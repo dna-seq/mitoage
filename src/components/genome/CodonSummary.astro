@@ -1,0 +1,104 @@
+---
+/**
+ * Codon usage of one protein-coding gene across vertebrates: the most used codons, and the
+ * preferred codon for each amino acid with its RSCU, overall and per class. Static HTML.
+ *
+ * <CodonSummary symbol="ND1" data={codonSummary("ND1")} />
+ */
+import "./genome.css";
+import { fmtFixed, fmtInt, fmtPct } from "~/lib/format";
+import type { CodonSummary } from "~/lib/genome/geneData";
+import { AMINO_ACIDS } from "~/lib/geneticCode";
+
+interface Props {
+  symbol: string;
+  data: CodonSummary;
+}
+const { symbol, data } = Astro.props;
+const maxPct = Math.max(...data.top.map((t) => t.pct), 1);
+const all = data.columns[0];
+/** Strength of a preference: 0 = no preference (RSCU 1), 1 = only that codon is used. */
+const level = (rscu: number, k: number) => Math.max(0, Math.min(1, (rscu - 1) / Math.max(1, k - 1)));
+---
+
+<div class="codons">
+  <div class="codons__top">
+    <h3 class="codons__h">Most used codons</h3>
+    <p class="codons__sub">Share of all {fmtInt(data.totalCodons)} sense codons of {symbol} in {fmtInt(all?.n ?? 0)} vertebrates</p>
+    <ol class="codons__bars" role="list">
+      {
+        data.top.map((t) => (
+          <li>
+            <span class="codons__codon">{t.codon}</span>
+            <span class="codons__aa" title={AMINO_ACIDS[t.aa]?.name}>
+              {AMINO_ACIDS[t.aa]?.three ?? t.aa}
+            </span>
+            <span class="codons__track" aria-hidden="true">
+              <span class="codons__fill" style={`width:${((t.pct / maxPct) * 100).toFixed(1)}%`} />
+            </span>
+            <span class="codons__pct">{fmtPct(t.pct, 1)}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+
+  <div class="codons__pref">
+    <h3 class="codons__h">Preferred codon for each amino acid</h3>
+    <p class="codons__sub">Most used synonymous codon and its RSCU, pooled by class; darker cells show a stronger preference</p>
+    <div class="dtable">
+      <div class="dtable__scroll codons__scroll" tabindex="0" role="region" aria-label="Preferred codons by class, scrollable">
+        <table>
+          <caption class="visually-hidden">Preferred codon and RSCU for each amino acid in {symbol}, by class</caption>
+          <thead>
+            <tr>
+              <th scope="col" class="codons__aa-col">Amino acid</th>
+              {
+                data.columns.map((c) => (
+                  <th scope="col">
+                    {c.label}
+                    <span class="dtable__sub">n {fmtInt(c.n)}</span>
+                  </th>
+                ))
+              }
+            </tr>
+          </thead>
+          <tbody>
+            {
+              data.rows.map((r) => (
+                <tr>
+                  <th scope="row" class="codons__aa-col">
+                    {r.three}
+                    <span class="dtable__sub">
+                      {r.aa} · {r.codons.length} codons
+                    </span>
+                  </th>
+                  {r.cells.map((cell) =>
+                    cell ? (
+                      <td>
+                        <span
+                          class:list={["heat__cell", "codons__cell", { "is-strong": level(cell.rscu, cell.synonyms) > 0.5 }]}
+                          style={`--v:${level(cell.rscu, cell.synonyms).toFixed(3)}`}
+                        >
+                          <span class="heat__codon">{cell.codon}</span>
+                          <span class="heat__count">{fmtFixed(cell.rscu, 2)}</span>
+                        </span>
+                      </td>
+                    ) : (
+                      <td class="muted">–</td>
+                    ),
+                  )}
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <p class="codons__note">
+      RSCU (relative synonymous codon usage) compares a codon with even use of all codons for its amino acid: 1 means no
+      preference, and the maximum equals the number of synonymous codons. Counts are summed over vertebrate species and read
+      with the vertebrate mitochondrial code (NCBI table 2); other animals use different codes and are left out.
+    </p>
+  </div>
+</div>

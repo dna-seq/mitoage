@@ -20,7 +20,8 @@ import CompositionBar from "~/components/ui/CompositionBar.astro";
 import DataTable, { type Column, type Row } from "~/components/ui/DataTable";
 import Hero from "~/components/ui/Hero.astro";
 import Icon from "~/components/ui/Icon.astro";
-import LinearGenomeTrack from "~/components/ui/LinearGenomeTrack.astro";
+import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
+import { mapDataFor } from "~/lib/genome/mapData";
 import StatCard from "~/components/ui/StatCard.astro";
 import TabNav from "~/components/ui/TabNav.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
@@ -349,18 +350,8 @@ const tabs = [
           <h2 id="map-title" class="card__title">Genome map</h2>
           <span class="card__desc">{fmtInt(features.length)} annotated features in {s.refseq}</span>
         </div>
-        {/*
-          GENOME MAP SLOT. Replace LinearGenomeTrack with the circular island when it exists:
-            import GenomeMap from "~/components/genome/GenomeMap";
-            <GenomeMap client:visible features={features} sizeBp={s.mtdnaSizeBp} />
-        */}
-        {
-          features.length ? (
-            <LinearGenomeTrack features={features} sizeBp={s.mtdnaSizeBp} />
-          ) : (
-            <p class="empty">No feature annotation for this record.</p>
-          )
-        }
+        <GenomeMapFigure id="sp-map" data={mapDataFor(s)} table />
+
       </Card>
     </section>
 

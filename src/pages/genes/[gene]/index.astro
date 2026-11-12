@@ -1,0 +1,420 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getAllSpecies, type Region } from "~/data";
+import Scatter from "~/components/charts/Scatter";
+import ClassDistribution from "~/components/genome/ClassDistribution.astro";
+import CodonSummary from "~/components/genome/CodonSummary.astro";
+import CorrelationTable from "~/components/genome/CorrelationTable.astro";
+import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Card from "~/components/ui/Card.astro";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import StatCard from "~/components/ui/StatCard.astro";
+import TabNav from "~/components/ui/TabNav.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { CLASS_GROUPS } from "~/lib/classes";
+import { fmtBp, fmtInt, fmtPct } from "~/lib/format";
+import { GENE_PAGE_REGIONS, REGION_INFO } from "~/lib/genes";
+import { GENE_FACTS, groupOf } from "~/lib/genome/geneFacts";
+import {
+  codonSummary,
+  featureLifespanPoints,
+  geneCorrelations,
+  geneSummary,
+  isProtein,
+  valuesByClass,
+} from "~/lib/genome/geneData";
+import { featureLength } from "~/lib/genome/layout";
+import { mapDataFor, referenceSpecies } from "~/lib/genome/mapData";
+import { featureSymbol } from "~/lib/genome/names";
+import { hashString } from "~/lib/random";
+import { keySpeciesPresent } from "~/lib/scatter";
+import { breadcrumbLd, type JsonLd } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { absoluteUrl, exploreUrl, geneSlug, geneUrl } from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  GENE_PAGE_REGIONS.map((region) => ({ params: { gene: geneSlug(region) }, props: { region } }))) satisfies GetStaticPaths;
+
+interface Props {
+  region: Region;
+}
+
+const { region } = Astro.props;
+const info = REGION_INFO[region];
+const symbol = featureSymbol(region);
+const group = groupOf(region);
+const facts = GENE_FACTS[region] ?? "";
+const all = getAllSpecies();
+const summary = geneSummary(region);
+
+// ---- Reference map (human) ----
+const ref = referenceSpecies();
+const refMap = mapDataFor(ref);
+const refFeat = refMap.features.find((f) => f.name === region);
+
+// ---- Distribution and scatter ----
+const gcKey = `gc:${region}`;
+const byClass = valuesByClass(gcKey);
+const points = featureLifespanPoints(gcKey);
+const keyIds = keySpeciesPresent();
+const keyPoints = points.filter((p) => keyIds.includes(p.id));
+const xs = points.map((p) => p.x);
+const ys = points.map((p) => p.y);
+const xDomain: [number, number] = [Math.min(...xs) / 1.35, Math.max(...xs) * 1.35];
+const yPad = (Math.max(...ys) - Math.min(...ys)) * 0.06;
+const yDomain: [number, number] = [Math.min(...ys) - yPad, Math.max(...ys) + yPad];
+const dataUrl = href(`/genes/${geneSlug(region)}/gc-lifespan.json`);
+
+// ---- Correlations and codons ----
+const correlations = geneCorrelations(region);
+const codons = isProtein(region) ? codonSummary(region) : null;
+
+// ---- Stats ----
+const annotated = summary.strand.plus + summary.strand.minus;
+const majorPlus = summary.strand.plus >= summary.strand.minus;
+const majorCount = majorPlus ? summary.strand.plus : summary.strand.minus;
+
+// ---- Navigation between genes ----
+const idx = GENE_PAGE_REGIONS.indexOf(region);
+const prev = idx > 0 ? GENE_PAGE_REGIONS[idx - 1] : undefined;
+const next = idx < GENE_PAGE_REGIONS.length - 1 ? GENE_PAGE_REGIONS[idx + 1] : undefined;
+
+// ---- SEO ----
+const longName = region === "D_Loop" ? "mitochondrial control region" : info.name;
+const title = `${symbol} (${longName}) across ${fmtInt(summary.n)} species`;
+const description = `${symbol}, ${longName.charAt(0).toLowerCase()}${longName.slice(1)}, in ${fmtInt(
+  summary.n,
+)} animal mitochondrial genomes: median length ${fmtBp(summary.length.median)}, median GC ${fmtPct(
+  summary.gc.median,
+  1,
+)}. GC content by class${codons ? ", codon usage" : ""} and correlations with maximum lifespan.`;
+const geneLd: JsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Gene",
+  name: symbol,
+  alternateName: info.name,
+  description: facts,
+  url: absoluteUrl(geneUrl(region), Astro.site),
+};
+const jsonLd = [
+  breadcrumbLd(Astro.site, [
+    { name: "Genes", path: "/genes/" },
+    { name: symbol, path: geneUrl(region) },
+  ]),
+  geneLd,
+];
+
+const tabs = [
+  { id: "map", label: "In the genome" },
+  { id: "classes", label: "By class" },
+  { id: "lifespan", label: "Lifespan" },
+  { id: "correlations", label: "Correlations" },
+  ...(codons ? [{ id: "codons", label: "Codon usage" }] : []),
+];
+const scatterLegend = CLASS_GROUPS.filter((g) => points.some((p) => p.group === g.key));
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd} ogType="article">
+  <Hero variant="page" seed={hashString(region) % 997} align="end">
+    <Breadcrumb
+      items={[{ label: "Genes", href: href("/genes/") }, ...(group ? [{ label: group.short }] : [])]}
+      label="Breadcrumb"
+      showRanks={false}
+    />
+    <h1 class="hero__title gene-title">
+      {symbol}
+      <span class="gene-title__name">{info.name}</span>
+    </h1>
+    <p class="gene-facts">{facts}</p>
+    <Fragment slot="aside">
+      <nav class="gene-step" aria-label="Previous and next gene">
+        {
+          prev && (
+            <a class="btn btn--outline-light" href={geneUrl(prev)} rel="prev">
+              <Icon name="chevronLeft" />
+              {featureSymbol(prev)}
+            </a>
+          )
+        }
+        {
+          next && (
+            <a class="btn btn--light" href={geneUrl(next)} rel="next">
+              {featureSymbol(next)}
+              <Icon name="chevronRight" />
+            </a>
+          )
+        }
+      </nav>
+    </Fragment>
+  </Hero>
+
+  <div class="container gene-body">
+    <nav class="gene-switch" aria-label="All genes" data-gene-switch>
+      <ul role="list">
+        {
+          GENE_PAGE_REGIONS.map((r) => (
+            <li>
+              <a
+                class:list={["chip", r === region ? "chip--current" : "chip--soft"]}
+                href={geneUrl(r)}
+                aria-current={r === region ? "page" : undefined}
+              >
+                {featureSymbol(r)}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <section class="stat-grid" aria-label="Key numbers">
+      <StatCard
+        layout="label-first"
+        size="md"
+        label="Median length"
+        value={fmtBp(summary.length.median)}
+        note={`Range ${fmtInt(summary.length.min)}–${fmtInt(summary.length.max)} bp`}
+        tone="green"
+      />
+      <StatCard
+        layout="label-first"
+        size="md"
+        label="Median GC content"
+        value={fmtPct(summary.gc.median, 1)}
+        note={`Middle half ${fmtPct(summary.gc.q1, 1)}–${fmtPct(summary.gc.q3, 1)}`}
+        tone="sky"
+      />
+      <StatCard
+        layout="label-first"
+        size="md"
+        label="Species with data"
+        value={fmtInt(summary.n)}
+        note={`Of ${fmtInt(all.length)} genomes`}
+        tone="orange"
+      />
+      {
+        region === "D_Loop" ? (
+          <StatCard
+            layout="label-first"
+            size="md"
+            label="Annotated D-loop"
+            value={fmtInt(annotated)}
+            note={summary.multiCopy ? `Two copies in ${fmtInt(summary.multiCopy)} genomes` : "Genomes with the feature"}
+            tone="violet"
+          />
+        ) : (
+          <StatCard
+            layout="label-first"
+            size="md"
+            label="Strand"
+            value={majorPlus ? "+ strand" : "− strand"}
+            note={`In ${fmtInt(majorCount)} of ${fmtInt(annotated)} genomes`}
+            tone="violet"
+          />
+        )
+      }
+    </section>
+
+    <TabNav items={tabs} label="Gene sections" />
+
+    <section id="map" class="gene-section" aria-labelledby="map-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="map-title" class="card__title">{symbol} in the human mitochondrial genome</h2>
+          <span class="card__desc">
+            <i>{ref.scientificName}</i>, RefSeq {ref.refseq}
+            {
+              refFeat &&
+                ` · ${fmtInt(refFeat.start)}–${fmtInt(refFeat.end)}, ${fmtBp(featureLength(refFeat, refMap.sizeBp))}${
+                  refFeat.type === "D-loop" ? "" : `, ${refFeat.strand === 1 ? "+" : "−"} strand`
+                }`
+            }
+          </span>
+        </div>
+        <GenomeMapFigure
+          id="gene-map"
+          data={refMap}
+          highlight={region}
+          load="idle"
+          label={`Circular map of the human mitochondrial genome with ${symbol} highlighted`}
+        />
+      </Card>
+    </section>
+
+    <section id="classes" class="gene-section" aria-labelledby="classes-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="classes-title" class="card__title">GC content of {symbol} across classes</h2>
+          <span class="card__desc">{fmtInt(points.length)} species, reference strand as deposited in RefSeq</span>
+        </div>
+        <ClassDistribution rows={byClass} unit="%" label={`GC% of ${symbol}`} />
+      </Card>
+    </section>
+
+    <section id="lifespan" class="gene-section" aria-labelledby="lifespan-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="lifespan-title" class="card__title">GC content of {symbol} against lifespan</h2>
+          <span class="card__desc">One point per species, coloured by class</span>
+        </div>
+        <Scatter
+          client:visible
+          points={keyPoints}
+          dataUrl={dataUrl}
+          groups={scatterLegend}
+          xLog
+          xDomain={xDomain}
+          yDomain={yDomain}
+          xLabel="Maximum lifespan, log scale"
+          yLabel={`GC % of ${symbol}`}
+          xFormat="lifespan"
+          yFormat="percent"
+          labelIds={keyIds}
+          interactiveLegend
+          ariaLabel={`Scatter plot of GC percent of ${symbol} against maximum lifespan for ${points.length} species, coloured by class`}
+          note="Hover or tap a point to see the species; select it again to open its page. Legend buttons spotlight a class."
+        />
+        <Fragment slot="footer">
+          <Button href={exploreUrl({ x: "maxLongevityYears", y: gcKey })} variant="primary" iconEnd="arrowRight">
+            Open in the plot explorer
+          </Button>
+        </Fragment>
+      </Card>
+    </section>
+
+    <section id="correlations" class="gene-section" aria-labelledby="corr-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="corr-title" class="card__title">Correlation with maximum lifespan</h2>
+          <span class="card__desc">All species, each class and each order with enough species</span>
+        </div>
+        {
+          correlations.length ? (
+            <CorrelationTable symbol={symbol} measures={correlations} />
+          ) : (
+            <p class="empty">No correlations were computed for {symbol}.</p>
+          )
+        }
+      </Card>
+    </section>
+
+    {
+      codons && (
+        <section id="codons" class="gene-section" aria-labelledby="codons-title">
+          <Card>
+            <div class="card__head">
+              <h2 id="codons-title" class="card__title">Codon usage of {symbol}</h2>
+              <span class="card__desc">Vertebrates, vertebrate mitochondrial code</span>
+            </div>
+            <CodonSummary symbol={symbol} data={codons} />
+          </Card>
+        </section>
+      )
+    }
+
+    <nav class="gene-pager" aria-label="More genes">
+      {
+        prev && (
+          <a class="row-link" href={geneUrl(prev)} rel="prev">
+            <Icon name="chevronLeft" class="row-link__chev" />
+            <span class="row-link__main">
+              {featureSymbol(prev)}
+              <span class="row-link__sub">{REGION_INFO[prev].name}</span>
+            </span>
+          </a>
+        )
+      }
+      <a class="row-link gene-pager__all" href={href("/genes/")}>
+        <Icon name="dna" size={22} />
+        <span class="row-link__main">
+          All genes
+          <span class="row-link__sub">13 proteins, 2 rRNAs, D-loop</span>
+        </span>
+      </a>
+      {
+        next && (
+          <a class="row-link gene-pager__next" href={geneUrl(next)} rel="next">
+            <span class="row-link__main">
+              {featureSymbol(next)}
+              <span class="row-link__sub">{REGION_INFO[next].name}</span>
+            </span>
+            <Icon name="chevronRight" class="row-link__chev" />
+          </a>
+        )
+      }
+    </nav>
+  </div>
+</BaseLayout>
+
+<script>
+  // Bring the current gene's chip into view in the scrollable strip (phones).
+  document.querySelectorAll<HTMLElement>("[data-gene-switch]").forEach((nav) => {
+    const cur = nav.querySelector<HTMLElement>("[aria-current='page']");
+    if (cur && nav.scrollWidth > nav.clientWidth) nav.scrollLeft = cur.offsetLeft - nav.clientWidth / 2 + cur.offsetWidth / 2;
+  });
+</script>
+
+<style>
+  .gene-title {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+  .gene-title__name {
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-heavy);
+    line-height: 1.25;
+    text-shadow: none;
+  }
+  .gene-facts {
+    max-width: 46rem;
+    font-size: var(--fs-md);
+    font-weight: var(--fw-bold);
+    line-height: 1.5;
+    color: var(--color-on-brand);
+  }
+  .gene-step {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .gene-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-6) var(--section-gap);
+  }
+  .gene-switch {
+    position: relative;
+    margin-inline: calc(-1 * var(--gutter));
+    padding-inline: var(--gutter);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .gene-switch::-webkit-scrollbar {
+    display: none;
+  }
+  .gene-switch ul {
+    display: flex;
+    gap: var(--space-2);
+    width: max-content;
+    padding-block: 2px;
+  }
+  .gene-section {
+    scroll-margin-top: 5rem;
+  }
+  .gene-pager {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-3);
+  }
+  .gene-pager__next {
+    text-align: right;
+  }
+  .gene-pager :global(.icon:first-child) {
+    color: var(--tone-green-ink);
+  }
+</style>

@@ -1,0 +1,117 @@
+---
+/**
+ * Circular genome map with its legend and side panel, an optional table of every feature,
+ * and a friendly empty state when a record has no annotation.
+ *
+ * <GenomeMapFigure id="sp-map" data={mapDataFor(species)} table />
+ * <GenomeMapFigure id="gene-map" data={mapDataFor(referenceSpecies())} highlight="ND1" />
+ */
+import GenomeMap from "./GenomeMap";
+import "./genome.css";
+import { fmtBp, fmtInt, fmtPct } from "~/lib/format";
+import { featureLength } from "~/lib/genome/layout";
+import type { MapData } from "~/lib/genome/mapData";
+import { FEATURE_COLOR, FEATURE_KIND, featureSymbol, hasGenePage } from "~/lib/genome/names";
+import { geneUrl } from "~/lib/urls";
+
+interface Props {
+  id: string;
+  data: MapData;
+  highlight?: string;
+  links?: boolean;
+  /** Show the "all features" table under the map. */
+  table?: boolean;
+  label?: string;
+  /** Hydration: "visible" (default) or "idle" for maps near the top of the page. */
+  load?: "visible" | "idle";
+}
+
+const { id, data, highlight, links = true, table = false, label, load = "visible" } = Astro.props;
+const sorted = [...data.features].sort((a, b) => a.start - b.start);
+const props = {
+  id,
+  features: data.features,
+  sizeBp: data.sizeBp,
+  gc: data.gc,
+  genomeGc: data.genomeGc,
+  name: data.name,
+  links,
+  ...(highlight ? { highlight } : {}),
+  ...(label ? { label } : {}),
+};
+---
+
+<div class="gmapfig">
+  {
+    data.features.length === 0 ? (
+      <div class="empty">
+        <svg width="56" height="56" viewBox="0 0 56 56" aria-hidden="true">
+          <circle cx="28" cy="28" r="20" fill="none" style="stroke: var(--color-border-strong)" stroke-width="7" stroke-dasharray="6 5" />
+        </svg>
+        <p>
+          This RefSeq record ({data.refseq}) has no annotated genes, so there is no map to draw.
+          <br />
+          The sequence itself is available from NCBI.
+        </p>
+      </div>
+    ) : load === "idle" ? (
+      <GenomeMap client:idle {...props} />
+    ) : (
+      <GenomeMap client:visible {...props} />
+    )
+  }
+  {
+    data.omitted.length > 0 && (
+      <p class="gmap-note">
+        Not drawn: {data.omitted.map((f) => `${featureSymbol(f.name)} ${fmtInt(f.start)}–${fmtInt(f.end)}`).join(", ")}, annotated
+        over most of the record.
+      </p>
+    )
+  }
+  {
+    table && sorted.length > 0 && (
+      <details class="gmap-table">
+        <summary>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" />
+          </svg>
+          All {fmtInt(sorted.length)} features as a table
+        </summary>
+        <div class="gmap-table__body dtable">
+          <div class="dtable__scroll" tabindex="0" role="region" aria-label="Annotated features">
+            <table>
+              <caption class="visually-hidden">Annotated features of {data.name} ({data.refseq})</caption>
+              <thead>
+                <tr>
+                  <th scope="col">Feature</th>
+                  <th scope="col">Type</th>
+                  <th scope="col" class="is-num">Start</th>
+                  <th scope="col" class="is-num">End</th>
+                  <th scope="col" class="is-num">Length</th>
+                  <th scope="col">Strand</th>
+                  <th scope="col" class="is-num">GC</th>
+                </tr>
+              </thead>
+              <tbody>
+                {sorted.map((f) => (
+                  <tr>
+                    <td class="dtable__primary">
+                      <span class="gmap__swatch" style={`--sw:${FEATURE_COLOR[f.type]}`} aria-hidden="true" />
+                      {hasGenePage(f.name) && links ? <a href={geneUrl(f.name)}>{featureSymbol(f.name)}</a> : featureSymbol(f.name)}
+                    </td>
+                    <td>{FEATURE_KIND[f.type]}</td>
+                    <td class="is-num">{fmtInt(f.start)}</td>
+                    <td class="is-num">{fmtInt(f.end)}</td>
+                    <td class="is-num">{fmtBp(featureLength(f, data.sizeBp))}</td>
+                    <td>{f.type === "D-loop" ? "–" : f.strand === 1 ? "+" : "−"}</td>
+                    <td class="is-num">{data.gc[f.name] !== undefined ? fmtPct(data.gc[f.name], 1) : "–"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+    )
+  }
+</div>

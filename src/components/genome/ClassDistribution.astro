@@ -1,0 +1,90 @@
+---
+/**
+ * Distribution of one value across species, one row per class: every species as a dot
+ * (jittered vertically), the interquartile range as a box and the median as a bar.
+ * Static SVG, no JavaScript. The plot stretches horizontally (preserveAspectRatio="none") while
+ * dots and strokes keep their pixel size (non-scaling strokes on zero-length segments).
+ *
+ * <ClassDistribution rows={valuesByClass("gc:ND1")} unit="%" label="GC% of ND1" />
+ */
+import { ticks } from "d3-array";
+import "./genome.css";
+import { fmtFixed, fmtInt, fmtNum } from "~/lib/format";
+import type { ClassRow } from "~/lib/genome/geneData";
+import { hash01 } from "~/lib/genome/stats";
+
+interface Props {
+  rows: ClassRow[];
+  /** Appended to values, e.g. "%" or " bp". */
+  unit?: string;
+  digits?: number;
+  /** What is plotted, e.g. "GC% of ND1". */
+  label: string;
+}
+const { rows, unit = "", digits = 1, label } = Astro.props;
+
+const all = rows.flatMap((r) => r.values);
+const lo0 = Math.min(...all);
+const hi0 = Math.max(...all);
+const pad = (hi0 - lo0 || 1) * 0.04;
+const lo = lo0 - pad;
+const hi = hi0 + pad;
+const W = 1000;
+const H = 40;
+const X = (v: number) => Math.round(((v - lo) / (hi - lo)) * W * 10) / 10;
+const tickVals = ticks(lo, hi, 6).filter((t) => t >= lo && t <= hi);
+const grid = tickVals.map((t) => `M${X(t)} 0V${H}`).join("");
+const fmt = (v: number) => `${fmtFixed(v, digits)}${unit}`;
+
+const dots = (r: ClassRow, k: number) =>
+  r.values
+    .map((v, j) => {
+      const y = Math.round((H / 2 + (hash01(j * 31 + k * 7919) - 0.5) * 26) * 10) / 10;
+      return `M${X(v)} ${y}h0`;
+    })
+    .join("");
+---
+
+<figure class="cdist">
+  <div class="cdist__grid" role="list" aria-label={`${label} by class`}>
+    {
+      rows.map((r, k) => (
+        <div class="cdist__row" role="listitem" style={`--c:${r.color}`}>
+          <div class="cdist__label">
+            <span class="cdist__swatch" aria-hidden="true" />
+            <span class="cdist__name">{r.label}</span>
+            <span class="cdist__meta">
+              n {fmtInt(r.n)} · median {fmt(r.median)}
+              <span class="cdist__iqr"> · middle half {fmt(r.q1)}–{fmt(r.q3)}</span>
+            </span>
+          </div>
+          <div class="cdist__plot">
+            <svg viewBox={`0 0 ${W} ${H}`} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+              <path class="cdist__gridlines" d={grid} />
+              <path class="cdist__whisker" d={`M${X(r.min)} ${H / 2}H${X(r.max)}`} />
+              <rect class="cdist__box" x={X(r.q1)} y="7" width={Math.max(0.5, X(r.q3) - X(r.q1))} height={H - 14} />
+              <path class="cdist__dots" d={dots(r, k)} />
+              <path class="cdist__median" d={`M${X(r.median)} 4V${H - 4}`} />
+            </svg>
+          </div>
+        </div>
+      ))
+    }
+    <div class="cdist__row cdist__row--axis" aria-hidden="true">
+      <div class="cdist__label"></div>
+      <div class="cdist__axis">
+        {
+          tickVals.map((t) => (
+            <span style={`left:${(X(t) / W) * 100}%`}>
+              {fmtNum(t, 1)}
+              {unit.trim()}
+            </span>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+  <figcaption class="cdist__note">
+    Each dot is one species. Boxes span the middle half of the species (25th to 75th percentile) and the thick line marks the median; thin lines run from the lowest to the highest value.
+  </figcaption>
+</figure>

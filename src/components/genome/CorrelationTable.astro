@@ -1,0 +1,178 @@
+---
+/**
+ * Correlations of a gene's length, GC%, GC skew and AT skew with maximum lifespan in every
+ * scope (all species, classes, orders). One table per measure behind a segmented control made
+ * of radio buttons (CSS only: every table is in the static HTML).
+ *
+ * <CorrelationTable symbol="ND1" measures={geneCorrelations("ND1")} />
+ */
+import "./genome.css";
+import { classLabel } from "~/lib/classes";
+import { fmtFixed, fmtInt, fmtSigned, isNum } from "~/lib/format";
+import type { MeasureCorrelations } from "~/lib/genome/geneData";
+import { findTaxon } from "~/lib/taxa";
+import { exploreUrl, taxonUrl } from "~/lib/urls";
+
+interface Props {
+  symbol: string;
+  measures: MeasureCorrelations[];
+  /** Unique on the page. */
+  id?: string;
+}
+const { symbol, measures, id = "corr" } = Astro.props;
+
+const scopeInfo = (scope: string): { label: string; sub: string; href?: string } => {
+  if (scope === "all") return { label: "All species", sub: "every class" };
+  const [rank, name = ""] = scope.split(":") as ["class" | "order", string];
+  const node = findTaxon(rank, name);
+  const out: { label: string; sub: string; href?: string } = {
+    label: rank === "class" ? classLabel(name) : name,
+    sub: rank === "class" ? `class ${name}` : "order",
+  };
+  if (node) out.href = taxonUrl(rank, node.slug);
+  return out;
+};
+const r2 = (v: number | null | undefined) => (isNum(v) ? fmtSigned(v, 2) : "–");
+const fmtQ = (q: number) => (!isNum(q) ? "–" : q < 0.001 ? "< 0.001" : q < 0.1 ? fmtFixed(q, 3) : fmtFixed(q, 2));
+const sig = (q: number) => isNum(q) && q < 0.05;
+/** Inline diverging bar: left edge and width in % of the track, centred on zero. */
+const bar = (r: number) => {
+  const v = isNum(r) ? Math.max(-1, Math.min(1, r)) : 0;
+  return `--l:${(50 + Math.min(0, v) * 50).toFixed(1)}%;--w:${(Math.abs(v) * 50).toFixed(1)}%`;
+};
+---
+
+<div class="corr" id={id}>
+  {
+    measures.map((m, k) => (
+      <input
+        type="radio"
+        class={`corr__radio corr__radio--${m.prefix}`}
+        name={`${id}-measure`}
+        id={`${id}-${m.prefix}`}
+        checked={k === 0}
+      />
+    ))
+  }
+  <div class="seg corr__tabs">
+    <span class="corr__tabs-label">Measure</span>
+    {
+      measures.map((m) => (
+        <label class={`seg__btn corr__tab corr__tab--${m.prefix}`} for={`${id}-${m.prefix}`}>
+          {m.label}
+        </label>
+      ))
+    }
+  </div>
+  <div class="corr__panels">
+    {
+      measures.map((m) => {
+        const nSig = m.rows.filter((r) => sig(r.qValue)).length;
+        return (
+          <section class={`corr__panel corr__panel--${m.prefix}`} aria-label={`${m.long} of ${symbol} against maximum lifespan`}>
+            <p class="corr__lead">
+              {m.long} of {symbol} against log<sub>10</sub> maximum lifespan in {fmtInt(m.rows.length)} groups;{" "}
+              {nSig === 0 ? "none passes" : `${fmtInt(nSig)} ${nSig === 1 ? "passes" : "pass"}`} q &lt; 0.05.{" "}
+              <a href={exploreUrl({ x: "maxLongevityYears", y: m.featureKey })}>Plot it in the explorer</a>
+            </p>
+            <div class="dtable">
+              <div class="dtable__scroll corr__scroll" tabindex="0" role="region" aria-label={`${m.long} correlations, scrollable`}>
+                <table>
+                  <caption class="visually-hidden">
+                    Correlation of {m.long} of {symbol} with log10 maximum lifespan by group
+                  </caption>
+                  <thead>
+                    <tr>
+                      <th scope="col" class="corr__scope">Group</th>
+                      <th scope="col" class="is-num">n</th>
+                      <th scope="col" class="is-num">
+                        <abbr title="Pearson correlation coefficient">Pearson r</abbr>
+                      </th>
+                      <th scope="col" class="is-num">
+                        <abbr title="Spearman rank correlation">Spearman ρ</abbr>
+                      </th>
+                      <th scope="col" class="is-num">
+                        <abbr title="Benjamini–Hochberg adjusted p-value">q</abbr>
+                      </th>
+                      <th scope="col" class="is-num">
+                        <abbr title="Correlation of phylogenetically independent contrasts">PIC r</abbr>
+                      </th>
+                      <th scope="col" class="is-num">
+                        <abbr title="Partial correlation controlling for log10 adult body mass">Partial r</abbr>
+                      </th>
+                      <th scope="col">
+                        <span class="visually-hidden">Explorer</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {m.rows.map((r) => {
+                      const s = scopeInfo(r.scope);
+                      return (
+                        <tr class:list={[{ "is-sig": sig(r.qValue) }]}>
+                          <th scope="row" class="corr__scope">
+                            {s.href ? <a href={s.href}>{s.label}</a> : <span>{s.label}</span>}
+                            <span class="dtable__sub">{s.sub}</span>
+                          </th>
+                          <td class="is-num">{fmtInt(r.n)}</td>
+                          <td class="is-num">
+                            <span class:list={["corr__r", { "is-neg": r.pearsonR < 0 }]} style={bar(r.pearsonR)}>
+                              <span class="corr__rbar" aria-hidden="true" />
+                              {r2(r.pearsonR)}
+                            </span>
+                          </td>
+                          <td class="is-num">{r2(r.spearmanRho)}</td>
+                          <td class="is-num">
+                            {sig(r.qValue) ? (
+                              <span class="corr__q">
+                                {fmtQ(r.qValue)}
+                                <span class="visually-hidden"> (significant)</span>
+                              </span>
+                            ) : (
+                              fmtQ(r.qValue)
+                            )}
+                          </td>
+                          <td class="is-num">{r2(r.picR)}</td>
+                          <td class="is-num">{r2(r.partialR)}</td>
+                          <td class="corr__go">
+                            <a
+                              href={exploreUrl({ x: "maxLongevityYears", y: m.featureKey })}
+                              aria-label={`Plot ${m.long.toLowerCase()} of ${symbol} against lifespan in the explorer (${s.label})`}
+                            >
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M4 20V4M4 20h16M8 15l3-4 3 2 5-6" />
+                              </svg>
+                            </a>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        );
+      })
+    }
+  </div>
+  <dl class="corr__help">
+    <div><dt>n</dt><dd>species with both values in the group.</dd></div>
+    <div>
+      <dt>Pearson r, Spearman ρ</dt>
+      <dd>strength of the link with log<sub>10</sub> lifespan, from −1 to +1; Spearman uses ranks, so a few extreme species weigh less.</dd>
+    </div>
+    <div>
+      <dt>q</dt>
+      <dd>p-value adjusted for testing every mtDNA feature in the same group (Benjamini–Hochberg); rows with q &lt; 0.05 are highlighted.</dd>
+    </div>
+    <div>
+      <dt>PIC r</dt>
+      <dd>the same test on phylogenetically independent contrasts, which removes similarity that comes from shared ancestry.</dd>
+    </div>
+    <div>
+      <dt>Partial r</dt>
+      <dd>the link with lifespan after accounting for body mass (log<sub>10</sub> adult weight), since bigger animals tend to live longer.</dd>
+    </div>
+  </dl>
+</div>

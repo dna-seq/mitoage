@@ -1,0 +1,439 @@
+---
+import { getAllSpecies } from "~/data";
+import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
+import Card from "~/components/ui/Card.astro";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtBp, fmtInt, fmtPct } from "~/lib/format";
+import { REGION_INFO } from "~/lib/genes";
+import { GENE_GROUPS } from "~/lib/genome/geneFacts";
+import { geneSummary } from "~/lib/genome/geneData";
+import { featureAngles } from "~/lib/genome/layout";
+import { mapDataFor, referenceSpecies } from "~/lib/genome/mapData";
+import { FEATURE_COLOR, featureFullName, featureSymbol, trnaLetter } from "~/lib/genome/names";
+import { breadcrumbLd, type JsonLd } from "~/lib/seo";
+import { absoluteUrl, geneUrl } from "~/lib/urls";
+
+const species = getAllSpecies();
+const ref = referenceSpecies();
+const refMap = mapDataFor(ref);
+const counts = refMap.features.reduce<Record<string, number>>((acc, f) => ((acc[f.type] = (acc[f.type] ?? 0) + 1), acc), {});
+
+/** Segments of a region on the human genome as % of its length, for the little position bars. */
+const segments = (region: string): { left: number; width: number }[] => {
+  const f = refMap.features.find((x) => x.name === region);
+  if (!f) return [];
+  const [a0, a1] = featureAngles(f, refMap.sizeBp);
+  const s = (a0 / (Math.PI * 2)) * 100;
+  const e = (a1 / (Math.PI * 2)) * 100;
+  return e <= 100 ? [{ left: s, width: Math.max(0.6, e - s) }] : [{ left: s, width: 100 - s }, { left: 0, width: e - 100 }];
+};
+
+const strandOf = (region: string): string | null => {
+  const f = refMap.features.find((x) => x.name === region);
+  if (!f || f.type === "D-loop") return null;
+  return f.strand === 1 ? "+ strand" : "− strand";
+};
+
+const colorOf = (region: string): string => {
+  const f = refMap.features.find((x) => x.name === region);
+  return f ? FEATURE_COLOR[f.type] : "var(--feat-cds)";
+};
+
+const trnas = refMap.features.filter((f) => f.type === "tRNA").sort((a, b) => a.start - b.start);
+
+const groups = GENE_GROUPS.map((g) => ({
+  ...g,
+  genes: g.regions.map((r) => ({ region: r, summary: geneSummary(r) })),
+}));
+
+const description = `The 13 protein-coding genes, two ribosomal RNAs and the control region of animal mitochondrial DNA, compared across ${fmtInt(
+  species.length,
+)} species: length, GC content, codon usage and correlations with maximum lifespan.`;
+
+const itemList: JsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Mitochondrial genes in MitoAge",
+  itemListElement: groups
+    .flatMap((g) => g.regions)
+    .map((r, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: `${featureSymbol(r)}: ${REGION_INFO[r].name}`,
+      url: absoluteUrl(geneUrl(r), Astro.site),
+    })),
+};
+const kinds = [
+  { n: counts["CDS"] ?? 13, label: "protein-coding genes", color: FEATURE_COLOR.CDS },
+  { n: counts["rRNA"] ?? 2, label: "ribosomal RNAs", color: FEATURE_COLOR.rRNA },
+  { n: counts["tRNA"] ?? 22, label: "transfer RNAs", color: FEATURE_COLOR.tRNA },
+  { n: counts["D-loop"] ?? 1, label: "control region", color: FEATURE_COLOR["D-loop"] },
+];
+---
+
+<BaseLayout
+  title="Mitochondrial genes"
+  description={description}
+  jsonLd={[breadcrumbLd(Astro.site, [{ name: "Genes", path: "/genes/" }]), itemList]}
+>
+  <Hero variant="page" seed={23}>
+    <p class="hero__eyebrow">Genes</p>
+    <h1 class="hero__title">Genes of the mitochondrial genome</h1>
+    <p class="hero__lede">
+      Animal mtDNA is a small circle with 37 genes and one control region. Pick a gene to compare its length, base
+      composition and codon usage across {fmtInt(species.length)} species, and to see how it relates to lifespan.
+    </p>
+    <Fragment slot="aside">
+      <ul class="genes-kinds" role="list" aria-label="Genes in the human mitochondrial genome">
+        {
+          kinds.map((k) => (
+            <li style={`--dot:${k.color}`}>
+              <span class="genes-kinds__n">{k.n}</span>
+              {k.label}
+            </li>
+          ))
+        }
+      </ul>
+    </Fragment>
+  </Hero>
+
+  <div class="container genes-body">
+    <section aria-labelledby="ref-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="ref-title" class="card__title">The human mitochondrial genome</h2>
+          <span class="card__desc"><i>{ref.scientificName}</i>, RefSeq {ref.refseq}, {fmtBp(ref.mtdnaSizeBp)}. Select a gene to open its page.</span>
+        </div>
+        <GenomeMapFigure id="genes-map" data={refMap} load="idle" label="Circular map of the human mitochondrial genome; every gene links to its page" />
+      </Card>
+    </section>
+
+    <div class="genes-groups">
+      {
+        groups.map((g) => (
+          <section class:list={["genes-group", `span-${Math.min(4, g.genes.length)}`]} aria-labelledby={`grp-${g.id}`}>
+            <SectionHeader id={`grp-${g.id}`} eyebrow={g.short} title={g.name} description={g.about} />
+            <ul role="list" class="genes-grid">
+              {g.genes.map(({ region, summary }) => (
+                <li>
+                  <a class="gcard" href={geneUrl(region)} style={`--fc:${colorOf(region)}`}>
+                    <span class="gcard__head">
+                      <span class="gcard__sym">{featureSymbol(region)}</span>
+                      {strandOf(region) && <span class="gcard__tag">{strandOf(region)}</span>}
+                      <Icon name="arrowRight" class="gcard__go" size={20} />
+                    </span>
+                    <span class="gcard__name">{REGION_INFO[region].name}</span>
+                    <span class="gcard__pos" title="Position in the human mitochondrial genome">
+                      {segments(region).map((s) => (
+                        <span class="gcard__seg" style={`left:${s.left.toFixed(2)}%;width:${s.width.toFixed(2)}%`} />
+                      ))}
+                    </span>
+                    <dl class="gcard__stats">
+                      <div>
+                        <dt>Median length</dt>
+                        <dd>{fmtBp(summary.length.median)}</dd>
+                      </div>
+                      <div>
+                        <dt>Median GC</dt>
+                        <dd>{fmtPct(summary.gc.median, 1)}</dd>
+                      </div>
+                    </dl>
+                    {summary.n < species.length && <span class="gcard__n">Data for {fmtInt(summary.n)} of {fmtInt(species.length)} species</span>}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+      <section class="genes-group span-3" aria-labelledby="grp-trna">
+        <SectionHeader
+          id="grp-trna"
+          eyebrow="Transfer RNA"
+          title={`${fmtInt(trnas.length)} tRNA genes`}
+          description="Each tRNA carries one amino acid to the mitochondrial ribosome. They have no pages of their own; every genome map shows them with their one-letter codes."
+        />
+        <div class="trna-panel">
+          <ul role="list" class="trna-list">
+            {
+              trnas.map((t) => (
+                <li title={featureFullName(t.name, t.type)}>
+                  <span class="trna-list__code">{trnaLetter(t.name)}</span>
+                  <span class="trna-list__name">{featureSymbol(t.name).replace(/^tRNA-/, "")}</span>
+                  <span class="trna-list__strand">{t.strand === 1 ? "+" : "−"}</span>
+                </li>
+              ))
+            }
+          </ul>
+          <p class="trna-panel__note">In the human genome, from the origin; + and − give the strand.</p>
+        </div>
+      </section>
+    </div>
+
+    <p class="genes-note muted">
+      Medians are across all species with data for the gene. The bar on each card shows where the gene lies in the human
+      genome, which starts at the top of the map and runs clockwise.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .genes-kinds {
+    display: grid;
+    gap: var(--space-2);
+    min-width: 15rem;
+    margin: 0;
+  }
+  .genes-kinds li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-pill);
+    background: var(--color-on-brand-chip);
+    color: var(--color-on-brand);
+    font-weight: var(--fw-heavy);
+  }
+  .genes-kinds li::before {
+    content: "";
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 4px;
+    background: var(--dot);
+    box-shadow: 0 0 0 2px var(--color-on-brand-outline);
+  }
+  .genes-kinds__n {
+    min-width: 1.6em;
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-black);
+    font-variant-numeric: tabular-nums;
+  }
+  .genes-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+    padding-block: var(--space-7) var(--section-gap);
+  }
+  /* Groups share a 4-column grid; each spans as many columns as it has genes, and subgrid
+     rows keep headers and cards aligned across the groups of one row. */
+  .genes-groups {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-4) var(--space-5);
+  }
+  .genes-group {
+    display: grid;
+    grid-row: span 2;
+    grid-template-rows: subgrid;
+    gap: var(--space-4);
+    min-width: 0;
+    margin-bottom: var(--space-6);
+  }
+  .genes-group :global(.section-head) {
+    align-self: end;
+    margin-bottom: 0;
+  }
+  .genes-group :global(.section-head h2) {
+    font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.75rem);
+  }
+  .genes-group :global(.section-head p) {
+    max-width: 52rem;
+    font-size: var(--fs-sm);
+  }
+  .genes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: var(--space-4);
+    align-content: start;
+  }
+  @media (min-width: 48rem) {
+    .genes-groups {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .genes-group {
+      grid-column: span 2;
+    }
+  }
+  @media (min-width: 72rem) {
+    .genes-groups {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+    .genes-group.span-1 {
+      grid-column: span 1;
+    }
+    .genes-group.span-3 {
+      grid-column: span 3;
+    }
+    .genes-group.span-4 {
+      grid-column: span 4;
+    }
+  }
+  .gcard {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    height: 100%;
+    padding: var(--space-5) var(--space-5) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    color: var(--color-text);
+    text-decoration: none;
+    overflow: hidden;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .gcard::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: var(--fc);
+  }
+  .gcard:hover {
+    color: var(--color-text);
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+  }
+  .gcard__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    padding-right: var(--space-6);
+  }
+  .gcard__sym {
+    white-space: nowrap;
+    font-size: clamp(1.5rem, 1.3rem + 0.6vw, 1.875rem);
+    font-weight: var(--fw-black);
+    color: var(--color-heading);
+    line-height: 1.1;
+  }
+  .gcard__tag {
+    padding: 0.15em 0.6em;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+    white-space: nowrap;
+  }
+  .gcard :global(.gcard__go) {
+    position: absolute;
+    top: var(--space-5);
+    right: var(--space-4);
+    color: var(--tone-green-ink);
+    transition: transform var(--dur-fast) var(--ease-out);
+  }
+  .gcard:hover :global(.gcard__go) {
+    transform: translateX(3px);
+  }
+  .gcard__name {
+    font-weight: var(--fw-heavy);
+    line-height: 1.3;
+    text-wrap: balance;
+  }
+  .gcard__pos {
+    position: relative;
+    height: 8px;
+    margin-block: var(--space-1);
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+  .gcard__seg {
+    position: absolute;
+    top: -2px;
+    bottom: -2px;
+    min-width: 4px;
+    border-radius: 3px;
+    background: var(--fc);
+  }
+  .gcard__stats {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+  .gcard__stats dt {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    line-height: 1.2;
+  }
+  .gcard__stats dd {
+    font-weight: var(--fw-black);
+    font-variant-numeric: tabular-nums;
+  }
+  .gcard__n {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .trna-panel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-5);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    border-top: 6px solid var(--feat-trna);
+  }
+  .trna-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.6rem, 1fr));
+    gap: var(--space-2);
+  }
+  .trna-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: 0.3em 0.6em 0.3em 0.35em;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+    white-space: nowrap;
+  }
+  .trna-list__code {
+    display: inline-grid;
+    place-items: center;
+    min-width: 1.9em;
+    height: 1.9em;
+    padding: 0 0.3em;
+    border-radius: var(--radius-pill);
+    background: var(--feat-trna);
+    color: color-mix(in srgb, var(--feat-trna) 8%, black);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-black);
+  }
+  .trna-list__name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .trna-list__strand {
+    color: var(--color-text-muted);
+    font-weight: var(--fw-black);
+  }
+  .trna-panel__note {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .genes-note {
+    max-width: 60rem;
+    font-size: var(--fs-sm);
+  }
+</style>
