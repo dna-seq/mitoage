@@ -102,10 +102,22 @@ const {
     min-height: 32px;
     font-size: var(--fs-sm);
   }
-  @media (max-width: 30rem) {
+  @media (max-width: 40rem) {
     .stat {
       padding: var(--space-4) var(--space-4) calc(var(--space-4) + 4px);
       border-radius: var(--radius-md);
+    }
+    .stat__value,
+    .stat--md .stat__value {
+      font-size: 1.5rem;
+    }
+    .stat__label {
+      font-size: var(--fs-sm);
+    }
+    .stat__label--top,
+    .stat__note,
+    .stat__link {
+      font-size: var(--fs-xs);
     }
   }
 </style>

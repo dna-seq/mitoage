@@ -17,14 +17,16 @@ import Footer from "~/components/ui/Footer.astro";
 import Header from "~/components/ui/Header.astro";
 import type { JsonLd } from "~/lib/seo";
 import { SITE_DESCRIPTION, SITE_NAME } from "~/lib/site";
+import { href } from "~/lib/url";
+import { absoluteUrl } from "~/lib/urls";
 
 interface Props {
   /** Page title without the site name; omit on the home page. */
   title?: string;
   description?: string;
-  /** Canonical path, defaults to the current path. */
+  /** Canonical path (root-relative or base-prefixed), defaults to the current path. */
   canonicalPath?: string;
-  /** Social image, absolute path on this site. */
+  /** Social image, root-relative path on this site. */
   image?: string;
   imageAlt?: string;
   ogType?: "website" | "article";
@@ -46,10 +48,10 @@ const {
   headerSearch = true,
 } = Astro.props;
 
-const site = Astro.site ?? new URL("https://www.mitoage.info");
+const site = Astro.site;
 const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME}: mitochondrial DNA and animal longevity`;
-const canonical = new URL(canonicalPath ?? Astro.url.pathname, site).toString();
-const imageUrl = new URL(image, site).toString();
+const canonical = absoluteUrl(canonicalPath ?? Astro.url.pathname, site);
+const imageUrl = absoluteUrl(image, site);
 const ld = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
 const ldJson = (o: JsonLd) => JSON.stringify(o).replace(/</g, "\\u003c");
 ---
@@ -74,11 +76,11 @@ const ldJson = (o: JsonLd) => JSON.stringify(o).replace(/</g, "\\u003c");
     <meta name="theme-color" content="#0e4a22" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#082e16" media="(prefers-color-scheme: dark)" />
 
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="manifest" href="/site.webmanifest" />
-    <link rel="sitemap" href="/sitemap-index.xml" />
+    <link rel="icon" href={href("/favicon.svg")} type="image/svg+xml" />
+    <link rel="icon" href={href("/favicon-32.png")} sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href={href("/apple-touch-icon.png")} />
+    <link rel="manifest" href={href("/site.webmanifest")} />
+    <link rel="sitemap" href={href("/sitemap-index.xml")} />
     <link rel="preload" href={nunitoLatin} as="font" type="font/woff2" crossorigin />
 
     <meta property="og:site_name" content={SITE_NAME} />

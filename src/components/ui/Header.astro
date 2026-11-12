@@ -6,6 +6,7 @@
  * Narrower: logo, theme toggle and a menu button; the menu panel holds search + nav.
  */
 import { NAV_ITEMS } from "~/lib/site";
+import { href, stripBase } from "~/lib/url";
 import LogoIcon from "../brand/LogoIcon.astro";
 import Icon from "./Icon.astro";
 import SearchBox from "./SearchBox";
@@ -16,13 +17,13 @@ interface Props {
   showSearch?: boolean;
 }
 const { showSearch = true } = Astro.props;
-const path = Astro.url.pathname;
-const isCurrent = (href: string) => (href === "/" ? path === "/" : path.startsWith(href));
+const path = stripBase(Astro.url.pathname);
+const isCurrent = (target: string) => (target === "/" ? path === "/" : path.startsWith(target));
 ---
 
 <header class="site-header">
   <div class="container site-header__bar">
-    <a class="brand" href="/" aria-label="MitoAge home">
+    <a class="brand" href={href("/")} aria-label="MitoAge home">
       <LogoIcon size={40} />
       <span class="brand__word">MitoAge</span>
     </a>
@@ -32,7 +33,7 @@ const isCurrent = (href: string) => (href === "/" ? path === "/" : path.startsWi
           {
             NAV_ITEMS.map((item) => (
               <li>
-                <a href={item.href} aria-current={isCurrent(item.href) ? "page" : undefined}>
+                <a href={href(item.href)} aria-current={isCurrent(item.href) ? "page" : undefined}>
                   <span class="site-nav__label">{item.label}</span>
                   <span class="site-nav__hint">{item.hint}</span>
                 </a>

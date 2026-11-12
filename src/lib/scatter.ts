@@ -3,10 +3,11 @@ import { getAllSpecies } from "~/data";
 import type { Species } from "~/data/schema";
 import { classGroup } from "./classes";
 import type { ScatterPoint } from "./scatterTypes";
+import { href } from "./url";
 import { speciesUrl } from "./urls";
 
 /** Public path of the shared GC% vs lifespan dataset (emitted by src/pages/species/gc-lifespan.json.ts). */
-export const GC_LIFESPAN_URL = "/species/gc-lifespan.json";
+export const GC_LIFESPAN_URL = href("/species/gc-lifespan.json");
 
 /** Species we try to label on overview plots, if present in the data. */
 export const KEY_SPECIES_SLUGS = [

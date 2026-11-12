@@ -1,4 +1,5 @@
 /** Wire format of /search-index.json (built by src/pages/search-index.json.ts). Safe for islands. */
+import { href } from "./url";
 
 export type SearchKind = "s" | "t" | "g";
 
@@ -20,4 +21,4 @@ export interface SearchIndex {
   items: SearchItem[];
 }
 
-export const SEARCH_INDEX_URL = "/search-index.json";
+export const SEARCH_INDEX_URL = href("/search-index.json");

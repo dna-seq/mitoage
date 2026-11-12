@@ -41,7 +41,8 @@ export interface NavItem {
 }
 
 /**
- * Primary navigation. To add a section, append an item here; Header renders it on
+ * Primary navigation (root-relative hrefs; Header/Footer pass them through href() for the
+ * base path). To add a section, append an item here; Header renders it on
  * desktop and in the mobile menu, and marks it current for any URL under `href`.
  */
 export const NAV_ITEMS: readonly NavItem[] = [

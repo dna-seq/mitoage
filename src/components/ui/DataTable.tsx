@@ -265,7 +265,7 @@ export default function DataTable(props: DataTableProps) {
                   <option value="">{f.allLabel ?? "All"}</option>
                   <For each={f.options}>
                     {([v, n]) => (
-                      <option value={v}>
+                      <option value={v} selected={facetVals()[f.key] === v}>
                         {v} ({n})
                       </option>
                     )}
@@ -288,10 +288,16 @@ export default function DataTable(props: DataTableProps) {
               <For each={props.columns.filter(sortable)}>
                 {(c) => (
                   <>
-                    <option value={`${c.key}:${isNumCol(c) ? "desc" : "asc"}`}>
+                    <option
+                      value={`${c.key}:${isNumCol(c) ? "desc" : "asc"}`}
+                      selected={`${sortKey()}:${sortDir()}` === `${c.key}:${isNumCol(c) ? "desc" : "asc"}`}
+                    >
                       {c.label} {isNumCol(c) ? "(high to low)" : "(A to Z)"}
                     </option>
-                    <option value={`${c.key}:${isNumCol(c) ? "asc" : "desc"}`}>
+                    <option
+                      value={`${c.key}:${isNumCol(c) ? "asc" : "desc"}`}
+                      selected={`${sortKey()}:${sortDir()}` === `${c.key}:${isNumCol(c) ? "asc" : "desc"}`}
+                    >
                       {c.label} {isNumCol(c) ? "(low to high)" : "(Z to A)"}
                     </option>
                   </>

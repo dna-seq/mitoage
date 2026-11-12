@@ -34,6 +34,7 @@ import { GC_LIFESPAN_URL } from "~/lib/scatter";
 import type { ScatterPoint } from "~/lib/scatterTypes";
 import { breadcrumbLd, taxonLd } from "~/lib/seo";
 import { speciesCrumbs } from "~/lib/taxa";
+import { href } from "~/lib/url";
 import { presentTraits } from "~/lib/traits";
 import {
   anageUrl,
@@ -185,7 +186,7 @@ const tabs = [
   </Hero>
 
   <div class="container sp-body">
-    <section class="grid-auto sp-stats" aria-label="Key numbers" style="--grid-min: 13rem; --grid-gap: var(--space-4)">
+    <section class="stat-grid sp-stats" aria-label="Key numbers">
       <StatCard
         layout="label-first"
         size="md"
@@ -382,21 +383,21 @@ const tabs = [
             </a>
           </li>
           <li>
-            <a class="row-link" href={`/species/${s.slug}.json`} download>
+            <a class="row-link" href={href(`/species/${s.slug}.json`)} download>
               <Icon name="file" size={22} />
               <span class="row-link__main">All statistics (JSON)<span class="row-link__sub">Species, regions, codon usage, features</span></span>
               <Icon name="download" class="row-link__chev" />
             </a>
           </li>
           <li>
-            <a class="row-link" href={`/species/${s.slug}.csv`} download>
+            <a class="row-link" href={href(`/species/${s.slug}.csv`)} download>
               <Icon name="file" size={22} />
               <span class="row-link__main">Region composition (CSV)<span class="row-link__sub">One row per gene and region</span></span>
               <Icon name="download" class="row-link__chev" />
             </a>
           </li>
           <li>
-            <a class="row-link" href="/data/">
+            <a class="row-link" href={href("/data/")}>
               <Icon name="info" size={22} />
               <span class="row-link__main">Whole database<span class="row-link__sub">Every species as Parquet and CSV</span></span>
               <Icon name="chevronRight" class="row-link__chev" />
@@ -426,6 +427,7 @@ const tabs = [
   .sp-overview {
     display: flex;
     flex-wrap: wrap;
+    align-items: flex-start;
     gap: var(--space-6);
   }
   .sp-overview :global(.sp-plot) {

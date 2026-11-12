@@ -8,6 +8,7 @@
  */
 import { createMemo, createSignal, createUniqueId, For, onCleanup, onMount, Show } from "solid-js";
 import { SEARCH_INDEX_URL, type SearchIndex, type SearchItem, type SearchKind } from "~/lib/searchTypes";
+import { href } from "~/lib/url";
 import { ICONS } from "./icons";
 
 interface Props {
@@ -188,7 +189,7 @@ export default function SearchBox(props: Props) {
     <div class={`search search--${variant()}`} ref={root}>
       <form
         role="search"
-        action="/species/"
+        action={href("/species/")}
         method="get"
         onSubmit={(e) => {
           const it = flat()[active()] ?? flat()[0];

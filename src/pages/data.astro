@@ -12,6 +12,8 @@ import Icon from "~/components/ui/Icon.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { fmtBytes, fmtDate, fmtInt } from "~/lib/format";
 import { datasetLd, type DistributionFile } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { absoluteUrl } from "~/lib/urls";
 
 const info = getBuildInfo();
 const dataDir = join(process.cwd(), "public", "data");
@@ -31,12 +33,12 @@ const walk = (dir: string): string[] => {
 };
 
 const DESCRIPTIONS: [RegExp, string][] = [
+  [/genome.?features|annotation/i, "Coordinates and strand of every annotated gene, rRNA, tRNA and D-loop."],
   [/species/i, "One row per species: taxonomy, maximum lifespan, life-history traits, genome size and GC content."],
   [/region/i, "Base composition (A, C, G, T, GC%, skews, length) of every gene and region in every species."],
   [/codon/i, "Codon counts per protein-coding gene and species, with amino-acid totals."],
-  [/feature.?values|features?\b/i, "Every numeric mtDNA feature for every species, wide format, ready for plotting."],
   [/correlation/i, "Correlations of each mtDNA feature with lifespan and other traits, per taxonomic scope, with q-values."],
-  [/genome.?features|annotation/i, "Coordinates and strand of every annotated gene, rRNA, tRNA and D-loop."],
+  [/feature.?values|features?\b/i, "Every numeric mtDNA feature for every species, wide format, ready for plotting."],
   [/taxonom|tree/i, "Taxonomy tree used for browsing and for phylogenetic corrections."],
   [/explorer/i, "Compact dataset loaded by the in-browser plot explorer."],
   [/readme|license/i, "Description of the files and their columns."],
@@ -58,7 +60,7 @@ const files = walk(dataDir)
     const rel = relative(dataDir, abs).split("\\").join("/");
     const ext = rel.split(".").pop()?.toLowerCase() ?? "";
     const desc = DESCRIPTIONS.find(([re]) => re.test(rel))?.[1];
-    return { rel, path: `/data/${rel}`, ext, size: statSync(abs).size, desc };
+    return { rel, path: href(`/data/${rel}`), ext, size: statSync(abs).size, desc };
   })
   .sort((a, b) => a.rel.localeCompare(b.rel));
 
@@ -67,6 +69,7 @@ const distribution: DistributionFile[] = files.map((f) => {
   if (f.desc) d.description = f.desc;
   return d;
 });
+const parquetBase = absoluteUrl("/data/", Astro.site);
 const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)} species, base composition, codon usage, genome annotations and correlations with lifespan as Parquet, CSV and JSON.`;
 ---
 
@@ -105,19 +108,19 @@ const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)
       }
     </Card>
 
-    <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-6)">
+    <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-6); align-items: start">
       <Card title="One species at a time" level={2}>
         <p>
           Every species page has a Downloads section with its FASTA and GenBank record from NCBI, all its statistics as
           JSON, and its region composition as CSV, at <code>/species/&lt;name&gt;.json</code> and
           <code>/species/&lt;name&gt;.csv</code>.
         </p>
-        <a href="/species/">Find a species</a>
+        <a href={href("/species/")}>Find a species</a>
       </Card>
       <Card title="Read Parquet in one line" level={2}>
         <pre class="data-code"><code>{`import polars as pl
-df = pl.read_parquet("https://www.mitoage.info/data/<file>.parquet")`}</code></pre>
-        <pre class="data-code"><code>{`SELECT * FROM 'https://www.mitoage.info/data/<file>.parquet';`}</code></pre>
+df = pl.read_parquet("${parquetBase}<file>.parquet")`}</code></pre>
+        <pre class="data-code"><code>{`SELECT * FROM '${parquetBase}<file>.parquet';`}</code></pre>
       </Card>
       <Card title="Licence and sources" level={2}>
         <ul class="data-sources">
@@ -129,7 +132,7 @@ df = pl.read_parquet("https://www.mitoage.info/data/<file>.parquet")`}</code></p
             ))
           }
         </ul>
-        <a href="/about/">Methods and how to cite</a>
+        <a href={href("/about/")}>Methods and how to cite</a>
       </Card>
     </div>
   </div>

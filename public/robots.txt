@@ -1,5 +1,0 @@
-User-agent: *
-Allow: /
-Disallow: /view/
-
-Sitemap: https://www.mitoage.info/sitemap-index.xml

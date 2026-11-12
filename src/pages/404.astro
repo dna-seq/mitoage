@@ -4,6 +4,7 @@ import Button from "~/components/ui/Button.astro";
 import Hero from "~/components/ui/Hero.astro";
 import SearchBox from "~/components/ui/SearchBox";
 import BaseLayout from "~/layouts/BaseLayout.astro";
+import { href } from "~/lib/url";
 ---
 
 <BaseLayout title="Page not found" description="This page does not exist in MitoAge." noindex headerSearch={false}>
@@ -17,8 +18,8 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
       <SearchBox client:load variant="hero" placeholder="Species, taxon or gene" />
     </div>
     <div class="hero__actions">
-      <Button href="/" variant="light">Home</Button>
-      <Button href="/species/" variant="outline-light">All species</Button>
+      <Button href={href("/")} variant="light">Home</Button>
+      <Button href={href("/species/")} variant="outline-light">All species</Button>
     </div>
     <Fragment slot="aside">
       <Mitochondrion width={300} rotate={-14} />

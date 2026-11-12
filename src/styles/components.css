@@ -39,6 +39,11 @@
     width: 1.2em;
     height: 1.2em;
   }
+  .btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+  }
   .btn--sm {
     --btn-h: 44px;
     font-size: var(--fs-sm);
@@ -160,6 +165,19 @@
     background: var(--dot, currentColor);
   }
 
+  /* Grid of StatCards: 2-up on phones, as many as fit elsewhere */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr));
+    gap: var(--space-4);
+  }
+  @media (max-width: 40rem) {
+    .stat-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+  }
+
   /* Pill value badge, e.g. "211 yr" on a species row */
   .value-pill {
     display: inline-flex;
@@ -177,6 +195,7 @@
   /* ================= Cards ================= */
   .card {
     min-width: 0;
+    overflow-wrap: anywhere;
     display: flex;
     flex-direction: column;
     gap: var(--space-3);
@@ -723,6 +742,14 @@
   }
   .search--hero .search__input {
     font-size: var(--fs-md);
+  }
+  @media (max-width: 30rem) {
+    .search--hero .search__submit {
+      display: none;
+    }
+    .search--hero .search__box {
+      height: 58px;
+    }
   }
   .search--hero .search__icon {
     width: 24px;

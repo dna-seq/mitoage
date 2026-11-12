@@ -65,4 +65,11 @@ const description = `All ${fmtInt(species.length)} species in MitoAge with maxim
   .sp-index {
     padding-bottom: var(--section-gap);
   }
+  @media (max-width: 40rem) {
+    .sp-index > .card {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
+  }
 </style>

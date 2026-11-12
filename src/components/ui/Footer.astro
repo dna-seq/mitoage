@@ -3,6 +3,7 @@
 import { getBuildInfo } from "~/data";
 import { fmtDate } from "~/lib/format";
 import { CITATION, CITATION_TEXT, FOOTER_LINKS, SOURCE_LINKS } from "~/lib/site";
+import { href } from "~/lib/url";
 import LogoIcon from "../brand/LogoIcon.astro";
 
 const info = getBuildInfo();
@@ -11,7 +12,7 @@ const info = getBuildInfo();
 <footer class="site-footer">
   <div class="container site-footer__grid">
     <div class="site-footer__brand">
-      <a class="site-footer__logo" href="/">
+      <a class="site-footer__logo" href={href("/")}>
         <LogoIcon size={44} />
         <span>MitoAge</span>
       </a>
@@ -23,7 +24,7 @@ const info = getBuildInfo();
     </div>
     <nav aria-label="Footer">
       <ul role="list" class="site-footer__links">
-        {FOOTER_LINKS.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        {FOOTER_LINKS.map((l) => <li><a href={href(l.href)}>{l.label}</a></li>)}
       </ul>
     </nav>
     <div class="site-footer__meta">

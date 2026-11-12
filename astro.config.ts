@@ -2,10 +2,18 @@ import { defineConfig } from "astro/config";
 import solid from "@astrojs/solid-js";
 import sitemap from "@astrojs/sitemap";
 
-const SITE = "https://www.mitoage.info";
+/**
+ * Deploy target from the environment:
+ *   default (own domain):  SITE_URL=https://www.mitoage.info  BASE_PATH=/
+ *   GitHub Pages:          SITE_URL=https://dna-seq.github.io BASE_PATH=/mitoage
+ * Internal links go through href() in src/lib/url.ts, which reads the base at build time.
+ */
+const SITE_URL = process.env["SITE_URL"] || "https://www.mitoage.info";
+const BASE_PATH = process.env["BASE_PATH"] || "/";
 
 export default defineConfig({
-  site: SITE,
+  site: SITE_URL,
+  base: BASE_PATH,
   output: "static",
   trailingSlash: "always",
   integrations: [

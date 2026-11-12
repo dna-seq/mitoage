@@ -16,7 +16,7 @@
  */
 import { Delaunay } from "d3-delaunay";
 import { scaleLinear, scaleLog } from "d3-scale";
-import { createMemo, createSignal, For, onMount, Show } from "solid-js";
+import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { fmtLifespan, fmtNum, fmtPct } from "~/lib/format";
 import { payloadToPoints, type ScatterGroup, type ScatterPayload, type ScatterPoint } from "~/lib/scatterTypes";
 
@@ -49,7 +49,7 @@ export interface ScatterProps {
   note?: string;
 }
 
-const W = 640;
+const DEFAULT_W = 640;
 const M = { top: 16, right: 18, bottom: 46, left: 50 };
 
 const fmt = (f: AxisFormat | undefined, v: number): string => {
@@ -91,7 +91,12 @@ const extent = (vals: number[], log: boolean): [number, number] => {
 };
 
 export default function Scatter(props: ScatterProps) {
-  const H = () => props.height ?? 360;
+  // The viewBox follows the rendered width, so text and points keep their pixel size on phones.
+  const [W, setW] = createSignal(DEFAULT_W);
+  const H = () => {
+    const h = props.height ?? 360;
+    return W() === DEFAULT_W ? h : Math.round(Math.max(250, Math.min(h, W() * 0.66)));
+  };
   const [remote, setRemote] = createSignal<ScatterPoint[]>([]);
   const [loading, setLoading] = createSignal(Boolean(props.dataUrl));
   const [failed, setFailed] = createSignal(false);
@@ -99,6 +104,18 @@ export default function Scatter(props: ScatterProps) {
   const [pinned, setPinned] = createSignal(false);
   const [spot, setSpot] = createSignal<string | null>(null);
   let svg: SVGSVGElement | undefined;
+  let frame: HTMLDivElement | undefined;
+
+  onMount(() => {
+    if (frame && "ResizeObserver" in window) {
+      const ro = new ResizeObserver((entries) => {
+        const w = entries[0]?.contentRect.width ?? DEFAULT_W;
+        if (w > 0) setW(Math.round(Math.min(900, Math.max(280, w))));
+      });
+      ro.observe(frame);
+      onCleanup(() => ro.disconnect());
+    }
+  });
 
   onMount(() => {
     if (!props.dataUrl) return;
@@ -130,7 +147,7 @@ export default function Scatter(props: ScatterProps) {
   const xDom = createMemo(() => props.xDomain ?? extent(valid().map((p) => p.x), Boolean(props.xLog)));
   const yDom = createMemo(() => props.yDomain ?? extent(valid().map((p) => p.y), Boolean(props.yLog)));
   const x = createMemo(() => {
-    const r: [number, number] = [M.left, W - M.right];
+    const r: [number, number] = [M.left, W() - M.right];
     return props.xLog ? scaleLog().domain(xDom()).range(r) : scaleLinear().domain(xDom()).range(r).nice();
   });
   const y = createMemo(() => {
@@ -171,7 +188,7 @@ export default function Scatter(props: ScatterProps) {
   const toSvg = (clientX: number, clientY: number): [number, number] | null => {
     if (!svg) return null;
     const r = svg.getBoundingClientRect();
-    const k = W / r.width;
+    const k = W() / r.width;
     return [(clientX - r.left) * k, (clientY - r.top) * k];
   };
 
@@ -240,7 +257,7 @@ export default function Scatter(props: ScatterProps) {
     const p = hover();
     if (!p || !svg) return null;
     const r = svg.getBoundingClientRect();
-    const k = r.width / W;
+    const k = r.width / W();
     const px = x()(p.x) * k;
     const py = y()(p.y) * k;
     const left = Math.min(Math.max(px, 90), r.width - 90);
@@ -250,10 +267,39 @@ export default function Scatter(props: ScatterProps) {
   const labelFor = (p: ScatterPoint) => p.short ?? p.label;
   const labelPos = (p: ScatterPoint, big: boolean) => {
     const px = x()(p.x);
-    const right = px < W - 120;
+    const right = px < W() - 120;
     const anchor: "start" | "end" = right ? "start" : "end";
     return { x: px + (right ? (big ? 13 : 9) : big ? -13 : -9), y: y()(p.y) + 4, anchor };
   };
+
+  /** Key-point and highlight labels, nudged vertically so they do not overlap each other. */
+  const placedLabels = createMemo(() => {
+    const items = [
+      ...ordered()
+        .filter((p) => labelSet().has(p.id))
+        .map((p) => ({ p, big: false })),
+      ...(highlight() ? [{ p: highlight() as ScatterPoint, big: true }] : []),
+    ];
+    const boxes: { x0: number; x1: number; y: number }[] = [];
+    return items
+      .map((it) => ({ ...it, pos: labelPos(it.p, it.big) }))
+      .sort((a, b) => a.pos.y - b.pos.y)
+      .map(({ p, big, pos }) => {
+        const w = labelFor(p).length * (big ? 8.4 : 7.4);
+        const x0 = pos.anchor === "start" ? pos.x : pos.x - w;
+        const x1 = x0 + w;
+        const hits = (yy: number) => boxes.some((b) => b.x0 < x1 && x0 < b.x1 && Math.abs(b.y - yy) < 15);
+        let ly = pos.y;
+        for (const dy of [0, 15, -15, 30, -30, 45]) {
+          if (!hits(pos.y + dy)) {
+            ly = pos.y + dy;
+            break;
+          }
+        }
+        boxes.push({ x0, x1, y: ly });
+        return { p, big, x: pos.x, y: ly, anchor: pos.anchor, py: y()(p.y), px: x()(p.x) };
+      });
+  });
 
   const groupCounts = createMemo(() => {
     const m = new Map<string, number>();
@@ -282,11 +328,11 @@ export default function Scatter(props: ScatterProps) {
 
   return (
     <figure class="chart">
-      <div class="chart__frame">
+      <div class="chart__frame" ref={frame}>
         <svg
           ref={svg}
           class="chart__svg"
-          viewBox={`0 0 ${W} ${H()}`}
+          viewBox={`0 0 ${W()} ${H()}`}
           role="application"
           aria-roledescription="scatter plot"
           aria-label={`${props.ariaLabel}. Use arrow keys to move between points, Enter to open.`}
@@ -301,10 +347,10 @@ export default function Scatter(props: ScatterProps) {
           }}
         >
           <g class="chart__grid">
-            <For each={yTicks()}>{(t) => <line x1={M.left} x2={W - M.right} y1={y()(t)} y2={y()(t)} />}</For>
+            <For each={yTicks()}>{(t) => <line x1={M.left} x2={W() - M.right} y1={y()(t)} y2={y()(t)} />}</For>
             <For each={xTicks()}>{(t) => <line y1={M.top} y2={H() - M.bottom} x1={x()(t)} x2={x()(t)} />}</For>
           </g>
-          <path class="chart__axis-line" d={`M${M.left} ${M.top}V${H() - M.bottom}H${W - M.right}`} />
+          <path class="chart__axis-line" d={`M${M.left} ${M.top}V${H() - M.bottom}H${W() - M.right}`} />
           <g>
             <For each={yTicks()}>
               {(t) => (
@@ -320,7 +366,7 @@ export default function Scatter(props: ScatterProps) {
                 </text>
               )}
             </For>
-            <text class="chart__axis-title" x={(M.left + W - M.right) / 2} y={H() - 6} text-anchor="middle">
+            <text class="chart__axis-title" x={(M.left + W() - M.right) / 2} y={H() - 6} text-anchor="middle">
               {props.xLabel}
             </text>
             <text class="chart__axis-title" x={M.left + 6} y={M.top + 2} dominant-baseline="hanging">
@@ -349,26 +395,18 @@ export default function Scatter(props: ScatterProps) {
             )}
           </Show>
           <g>
-            <For each={ordered().filter((p) => labelSet().has(p.id))}>
-              {(p) => {
-                const l = labelPos(p, false);
-                return (
-                  <text class="chart__label" x={l.x} y={l.y} text-anchor={l.anchor}>
-                    {labelFor(p)}
+            <For each={placedLabels()}>
+              {(l) => (
+                <>
+                  <Show when={Math.abs(l.y - 4 - l.py) > 8}>
+                    <line class="chart__label-line" x1={l.px} y1={l.py} x2={l.x} y2={l.y - 4} />
+                  </Show>
+                  <text class={`chart__label${l.big ? " chart__label--hl" : ""}`} x={l.x} y={l.y} text-anchor={l.anchor}>
+                    {labelFor(l.p)}
                   </text>
-                );
-              }}
+                </>
+              )}
             </For>
-            <Show when={highlight()}>
-              {(h) => {
-                const l = () => labelPos(h(), true);
-                return (
-                  <text class="chart__label chart__label--hl" x={l().x} y={l().y} text-anchor={l().anchor}>
-                    {labelFor(h())}
-                  </text>
-                );
-              }}
-            </Show>
           </g>
           <Show when={hover()}>
             {(p) => <circle class="chart__hover-ring" cx={x()(p().x)} cy={y()(p().y)} r={9} />}
