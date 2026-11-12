@@ -1,0 +1,64 @@
+---
+/**
+ * A/T/G/C composition as a stacked bar, with a legend. Colours are fixed site-wide
+ * (tokens --nt-a, --nt-t, --nt-g, --nt-c, --nt-other).
+ *
+ * <CompositionBar a={5124} c={5181} g={2169} t={4094} label="Whole genome" size="lg" />
+ */
+import { NUCLEOTIDES, basePercents } from "~/lib/composition";
+import { fmtFixed } from "~/lib/format";
+
+interface Props {
+  a: number;
+  c: number;
+  g: number;
+  t: number;
+  other?: number;
+  label?: string;
+  /** Shown at the right of the label, e.g. "16,569 bp". */
+  meta?: string;
+  size?: "xs" | "md" | "lg";
+  legend?: boolean;
+  /** Add GC% to the legend. */
+  showGc?: boolean;
+  class?: string;
+}
+const { a, c, g, t, other = 0, label, meta, size = "md", legend = true, showGc = false, class: className } = Astro.props;
+const pct = basePercents({ a, c, g, t, other });
+const segs = NUCLEOTIDES.filter((n) => pct[n.key] > 0);
+const gc = pct.g + pct.c;
+const aria = `${label ? `${label}: ` : ""}${segs.map((n) => `${n.label} ${fmtFixed(pct[n.key], 1)}%`).join(", ")}`;
+---
+
+<div class:list={["comp", className]}>
+  {
+    (label || meta) && (
+      <div class="comp__label">
+        <span>{label}</span>
+        {meta && <span>{meta}</span>}
+      </div>
+    )
+  }
+  <div class:list={["comp-bar", size !== "md" && `comp-bar--${size}`]} role="img" aria-label={aria}>
+    {segs.map((n) => <span class:list={["comp-bar__seg", n.className]} style={`width:${pct[n.key].toFixed(3)}%`} />)}
+  </div>
+  {
+    legend && (
+      <ul class="comp-legend" aria-hidden="true">
+        {segs.map((n) => (
+          <li>
+            <span class:list={["comp-legend__swatch", n.className]} />
+            <span class="comp-legend__base">{n.label}</span>
+            <span class="comp-legend__pct">{fmtFixed(pct[n.key], 1)}%</span>
+          </li>
+        ))}
+        {showGc && (
+          <li>
+            <span class="comp-legend__base">GC</span>
+            <span class="comp-legend__pct">{fmtFixed(gc, 2)}%</span>
+          </li>
+        )}
+      </ul>
+    )
+  }
+</div>

@@ -1,0 +1,71 @@
+---
+/**
+ * Breadcrumb trail rendered as chips.
+ * <Breadcrumb items={[{ label: "Mammalia", rank: "class", href: "/taxa/class/mammalia/" }]} />
+ */
+import Chip from "./Chip.astro";
+
+export interface BreadcrumbItem {
+  label: string;
+  href?: string;
+  rank?: string;
+  italic?: boolean;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+  variant?: "on-brand" | "soft";
+  label?: string;
+  showRanks?: boolean;
+}
+const { items, variant = "on-brand", label = "Breadcrumb", showRanks = true } = Astro.props;
+---
+
+<nav aria-label={label} class="crumbs">
+  <ol role="list">
+    {
+      items.map((it, i) => (
+        <li>
+          <Chip
+            href={it.href}
+            variant={variant}
+            rank={showRanks ? it.rank : undefined}
+            class={it.italic ? "sci" : undefined}
+          >
+            {it.label}
+          </Chip>
+          {i < items.length - 1 && (
+            <svg class="crumbs__sep" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M9 6l6 6-6 6" />
+            </svg>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
+
+<style>
+  .crumbs ol {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) 2px;
+    margin: 0;
+  }
+  .crumbs li {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+  }
+  .crumbs__sep {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.6;
+  }
+</style>

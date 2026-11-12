@@ -1,0 +1,57 @@
+---
+/**
+ * Surface card.
+ * <Card title="Base composition" description="Whole genome" as="section" id="composition">
+ *   ...content...
+ *   <Fragment slot="actions"><a href="...">More</a></Fragment>
+ *   <Fragment slot="footer">...</Fragment>
+ * </Card>
+ */
+interface Props {
+  as?: "div" | "section" | "article" | "aside";
+  title?: string;
+  /** Heading level for the title. */
+  level?: 2 | 3;
+  description?: string;
+  variant?: "raised" | "flat" | "sunken";
+  id?: string;
+  class?: string;
+  /** Extra inline style, e.g. a grid-area. */
+  style?: string;
+}
+const {
+  as: Tag = "div",
+  title,
+  level = 2,
+  description,
+  variant = "raised",
+  id,
+  class: className,
+  style,
+} = Astro.props;
+const H = level === 2 ? "h2" : "h3";
+const hasHead = Boolean(title) || Astro.slots.has("actions");
+---
+
+<Tag
+  class:list={["card", variant !== "raised" && `card--${variant}`, className]}
+  id={id}
+  style={style}
+  aria-labelledby={title && id ? `${id}-title` : undefined}
+>
+  {
+    hasHead && (
+      <div class="card__head">
+        {title && (
+          <H class="card__title" id={id ? `${id}-title` : undefined}>
+            {title}
+          </H>
+        )}
+        <slot name="actions" />
+      </div>
+    )
+  }
+  {description && <p class="card__desc">{description}</p>}
+  <slot />
+  {Astro.slots.has("footer") && <div class="card__foot"><slot name="footer" /></div>}
+</Tag>

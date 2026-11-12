@@ -1,0 +1,31 @@
+---
+/**
+ * The mitochondrion on its own (no badge), e.g. for illustrations or empty states.
+ * <Mitochondrion width={220} rotate={-18} />
+ */
+import { mitoMarkup } from "./mitoSvg";
+import { nextId } from "./ids";
+
+interface Props {
+  width?: number;
+  rotate?: number;
+  detail?: "full" | "simple";
+  class?: string;
+  label?: string;
+}
+
+const { width = 220, rotate = -18, detail = "full", class: className, label } = Astro.props;
+const markup = `<g transform="rotate(${rotate})">${mitoMarkup({ id: nextId("mito"), detail, shadow: true })}</g>`;
+---
+
+<svg
+  class:list={["mitochondrion", className]}
+  viewBox="-118 -80 236 160"
+  width={width}
+  height={Math.round((width * 160) / 236)}
+  role={label ? "img" : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+  focusable="false"
+  set:html={markup}
+/>

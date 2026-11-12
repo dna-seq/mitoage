@@ -1,0 +1,460 @@
+---
+import type { GetStaticPaths } from "astro";
+import {
+  getAllSpecies,
+  getCodonUsage,
+  getGenomeFeatures,
+  getRegionStats,
+  PROTEIN_GENES,
+  type CodonUsage,
+  type Region,
+  type RegionStats,
+  type Species,
+} from "~/data";
+import Scatter from "~/components/charts/Scatter";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Card from "~/components/ui/Card.astro";
+import CodonHeatmap, { type CodonSet } from "~/components/ui/CodonHeatmap";
+import CompositionBar from "~/components/ui/CompositionBar.astro";
+import DataTable, { type Column, type Row } from "~/components/ui/DataTable";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import LinearGenomeTrack from "~/components/ui/LinearGenomeTrack.astro";
+import StatCard from "~/components/ui/StatCard.astro";
+import TabNav from "~/components/ui/TabNav.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { CLASS_GROUPS, classColor, classGroup, classLabel } from "~/lib/classes";
+import { basePercents } from "~/lib/composition";
+import { fmtBp, fmtFixed, fmtInt, fmtLifespan, fmtLifespanLong, fmtPct, fmtSigned, ordinal } from "~/lib/format";
+import { CODONS, codeForPhylum } from "~/lib/geneticCode";
+import { REGION_INFO, regionLabel } from "~/lib/genes";
+import { hashString } from "~/lib/random";
+import { GC_LIFESPAN_URL } from "~/lib/scatter";
+import type { ScatterPoint } from "~/lib/scatterTypes";
+import { breadcrumbLd, taxonLd } from "~/lib/seo";
+import { speciesCrumbs } from "~/lib/taxa";
+import { presentTraits } from "~/lib/traits";
+import {
+  anageUrl,
+  compareUrl,
+  exploreUrl,
+  geneUrl,
+  refseqFastaUrl,
+  refseqGenbankUrl,
+  refseqUrl,
+  speciesUrl,
+} from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  getAllSpecies().map((species) => ({ params: { slug: species.slug }, props: { species } }))) satisfies GetStaticPaths;
+
+interface Props {
+  species: Species;
+}
+
+const { species: s } = Astro.props;
+const all = getAllSpecies();
+const regions = getRegionStats(s.id);
+const regionOf = (r: Region): RegionStats | undefined => regions.find((x) => x.region === r);
+const total = regionOf("total_mtDNA");
+const dloop = regionOf("D_Loop");
+const codonUsage = getCodonUsage(s.id);
+const features = getGenomeFeatures(s.id);
+const crumbs = speciesCrumbs(s, "class");
+const traits = presentTraits(s.traits);
+const name = s.scientificName;
+const common = s.commonName.trim();
+const display = common || name;
+const group = classGroup(s.taxonomy.class);
+
+// ---- Scatter: whole-genome GC% vs lifespan, this species highlighted ----
+const finite = all.filter((x) => x.maxLongevityYears > 0 && Number.isFinite(x.gcPercent));
+const lifespans = finite.map((x) => x.maxLongevityYears);
+const gcs = finite.map((x) => x.gcPercent);
+const xDomain: [number, number] = [Math.min(...lifespans) / 1.35, Math.max(...lifespans) * 1.35];
+const yPad = (Math.max(...gcs) - Math.min(...gcs)) * 0.06;
+const yDomain: [number, number] = [Math.min(...gcs) - yPad, Math.max(...gcs) + yPad];
+const self: ScatterPoint = {
+  id: s.slug,
+  x: s.maxLongevityYears,
+  y: s.gcPercent,
+  group,
+  label: name,
+  short: display,
+  href: speciesUrl(s.slug),
+};
+if (common) self.sub = common;
+const groupLabel = group === "Other" ? "other classes" : classLabel(s.taxonomy.class).toLowerCase();
+const legend = [
+  { label: "This species", color: "var(--chart-highlight)" },
+  ...(group === "Other" ? [] : [{ label: `Other ${groupLabel}`, color: classColor(s.taxonomy.class), group }]),
+  { label: group === "Other" ? "All other species" : "Other classes", color: "var(--chart-point-muted)" },
+];
+const rankAmong = [...all].sort((a, b) => b.maxLongevityYears - a.maxLongevityYears).findIndex((x) => x.id === s.id) + 1;
+
+// ---- Composition by region ----
+const COMP_REGIONS: Region[] = ["total_mtDNA", "total_pc", "rRNA-12S", "rRNA-16S", "total_tRNA", "D_Loop"];
+const compRegions = COMP_REGIONS.map(regionOf).filter((r): r is RegionStats => r !== undefined);
+
+// ---- Gene table ----
+const TABLE_REGIONS: Region[] = [...PROTEIN_GENES, "rRNA-12S", "rRNA-16S", "D_Loop"];
+const geneRows: Row[] = TABLE_REGIONS.map(regionOf)
+  .filter((r): r is RegionStats => r !== undefined)
+  .map((r) => {
+    const p = basePercents(r);
+    return {
+      gene: regionLabel(r.region),
+      geneName: REGION_INFO[r.region].name,
+      href: geneUrl(r.region),
+      length: r.lengthBp,
+      comp: [r.a, r.c, r.g, r.t],
+      a: p.a,
+      t: p.t,
+      g: p.g,
+      c: p.c,
+      gc: r.gcPercent,
+      gcSkew: r.gcSkew,
+      atSkew: r.atSkew,
+    };
+  });
+const geneColumns: Column[] = [
+  { key: "gene", label: "Gene", hrefKey: "href", subKey: "geneName", primary: true },
+  { key: "length", label: "Length", format: "bp" },
+  { key: "comp", label: "Composition", kind: "composition" },
+  { key: "a", label: "A", format: "pct1", hideOnMobile: true },
+  { key: "t", label: "T", format: "pct1", hideOnMobile: true },
+  { key: "g", label: "G", format: "pct1", hideOnMobile: true },
+  { key: "c", label: "C", format: "pct1", hideOnMobile: true },
+  { key: "gc", label: "GC", format: "pct2" },
+  { key: "gcSkew", label: "GC skew", format: "signed3", title: "(G − C) / (G + C) on the L strand" },
+  { key: "atSkew", label: "AT skew", format: "signed3", title: "(A − T) / (A + T) on the L strand" },
+];
+
+// ---- Codon usage ----
+const code = codeForPhylum(s.taxonomy.phylum);
+const codonCount = (u: CodonUsage, c: string) => u.counts[c] ?? u.counts[c.replace(/U/g, "T")] ?? 0;
+const ORDER: string[] = ["total_pc", ...PROTEIN_GENES];
+const codonSets: CodonSet[] = [...codonUsage]
+  .sort((a, b) => ORDER.indexOf(a.region) - ORDER.indexOf(b.region))
+  .map((u) => ({
+    region: u.region,
+    label: u.region === "total_pc" ? "All protein-coding genes" : u.region,
+    counts: CODONS.map((c) => codonCount(u, c)),
+  }));
+
+// ---- SEO ----
+const title = common ? `${name} (${common})` : name;
+const description = `Mitochondrial genome of ${name}${common ? ` (${common})` : ""}: ${fmtInt(s.mtdnaSizeBp)} bp, GC ${fmtFixed(
+  s.gcPercent,
+  1,
+)}%, maximum lifespan ${fmtLifespanLong(s.maxLongevityYears)}. Base composition, codon usage and gene statistics in MitoAge.`;
+const genusCrumb = crumbs.find((c) => c.rank === "genus");
+const jsonLd = [
+  taxonLd(Astro.site, s, genusCrumb?.href),
+  breadcrumbLd(Astro.site, [
+    { name: "Species", path: "/species/" },
+    ...crumbs.filter((c) => c.href).map((c) => ({ name: c.label, path: c.href ?? "/" })),
+    { name, path: speciesUrl(s.slug) },
+  ]),
+];
+
+const tabs = [
+  { id: "overview", label: "Overview" },
+  { id: "composition", label: "Composition" },
+  { id: "genes", label: "Genes", count: geneRows.length },
+  { id: "codons", label: "Codon usage" },
+  { id: "genome-map", label: "Genome map" },
+  { id: "downloads", label: "Downloads" },
+];
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd} ogType="article">
+  <Hero variant="strip" seed={hashString(s.slug) % 997} align="end">
+    <Breadcrumb items={crumbs.map((c) => ({ label: c.label, href: c.href, rank: c.rank, italic: c.rank === "genus" }))} label="Taxonomy" />
+    <h1 class="hero__title hero__title--sci">{name}</h1>
+    {common && <p class="sp-common">{common}</p>}
+    <Fragment slot="aside">
+      <div class="hero__actions sp-actions">
+        <Button href={compareUrl([s.slug])} variant="action" icon="plus">Add to compare</Button>
+        <Button href={refseqFastaUrl(s.refseq)} variant="light" icon="download" download={`${s.refseq}.fasta`}>
+          Download FASTA
+        </Button>
+      </div>
+    </Fragment>
+  </Hero>
+
+  <div class="container sp-body">
+    <section class="grid-auto sp-stats" aria-label="Key numbers" style="--grid-min: 13rem; --grid-gap: var(--space-4)">
+      <StatCard
+        layout="label-first"
+        size="md"
+        label="Maximum lifespan"
+        value={fmtLifespan(s.maxLongevityYears)}
+        tone="red"
+        href={anageUrl(name)}
+        hrefLabel="AnAge record"
+        external
+      />
+      <StatCard
+        layout="label-first"
+        size="md"
+        label="mtDNA size"
+        value={fmtBp(s.mtdnaSizeBp)}
+        tone="green"
+        href={refseqUrl(s.refseq)}
+        hrefLabel={`RefSeq ${s.refseq}`}
+        external
+      />
+      <StatCard layout="label-first" size="md" label="GC content" value={fmtPct(s.gcPercent, 2)} tone="sky" note="Whole genome" />
+      {
+        s.nonCodingBp !== null && (
+          <StatCard
+            layout="label-first"
+            size="md"
+            label="Non-coding"
+            value={fmtBp(s.nonCodingBp)}
+            tone="orange"
+            note={dloop ? `D-loop ${fmtBp(dloop.lengthBp)}` : "Including the D-loop"}
+          />
+        )
+      }
+    </section>
+
+    <TabNav items={tabs} label="Species sections" class="sp-tabs" />
+
+    <section id="overview" class="sp-overview" aria-labelledby="overview-title">
+      <Card class="sp-plot">
+        <h2 id="overview-title" class="card__title">Where {common ? display : <i>{name}</i>} sits among {fmtInt(all.length)} species</h2>
+        <p class="card__desc">
+          Whole-genome GC content against maximum lifespan. {display} has the {ordinal(rankAmong)} longest lifespan of them.
+        </p>
+        <Scatter
+          client:visible
+          points={[self]}
+          dataUrl={GC_LIFESPAN_URL}
+          groups={CLASS_GROUPS}
+          xLog
+          xDomain={xDomain}
+          yDomain={yDomain}
+          xLabel="Maximum lifespan, log scale"
+          yLabel="GC %"
+          xFormat="lifespan"
+          yFormat="percent"
+          highlightId={s.slug}
+          emphasizeGroup={group}
+          legend={legend}
+          ariaLabel={`Scatter plot of GC percent against maximum lifespan with ${name} highlighted`}
+          height={340}
+        />
+        <Fragment slot="footer">
+          <a href={exploreUrl({ highlight: s.slug })}>Plot other features in the explorer</a>
+        </Fragment>
+      </Card>
+
+      <div class="sp-side">
+        <Card title="Base composition" level={2}>
+          {
+            total ? (
+              <CompositionBar a={total.a} c={total.c} g={total.g} t={total.t} other={total.other} size="lg" showGc meta={fmtBp(total.lengthBp)} label="Whole genome" />
+            ) : (
+              <p class="muted">No whole-genome composition for this species.</p>
+            )
+          }
+          {
+            total && (
+              <dl class="kv">
+                <dt>GC skew <span class="muted">(G − C) / (G + C)</span></dt>
+                <dd>{fmtSigned(total.gcSkew)}</dd>
+                <dt>AT skew <span class="muted">(A − T) / (A + T)</span></dt>
+                <dd>{fmtSigned(total.atSkew)}</dd>
+              </dl>
+            )
+          }
+        </Card>
+
+        <Card title="Life history" level={2}>
+          <dl class="kv">
+            <dt>Maximum lifespan</dt>
+            <dd>{fmtLifespanLong(s.maxLongevityYears)}</dd>
+            {
+              traits.map((t) => (
+                <>
+                  <dt>{t.label}</dt>
+                  <dd>{t.value}</dd>
+                </>
+              ))
+            }
+          </dl>
+          <p class="card__desc">
+            Source: {s.traits.source ?? "AnAge"} ·{" "}
+            <a href={anageUrl(name)} target="_blank" rel="noopener">AnAge entry</a>
+          </p>
+        </Card>
+      </div>
+    </section>
+
+    <section id="composition" class="sp-section" aria-labelledby="composition-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="composition-title" class="card__title">Composition by region</h2>
+          <span class="card__desc">Reference (L) strand as deposited in RefSeq</span>
+        </div>
+        <div class="grid-auto" style="--grid-min: 17rem; --grid-gap: var(--space-5) var(--space-7)">
+          {
+            compRegions.map((r) => (
+              <CompositionBar a={r.a} c={r.c} g={r.g} t={r.t} other={r.other} label={regionLabel(r.region)} meta={fmtBp(r.lengthBp)} />
+            ))
+          }
+        </div>
+      </Card>
+    </section>
+
+    <section id="genes" class="sp-section" aria-labelledby="genes-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="genes-title" class="card__title">Genes and regions</h2>
+          <span class="card__desc">Select a column to sort; select a gene to compare it across species</span>
+        </div>
+        <DataTable
+          client:visible
+          caption={`Base composition of ${name} genes`}
+          columns={geneColumns}
+          rows={geneRows}
+          noun={["gene", "genes"]}
+        />
+      </Card>
+    </section>
+
+    <section id="codons" class="sp-section" aria-labelledby="codons-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="codons-title" class="card__title">Codon usage</h2>
+          <span class="card__desc">Counts per codon, darker is more frequent</span>
+        </div>
+        {
+          codonSets.length ? (
+            <CodonHeatmap client:visible sets={codonSets} code={code.id} />
+          ) : (
+            <p class="empty">No codon usage for this species.</p>
+          )
+        }
+      </Card>
+    </section>
+
+    <section id="genome-map" class="sp-section" aria-labelledby="map-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="map-title" class="card__title">Genome map</h2>
+          <span class="card__desc">{fmtInt(features.length)} annotated features in {s.refseq}</span>
+        </div>
+        {/*
+          GENOME MAP SLOT. Replace LinearGenomeTrack with the circular island when it exists:
+            import GenomeMap from "~/components/genome/GenomeMap";
+            <GenomeMap client:visible features={features} sizeBp={s.mtdnaSizeBp} />
+        */}
+        {
+          features.length ? (
+            <LinearGenomeTrack features={features} sizeBp={s.mtdnaSizeBp} />
+          ) : (
+            <p class="empty">No feature annotation for this record.</p>
+          )
+        }
+      </Card>
+    </section>
+
+    <section id="downloads" class="sp-section" aria-labelledby="downloads-title">
+      <Card>
+        <h2 id="downloads-title" class="card__title">Downloads</h2>
+        <ul role="list" class="sp-downloads">
+          <li>
+            <a class="row-link" href={refseqFastaUrl(s.refseq)} download={`${s.refseq}.fasta`}>
+              <Icon name="dna" size={22} />
+              <span class="row-link__main">FASTA sequence<span class="row-link__sub">{s.refseq} from NCBI</span></span>
+              <Icon name="download" class="row-link__chev" />
+            </a>
+          </li>
+          <li>
+            <a class="row-link" href={refseqGenbankUrl(s.refseq)} download={`${s.refseq}.gb`}>
+              <Icon name="file" size={22} />
+              <span class="row-link__main">GenBank record<span class="row-link__sub">Annotated features from NCBI</span></span>
+              <Icon name="download" class="row-link__chev" />
+            </a>
+          </li>
+          <li>
+            <a class="row-link" href={`/species/${s.slug}.json`} download>
+              <Icon name="file" size={22} />
+              <span class="row-link__main">All statistics (JSON)<span class="row-link__sub">Species, regions, codon usage, features</span></span>
+              <Icon name="download" class="row-link__chev" />
+            </a>
+          </li>
+          <li>
+            <a class="row-link" href={`/species/${s.slug}.csv`} download>
+              <Icon name="file" size={22} />
+              <span class="row-link__main">Region composition (CSV)<span class="row-link__sub">One row per gene and region</span></span>
+              <Icon name="download" class="row-link__chev" />
+            </a>
+          </li>
+          <li>
+            <a class="row-link" href="/data/">
+              <Icon name="info" size={22} />
+              <span class="row-link__main">Whole database<span class="row-link__sub">Every species as Parquet and CSV</span></span>
+              <Icon name="chevronRight" class="row-link__chev" />
+            </a>
+          </li>
+        </ul>
+      </Card>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .sp-common {
+    font-size: var(--fs-lg);
+    font-weight: var(--fw-heavy);
+    color: var(--color-on-brand);
+  }
+  .sp-actions {
+    justify-content: flex-start;
+  }
+  .sp-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-7) var(--section-gap);
+  }
+  .sp-overview {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-6);
+  }
+  .sp-overview :global(.sp-plot) {
+    flex: 3 1 32rem;
+  }
+  .sp-side {
+    flex: 2 1 20rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .sp-section {
+    scroll-margin-top: 5rem;
+  }
+  #overview {
+    scroll-margin-top: 5rem;
+  }
+  .sp-downloads {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 18rem), 1fr));
+    gap: var(--space-3);
+  }
+  .sp-downloads :global(.row-link) {
+    font-size: var(--fs-base);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+  .sp-downloads :global(.icon:first-child) {
+    color: var(--tone-green-ink);
+  }
+</style>

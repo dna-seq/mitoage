@@ -1,0 +1,150 @@
+---
+/**
+ * Static linear map of a mitochondrial genome's annotated features (from getGenomeFeatures).
+ * Heavy strand (+1) above the axis, light strand (-1) below. Colours: --feat-cds, --feat-rrna,
+ * --feat-trna, --feat-dloop. Used as the stand-in until the circular <GenomeMap> island exists.
+ *
+ * <LinearGenomeTrack features={features} sizeBp={species.mtdnaSizeBp} />
+ */
+import type { GenomeFeature } from "~/data/schema";
+import { fmtInt } from "~/lib/format";
+import { regionLabel } from "~/lib/genes";
+
+interface Props {
+  features: GenomeFeature[];
+  sizeBp: number;
+  label?: string;
+}
+const { features, sizeBp, label = "Linear map of the mitochondrial genome" } = Astro.props;
+
+const W = 1000;
+const PAD = 8;
+const AXIS = 62;
+const scale = (bp: number) => PAD + ((bp - 1) / Math.max(1, sizeBp)) * (W - 2 * PAD);
+const typeClass: Record<string, string> = { CDS: "cds", rRNA: "rrna", tRNA: "trna", "D-loop": "dloop" };
+
+interface Piece {
+  x: number;
+  w: number;
+  f: GenomeFeature;
+}
+const pieces: Piece[] = features.flatMap((f) => {
+  const segs: [number, number][] = f.start <= f.end ? [[f.start, f.end]] : [[f.start, sizeBp], [1, f.end]];
+  return segs.map(([a, b]) => ({ x: scale(a), w: Math.max(1.5, scale(b + 1) - scale(a)), f }));
+});
+const height = (f: GenomeFeature) => (f.type === "tRNA" ? 14 : 26);
+const yOf = (f: GenomeFeature) => (f.strand === 1 ? AXIS - 4 - height(f) : AXIS + 4);
+const ticks = Array.from({ length: Math.floor(sizeBp / 2000) + 1 }, (_, i) => i * 2000).filter((t) => t > 0 && t < sizeBp);
+const counts = features.reduce<Record<string, number>>((acc, f) => ((acc[f.type] = (acc[f.type] ?? 0) + 1), acc), {});
+---
+
+<figure class="gtrack">
+  <div class="gtrack__scroll" tabindex="0" role="region" aria-label={label}>
+    <svg viewBox={`0 0 ${W} 130`} role="img" aria-label={`${label}: ${features.length} features over ${fmtInt(sizeBp)} bp`}>
+      <line class="gtrack__axis" x1={PAD} x2={W - PAD} y1={AXIS} y2={AXIS} />
+      {
+        ticks.map((t) => (
+          <g>
+            <line class="gtrack__tick" x1={scale(t)} x2={scale(t)} y1={AXIS + 34} y2={AXIS + 40} />
+            <text class="gtrack__ticklabel" x={scale(t)} y={AXIS + 54} text-anchor="middle">
+              {t / 1000} kb
+            </text>
+          </g>
+        ))
+      }
+      {
+        pieces.map((p) => (
+          <rect
+            class:list={["gtrack__feat", `gtrack__feat--${typeClass[p.f.type] ?? "cds"}`]}
+            x={p.x}
+            y={yOf(p.f)}
+            width={p.w}
+            height={height(p.f)}
+            rx="3"
+          >
+            <title>{`${p.f.name}: ${fmtInt(p.f.start)}–${fmtInt(p.f.end)} (${p.f.strand === 1 ? "+" : "−"} strand)`}</title>
+          </rect>
+        ))
+      }
+      {
+        pieces
+          .filter((p) => p.f.type !== "tRNA" && p.w > 34)
+          .map((p) => (
+            <text class="gtrack__label" x={p.x + p.w / 2} y={yOf(p.f) + height(p.f) / 2 + 4} text-anchor="middle">
+              {regionLabel(p.f.name)}
+            </text>
+          ))
+      }
+    </svg>
+  </div>
+  <figcaption><ul class="comp-legend">
+    <li><span class="comp-legend__swatch gtrack__sw--cds"></span>Protein-coding {counts["CDS"] ?? 0}</li>
+    <li><span class="comp-legend__swatch gtrack__sw--rrna"></span>rRNA {counts["rRNA"] ?? 0}</li>
+    <li><span class="comp-legend__swatch gtrack__sw--trna"></span>tRNA {counts["tRNA"] ?? 0}</li>
+    <li><span class="comp-legend__swatch gtrack__sw--dloop"></span>D-loop {counts["D-loop"] ?? 0}</li>
+    <li class="muted">Upper row: + strand, lower row: − strand</li>
+  </ul></figcaption>
+</figure>
+
+<style>
+  .gtrack {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .gtrack__scroll {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    padding: var(--space-3);
+  }
+  .gtrack svg {
+    min-width: 40rem;
+    width: 100%;
+    height: auto;
+    font-family: var(--font-sans);
+  }
+  .gtrack__axis {
+    stroke: var(--chart-axis);
+    stroke-width: 2;
+  }
+  .gtrack__tick {
+    stroke: var(--chart-tick);
+  }
+  .gtrack__ticklabel {
+    fill: var(--chart-tick);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .gtrack__feat {
+    stroke: var(--color-surface);
+    stroke-width: 1;
+  }
+  .gtrack__feat--cds,
+  .gtrack__sw--cds {
+    fill: var(--feat-cds);
+    background: var(--feat-cds);
+  }
+  .gtrack__feat--rrna,
+  .gtrack__sw--rrna {
+    fill: var(--feat-rrna);
+    background: var(--feat-rrna);
+  }
+  .gtrack__feat--trna,
+  .gtrack__sw--trna {
+    fill: var(--feat-trna);
+    background: var(--feat-trna);
+  }
+  .gtrack__feat--dloop,
+  .gtrack__sw--dloop {
+    fill: var(--feat-dloop);
+    background: var(--feat-dloop);
+  }
+  .gtrack__label {
+    fill: #0b1916;
+    font-size: 12px;
+    font-weight: 900;
+    pointer-events: none;
+  }
+</style>

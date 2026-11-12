@@ -1,0 +1,30 @@
+---
+/** <Icon name="search" size={20} /> - decorative unless `label` is given. */
+import { ICONS, type IconName } from "./icons";
+
+interface Props {
+  name: IconName;
+  size?: number;
+  label?: string;
+  class?: string;
+  strokeWidth?: number;
+}
+const { name, size = 20, label, class: className, strokeWidth = 2.4 } = Astro.props;
+---
+
+<svg
+  class:list={["icon", className]}
+  viewBox="0 0 24 24"
+  width={size}
+  height={size}
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role={label ? "img" : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : "true"}
+  focusable="false"
+  set:html={ICONS[name]}
+/>

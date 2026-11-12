@@ -1,0 +1,25 @@
+---
+/**
+ * Heading row above a block of content.
+ * <SectionHeader title="Browse by class" eyebrow="Taxonomy" id="browse" description="..." />
+ * Optional `actions` slot on the right (links, buttons).
+ */
+interface Props {
+  title: string;
+  eyebrow?: string;
+  description?: string;
+  id?: string;
+  level?: 2 | 3;
+}
+const { title, eyebrow, description, id, level = 2 } = Astro.props;
+const H = level === 2 ? "h2" : "h3";
+---
+
+<div class="section-head">
+  <div class="section-head__text">
+    {eyebrow && <span class="eyebrow">{eyebrow}</span>}
+    <H id={id}>{title}</H>
+    {description && <p class="muted">{description}</p>}
+  </div>
+  <slot name="actions" />
+</div>

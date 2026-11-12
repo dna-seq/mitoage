@@ -1,0 +1,160 @@
+---
+/**
+ * Brand hero band: green gradient + generated low-poly/constellation backdrop.
+ *
+ * <Hero variant="home" seed={3} wave>
+ *   <p class="hero__eyebrow">...</p>
+ *   <h1 class="hero__title">...</h1>
+ *   <p class="hero__lede">...</p>
+ *   <Fragment slot="aside"><BadgeLogo /></Fragment>
+ * </Hero>
+ *
+ * Content classes available inside: hero__eyebrow, hero__title, hero__title--sci (italic),
+ * hero__lede, hero__actions. Variants: "home" (tall), "page" (medium), "strip" (compact).
+ */
+import HeroBackdrop from "./HeroBackdrop.astro";
+
+interface Props {
+  variant?: "home" | "page" | "strip";
+  seed?: number;
+  constellation?: "right" | "left" | "full" | "none";
+  /** Wavy bottom edge into the page background. */
+  wave?: boolean;
+  /** Vertical alignment of main vs aside columns. */
+  align?: "center" | "end";
+  class?: string;
+  id?: string;
+}
+
+const {
+  variant = "page",
+  seed = 1,
+  constellation = "right",
+  wave = false,
+  align = "center",
+  class: className,
+  id,
+} = Astro.props;
+const backdropHeight = variant === "home" ? 620 : variant === "page" ? 380 : 300;
+const hasAside = Astro.slots.has("aside");
+---
+
+<section class:list={["hero", `hero--${variant}`, { "hero--wave": wave }, className]} id={id}>
+  <HeroBackdrop seed={seed} height={backdropHeight} constellation={constellation} columns={variant === "home" ? 7 : 8} stars={variant === "home" ? 26 : 16} />
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class:list={["container", "hero__inner", `hero__inner--${align}`]}>
+    <div class="hero__main"><slot /></div>
+    {hasAside && <div class="hero__aside"><slot name="aside" /></div>}
+  </div>
+  {
+    wave && (
+      <svg class="hero__wave" viewBox="0 0 1400 60" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+        <path d="M0 60V30c120-30 260-30 380 0s260 30 380 0 260-30 380 0 190 20 260 6V60z" />
+      </svg>
+    )
+  }
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    color: var(--color-on-brand);
+    background: var(--grad-hero-narrow);
+  }
+  @media (min-width: 48rem) {
+    .hero {
+      background: var(--grad-hero);
+    }
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: var(--grad-hero-scrim);
+    pointer-events: none;
+  }
+  .hero__inner {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-7) var(--space-9);
+  }
+  .hero__inner--end {
+    align-items: flex-end;
+  }
+  .hero__main {
+    flex: 999 1 30rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+  }
+  .hero__aside {
+    flex: 1 1 15rem;
+    min-width: 0;
+    display: flex;
+    justify-content: center;
+  }
+  .hero--home .hero__inner {
+    padding-block: clamp(2.25rem, 5vw, 4.25rem) clamp(2.5rem, 6vw, 4.75rem);
+  }
+  .hero--page .hero__inner {
+    padding-block: clamp(1.75rem, 4vw, 2.75rem) clamp(2rem, 4.5vw, 3rem);
+  }
+  .hero--strip .hero__inner {
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+  }
+  .hero--strip .hero__main {
+    gap: var(--space-3);
+  }
+  .hero--wave .hero__inner {
+    padding-bottom: clamp(1rem, 3vw, 1.75rem);
+  }
+  .hero__wave {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: clamp(28px, 4vw, 60px);
+    margin-top: -1px;
+    fill: var(--color-bg);
+  }
+
+  .hero :global(.hero__eyebrow) {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-on-brand-eyebrow);
+  }
+  .hero :global(.hero__title) {
+    color: var(--color-on-brand);
+    font-size: var(--fs-display);
+    font-weight: var(--fw-black);
+    line-height: var(--lh-tight);
+    text-shadow: var(--hero-text-shadow);
+    max-width: 17ch;
+  }
+  .hero--page :global(.hero__title),
+  .hero--strip :global(.hero__title) {
+    font-size: var(--fs-2xl);
+    max-width: none;
+  }
+  .hero :global(.hero__title--sci) {
+    font-style: italic;
+    overflow-wrap: anywhere;
+  }
+  .hero :global(.hero__lede) {
+    max-width: 38rem;
+    font-size: clamp(1.1875rem, 1.05rem + 0.5vw, 1.3125rem);
+    font-weight: var(--fw-bold);
+    line-height: 1.45;
+    color: var(--color-on-brand);
+  }
+  .hero :global(.hero__actions) {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+</style>

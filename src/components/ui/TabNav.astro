@@ -1,0 +1,65 @@
+---
+/**
+ * Sticky in-page section navigation (anchor tabs) with scroll-spy.
+ * <TabNav label="Species sections" items={[{ id: "overview", label: "Overview" }, ...]} />
+ * Each item links to #id; the link of the section in view gets aria-current="true".
+ */
+interface Props {
+  items: { id: string; label: string; count?: number }[];
+  label?: string;
+  class?: string;
+}
+const { items, label = "On this page", class: className } = Astro.props;
+---
+
+<nav class:list={["tabnav", className]} aria-label={label} data-tabnav>
+  {
+    items.map((it, i) => (
+      <a class="tabnav__link" href={`#${it.id}`} aria-current={i === 0 ? "true" : undefined}>
+        {it.label}
+        {it.count !== undefined && <span class="tabnav__count">{it.count}</span>}
+      </a>
+    ))
+  }
+</nav>
+
+<script>
+  const navs = document.querySelectorAll<HTMLElement>("[data-tabnav]");
+  navs.forEach((nav) => {
+    const links = Array.from(nav.querySelectorAll<HTMLAnchorElement>("a[href^='#']"));
+    const targets = links
+      .map((a) => document.getElementById(decodeURIComponent(a.hash.slice(1))))
+      .filter((el): el is HTMLElement => el !== null);
+    if (!targets.length || !("IntersectionObserver" in window)) return;
+    const setCurrent = (id: string) => {
+      links.forEach((a) => {
+        const on = a.hash === `#${id}`;
+        if (on) {
+          a.setAttribute("aria-current", "true");
+          const left = a.offsetLeft - nav.clientWidth / 2 + a.clientWidth / 2;
+          nav.scrollTo({ left, behavior: "smooth" });
+        } else a.removeAttribute("aria-current");
+      });
+    };
+    const visible = new Map<string, number>();
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => visible.set(e.target.id, e.isIntersecting ? e.intersectionRatio : 0));
+        let best = "";
+        let bestTop = Infinity;
+        targets.forEach((t) => {
+          if ((visible.get(t.id) ?? 0) > 0) {
+            const top = Math.abs(t.getBoundingClientRect().top);
+            if (top < bestTop) {
+              bestTop = top;
+              best = t.id;
+            }
+          }
+        });
+        if (best) setCurrent(best);
+      },
+      { rootMargin: "-90px 0px -55% 0px", threshold: [0, 0.01, 0.25] },
+    );
+    targets.forEach((t) => io.observe(t));
+  });
+</script>

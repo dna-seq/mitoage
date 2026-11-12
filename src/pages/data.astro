@@ -1,0 +1,191 @@
+---
+/**
+ * Download page. Lists whatever the pipeline wrote to public/data/ at build time, with a
+ * description per known file, plus per-species downloads.
+ */
+import { readdirSync, statSync } from "node:fs";
+import { join, relative } from "node:path";
+import { getBuildInfo } from "~/data";
+import Card from "~/components/ui/Card.astro";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtBytes, fmtDate, fmtInt } from "~/lib/format";
+import { datasetLd, type DistributionFile } from "~/lib/seo";
+
+const info = getBuildInfo();
+const dataDir = join(process.cwd(), "public", "data");
+
+const walk = (dir: string): string[] => {
+  let out: string[] = [];
+  try {
+    for (const name of readdirSync(dir)) {
+      if (name.startsWith(".")) continue;
+      const p = join(dir, name);
+      out = statSync(p).isDirectory() ? out.concat(walk(p)) : out.concat(p);
+    }
+  } catch {
+    /* no data directory yet */
+  }
+  return out;
+};
+
+const DESCRIPTIONS: [RegExp, string][] = [
+  [/species/i, "One row per species: taxonomy, maximum lifespan, life-history traits, genome size and GC content."],
+  [/region/i, "Base composition (A, C, G, T, GC%, skews, length) of every gene and region in every species."],
+  [/codon/i, "Codon counts per protein-coding gene and species, with amino-acid totals."],
+  [/feature.?values|features?\b/i, "Every numeric mtDNA feature for every species, wide format, ready for plotting."],
+  [/correlation/i, "Correlations of each mtDNA feature with lifespan and other traits, per taxonomic scope, with q-values."],
+  [/genome.?features|annotation/i, "Coordinates and strand of every annotated gene, rRNA, tRNA and D-loop."],
+  [/taxonom|tree/i, "Taxonomy tree used for browsing and for phylogenetic corrections."],
+  [/explorer/i, "Compact dataset loaded by the in-browser plot explorer."],
+  [/readme|license/i, "Description of the files and their columns."],
+];
+const FORMATS: Record<string, string> = {
+  parquet: "application/vnd.apache.parquet",
+  csv: "text/csv",
+  json: "application/json",
+  tsv: "text/tab-separated-values",
+  zip: "application/zip",
+  gz: "application/gzip",
+  txt: "text/plain",
+  md: "text/markdown",
+  nwk: "text/x-nh",
+};
+
+const files = walk(dataDir)
+  .map((abs) => {
+    const rel = relative(dataDir, abs).split("\\").join("/");
+    const ext = rel.split(".").pop()?.toLowerCase() ?? "";
+    const desc = DESCRIPTIONS.find(([re]) => re.test(rel))?.[1];
+    return { rel, path: `/data/${rel}`, ext, size: statSync(abs).size, desc };
+  })
+  .sort((a, b) => a.rel.localeCompare(b.rel));
+
+const distribution: DistributionFile[] = files.map((f) => {
+  const d: DistributionFile = { name: f.rel, path: f.path, format: FORMATS[f.ext] ?? "application/octet-stream" };
+  if (f.desc) d.description = f.desc;
+  return d;
+});
+const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)} species, base composition, codon usage, genome annotations and correlations with lifespan as Parquet, CSV and JSON.`;
+---
+
+<BaseLayout title="Download the data" description={description} jsonLd={datasetLd(Astro.site, info, distribution)}>
+  <Hero variant="page" seed={31}>
+    <p class="hero__eyebrow">Open data</p>
+    <h1 class="hero__title">Download the data</h1>
+    <p class="hero__lede">
+      Every table behind the site, for {fmtInt(info.speciesCount)} species. Parquet for Python, R or DuckDB; CSV and JSON
+      for everything else.
+    </p>
+  </Hero>
+
+  <div class="container section data">
+    <Card title={`Files in ${info.build}`} description={`Generated ${fmtDate(info.generatedAt)}`}>
+      {
+        files.length ? (
+          <ul role="list" class="data-files">
+            {files.map((f) => (
+              <li>
+                <a class="row-link" href={f.path} download>
+                  <span class="data-files__ext">{f.ext || "file"}</span>
+                  <span class="row-link__main">
+                    {f.rel}
+                    <span class="row-link__sub">{f.desc ?? "Data file"}</span>
+                  </span>
+                  <span class="data-files__size">{fmtBytes(f.size)}</span>
+                  <Icon name="download" class="row-link__chev" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="empty">The data files for this build are not available yet.</p>
+        )
+      }
+    </Card>
+
+    <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-6)">
+      <Card title="One species at a time" level={2}>
+        <p>
+          Every species page has a Downloads section with its FASTA and GenBank record from NCBI, all its statistics as
+          JSON, and its region composition as CSV, at <code>/species/&lt;name&gt;.json</code> and
+          <code>/species/&lt;name&gt;.csv</code>.
+        </p>
+        <a href="/species/">Find a species</a>
+      </Card>
+      <Card title="Read Parquet in one line" level={2}>
+        <pre class="data-code"><code>{`import polars as pl
+df = pl.read_parquet("https://www.mitoage.info/data/<file>.parquet")`}</code></pre>
+        <pre class="data-code"><code>{`SELECT * FROM 'https://www.mitoage.info/data/<file>.parquet';`}</code></pre>
+      </Card>
+      <Card title="Licence and sources" level={2}>
+        <ul class="data-sources">
+          {
+            info.sources.map((s) => (
+              <li>
+                <a href={s.url}>{s.name}</a> {s.version} · {s.license}
+              </li>
+            ))
+          }
+        </ul>
+        <a href="/about/">Methods and how to cite</a>
+      </Card>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .data {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-7);
+  }
+  .data-files {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .data-files :global(.row-link) {
+    font-size: var(--fs-base);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1px var(--color-border);
+    overflow-wrap: anywhere;
+  }
+  .data-files__ext {
+    flex: none;
+    display: grid;
+    place-items: center;
+    min-width: 4.2rem;
+    height: 2.2rem;
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-pill);
+    background: var(--grad-primary);
+    color: #fff;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-black);
+    text-transform: uppercase;
+  }
+  .data-files__size {
+    flex: none;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .data-code {
+    margin: 0;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface-sunken);
+    overflow-x: auto;
+    font-size: var(--fs-sm);
+  }
+  .data-sources {
+    padding-left: 1.2em;
+  }
+  @media (max-width: 30rem) {
+    .data-files__size {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,27 @@
+---
+import Mitochondrion from "~/components/brand/Mitochondrion.astro";
+import Button from "~/components/ui/Button.astro";
+import Hero from "~/components/ui/Hero.astro";
+import SearchBox from "~/components/ui/SearchBox";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Page not found" description="This page does not exist in MitoAge." noindex headerSearch={false}>
+  <Hero variant="page" seed={404} wave>
+    <p class="hero__eyebrow">Error 404</p>
+    <h1 class="hero__title">This page has gone missing</h1>
+    <p class="hero__lede">
+      Old MitoAge links have moved. Search for the species, taxon or gene you were looking for.
+    </p>
+    <div style="max-width: 36rem">
+      <SearchBox client:load variant="hero" placeholder="Species, taxon or gene" />
+    </div>
+    <div class="hero__actions">
+      <Button href="/" variant="light">Home</Button>
+      <Button href="/species/" variant="outline-light">All species</Button>
+    </div>
+    <Fragment slot="aside">
+      <Mitochondrion width={300} rotate={-14} />
+    </Fragment>
+  </Hero>
+</BaseLayout>

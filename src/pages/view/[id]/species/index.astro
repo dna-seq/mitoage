@@ -1,0 +1,17 @@
+---
+/**
+ * Legacy URLs of the old site, /view/{legacyId}/species/, redirect to /species/{slug}/.
+ * Only generated for species whose legacyId is known.
+ */
+import type { GetStaticPaths } from "astro";
+import { getAllSpecies } from "~/data";
+import { speciesUrl } from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  getAllSpecies()
+    .filter((s) => s.legacyId !== null)
+    .map((s) => ({ params: { id: String(s.legacyId) }, props: { slug: s.slug } }))) satisfies GetStaticPaths;
+
+const { slug } = Astro.props as { slug: string };
+return Astro.redirect(speciesUrl(slug), 301);
+---

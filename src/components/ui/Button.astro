@@ -1,0 +1,60 @@
+---
+/**
+ * Pill button or link styled as a button.
+ * <Button href="/explore/" variant="primary">Open the plot explorer</Button>
+ * Variants: action (red), primary (green), light (white on brand), soft, outline-light.
+ */
+import type { HTMLAttributes } from "astro/types";
+import Icon from "./Icon.astro";
+import type { IconName } from "./icons";
+
+type Variant = "action" | "primary" | "light" | "soft" | "outline-light";
+
+interface Props extends Omit<HTMLAttributes<"a">, "class" | "type"> {
+  href?: string;
+  variant?: Variant;
+  size?: "sm" | "md" | "lg";
+  block?: boolean;
+  icon?: IconName;
+  iconEnd?: IconName;
+  type?: "button" | "submit" | "reset";
+  class?: string;
+  external?: boolean;
+}
+
+const {
+  href,
+  variant = "primary",
+  size = "md",
+  block = false,
+  icon,
+  iconEnd,
+  type = "button",
+  class: className,
+  external = false,
+  ...rest
+} = Astro.props;
+const classes = ["btn", `btn--${variant}`, size !== "md" && `btn--${size}`, block && "btn--block", className];
+---
+
+{
+  href ? (
+    <a
+      href={href}
+      class:list={classes}
+      target={external ? "_blank" : undefined}
+      rel={external ? "noopener" : undefined}
+      {...rest}
+    >
+      {icon && <Icon name={icon} />}
+      <slot />
+      {iconEnd && <Icon name={iconEnd} />}
+    </a>
+  ) : (
+    <button type={type} class:list={classes}>
+      {icon && <Icon name={icon} />}
+      <slot />
+      {iconEnd && <Icon name={iconEnd} />}
+    </button>
+  )
+}

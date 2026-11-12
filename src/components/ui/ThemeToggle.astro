@@ -1,0 +1,68 @@
+---
+/**
+ * Light/dark switch. The initial theme is set before paint by the inline script in
+ * BaseLayout (ThemeScript); this button flips it and remembers the choice in localStorage.
+ */
+import Icon from "./Icon.astro";
+---
+
+<button type="button" class="theme-toggle" data-theme-toggle aria-pressed="false" title="Switch colour theme">
+  <span class="visually-hidden">Dark theme</span>
+  <Icon name="moon" size={22} class="theme-toggle__moon" />
+  <Icon name="sun" size={22} class="theme-toggle__sun" />
+</button>
+
+<script>
+  const KEY = "mitoage-theme";
+  const root = document.documentElement;
+  const media = window.matchMedia("(prefers-color-scheme: dark)");
+  const effective = () => root.dataset["theme"] ?? (media.matches ? "dark" : "light");
+  const sync = () => {
+    const dark = effective() === "dark";
+    document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((b) => {
+      b.setAttribute("aria-pressed", String(dark));
+    });
+    const meta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]:not([media])');
+    if (meta) meta.content = dark ? "#082e16" : "#0e4a22";
+  };
+  document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((b) => {
+    b.addEventListener("click", () => {
+      const next = effective() === "dark" ? "light" : "dark";
+      root.dataset["theme"] = next;
+      try {
+        localStorage.setItem(KEY, next);
+      } catch {
+        /* storage unavailable: the choice lasts for this page only */
+      }
+      sync();
+    });
+  });
+  media.addEventListener("change", sync);
+  sync();
+</script>
+
+<style>
+  .theme-toggle {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    border: 0;
+    border-radius: 50%;
+    background: var(--color-header-pill);
+    color: var(--color-header-text);
+  }
+  .theme-toggle:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+  .theme-toggle :global(.theme-toggle__sun) {
+    display: none;
+  }
+  .theme-toggle[aria-pressed="true"] :global(.theme-toggle__sun) {
+    display: block;
+  }
+  .theme-toggle[aria-pressed="true"] :global(.theme-toggle__moon) {
+    display: none;
+  }
+</style>

@@ -1,0 +1,25 @@
+---
+/**
+ * Small pill, optionally a link.
+ * <Chip href="/taxa/order/primates/" variant="on-brand" rank="order">Primates</Chip>
+ * Variants: on-brand (translucent dark on the hero), outline-light, soft, current.
+ */
+interface Props {
+  href?: string;
+  variant?: "on-brand" | "outline-light" | "soft" | "current";
+  rank?: string;
+  count?: number;
+  dot?: string;
+  class?: string;
+  title?: string;
+}
+const { href, variant = "soft", rank, count, dot, class: className, title } = Astro.props;
+const Tag = href ? "a" : "span";
+---
+
+<Tag href={href} class:list={["chip", `chip--${variant}`, className]} title={title}>
+  {dot && <span class="chip__dot" style={`--dot:${dot}`} aria-hidden="true" />}
+  {rank && <span class="chip__rank">{rank}</span>}
+  <slot />
+  {count !== undefined && <span class="chip__count">{count.toLocaleString("en-US")}</span>}
+</Tag>

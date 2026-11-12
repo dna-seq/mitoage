@@ -1,0 +1,46 @@
+---
+/**
+ * Full round MitoAge badge: faceted green ring with arc lettering and the mitochondrion.
+ * <BadgeLogo size={320} />  or  <BadgeLogo class="hero-badge" decorative />
+ */
+import { badgeMarkup } from "./mitoSvg";
+import { nextId } from "./ids";
+
+interface Props {
+  /** Rendered width/height in px; omit to size with CSS. */
+  size?: number;
+  class?: string;
+  /** Hide from assistive tech (when the name is already on the page). */
+  decorative?: boolean;
+  topText?: string;
+  bottomText?: string;
+}
+
+const { size, class: className, decorative = false, topText, bottomText } = Astro.props;
+const id = nextId("badge");
+const text: { top?: string; bottom?: string } = {};
+if (topText) text.top = topText;
+if (bottomText) text.bottom = bottomText;
+const markup = badgeMarkup(id, text);
+---
+
+<svg
+  class:list={["badge-logo", className]}
+  viewBox="0 0 300 300"
+  width={size}
+  height={size}
+  role={decorative ? undefined : "img"}
+  aria-label={decorative ? undefined : "MitoAge badge: mitochondrial DNA and longevity"}
+  aria-hidden={decorative ? "true" : undefined}
+  focusable="false"
+  set:html={markup}
+/>
+
+<style>
+  .badge-logo {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

@@ -1,0 +1,142 @@
+---
+import { getBuildInfo } from "~/data";
+import BadgeLogo from "~/components/brand/BadgeLogo.astro";
+import Card from "~/components/ui/Card.astro";
+import Hero from "~/components/ui/Hero.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtDate, fmtInt } from "~/lib/format";
+import { CITATION, CITATION_TEXT } from "~/lib/site";
+
+const info = getBuildInfo();
+const description =
+  "How MitoAge is built: data sources, how base composition, skews, codon usage and correlations with lifespan are computed, known data issues, and how to cite.";
+---
+
+<BaseLayout title="About, methods and sources" description={description}>
+  <Hero variant="page" seed={23}>
+    <p class="hero__eyebrow">About</p>
+    <h1 class="hero__title">Methods and sources</h1>
+    <p class="hero__lede">
+      What is in {info.build}, where it comes from and how every number on this site is computed.
+    </p>
+    <Fragment slot="aside">
+      <div class="about-badge"><BadgeLogo decorative /></div>
+    </Fragment>
+  </Hero>
+
+  <div class="container section about">
+    <article class="prose">
+      <h2>What MitoAge is</h2>
+      <p>
+        MitoAge is a database for comparative analysis of mitochondrial DNA (mtDNA), with a special focus on animal
+        longevity. For each of {fmtInt(info.speciesCount)} species it combines the complete mitochondrial genome from
+        NCBI RefSeq with the maximum recorded lifespan and other life-history traits from AnAge, and computes base
+        composition, strand skews and codon usage for the whole genome and for every gene.
+      </p>
+
+      <h2>How the numbers are computed</h2>
+      <ul>
+        <li>
+          <strong>Base composition</strong> counts A, C, G and T on the reference (L) strand as deposited in RefSeq, for
+          the whole genome, each of the 13 protein-coding genes, the 12S and 16S rRNA genes, all tRNA genes together and
+          the control region (D-loop). Ambiguous bases are counted separately.
+        </li>
+        <li><strong>GC content</strong> is (G + C) divided by all bases, in percent.</li>
+        <li>
+          <strong>GC skew</strong> is (G − C) / (G + C) and <strong>AT skew</strong> is (A − T) / (A + T), both on the
+          L strand.
+        </li>
+        <li>
+          <strong>Codon usage</strong> counts codons of each protein-coding gene in frame. Amino acids are assigned with
+          the mitochondrial genetic code of the species (vertebrate, invertebrate or echinoderm code).
+        </li>
+        <li>
+          <strong>Correlations with lifespan</strong> use log10 of the trait. Pearson and Spearman coefficients are
+          reported for all species and within each class and order; p-values are corrected with the Benjamini–Hochberg
+          procedure within each trait and scope. Where a dated phylogeny is available, phylogenetically independent
+          contrasts correct for shared ancestry.
+        </li>
+      </ul>
+
+      <h2>Sources</h2>
+    </article>
+
+    <div class="about-sources grid-auto" style="--grid-min: 16rem">
+      {
+        info.sources.map((s) => (
+          <Card variant="flat" level={3} title={s.name}>
+            <p class="card__desc">
+              Version {s.version} · {s.license}
+            </p>
+            <a href={s.url}>{s.url.replace(/^https?:\/\//, "").replace(/\/$/, "")}</a>
+          </Card>
+        ))
+      }
+    </div>
+
+    {
+      info.notes.length > 0 && (
+        <article class="prose">
+          <h2>Data notes</h2>
+          <p>Problems found in the source data while building {info.build}, and how they were handled.</p>
+          <ul>
+            {info.notes.map((n) => (
+              <li>{n}</li>
+            ))}
+          </ul>
+        </article>
+      )
+    }
+
+    <article class="prose">
+      <h2>How to cite</h2>
+    </article>
+    <Card variant="sunken" class="about-cite">
+      <p class="about-cite__text" id="citation">{CITATION_TEXT}</p>
+      <div class="cluster">
+        <a href={`https://doi.org/${CITATION.doi}`}>doi:{CITATION.doi}</a>
+        <a href={`https://pubmed.ncbi.nlm.nih.gov/${CITATION.pmid}/`}>PubMed {CITATION.pmid}</a>
+        <button type="button" class="btn btn--soft btn--sm" data-copy="citation">Copy citation</button>
+      </div>
+    </Card>
+    <p class="muted about-build">{info.build}, generated {fmtDate(info.generatedAt)}.</p>
+  </div>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>("[data-copy]").forEach((b) => {
+    b.addEventListener("click", async () => {
+      const el = document.getElementById(b.dataset["copy"] ?? "");
+      if (!el) return;
+      try {
+        await navigator.clipboard.writeText(el.textContent ?? "");
+        const old = b.textContent;
+        b.textContent = "Copied";
+        setTimeout(() => (b.textContent = old), 1600);
+      } catch {
+        /* clipboard blocked: the text is selectable on the page */
+      }
+    });
+  });
+</script>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+  }
+  .about-badge {
+    width: min(15rem, 55vw);
+  }
+  .about-cite__text {
+    font-weight: var(--fw-bold);
+    line-height: 1.6;
+  }
+  :global(.about-cite) {
+    max-width: 68ch;
+  }
+  .about-build {
+    font-size: var(--fs-sm);
+  }
+</style>

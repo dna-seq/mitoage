@@ -1,0 +1,111 @@
+---
+/**
+ * Big-number card with a coloured bottom edge.
+ * <StatCard value="922" label="species with a full mtDNA" tone="green" />
+ * <StatCard layout="label-first" label="Maximum lifespan" value="122.5 yr" tone="red"
+ *           href="https://..." hrefLabel="AnAge record" external />
+ * Tones: green, orange, sky, red, violet, navy (tokens --tone-*-bar / --tone-*-ink).
+ */
+export type Tone = "green" | "orange" | "sky" | "red" | "violet" | "navy";
+
+interface Props {
+  value: string;
+  label: string;
+  tone?: Tone;
+  layout?: "value-first" | "label-first";
+  note?: string;
+  href?: string;
+  hrefLabel?: string;
+  external?: boolean;
+  size?: "md" | "lg";
+  class?: string;
+}
+const {
+  value,
+  label,
+  tone = "green",
+  layout = "value-first",
+  note,
+  href,
+  hrefLabel,
+  external = false,
+  size = "lg",
+  class: className,
+} = Astro.props;
+---
+
+<div class:list={["stat", `stat--${size}`, className]} style={`--bar: var(--tone-${tone}-bar); --ink: var(--tone-${tone}-ink);`}>
+  {layout === "label-first" && <div class="stat__label stat__label--top">{label}</div>}
+  <div class="stat__value">{value}</div>
+  {layout === "value-first" && <div class="stat__label">{label}</div>}
+  {note && <div class="stat__note">{note}</div>}
+  {
+    href && (
+      <a class="stat__link" href={href} target={external ? "_blank" : undefined} rel={external ? "noopener" : undefined}>
+        {hrefLabel ?? "Source"}
+        {external && <span class="visually-hidden"> (opens in a new tab)</span>}
+      </a>
+    )
+  }
+  <slot />
+</div>
+
+<style>
+  .stat {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: var(--space-5) var(--space-6) calc(var(--space-5) + 2px);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+  .stat::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 6px;
+    background: var(--bar);
+  }
+  .stat__value {
+    color: var(--ink);
+    font-size: var(--fs-stat);
+    font-weight: var(--fw-black);
+    line-height: 1.05;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .stat--md .stat__value {
+    font-size: clamp(1.75rem, 1.4rem + 1.2vw, 2.5rem);
+  }
+  .stat__label {
+    font-size: var(--fs-base);
+    font-weight: var(--fw-heavy);
+    line-height: 1.3;
+  }
+  .stat__label--top {
+    font-size: var(--fs-sm);
+    color: var(--color-text-muted);
+  }
+  .stat__note {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+  }
+  .stat__link {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    font-size: var(--fs-sm);
+  }
+  @media (max-width: 30rem) {
+    .stat {
+      padding: var(--space-4) var(--space-4) calc(var(--space-4) + 4px);
+      border-radius: var(--radius-md);
+    }
+  }
+</style>

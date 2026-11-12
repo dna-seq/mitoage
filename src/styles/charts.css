@@ -1,0 +1,183 @@
+/* Chart styles shared by Solid chart islands (Scatter*.tsx) and later chart components. */
+@layer components {
+  .chart {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .chart__frame {
+    position: relative;
+    width: 100%;
+    touch-action: pan-y;
+  }
+  .chart__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: var(--font-sans);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .chart__grid line {
+    stroke: var(--chart-grid);
+    stroke-width: 1;
+  }
+  .chart__axis-line {
+    stroke: var(--chart-axis);
+    stroke-width: 1.5;
+    fill: none;
+  }
+  .chart__tick {
+    fill: var(--chart-tick);
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .chart__axis-title {
+    fill: var(--chart-tick);
+    font-size: 13px;
+    font-weight: 800;
+  }
+  .chart__point {
+    stroke: var(--chart-point-stroke);
+    stroke-width: 0.8;
+    fill-opacity: 0.82;
+    transition: r var(--dur-fast) var(--ease-out);
+  }
+  .chart__point.is-muted {
+    fill: var(--chart-point-muted);
+    fill-opacity: 0.45;
+    stroke-width: 0;
+  }
+  .chart__point.is-dimmed {
+    fill-opacity: 0.12;
+    stroke-opacity: 0.2;
+  }
+  .chart__point.is-key {
+    stroke-width: 2;
+    fill-opacity: 1;
+  }
+  .chart__highlight {
+    fill: var(--chart-highlight);
+    stroke: var(--chart-point-stroke);
+    stroke-width: 2.5;
+  }
+  .chart__halo {
+    fill: var(--chart-highlight-halo);
+  }
+  .chart__hover-ring {
+    fill: none;
+    stroke: var(--chart-axis);
+    stroke-width: 2;
+    pointer-events: none;
+  }
+  .chart__label {
+    fill: var(--chart-label);
+    font-size: 13px;
+    font-weight: 900;
+    paint-order: stroke;
+    stroke: var(--chart-label-halo);
+    stroke-width: 4px;
+    stroke-linejoin: round;
+    pointer-events: none;
+  }
+  .chart__label--hl {
+    font-size: 15px;
+  }
+  .chart__label-line {
+    stroke: var(--chart-label);
+    stroke-width: 1;
+    opacity: 0.5;
+  }
+  .chart__tooltip {
+    position: absolute;
+    z-index: 5;
+    pointer-events: none;
+    max-width: min(16rem, 80vw);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-popover);
+    font-size: var(--fs-sm);
+    line-height: 1.3;
+    transform: translate(-50%, calc(-100% - 14px));
+  }
+  .chart__tooltip.is-below {
+    transform: translate(-50%, 14px);
+  }
+  .chart__tooltip-title {
+    font-weight: var(--fw-black);
+  }
+  .chart__tooltip-sub {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .chart__tooltip-vals {
+    display: flex;
+    gap: var(--space-3);
+    margin-top: 2px;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    font-variant-numeric: tabular-nums;
+  }
+  .chart__tooltip-hint {
+    margin-top: 2px;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    color: var(--color-link);
+  }
+  .chart__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-2);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+  .chart__legend-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    min-height: 36px;
+    padding: 0 0.75em;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+  }
+  button.chart__legend-btn:hover {
+    background: var(--color-surface-sunken);
+  }
+  .chart__legend-btn[aria-pressed="true"] {
+    background: var(--color-surface-sunken);
+    box-shadow: inset 0 0 0 2px var(--color-border-strong);
+  }
+  .chart__legend-swatch {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--swatch);
+  }
+  .chart__legend-count {
+    color: var(--color-text-muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .chart__note {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .chart__loading {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--color-text-muted);
+    font-weight: var(--fw-heavy);
+  }
+}

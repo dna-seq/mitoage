@@ -1,0 +1,392 @@
+/*
+ * MitoAge design tokens.
+ *
+ * Three tiers:
+ *   1. Raw palette   (--green-700, --navy-900 ...) - never used directly by components.
+ *   2. Semantic      (--color-*, --grad-*, --shadow-*) - what components use.
+ *   3. Data colours  (--nt-*, --class-*, --chart-*, --heat-*) - fixed meaning site-wide.
+ *
+ * Light theme is the default. Dark theme applies when
+ *   - the OS prefers dark and the user has not chosen light (data-theme="light"), or
+ *   - the user chose dark (data-theme="dark" on <html>).
+ * Only semantic and data tokens are redefined for dark; components never branch on theme.
+ */
+
+@layer tokens {
+  :root {
+    /* ---------- 1. Raw palette (from the approved mockup) ---------- */
+    --green-950: #082e16;
+    --green-900: #0b3a1c;
+    --green-850: #0e4a22;
+    --green-800: #145a27;
+    --green-750: #17642c;
+    --green-700: #156f31;
+    --green-600: #1f8a3b;
+    --green-500: #2e9a3c;
+    --green-400: #55b336;
+    --lime-400: #8cc63f;
+    --lime-300: #b9dc35;
+    --lime-200: #e3f3c4;
+    --lime-100: #eaf6d5;
+    --lime-50: #f4fae6;
+    --navy-900: #17305c;
+    --navy-700: #1f3a6e;
+    --navy-500: #2f5fa8;
+    --slate-600: #4a5a78;
+    --red-500: #e8503a;
+    --red-600: #c62f22;
+    --red-700: #b3281c;
+    --orange-400: #f7a81b;
+    --orange-700: #9a5b00;
+    --yellow-300: #ffe27a;
+    --sky-400: #5bb3e6;
+    --sky-700: #1d5f8f;
+    --violet-400: #9a6bd8;
+    --violet-700: #6a3fb0;
+    --white: #ffffff;
+
+    /* ---------- 2. Semantic: surfaces and text ---------- */
+    --color-bg: var(--lime-50);
+    --color-bg-band: var(--lime-200);
+    --color-surface: var(--white);
+    --color-surface-2: #f8fcef;
+    --color-surface-sunken: var(--lime-100);
+    --color-border: #dde7c8;
+    --color-border-strong: #c3d3a4;
+    --color-text: var(--navy-900);
+    --color-text-muted: var(--slate-600);
+    --color-heading: var(--navy-900);
+    --color-link: var(--green-750);
+    --color-link-hover: #0e3d1a;
+    --color-focus: #2f6fd0;
+    --color-selection: #d4ec9a;
+
+    /* Brand chrome */
+    --color-header-bg: var(--green-850);
+    --color-header-text: var(--white);
+    --color-header-accent: var(--orange-400);
+    --color-header-pill: rgb(255 255 255 / 0.16);
+    --color-header-pill-hover: rgb(255 255 255 / 0.1);
+    --color-footer-bg: var(--green-850);
+    --color-footer-text: #dff2c8;
+    --color-footer-muted: #b6d6a0;
+    --color-on-brand: var(--white);
+    --color-on-brand-eyebrow: var(--yellow-300);
+    --color-on-brand-chip: rgb(11 74 30 / 0.38);
+    --color-on-brand-chip-hover: rgb(11 74 30 / 0.55);
+    --color-on-brand-outline: rgb(255 255 255 / 0.75);
+    --hero-text-shadow: 0 3px 0 rgb(11 74 30 / 0.35);
+
+    /* Tones used by stat cards, legends and accents: bar = decorative edge, ink = text on surface */
+    --tone-green-bar: var(--green-500);
+    --tone-green-ink: var(--green-750);
+    --tone-orange-bar: var(--orange-400);
+    --tone-orange-ink: var(--orange-700);
+    --tone-sky-bar: var(--sky-400);
+    --tone-sky-ink: var(--sky-700);
+    --tone-red-bar: var(--red-500);
+    --tone-red-ink: var(--red-700);
+    --tone-violet-bar: var(--violet-400);
+    --tone-violet-ink: var(--violet-700);
+    --tone-navy-bar: var(--navy-700);
+    --tone-navy-ink: var(--navy-700);
+
+    /* Inputs */
+    --color-input-bg: var(--white);
+    --color-input-text: var(--navy-900);
+    --color-input-placeholder: #5d6b85;
+    --color-input-icon: var(--green-750);
+
+    /* ---------- Gradients ---------- */
+    --grad-hero: linear-gradient(105deg, #115f2a 0%, #156f31 26%, #1f8a3b 48%, #55b336 74%, #b9dc35 100%);
+    --grad-hero-narrow: linear-gradient(165deg, #115f2a 0%, #156f31 38%, #1f8a3b 66%, #55b336 88%, #9ccf34 100%);
+    --grad-hero-scrim: radial-gradient(ellipse 70% 90% at 18% 55%, rgb(8 50 22 / 0.34), transparent 70%);
+    --grad-hero-wave-fill: var(--color-bg);
+    --grad-action: linear-gradient(180deg, #d9452f 0%, #b3281c 100%);
+    --grad-action-hover: linear-gradient(180deg, #c93a26 0%, #9e2217 100%);
+    --grad-primary: linear-gradient(180deg, #23873a 0%, #145a27 100%);
+    --grad-primary-hover: linear-gradient(180deg, #1c7731 0%, #0f4a1f 100%);
+    --grad-meter: linear-gradient(90deg, var(--lime-300), var(--green-500));
+    --grad-band: linear-gradient(180deg, var(--lime-200), #d8eeb0);
+    --grad-badge-ring: radial-gradient(circle at 35% 25%, #6dbe3a 0%, #2e9a3c 55%, #1f8a3b 100%);
+
+    /* ---------- Elevation ---------- */
+    --shadow-xs: 0 1px 3px rgb(23 48 92 / 0.08);
+    --shadow-sm: 0 4px 14px rgb(23 48 92 / 0.08);
+    --shadow-md: 0 8px 24px rgb(23 48 92 / 0.1);
+    --shadow-lg: 0 14px 34px rgb(23 48 92 / 0.14);
+    --shadow-brand: 0 10px 30px rgb(11 74 30 / 0.3);
+    --shadow-action: 0 8px 20px rgb(198 47 34 / 0.3);
+    --shadow-popover: 0 18px 40px rgb(14 40 30 / 0.22), 0 2px 6px rgb(14 40 30 / 0.12);
+
+    /* ---------- Shape ---------- */
+    --radius-xs: 8px;
+    --radius-sm: 14px;
+    --radius-md: 20px;
+    --radius-lg: 26px;
+    --radius-xl: 32px;
+    --radius-pill: 999px;
+
+    /* ---------- Spacing (4px base) ---------- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-7: 2rem;
+    --space-8: 2.5rem;
+    --space-9: 3.5rem;
+    --space-10: 4.5rem;
+    --gutter: clamp(1rem, 3.6vw, 2rem);
+    --container: 75rem;
+    --container-narrow: 50rem;
+    --section-gap: clamp(2.5rem, 5vw, 4rem);
+    --tap: 44px;
+
+    /* ---------- Typography ---------- */
+    --font-sans: "Nunito Variable", "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: ui-monospace, "SFMono-Regular", "JetBrains Mono", Menlo, Consolas, monospace;
+    --fw-regular: 400;
+    --fw-semibold: 600;
+    --fw-bold: 700;
+    --fw-heavy: 800;
+    --fw-black: 900;
+    --fs-xs: 0.8125rem;   /* 13 */
+    --fs-sm: 0.9375rem;   /* 15 */
+    --fs-base: 1.0625rem; /* 17 */
+    --fs-md: 1.1875rem;   /* 19 */
+    --fs-lg: clamp(1.25rem, 1.15rem + 0.45vw, 1.5rem);           /* 20 - 24 */
+    --fs-xl: clamp(1.5rem, 1.25rem + 1vw, 2.125rem);             /* 24 - 34 */
+    --fs-2xl: clamp(2rem, 1.45rem + 2.4vw, 3.625rem);            /* 32 - 58 */
+    --fs-display: clamp(2.125rem, 1.35rem + 3.4vw, 3.75rem);      /* 34 - 60 */
+    --fs-stat: clamp(1.875rem, 1.5rem + 1.6vw, 2.875rem);         /* 30 - 46 */
+    --lh-tight: 1.06;
+    --lh-snug: 1.25;
+    --lh-body: 1.55;
+    --tracking-eyebrow: 0.12em;
+
+    /* ---------- Motion ---------- */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --dur-fast: 120ms;
+    --dur-med: 220ms;
+
+    /* ---------- 3. Data colours ---------- */
+    /* One fixed colour per nucleotide, everywhere on the site. */
+    --nt-a: #2e9a3c;
+    --nt-c: #2f6fd0;
+    --nt-g: #f7a81b;
+    --nt-t: #e8503a;
+    --nt-other: #9aa3ae;
+
+    /* Taxonomic classes (scatter points, legends, browse list). */
+    --class-mammalia: #1f8a3b;
+    --class-aves: #f7a81b;
+    --class-actinopterygii: #5bb3e6;
+    --class-reptilia: #1f3a6e;
+    --class-chondrichthyes: #9a6bd8;
+    --class-amphibia: #e8503a;
+    --class-other: #9aa3ae;
+
+    /* Feature types on the genome (for the genome map) */
+    --feat-cds: #2e9a3c;
+    --feat-rrna: #5b93e8;
+    --feat-trna: #f7a81b;
+    --feat-dloop: #9a6bd8;
+
+    /* Charts */
+    --chart-grid: #dde7c8;
+    --chart-axis: var(--navy-900);
+    --chart-tick: var(--slate-600);
+    --chart-point-muted: #9aa3ae;
+    --chart-point-stroke: var(--white);
+    --chart-highlight: var(--red-500);
+    --chart-highlight-halo: rgb(232 80 58 / 0.22);
+    --chart-label: var(--navy-900);
+    --chart-label-halo: rgb(255 255 255 / 0.85);
+
+    /* Heatmap ramp (codon usage). Cells mix between lo and hi by value. */
+    --heat-lo: #f4fae6;
+    --heat-mid: #b9dc35;
+    --heat-hi: #156f31;
+    --heat-text-lo: var(--navy-900);
+    --heat-text-hi: var(--white);
+
+    color-scheme: light;
+  }
+
+  /* ---------- Dark theme values (shared by both selectors below) ---------- */
+  :root[data-theme="dark"] {
+    --color-bg: #0b1916;
+    --color-bg-band: #10241d;
+    --color-surface: #132a23;
+    --color-surface-2: #17322a;
+    --color-surface-sunken: #0f221c;
+    --color-border: #26473b;
+    --color-border-strong: #33604f;
+    --color-text: #e7f1e4;
+    --color-text-muted: #a9c1b5;
+    --color-heading: #f2f8ee;
+    --color-link: #a4dc6c;
+    --color-link-hover: #c8ef98;
+    --color-focus: #ffd15c;
+    --color-selection: #2f5a2a;
+
+    --color-header-bg: #082e16;
+    --color-footer-bg: #071f12;
+    --color-footer-text: #d4ebc2;
+    --color-footer-muted: #a6c79a;
+    --color-on-brand-chip: rgb(4 30 14 / 0.45);
+    --color-on-brand-chip-hover: rgb(4 30 14 / 0.62);
+
+    --tone-green-ink: #8fdc72;
+    --tone-orange-ink: #f9bd4f;
+    --tone-sky-ink: #86c9f0;
+    --tone-red-ink: #ff9580;
+    --tone-violet-ink: #c6a7f4;
+    --tone-navy-bar: #6f8fd6;
+    --tone-navy-ink: #a9bdf0;
+
+    --color-input-bg: #f7fbef;
+    --color-input-text: var(--navy-900);
+    --color-input-placeholder: #5d6b85;
+
+    --grad-hero: linear-gradient(105deg, #072a13 0%, #0d4720 28%, #156f31 54%, #2e8a36 78%, #6aa62c 100%);
+    --grad-hero-narrow: linear-gradient(165deg, #072a13 0%, #0d4720 40%, #156f31 70%, #2e8a36 90%, #5f9a2b 100%);
+    --grad-hero-scrim: radial-gradient(ellipse 70% 90% at 18% 55%, rgb(2 20 9 / 0.4), transparent 70%);
+    --grad-band: linear-gradient(180deg, #10241d, #0d1f19);
+    --grad-badge-ring: radial-gradient(circle at 35% 25%, #5fae35 0%, #23873a 55%, #176d30 100%);
+
+    --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.35);
+    --shadow-sm: 0 4px 14px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 8px 24px rgb(0 0 0 / 0.35);
+    --shadow-lg: 0 14px 34px rgb(0 0 0 / 0.42);
+    --shadow-brand: 0 10px 30px rgb(0 0 0 / 0.45);
+    --shadow-popover: 0 18px 40px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.4);
+
+    --nt-a: #4fbf5c;
+    --nt-c: #5b93e8;
+    --nt-g: #f7b23a;
+    --nt-t: #f06a55;
+    --nt-other: #7f8a96;
+
+    --class-mammalia: #4fbf5c;
+    --class-aves: #f7b23a;
+    --class-actinopterygii: #6cc3f0;
+    --class-reptilia: #8ea9ec;
+    --class-chondrichthyes: #b58ff0;
+    --class-amphibia: #f27560;
+    --class-other: #7f8a96;
+
+    --feat-cds: #4fbf5c;
+    --feat-rrna: #5b93e8;
+    --feat-trna: #f7b23a;
+    --feat-dloop: #b58ff0;
+
+    --chart-grid: #24423a;
+    --chart-axis: #c9dbd0;
+    --chart-tick: #a9c1b5;
+    --chart-point-muted: #5f6d78;
+    --chart-point-stroke: #0b1916;
+    --chart-highlight: #ff6b52;
+    --chart-highlight-halo: rgb(255 107 82 / 0.28);
+    --chart-label: #f2f8ee;
+    --chart-label-halo: rgb(11 25 22 / 0.85);
+
+    --heat-lo: #142c24;
+    --heat-mid: #4e8f2e;
+    --heat-hi: #b9dc35;
+    --heat-text-lo: #e7f1e4;
+    --heat-text-hi: #0b1916;
+
+    color-scheme: dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-bg: #0b1916;
+      --color-bg-band: #10241d;
+      --color-surface: #132a23;
+      --color-surface-2: #17322a;
+      --color-surface-sunken: #0f221c;
+      --color-border: #26473b;
+      --color-border-strong: #33604f;
+      --color-text: #e7f1e4;
+      --color-text-muted: #a9c1b5;
+      --color-heading: #f2f8ee;
+      --color-link: #a4dc6c;
+      --color-link-hover: #c8ef98;
+      --color-focus: #ffd15c;
+      --color-selection: #2f5a2a;
+
+      --color-header-bg: #082e16;
+      --color-footer-bg: #071f12;
+      --color-footer-text: #d4ebc2;
+      --color-footer-muted: #a6c79a;
+      --color-on-brand-chip: rgb(4 30 14 / 0.45);
+      --color-on-brand-chip-hover: rgb(4 30 14 / 0.62);
+
+      --tone-green-ink: #8fdc72;
+      --tone-orange-ink: #f9bd4f;
+      --tone-sky-ink: #86c9f0;
+      --tone-red-ink: #ff9580;
+      --tone-violet-ink: #c6a7f4;
+      --tone-navy-bar: #6f8fd6;
+      --tone-navy-ink: #a9bdf0;
+
+      --color-input-bg: #f7fbef;
+      --color-input-text: var(--navy-900);
+      --color-input-placeholder: #5d6b85;
+
+      --grad-hero: linear-gradient(105deg, #072a13 0%, #0d4720 28%, #156f31 54%, #2e8a36 78%, #6aa62c 100%);
+      --grad-hero-narrow: linear-gradient(165deg, #072a13 0%, #0d4720 40%, #156f31 70%, #2e8a36 90%, #5f9a2b 100%);
+      --grad-hero-scrim: radial-gradient(ellipse 70% 90% at 18% 55%, rgb(2 20 9 / 0.4), transparent 70%);
+      --grad-band: linear-gradient(180deg, #10241d, #0d1f19);
+      --grad-badge-ring: radial-gradient(circle at 35% 25%, #5fae35 0%, #23873a 55%, #176d30 100%);
+
+      --shadow-xs: 0 1px 3px rgb(0 0 0 / 0.35);
+      --shadow-sm: 0 4px 14px rgb(0 0 0 / 0.3);
+      --shadow-md: 0 8px 24px rgb(0 0 0 / 0.35);
+      --shadow-lg: 0 14px 34px rgb(0 0 0 / 0.42);
+      --shadow-brand: 0 10px 30px rgb(0 0 0 / 0.45);
+      --shadow-popover: 0 18px 40px rgb(0 0 0 / 0.55), 0 2px 6px rgb(0 0 0 / 0.4);
+
+      --nt-a: #4fbf5c;
+      --nt-c: #5b93e8;
+      --nt-g: #f7b23a;
+      --nt-t: #f06a55;
+      --nt-other: #7f8a96;
+
+      --class-mammalia: #4fbf5c;
+      --class-aves: #f7b23a;
+      --class-actinopterygii: #6cc3f0;
+      --class-reptilia: #8ea9ec;
+      --class-chondrichthyes: #b58ff0;
+      --class-amphibia: #f27560;
+      --class-other: #7f8a96;
+
+      --feat-cds: #4fbf5c;
+      --feat-rrna: #5b93e8;
+      --feat-trna: #f7b23a;
+      --feat-dloop: #b58ff0;
+
+      --chart-grid: #24423a;
+      --chart-axis: #c9dbd0;
+      --chart-tick: #a9c1b5;
+      --chart-point-muted: #5f6d78;
+      --chart-point-stroke: #0b1916;
+      --chart-highlight: #ff6b52;
+      --chart-highlight-halo: rgb(255 107 82 / 0.28);
+      --chart-label: #f2f8ee;
+      --chart-label-halo: rgb(11 25 22 / 0.85);
+
+      --heat-lo: #142c24;
+      --heat-mid: #4e8f2e;
+      --heat-hi: #b9dc35;
+      --heat-text-lo: #e7f1e4;
+      --heat-text-hi: #0b1916;
+
+      color-scheme: dark;
+    }
+  }
+}
