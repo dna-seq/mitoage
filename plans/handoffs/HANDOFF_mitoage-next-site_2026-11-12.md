@@ -72,7 +72,7 @@ Findings recorded by the pipeline in `src/data/generated/build-info.json` (`note
 - **AnAge:** build 15 (2023-07-03); 896 species matched by scientific name, 26 by common name after renaming, 0 unmatched. 59 species now have a different maximum longevity in AnAge; the build keeps the 2015 values.
 - **GenBank features:** 922 species fetched; 912 have at least 13 CDS, 2 rRNA and 22 tRNA. D-loop computed from sequence for 263 species missing it in the CSV.
 - **Duplicates:** 16S rows duplicated for HAGRID 2497, 3897, 4026; resolved against RefSeq.
-- **Phylogeny skipped** (`MITOAGE_SKIP_TREE`): no branch lengths, no PIC in this build.
+- **Phylogeny (update after pipeline agent finished):** dated tree built from Open Tree of Life topology (921/922 species) + TimeTree 5 dates; `branchLengthMya` set and `picR`/`picPValue` filled. `MITOAGE_SKIP_TREE=1` disables it. Pipeline agent reported: `bun run data` passes validation, 50 tests pass, 76,954 correlations, `legacyId` recovered for all 922 species, trial `astro build` produced 1849 pages. GC/AT skews flip sign vs the old site because of the base-label fix. `src/data/index.ts` is server-side only (node:fs): browser islands need props or `/data/explorer.json`.
 - **Correlations:** Pearson, Spearman, two-tailed p, BH q within (trait, scope); 18 scopes (all, classes and orders with n ≥ 20); `partialR` controls for log10 adult weight.
 
 My own early check (before the pipeline): pooled Pearson r of whole-genome GC% vs log10 max lifespan across 923 rows = 0.044; lifespan range 0.16–507 yr; GC% range 15.14–50.64.

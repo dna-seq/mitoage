@@ -138,9 +138,11 @@ interface TimeTreeMrca {
 async function timetreeMrca(taxids: number[]): Promise<number | null> {
   const ids = [...new Set(taxids)].sort((a, b) => a - b);
   if (ids.length < 2) return null;
-  const res = await cachedJson<TimeTreeMrca | null>(`tree/timetree/mrca_${hash(ids.join("+"))}.json`, async () => {
-    await ttLimit();
-    try {
+  let res: TimeTreeMrca | null;
+  try {
+    res = await cachedJson<TimeTreeMrca | null>(`tree/timetree/mrca_${hash(ids.join("+"))}.json`, async () => {
+      await ttLimit();
+      // Network/HTTP failures throw and are not cached; a non-JSON answer is cached as "no age".
       const r = await fetchWithRetry(`${TIMETREE}/mrca/id/${ids.join("+")}/json`);
       const text = await r.text();
       try {
@@ -148,13 +150,17 @@ async function timetreeMrca(taxids: number[]): Promise<number | null> {
       } catch {
         return null;
       }
-    } catch {
-      return null;
-    }
-  });
+    });
+  } catch {
+    return null;
+  }
   if (!res || (res.found_ids?.length ?? 0) < 2) return null;
-  const age = Number(res.adjusted_age ?? res.precomputed_age);
-  return Number.isFinite(age) && age > 0 ? age : null;
+  // adjusted_age is 0 when TimeTree has a single study for the node; fall back to precomputed_age.
+  for (const v of [res.adjusted_age, res.precomputed_age]) {
+    const age = Number(v);
+    if (v !== null && v !== undefined && Number.isFinite(age) && age > 0) return age;
+  }
+  return null;
 }
 
 export async function buildDatedTree(input: TreeInput[]): Promise<DatedTree> {
