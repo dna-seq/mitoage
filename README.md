@@ -17,7 +17,7 @@ d3 scales. All code is TypeScript. Runs on [Bun](https://bun.sh).
 | `bun run build` | Build the static site into `dist/` |
 | `bun run preview` | Serve `dist/` locally (set the same `BASE_PATH` as the build) |
 | `bun run check` | Type-check `.ts`/`.tsx` with TypeScript 7 (`.astro` files are not covered: `astro check` does not support TypeScript 7.0) |
-| `bun test` | Pipeline unit tests |
+| `bun test` | Unit tests: pipeline, tree layout, explorer statistics |
 
 ### Deploy targets and the base path
 
@@ -49,15 +49,27 @@ src/
   components/
     brand/         the mitochondrion, the round badge, the compact icon
     ui/            Header, Footer, Hero, Card, StatCard, Button, Chip, Breadcrumb, TabNav,
-                   CompositionBar, DataTable, SearchBox, CodonHeatmap, LinearGenomeTrack
+                   CompositionBar, DataTable, SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island)
-  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders
-  pages/           routes
+    genome/        circular genome map, gene-page charts and correlation tables
+    tree/          radial taxonomy tree, clade scatter and species table, taxon-page cards
+    explore/       plot explorer: axis picker, strongest-correlations panel
+    compare/       species comparison: dot plots and markers
+  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders;
+                   genome/, tree/ and explore/ hold the logic behind those components
+  pages/           routes: species/, taxa/, tree/, genes/, explore/, compare/, data, about
 ```
 
 Pages read data only through `~/data` (`src/data/index.ts`), which is server-side. Islands receive
 data as props or fetch static JSON emitted at build time (`/search-index.json`,
-`/species/gc-lifespan.json`, `/data/*`).
+`/species/gc-lifespan.json`, `/species/{slug}.json`, `/tree/tree.json`,
+`/genes/{gene}/gc-lifespan.json`, `/explore/correlations/{trait}/{scope}.json`,
+`/explore/values/{chunk}.json`, `/compare/species-index.json`, `/data/*`).
+
+Section stylesheets (`genome.css`, `tree.css`, `explorer.css`, `compare.css`) are imported by
+the pages, not the islands, and each starts with
+`@layer tokens, reset, base, components, utilities;`. Keep that line in any new stylesheet: a
+sheet bundled before `global.css` would otherwise reorder the cascade layers for the whole page.
 
 ## Design system
 
