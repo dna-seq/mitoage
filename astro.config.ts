@@ -5,7 +5,7 @@ import sitemap from "@astrojs/sitemap";
 /**
  * Deploy target from the environment:
  *   default (own domain):  SITE_URL=https://www.mitoage.info  BASE_PATH=/
- *   GitHub Pages:          SITE_URL=https://dna-seq.github.io BASE_PATH=/mitoage
+ *   GitHub Pages:          SITE_URL=https://just-dna.life BASE_PATH=/mitoage (the dna-seq org Pages domain)
  * Internal links go through href() in src/lib/url.ts, which reads the base at build time.
  */
 const SITE_URL = process.env["SITE_URL"] || "https://www.mitoage.info";

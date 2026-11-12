@@ -1,6 +1,6 @@
 /**
  * Base-path aware URLs. The site can be served from a sub-path (GitHub Pages:
- * https://dna-seq.github.io/mitoage/), so every root-relative internal URL must go through
+ * https://just-dna.life/mitoage/), so every root-relative internal URL must go through
  * `href()`. Works in Astro pages, endpoints and Solid islands (Vite inlines BASE_URL).
  *
  *   href("/species/")       -> "/species/"          (base "/")

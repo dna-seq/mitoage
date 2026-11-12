@@ -27,9 +27,14 @@ jobs:
         env:
           SITE_URL: https://just-dna.life
           BASE_PATH: /mitoage
-      # Safety net: prefix any root-absolute link that missed the base path.
-      - name: Prefix leftover root-absolute links
-        run: find dist -name '*.html' -print0 | xargs -0 perl -pi -e 's#\b(href|src|action)="/(?!mitoage/|/)#$1="/mitoage/#g'
+      # Every internal URL must go through href() (src/lib/url.ts). Fail instead of patching dist,
+      # so a hard-coded root-absolute path is fixed in the source.
+      - name: Check links carry the base path
+        run: |
+          if grep -rnoP '\b(href|src|action)="/(?!mitoage/|/)[^"]*"' dist --include='*.html' | head -20 | grep .; then
+            echo "::error::The links above miss the /mitoage/ base path. Build them with href() from src/lib/url.ts."
+            exit 1
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

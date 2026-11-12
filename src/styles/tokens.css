@@ -208,7 +208,7 @@
     /* Heatmap ramp (codon usage). Cells mix between lo and hi by value. */
     --heat-lo: #f4fae6;
     --heat-mid: #b9dc35;
-    --heat-hi: #156f31;
+    --heat-hi: #0e4a22;
     --heat-text-lo: var(--navy-900);
     --heat-text-hi: var(--white);
 

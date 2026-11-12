@@ -59,7 +59,8 @@ const hasAside = Astro.slots.has("aside");
   .hero {
     position: relative;
     isolation: isolate;
-    overflow: hidden;
+    /* Clip the backdrop sideways only, so dropdowns (search results) can hang below the band. */
+    overflow-x: clip;
     color: var(--color-on-brand);
     background: var(--grad-hero-narrow);
   }
@@ -67,6 +68,11 @@ const hasAside = Astro.slots.has("aside");
     .hero {
       background: var(--grad-hero);
     }
+  }
+  /* While a control inside is focused (e.g. the search combobox), lift the band above the
+     content that follows so its popup is not covered. */
+  .hero:focus-within {
+    z-index: 30;
   }
   .hero__scrim {
     position: absolute;

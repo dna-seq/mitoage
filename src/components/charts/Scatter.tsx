@@ -260,7 +260,8 @@ export default function Scatter(props: ScatterProps) {
     const k = r.width / W();
     const px = x()(p.x) * k;
     const py = y()(p.y) * k;
-    const left = Math.min(Math.max(px, 90), r.width - 90);
+    const half = Math.min(128, r.width * 0.35);
+    const left = Math.min(Math.max(px, half), r.width - half);
     return { p, left, top: py, below: py < 90 };
   });
 

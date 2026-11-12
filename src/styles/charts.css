@@ -20,6 +20,9 @@
     user-select: none;
     -webkit-user-select: none;
   }
+  .chart__svg:focus:not(:focus-visible) {
+    outline: none;
+  }
   .chart__grid line {
     stroke: var(--chart-grid);
     stroke-width: 1;
@@ -94,7 +97,8 @@
     position: absolute;
     z-index: 5;
     pointer-events: none;
-    max-width: min(16rem, 80vw);
+    width: max-content;
+    max-width: min(16rem, 70vw);
     padding: var(--space-2) var(--space-3);
     border-radius: var(--radius-sm);
     background: var(--color-surface);

@@ -335,8 +335,9 @@
     padding: 6px;
     border-radius: var(--radius-pill);
     background: color-mix(in srgb, var(--color-surface) 92%, transparent);
+    /* Unprefixed only: the CSS minifier keeps just the last of a prefixed pair, and Chromium
+       ignores -webkit-backdrop-filter. Safari supports the standard property since 18. */
     backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
     box-shadow: var(--shadow-sm);
     overflow-x: auto;
     scrollbar-width: none;
@@ -898,12 +899,15 @@
     align-items: center;
     padding: 5px 4px;
     border-radius: 10px;
-    background: color-mix(in oklab, var(--heat-hi) calc(var(--v) * 100%), var(--heat-lo));
+    /* Two-part ramp: weak cells stay light (dark text), strong cells jump to the dark half
+       (light text), so no cell lands in the mid-tone band where neither text colour reaches 4.5:1. */
+    background: color-mix(in oklab, var(--heat-hi) calc(var(--v) * 88%), var(--heat-lo));
     color: var(--heat-text-lo);
     line-height: 1.15;
     font-variant-numeric: tabular-nums;
   }
   .heat__cell.is-strong {
+    background: color-mix(in oklab, var(--heat-hi) calc(70% + (var(--v) - 0.5) * 60%), var(--heat-lo));
     color: var(--heat-text-hi);
   }
   .heat__codon {

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "mitoage-preview",
+      "runtimeExecutable": "env",
+      "runtimeArgs": ["SITE_URL=https://just-dna.life", "BASE_PATH=/mitoage", "bun", "run", "preview", "--port", "4321"],
+      "port": 4321
+    }
+  ]
+}

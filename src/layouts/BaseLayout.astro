@@ -63,8 +63,7 @@ const ldJson = (o: JsonLd) => JSON.stringify(o).replace(/</g, "\\u003c");
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    {noindex ? <meta name="robots" content="noindex, follow" /> : <link rel="canonical" href={canonical} />}
 
     <script is:inline>
       try {
@@ -87,7 +86,7 @@ const ldJson = (o: JsonLd) => JSON.stringify(o).replace(/</g, "\\u003c");
     <meta property="og:type" content={ogType} />
     <meta property="og:title" content={title ?? fullTitle} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    {!noindex && <meta property="og:url" content={canonical} />}
     <meta property="og:image" content={imageUrl} />
     <meta property="og:image:alt" content={imageAlt} />
     <meta property="og:image:width" content="1200" />
