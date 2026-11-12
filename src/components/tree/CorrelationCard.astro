@@ -1,0 +1,128 @@
+---
+/**
+ * "What tracks lifespan in {clade}": the ten mtDNA features most strongly rank-correlated with
+ * maximum lifespan within one correlation scope, with Pearson, Spearman, BH q, PIC and
+ * body-mass partial correlations. Static HTML (no island).
+ *
+ * <CorrelationCard scope="order:Primates" clade="Primates" />
+ */
+import { getCorrelations, getFeatureDefs, type Correlation, type FeatureDef } from "~/data";
+import { fmtFixed, fmtInt } from "~/lib/format";
+import { exploreUrl } from "~/lib/urls";
+
+interface Props {
+  scope: string;
+  /** Display name of the clade, e.g. "Primates" or "mammals". */
+  clade: string;
+  id?: string;
+  limit?: number;
+}
+const { scope, clade, id = "lifespan-correlates", limit = 10 } = Astro.props;
+
+const all = getCorrelations({ scope, trait: "maxLongevityYears" });
+const tested = all.filter((r) => Number.isFinite(r.spearmanRho));
+const rows: Correlation[] = [...tested].sort((a, b) => Math.abs(b.spearmanRho) - Math.abs(a.spearmanRho)).slice(0, limit);
+const defs = new Map<string, FeatureDef>(getFeatureDefs().map((d) => [d.key, d]));
+const nMax = Math.max(0, ...rows.map((r) => r.n));
+const significant = tested.filter((r) => r.qValue < 0.05).length;
+
+const GROUP: Record<FeatureDef["group"], string> = {
+  composition: "Composition",
+  skew: "Strand skew",
+  size: "Length",
+  codon: "Codon",
+  aminoAcid: "Amino acid",
+};
+
+const SUP: Record<string, string> = { "-": "⁻", "0": "⁰", "1": "¹", "2": "²", "3": "³", "4": "⁴", "5": "⁵", "6": "⁶", "7": "⁷", "8": "⁸", "9": "⁹" };
+const fmtQ = (q: number): string => {
+  if (!Number.isFinite(q)) return "–";
+  if (q >= 0.001) return fmtFixed(q, 3);
+  const e = Math.floor(Math.log10(q));
+  const m = q / 10 ** e;
+  return `${fmtFixed(m, 1)}×10${String(e).replace(/./g, (c) => SUP[c] ?? c)}`;
+};
+const fmtR = (v: number | null | undefined): string => {
+  if (v === null || v === undefined || !Number.isFinite(v)) return "–";
+  const s = fmtFixed(Math.abs(v), 2);
+  if (s === "0.00") return s;
+  return v < 0 ? `−${s}` : `+${s}`;
+};
+const barStyle = (rho: number) => {
+  const w = Math.min(1, Math.abs(rho)) * 50;
+  return rho >= 0 ? `left:50%;width:${w.toFixed(1)}%` : `left:${(50 - w).toFixed(1)}%;width:${w.toFixed(1)}%`;
+};
+---
+
+<section class="card corr" id={id} aria-labelledby={`${id}-title`}>
+  <div class="card__head">
+    <h2 class="card__title" id={`${id}-title`}>What tracks lifespan in {clade}</h2>
+    <span class="card__desc">
+      Top {rows.length} of {fmtInt(tested.length)} mtDNA features by |ρ| · {fmtInt(significant)} with q &lt; 0.05
+    </span>
+  </div>
+  <div class="corr__scroll">
+    <table class="corr__table">
+      <caption class="visually-hidden">
+        mtDNA features most correlated with log10 maximum lifespan in {clade} (n = {fmtInt(nMax)})
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">Feature</th>
+          <th scope="col" class="is-num"><abbr title="Number of species">n</abbr></th>
+          <th scope="col" class="is-num"><abbr title="Pearson correlation">r</abbr></th>
+          <th scope="col" class="corr__rho-h"><abbr title="Spearman rank correlation">ρ</abbr></th>
+          <th scope="col" class="is-num"><abbr title="Benjamini–Hochberg q-value">q</abbr></th>
+          <th scope="col" class="is-num"><abbr title="Correlation of phylogenetically independent contrasts">PIC r</abbr></th>
+          <th scope="col" class="is-num"><abbr title="Partial correlation controlling for log10 adult body mass">Partial r</abbr></th>
+        </tr>
+      </thead>
+      <tbody>
+        {
+          rows.map((r) => {
+            const def = defs.get(r.featureKey);
+            const sig = r.qValue < 0.05;
+            const picSig = r.picPValue !== null && r.picPValue < 0.05;
+            const partialSig = r.partialPValue !== null && r.partialPValue !== undefined && r.partialPValue < 0.05;
+            return (
+              <tr>
+                <td class="corr__feature" data-label="Feature">
+                  <a href={exploreUrl({ x: "maxLongevityYears", y: r.featureKey })}>{def?.label ?? r.featureKey}</a>
+                  <span class="corr__group">{def ? GROUP[def.group] : ""}</span>
+                </td>
+                <td class="is-num" data-label="n">{fmtInt(r.n)}</td>
+                <td class="is-num" data-label="Pearson r">{fmtR(r.pearsonR)}</td>
+                <td class="corr__rho" data-label="Spearman ρ">
+                  <span class="corr__rho-val">{fmtR(r.spearmanRho)}</span>
+                  <span class="corr__bar" aria-hidden="true">
+                    <span class:list={["corr__bar-fill", r.spearmanRho < 0 ? "is-neg" : "is-pos"]} style={barStyle(r.spearmanRho)} />
+                  </span>
+                </td>
+                <td class="is-num" data-label="BH q">
+                  <span class:list={["corr__q", { "is-sig": sig }]}>
+                    {fmtQ(r.qValue)}
+                    {sig && <span class="visually-hidden"> (significant)</span>}
+                  </span>
+                </td>
+                <td class:list={["is-num", { "is-strong": picSig }]} data-label="PIC r">{fmtR(r.picR)}</td>
+                <td class:list={["is-num", { "is-strong": partialSig }]} data-label="Partial r">{fmtR(r.partialR)}</td>
+              </tr>
+            );
+          })
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="corr__notes">
+    <p>
+      Lifespan is log<sub>10</sub>-transformed. <b>r</b> is the Pearson and <b>ρ</b> the Spearman rank correlation across
+      species.{" "}<b>q</b> corrects the p-value for testing {fmtInt(tested.length)} features at once
+      (Benjamini–Hochberg);{" "}<span class="corr__q is-sig">green</span> marks q &lt; 0.05.
+    </p>
+    <p>
+      <b>PIC r</b> uses phylogenetically independent contrasts, so related species do not count as independent
+      evidence.{" "}<b>Partial r</b> holds log<sub>10</sub> body mass constant, because big animals live longer. Bold
+      values have p &lt; 0.05. Select a feature to plot it against lifespan.
+    </p>
+  </div>
+</section>

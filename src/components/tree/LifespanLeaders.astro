@@ -1,0 +1,46 @@
+---
+/**
+ * The longest-lived species of a clade, ranked, with a bar per lifespan, plus the
+ * shortest-lived one for contrast.
+ *
+ * <LifespanLeaders species={species} color="var(--class-mammalia)" />
+ */
+import type { Species } from "~/data/schema";
+import { fmtLifespan } from "~/lib/format";
+import { speciesUrl } from "~/lib/urls";
+
+interface Props {
+  species: Species[];
+  color: string;
+  top?: number;
+}
+const { species, color, top = 5 } = Astro.props;
+const byLife = [...species].sort((a, b) => b.maxLongevityYears - a.maxLongevityYears);
+const leaders = byLife.slice(0, top);
+const shortest = byLife.length > top ? byLife[byLife.length - 1] : undefined;
+const max = Math.max(...byLife.map((s) => s.maxLongevityYears), 1e-6);
+const rows = [
+  ...leaders.map((s, i) => ({ s, rank: String(i + 1) })),
+  ...(shortest ? [{ s: shortest, rank: "…" }] : []),
+];
+---
+
+<ol role="list" class="leaders" style={`--bar:${color}`}>
+  {
+    rows.map(({ s, rank }, i) => (
+      <li class:list={["leaders__row", { "leaders__row--last": i === rows.length - 1 && shortest }]}>
+        <span class="leaders__rank" aria-hidden="true">
+          {rank}
+        </span>
+        <a class="leaders__name" href={speciesUrl(s.slug)}>
+          {s.commonName || <i>{s.scientificName}</i>}
+          {s.commonName && <span class="leaders__sci">{s.scientificName}</span>}
+        </a>
+        <span class="leaders__value">{fmtLifespan(s.maxLongevityYears)}</span>
+        <span class="leaders__bar" aria-hidden="true">
+          <span style={`width:${Math.max(1.5, (s.maxLongevityYears / max) * 100).toFixed(1)}%`} />
+        </span>
+      </li>
+    ))
+  }
+</ol>

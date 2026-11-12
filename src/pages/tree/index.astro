@@ -1,0 +1,88 @@
+---
+import { getAllSpecies, getTaxonomyTree } from "~/data";
+import RadialTree from "~/components/tree/RadialTree";
+import TaxonList from "~/components/tree/TaxonList.astro";
+import "~/components/tree/tree.css";
+import Hero from "~/components/ui/Hero.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtInt } from "~/lib/format";
+import { breadcrumbLd } from "~/lib/seo";
+import { datingReport } from "~/lib/tree/build";
+import { taxaOfRank } from "~/lib/taxa";
+
+const root = getTaxonomyTree();
+const species = getAllSpecies();
+const classes = taxaOfRank("class");
+const orders = taxaOfRank("order");
+const families = taxaOfRank("family");
+const dating = datingReport();
+
+const title = "Taxonomy tree";
+const description = `A radial tree of all ${fmtInt(species.length)} MitoAge species: ${root.children.length} phyla, ${classes.length} classes, ${orders.length} orders and ${families.length} families, with maximum lifespan, GC content and mtDNA size for every species. Focus any clade and open its page.`;
+---
+
+<BaseLayout title={title} description={description} jsonLd={breadcrumbLd(Astro.site, [{ name: "Taxonomy tree", path: "/tree/" }])}>
+  <Hero variant="strip" seed={23}>
+    <p class="hero__eyebrow">Taxonomy</p>
+    <h1 class="hero__title">The tree of {fmtInt(species.length)} species</h1>
+    <p class="hero__lede">
+      {root.children.length} phyla, {classes.length} classes and {orders.length} orders, from fruit flies to bowhead whales. The outer
+      ring shows each species’ lifespan, GC content or genome size, so you can see where long lives cluster.
+    </p>
+  </Hero>
+
+  <section class="container tree-main" aria-label="Radial taxonomy tree">
+    <div class="card tree-card">
+      <RadialTree
+        client:visible
+        label={`Radial taxonomy tree of ${fmtInt(species.length)} species, coloured by class`}
+        syncUrl
+        panel
+        maxSize={860}
+      />
+    </div>
+  </section>
+
+  <section class="container section tree-outline" aria-labelledby="outline-title">
+    <SectionHeader
+      id="outline-title"
+      title="Browse the taxonomy"
+      eyebrow="Every phylum, class and order"
+      description="Open a class to see its orders. Every name links to a page with its species, lifespans and the mtDNA features that track lifespan."
+    />
+    <TaxonList root={root} />
+    <p class="tree-note muted">
+      Classification from AnAge. {
+        dating.dated
+          ? `Divergence times come from TimeTree dates on the Open Tree of Life topology; the root is ${fmtInt(dating.rootAge)} million years old.`
+          : "No dated tree is available for this build, so the tree is drawn by rank only."
+      }
+    </p>
+  </section>
+</BaseLayout>
+
+<style>
+  .tree-main {
+    padding-top: var(--space-7);
+  }
+  .tree-card {
+    gap: var(--space-4);
+  }
+  .tree-note {
+    margin-top: var(--space-6);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+  }
+  @media (max-width: 40rem) {
+    .tree-card {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+      --rt-bg: var(--color-bg);
+    }
+    .tree-card :global(.rtree) {
+      --rt-bg: var(--color-bg);
+    }
+  }
+</style>

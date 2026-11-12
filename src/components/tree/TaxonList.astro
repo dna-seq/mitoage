@@ -1,0 +1,66 @@
+---
+/**
+ * Static, crawlable outline of the taxonomy: phyla -> classes (details/summary) -> orders,
+ * with links to every taxon page and species counts. Works without JavaScript.
+ *
+ * <TaxonList root={getTaxonomyTree()} />
+ */
+import type { TaxonNode } from "~/data/schema";
+import Icon from "~/components/ui/Icon.astro";
+import { classColor, classLabel } from "~/lib/classes";
+import { fmtInt } from "~/lib/format";
+import { rankCount } from "~/lib/tree/names";
+import { taxonUrl } from "~/lib/urls";
+
+interface Props {
+  root: TaxonNode;
+  /** Class open by default. */
+  openClass?: string;
+}
+const { root, openClass = "Mammalia" } = Astro.props;
+const bySize = (a: TaxonNode, b: TaxonNode) => b.speciesCount - a.speciesCount || a.name.localeCompare(b.name);
+const phyla = [...root.children].sort(bySize);
+---
+
+<div class="tx-outline">
+  {
+    phyla.map((p) => (
+      <section class="tx-phylum" aria-labelledby={`phylum-${p.slug}`}>
+        <h3 class="tx-phylum__title" id={`phylum-${p.slug}`}>
+          <a href={taxonUrl("phylum", p.slug)}>{p.name}</a>
+          <span class="tx-phylum__meta">
+            phylum · {rankCount(p.speciesCount, "species")} · {rankCount(p.children.length, "class")}
+          </span>
+        </h3>
+        <div class="tx-classes">
+          {[...p.children].sort(bySize).map((c) => (
+            <details class="tx-class" open={c.name === openClass} style={`--dot:${classColor(c.name)}`}>
+              <summary class="tx-class__summary">
+                <span class="row-link__dot" aria-hidden="true" />
+                <span class="tx-class__name">
+                  {classLabel(c.name)}
+                  {classLabel(c.name) !== c.name && <span class="tx-class__sci">{c.name}</span>}
+                </span>
+                <span class="tx-class__count">{fmtInt(c.speciesCount)}</span>
+                <Icon name="chevronRight" class="tx-class__chev" size={18} />
+              </summary>
+              <div class="tx-class__body">
+                <a class="tx-class__page" href={taxonUrl("class", c.slug)}>
+                  {c.name}: class page <Icon name="arrowRight" size={16} />
+                </a>
+                <ul role="list" class="tx-orders">
+                  {[...c.children].sort(bySize).map((o) => (
+                    <li>
+                      <a href={taxonUrl("order", o.slug)}>{o.name}</a>
+                      <span class="tx-orders__n">{fmtInt(o.speciesCount)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    ))
+  }
+</div>

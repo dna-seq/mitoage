@@ -1,0 +1,63 @@
+---
+/**
+ * Child taxa of a clade as row links (as in "Browse by class" on the home page), with species
+ * counts and a bar for each child's share of the clade.
+ *
+ * <ChildTaxa nodes={taxon.children} color="var(--class-mammalia)" />
+ */
+import type { TaxonNode } from "~/data/schema";
+import { getSpeciesById } from "~/data";
+import { classColor, classLabel } from "~/lib/classes";
+import { fmtInt } from "~/lib/format";
+import { childRank, isItalicRank, rankCount } from "~/lib/tree/names";
+import { taxonUrl } from "~/lib/urls";
+
+interface Props {
+  nodes: TaxonNode[];
+  /** Dot colour for children below class rank (classes use their own colour). */
+  color: string;
+  /** One column instead of a responsive grid. */
+  list?: boolean;
+  /** Cap the height and scroll (long lists beside the tree, wide screens only). */
+  scroll?: boolean;
+}
+const { nodes, color, list = false, scroll = false } = Astro.props;
+const sorted = [...nodes].sort((a, b) => b.speciesCount - a.speciesCount || a.name.localeCompare(b.name));
+const max = Math.max(1, ...sorted.map((n) => n.speciesCount));
+
+const subOf = (n: TaxonNode): string => {
+  if (n.rank === "class") return classLabel(n.name) !== n.name ? n.name : rankCount(n.children.length, "order");
+  if (n.rank === "genus") {
+    if (n.speciesCount === 1) {
+      const leaf = n.children[0];
+      const s = leaf?.speciesId !== undefined ? getSpeciesById(leaf.speciesId) : undefined;
+      return s?.commonName || leaf?.name || "";
+    }
+    return rankCount(n.speciesCount, "species");
+  }
+  return rankCount(n.children.length, childRank(n.rank));
+};
+---
+
+<ul role="list" class:list={["tx-children", { "tx-children--list": list, "tx-children--scroll": scroll }]}>
+  {
+    sorted.map((n) => (
+      <li>
+        <a class="row-link" href={taxonUrl(n.rank, n.slug)} style={`--dot:${n.rank === "class" ? classColor(n.name) : color}`}>
+          <span class="row-link__dot" aria-hidden="true" />
+          <span class="row-link__main">
+            <span class={isItalicRank(n.rank) ? "sci" : undefined}>{n.rank === "class" ? classLabel(n.name) : n.name}</span>
+            <span class="row-link__sub">{subOf(n)}</span>
+            <span class="tx-bar" aria-hidden="true">
+              <span style={`width:${Math.max(3, (n.speciesCount / max) * 100).toFixed(1)}%`} />
+            </span>
+          </span>
+          <span class="row-link__value" title={rankCount(n.speciesCount, "species")}>
+            {fmtInt(n.speciesCount)}
+          </span>
+          <span class="tx-chev" aria-hidden="true" />
+        </a>
+      </li>
+    ))
+  }
+</ul>

@@ -1,0 +1,415 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getAllSpecies, getCorrelations, getSpeciesById, getSpeciesInTaxon, getTaxa, type Rank, type Species, type TaxonNode } from "~/data";
+import Scatter from "~/components/charts/Scatter";
+import CladeScatter from "~/components/tree/CladeScatter";
+import CladeSpeciesTable, { groupLabel } from "~/components/tree/CladeSpeciesTable";
+import ChildTaxa from "~/components/tree/ChildTaxa.astro";
+import CorrelationCard from "~/components/tree/CorrelationCard.astro";
+import LifespanLeaders from "~/components/tree/LifespanLeaders.astro";
+import RadialTree from "~/components/tree/RadialTree";
+import "~/components/tree/tree.css";
+import Breadcrumb from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Card from "~/components/ui/Card.astro";
+import Chip from "~/components/ui/Chip.astro";
+import type { Row } from "~/components/ui/DataTable";
+import Hero from "~/components/ui/Hero.astro";
+import StatCard from "~/components/ui/StatCard.astro";
+import TabNav from "~/components/ui/TabNav.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { CLASS_GROUPS, classColor, classLabel, COLOURED_CLASSES } from "~/lib/classes";
+import { fmtBp, fmtInt, fmtLifespan, fmtLifespanLong, fmtNum, fmtPct } from "~/lib/format";
+import { hashString } from "~/lib/random";
+import { GC_LIFESPAN_URL, keySpeciesPresent } from "~/lib/scatter";
+import { breadcrumbLd } from "~/lib/seo";
+import { ancestorsOf, cladeStats } from "~/lib/tree/build";
+import { treeUrl } from "~/lib/tree/data";
+import { childRank, RANK_LABEL, rankCount, rankPlural } from "~/lib/tree/names";
+import { cladeLd } from "~/lib/tree/seo";
+import { speciesUrl, taxonUrl } from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  getTaxa().map((taxon) => ({ params: { rank: taxon.rank, slug: taxon.slug }, props: { taxon } }))) satisfies GetStaticPaths;
+
+interface Props {
+  taxon: TaxonNode;
+}
+
+const { taxon } = Astro.props;
+const rank = taxon.rank;
+const key = `${rank}:${taxon.slug}`;
+const name = taxon.name;
+const all = getAllSpecies();
+const species = getSpeciesInTaxon(rank, taxon.slug);
+const stats = cladeStats(species);
+const ancestors = ancestorsOf(taxon);
+const parent = ancestors[ancestors.length - 1];
+const isGenus = rank === "genus";
+const children = taxon.children;
+const kidRank = childRank(rank);
+const ucFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+// ---- class context and colours
+const classes = [...new Set(species.map((s) => s.taxonomy.class))];
+const cls = classes.length === 1 ? classes[0] : undefined;
+const friendly = rank === "class" ? classLabel(name) : undefined;
+const coloured = cls !== undefined && (COLOURED_CLASSES as readonly string[]).includes(cls);
+const cladeColor = coloured && cls ? classColor(cls) : "var(--chart-highlight)";
+const dotColor = cls ? classColor(cls) : "var(--class-other)";
+const displayName = friendly && friendly !== name ? friendly : name;
+/** "Primates", "mammals", "Homo" for prose. */
+const proseName = friendly && friendly !== name ? friendly.toLowerCase() : name;
+
+// ---- text helpers
+const nameOf = (s: Species | undefined) => (s ? s.commonName || s.scientificName : "");
+const lifeRange = (lo: number, hi: number) =>
+  lo >= 1 && hi >= 1 ? `${fmtNum(lo, 1)}–${fmtLifespan(hi)}` : `${fmtLifespan(lo)}–${fmtLifespan(hi)}`;
+const longest = stats.longest;
+const shortest = stats.shortest;
+const childSummary = isGenus || !children.length ? "" : ` in ${rankCount(children.length, kidRank)}`;
+const lede =
+  species.length > 1 && longest && shortest
+    ? `${rankCount(species.length, "species")}${childSummary}. Maximum lifespan ranges from ${fmtLifespanLong(
+        shortest.maxLongevityYears,
+      )} (${nameOf(shortest)}) to ${fmtLifespanLong(longest.maxLongevityYears)} (${nameOf(longest)}).`
+    : longest
+      ? `One species in MitoAge: ${longest.scientificName}${longest.commonName ? ` (${longest.commonName})` : ""}, maximum lifespan ${fmtLifespanLong(longest.maxLongevityYears)}.`
+      : "";
+
+// ---- breadcrumb (kingdom only on phylum pages, where it is the only ancestor)
+const crumbNodes = ancestors.filter((a) => a.rank !== "kingdom" || ancestors.length === 1);
+const crumbs = crumbNodes.map((a) => ({ label: a.name, href: taxonUrl(a.rank, a.slug), rank: a.rank, italic: a.rank === "genus" }));
+
+// ---- tree
+const showTree = !isGenus && species.length >= 3;
+
+// ---- scatter
+const finite = all.filter((x) => x.maxLongevityYears > 0 && Number.isFinite(x.gcPercent));
+const lifespans = finite.map((x) => x.maxLongevityYears);
+const gcs = finite.map((x) => x.gcPercent);
+const xDomain: [number, number] = [Math.min(...lifespans) / 1.35, Math.max(...lifespans) * 1.35];
+const yPad = (Math.max(...gcs) - Math.min(...gcs)) * 0.06;
+const yDomain: [number, number] = [Math.min(...gcs) - yPad, Math.max(...gcs) + yPad];
+const wholeTree = species.length >= all.length * 0.5;
+const shortLabel = (s: Species) =>
+  s.commonName ? (s.commonName.length > 18 ? s.commonName.split(/\s+/).slice(-2).join(" ") : s.commonName) : s.scientificName;
+// Partial points: Scatter merges them over the full dataset by id, adding the short labels.
+const keyPoints = keySpeciesPresent().flatMap((slug) => {
+  const s = all.find((x) => x.slug === slug);
+  return s ? [{ id: slug, short: shortLabel(s) }] : [];
+});
+const scatterLabels = (() => {
+  const picks = species.length <= 5 ? species : [longest, shortest].filter((s): s is Species => s !== undefined);
+  return picks.map((s) => ({ id: s.slug, short: shortLabel(s) }));
+})();
+
+// ---- species table: every row inline for small clades, the first page for big ones
+const INLINE_MAX = 30;
+const PAGE = 20;
+const groupRank: Rank | undefined =
+  rank === "kingdom" || rank === "phylum" ? "class" : rank === "class" ? "order" : rank === "order" ? "family" : undefined;
+const byLife = [...species].sort((a, b) => b.maxLongevityYears - a.maxLongevityYears);
+const tableRows: Row[] = (species.length <= INLINE_MAX ? byLife : byLife.slice(0, PAGE)).map((s) => {
+  const row: Row = {
+    name: s.scientificName,
+    common: s.commonName,
+    href: speciesUrl(s.slug),
+    life: s.maxLongevityYears,
+    size: s.mtdnaSizeBp,
+    gc: s.gcPercent,
+  };
+  if (groupRank) row["group"] = groupLabel(groupRank, s.taxonomy[groupRank as keyof Species["taxonomy"]]);
+  return row;
+});
+
+// ---- correlations
+const scope = rank === "kingdom" ? "all" : rank === "class" || rank === "order" ? `${rank}:${name}` : null;
+const hasCorrelations = scope !== null && getCorrelations({ scope, trait: "maxLongevityYears" }).length > 0;
+
+// ---- siblings
+const siblings = parent ? [...parent.children].filter((c) => c !== taxon).sort((a, b) => b.speciesCount - a.speciesCount) : [];
+const shownSiblings = siblings.slice(0, 24);
+
+// ---- SEO
+const title = friendly && friendly !== name ? `${RANK_LABEL[rank]} ${name} (${friendly})` : `${RANK_LABEL[rank]} ${name}`;
+const description =
+  species.length > 1 && longest && shortest
+    ? `Mitochondrial genomes of ${fmtInt(species.length)} species in the ${rank} ${name}${friendly && friendly !== name ? ` (${proseName})` : ""}: lifespans from ${fmtLifespan(
+        shortest.maxLongevityYears,
+      )} to ${fmtLifespan(longest.maxLongevityYears)} (${nameOf(longest)}), median GC ${fmtPct(stats.medianGc, 1)}.${
+        childSummary ? ` Browse ${rankCount(children.length, kidRank)}.` : ""
+      }`
+    : `Mitochondrial genome of ${longest?.scientificName ?? name}${longest?.commonName ? ` (${longest.commonName})` : ""}, the only ${name} species in MitoAge: lifespan ${fmtLifespan(longest?.maxLongevityYears)}, GC ${fmtPct(stats.medianGc, 1)}.`;
+const jsonLd = [
+  cladeLd(Astro.site, taxon, {
+    parent,
+    alternateName: friendly && friendly !== name ? friendly : undefined,
+    speciesOf: (n) => (n.speciesId !== undefined ? getSpeciesById(n.speciesId) : undefined),
+  }),
+  breadcrumbLd(Astro.site, [
+    { name: "Taxonomy tree", path: "/tree/" },
+    ...ancestors.map((a) => ({ name: a.name, path: taxonUrl(a.rank, a.slug) })),
+    { name, path: taxonUrl(rank, taxon.slug) },
+  ]),
+];
+
+const hasOverview = showTree || (!isGenus && children.length > 0);
+const tabs = [
+  ...(hasOverview ? [{ id: "overview", label: "Overview" }] : []),
+  { id: "lifespan", label: "Lifespan" },
+  ...(hasCorrelations ? [{ id: "lifespan-correlates", label: "What tracks lifespan" }] : []),
+  { id: "species", label: "Species", count: species.length },
+];
+const largestChild = [...children].sort((a, b) => b.speciesCount - a.speciesCount)[0];
+const wideChildren = !showTree;
+---
+
+<BaseLayout title={title} description={description} jsonLd={jsonLd} ogType="article">
+  <Hero variant="strip" seed={hashString(key) % 997} align="end">
+    {crumbs.length > 0 && <Breadcrumb items={crumbs} label="Taxonomy" />}
+    <p class="hero__eyebrow">{RANK_LABEL[rank]}</p>
+    <h1 class:list={["hero__title", { "hero__title--sci": isGenus }]}>{name}</h1>
+    {friendly && friendly !== name && <p class="tx-label">{friendly}</p>}
+    {lede && <p class="hero__lede tx-lede">{lede}</p>}
+    <Fragment slot="aside">
+      <div class="hero__actions">
+        <Button href={treeUrl(key)} variant="light" icon="tree">Show in the tree</Button>
+      </div>
+    </Fragment>
+  </Hero>
+
+  <div class="container tx-body">
+    <section class="stat-grid" aria-label="Key numbers">
+      <StatCard layout="label-first" size="md" label="Species" value={fmtInt(species.length)} tone="green" note="with a complete mtDNA" />
+      {
+        longest && shortest && (
+          <StatCard
+            layout="label-first"
+            size="md"
+            label={species.length > 1 ? "Lifespan range" : "Maximum lifespan"}
+            value={species.length > 1 ? lifeRange(shortest.maxLongevityYears, longest.maxLongevityYears) : fmtLifespan(longest.maxLongevityYears)}
+            tone="red"
+            href={speciesUrl(longest.slug)}
+            hrefLabel={species.length > 1 ? `Longest: ${nameOf(longest)}` : nameOf(longest)}
+          />
+        )
+      }
+      <StatCard
+        layout="label-first"
+        size="md"
+        label={species.length > 1 ? "Median GC" : "GC content"}
+        value={fmtPct(stats.medianGc, 1)}
+        tone="sky"
+        note={species.length > 1 ? `Range ${fmtNum(stats.minGc, 1)}–${fmtPct(stats.maxGc, 1)}` : "Whole genome"}
+      />
+      {
+        isGenus ? (
+          <StatCard layout="label-first" size="md" label="Median mtDNA size" value={fmtBp(stats.medianSize)} tone="orange" />
+        ) : (
+          <StatCard
+            layout="label-first"
+            size="md"
+            label={ucFirst(rankPlural(kidRank))}
+            value={fmtInt(children.length)}
+            tone="orange"
+            note={largestChild && children.length > 1 ? `Largest: ${largestChild.rank === "class" ? classLabel(largestChild.name) : largestChild.name} (${fmtInt(largestChild.speciesCount)})` : undefined}
+          />
+        )
+      }
+    </section>
+
+    <TabNav items={tabs} label={`${name} sections`} class="tx-tabs" />
+
+    {hasOverview && (
+    <section id="overview" class="tx-section" aria-labelledby="overview-title">
+      <h2 id="overview-title" class="visually-hidden">Overview</h2>
+      <div class:list={["tx-overview", { "tx-overview--wide": wideChildren }]}>
+        {
+          showTree && (
+            <Card class="tx-tree" title={`The ${displayName} tree`}>
+              <span slot="actions" class="card__desc">Select a clade to look inside</span>
+              <RadialTree
+                client:visible
+                label={`Radial tree of ${name}, ${fmtInt(species.length)} species`}
+                rootKey={key}
+                maxSize={660}
+              />
+            </Card>
+          )
+        }
+        {
+          !isGenus && children.length > 0 && (
+            <Card class="tx-kids" title={`${ucFirst(rankPlural(kidRank))} of ${displayName}`}>
+              <span slot="actions" class="card__desc">{rankCount(children.length, kidRank)}, by species count</span>
+              <ChildTaxa nodes={children} color={dotColor} list={!wideChildren} scroll={!wideChildren && children.length > 9} />
+            </Card>
+          )
+        }
+      </div>
+    </section>
+    )}
+
+    <section id="lifespan" class="tx-section tx-life" aria-labelledby="lifespan-title">
+      <Card class="tx-plot">
+        <h2 id="lifespan-title" class="card__title">
+          Where {isGenus ? <><i>{name}</i> species</> : displayName} sit among {fmtInt(all.length)} species
+        </h2>
+        <p class="card__desc">Whole-genome GC content against maximum lifespan. Hover or tap a point; select it again to open the species.</p>
+        {
+          wholeTree ? (
+            <Scatter
+              client:visible
+              points={keyPoints}
+              dataUrl={GC_LIFESPAN_URL}
+              groups={CLASS_GROUPS}
+              xLog
+              xDomain={xDomain}
+              yDomain={yDomain}
+              xLabel="Maximum lifespan, log scale"
+              yLabel="GC %"
+              xFormat="lifespan"
+              yFormat="percent"
+              labelIds={keySpeciesPresent()}
+              interactiveLegend
+              ariaLabel={`Scatter plot of GC percent against maximum lifespan for all species, coloured by class`}
+              height={340}
+            />
+          ) : (
+            <CladeScatter
+              client:visible
+              {...(species.length <= INLINE_MAX ? { ids: species.map((s) => s.slug).join(",") } : { cladeKey: key })}
+              count={species.length}
+              color={cladeColor}
+              cladeLabel={displayName}
+              labels={scatterLabels}
+              dataUrl={GC_LIFESPAN_URL}
+              xLog
+              xDomain={xDomain}
+              yDomain={yDomain}
+              xLabel="Maximum lifespan, log scale"
+              yLabel="GC %"
+              xFormat="lifespan"
+              yFormat="percent"
+              ariaLabel={`Scatter plot of GC percent against maximum lifespan with the ${fmtInt(species.length)} species of ${name} highlighted`}
+              height={340}
+            />
+          )
+        }
+      </Card>
+      {
+        species.length >= 2 && (
+          <Card class="tx-leaders" title={species.length > 5 ? "Longest-lived" : "By lifespan"}>
+            <span slot="actions" class="card__desc">{species.length > 6 ? "Top 5 and the shortest-lived" : `All ${species.length}`}</span>
+            <LifespanLeaders species={species} color={coloured ? cladeColor : "var(--tone-red-bar)"} top={species.length > 6 ? 5 : species.length} />
+          </Card>
+        )
+      }
+    </section>
+
+    {hasCorrelations && scope && <CorrelationCard scope={scope} clade={rank === "kingdom" ? "all animals" : displayName} />}
+
+    <section id="species" class="tx-section" aria-labelledby="species-title">
+      <Card>
+        <div class="card__head">
+          <h2 id="species-title" class="card__title">Species in {isGenus ? <i>{name}</i> : displayName}</h2>
+          <span class="card__desc">Select a column to sort</span>
+        </div>
+        <CladeSpeciesTable
+          client:visible
+          cladeKey={key}
+          total={species.length}
+          rows={tableRows}
+          groupRank={groupRank}
+          pageSize={PAGE}
+          caption={`Species in ${name}`}
+        />
+      </Card>
+    </section>
+
+    {
+      shownSiblings.length > 0 && parent && (
+        <section class="tx-section tx-related" aria-labelledby="related-title">
+          <h2 id="related-title" class="tx-related__title">
+            Other {rankPlural(rank)} in {parent.rank === "class" ? classLabel(parent.name).toLowerCase() : parent.name}
+          </h2>
+          <ul role="list" class="cluster tx-related__list" style="--cluster-gap: var(--space-2)">
+            {shownSiblings.map((s) => (
+              <li>
+                <Chip href={taxonUrl(s.rank, s.slug)} variant="soft" count={s.speciesCount} dot={s.rank === "class" ? classColor(s.name) : dotColor} class={isGenus ? "sci" : undefined}>
+                  {s.rank === "class" ? classLabel(s.name) : s.name}
+                </Chip>
+              </li>
+            ))}
+            {siblings.length > shownSiblings.length && (
+              <li>
+                <Chip href={taxonUrl(parent.rank, parent.slug)} variant="soft">
+                  all {fmtInt(siblings.length + 1)} in {parent.name}
+                </Chip>
+              </li>
+            )}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .tx-lede {
+    font-size: var(--fs-md);
+  }
+  .tx-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    padding-block: var(--space-7) var(--section-gap);
+  }
+  .tx-section {
+    scroll-margin-top: 5rem;
+  }
+  .tx-overview {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+  .tx-overview :global(.tx-tree) {
+    flex: 3 1 32rem;
+  }
+  .tx-overview :global(.tx-kids) {
+    flex: 2 1 20rem;
+  }
+  .tx-overview--wide :global(.tx-kids) {
+    flex-basis: 100%;
+  }
+  .tx-life {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: var(--space-6);
+  }
+  .tx-life :global(.tx-plot) {
+    flex: 3 1 32rem;
+  }
+  .tx-life :global(.tx-leaders) {
+    flex: 1 1 18rem;
+  }
+  .tx-related {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+  .tx-related__title {
+    font-size: var(--fs-lg);
+  }
+  .tx-related__list {
+    margin: 0;
+    padding: 0;
+  }
+  @media (max-width: 40rem) {
+    .tx-overview :global(.tx-tree) {
+      padding-inline: var(--space-3);
+    }
+  }
+</style>
