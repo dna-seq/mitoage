@@ -1,0 +1,675 @@
+/*
+ * Compare page (Compare.tsx, DotPlot.tsx, Marker.tsx). Tokens only. Each compared species has a
+ * series colour --cmp-0 .. --cmp-5 (the site's tone colours) and a marker shape.
+ */
+/* Same layer order as global.css, so the order holds even if this file is bundled first. */
+@layer tokens, reset, base, components, utilities;
+
+@layer components {
+  .cmp {
+    --cmp-0: var(--tone-green-bar);
+    --cmp-1: var(--tone-orange-bar);
+    --cmp-2: var(--tone-sky-bar);
+    --cmp-3: var(--tone-red-bar);
+    --cmp-4: var(--tone-violet-bar);
+    --cmp-5: var(--tone-navy-bar);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    scroll-margin-top: var(--space-4);
+  }
+  /* Arriving with ?species=: keep the "pick species" state hidden until the island has read it. */
+  .cmp-has-query .cmp:not([data-ready]) .cmp-empty {
+    visibility: hidden;
+  }
+
+  /* ================= Markers and legend ================= */
+  .cmp-marker {
+    flex: none;
+    display: inline-block;
+    overflow: visible;
+  }
+  .cmp-marker__shape,
+  .cmp-dot__mark {
+    stroke: var(--chart-point-stroke);
+    stroke-width: 1.6;
+  }
+  .cmp-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+  }
+  .cmp-legend li {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 28px;
+  }
+
+  /* ================= Toolbar ================= */
+  .cmp-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+  .cmp-toolbar__count {
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-toolbar__count strong {
+    color: var(--color-heading);
+    font-weight: var(--fw-black);
+  }
+  .cmp-toolbar__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  /* ================= Species cards ================= */
+  .cmp-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 14.5rem), 1fr));
+    gap: var(--space-4);
+  }
+  @media (max-width: 40rem) {
+    .cmp-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+    .cmp-card--add {
+      grid-column: 1 / -1;
+    }
+  }
+  .cmp-card {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: calc(var(--space-4) + 4px) var(--space-4) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    overflow-wrap: anywhere;
+  }
+  .cmp-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: var(--series, var(--color-border));
+  }
+  .cmp-card__top {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin-top: calc(-1 * var(--space-2));
+    margin-right: calc(-1 * var(--space-2));
+  }
+  .cmp-card__top .cmp-marker {
+    width: 22px;
+    height: 22px;
+  }
+  .cmp-card__class {
+    align-self: flex-start;
+    max-width: 100%;
+    min-width: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    margin-top: var(--space-1);
+    padding: 0.2em 0.75em 0.2em 0.6em;
+    border-radius: var(--radius-pill);
+    background: color-mix(in srgb, var(--dot, var(--class-other)) 16%, transparent);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cmp-card__top .cmp-card__x {
+    margin-left: auto;
+  }
+  .cmp-card__order {
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .cmp-card__dot {
+    flex: none;
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--dot, var(--class-other));
+  }
+  .cmp-card__x {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: var(--tap);
+    height: var(--tap);
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text-muted);
+  }
+  .cmp-card__x:hover {
+    color: var(--color-text);
+    background: var(--color-surface-sunken);
+  }
+  .cmp-card__name {
+    font-size: var(--fs-md);
+    line-height: 1.2;
+  }
+  .cmp-card__name a {
+    color: var(--color-heading);
+    text-decoration: none;
+  }
+  /* The whole card opens the species page; the remove button sits above that link. */
+  .cmp-card__name a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  .cmp-card__x {
+    position: relative;
+    z-index: 1;
+  }
+  .cmp-card:has(.cmp-card__name a:hover) {
+    box-shadow: var(--shadow-lg);
+  }
+  .cmp-card:has(.cmp-card__name a:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+  .cmp-card__name a:focus-visible {
+    outline: none;
+  }
+  .cmp-card__name a:hover {
+    color: var(--color-link);
+    text-decoration: underline;
+  }
+  .cmp-card__common {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-card__stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px solid var(--color-border);
+  }
+  .cmp-card__stats dt {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-card__stats dd {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+  @media (max-width: 40rem) {
+    .cmp-card {
+      padding: calc(var(--space-3) + 4px) var(--space-3) var(--space-3);
+    }
+    .cmp-card__name {
+      font-size: var(--fs-base);
+    }
+    .cmp-card__order {
+      display: none;
+    }
+    .cmp-card__stats {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 2px;
+    }
+    .cmp-card__stats > div {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-2);
+    }
+  }
+  .cmp-card__state {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    min-height: 7rem;
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-card__loading {
+    animation: cmp-pulse 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes cmp-pulse {
+    to {
+      opacity: 0.45;
+    }
+  }
+  .cmp-card--add {
+    justify-content: center;
+    gap: var(--space-2);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 2px var(--color-border-strong);
+    border-radius: var(--radius-lg);
+    overflow: visible;
+  }
+  .cmp-card--add::before {
+    display: none;
+  }
+  .cmp-card__add-title {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-weight: var(--fw-black);
+    color: var(--color-heading);
+  }
+  .cmp-card__add-title svg {
+    color: var(--tone-green-ink);
+  }
+  .cmp-card__hint {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-combo .search__box {
+    height: var(--tap);
+  }
+  .cmp-combo--big .search__box {
+    height: 56px;
+    padding-left: var(--space-5);
+    box-shadow:
+      inset 0 0 0 2px var(--color-border),
+      var(--shadow-sm);
+  }
+
+  /* ================= Empty state ================= */
+  .cmp-empty {
+    gap: var(--space-5);
+  }
+  .cmp-empty__intro {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    max-width: 38rem;
+  }
+  .cmp-suggest {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+    gap: var(--space-3);
+  }
+  .cmp-suggest__item {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1.5px var(--color-border);
+    color: var(--color-text);
+    text-decoration: none;
+    transition:
+      transform var(--dur-fast) var(--ease-out),
+      box-shadow var(--dur-fast) var(--ease-out);
+  }
+  .cmp-suggest__item:hover {
+    color: var(--color-text);
+    transform: translateY(-2px);
+    box-shadow:
+      inset 0 0 0 1.5px var(--color-border-strong),
+      var(--shadow-md);
+  }
+  .cmp-suggest__title {
+    font-weight: var(--fw-black);
+    color: var(--color-heading);
+  }
+  .cmp-suggest__why {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-suggest__species {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    margin-top: auto;
+    padding-top: var(--space-2);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+  }
+  .cmp-suggest__sp {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+  .cmp-suggest__life {
+    color: var(--tone-green-ink);
+    font-weight: var(--fw-black);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ================= One species: suggestions ================= */
+  .cmp-one {
+    gap: var(--space-3);
+  }
+  .cmp-rel {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+    gap: var(--space-2);
+  }
+  .cmp-rel__btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    min-height: 56px;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    box-shadow: inset 0 0 0 1.5px var(--color-border);
+    color: var(--color-text);
+    text-align: left;
+  }
+  .cmp-rel__btn:hover {
+    background: var(--color-surface-sunken);
+    box-shadow: inset 0 0 0 1.5px var(--color-border-strong);
+  }
+  .cmp-rel__btn > svg {
+    flex: none;
+    color: var(--tone-green-ink);
+  }
+  .cmp-rel__text {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    line-height: 1.3;
+  }
+  .cmp-rel__name {
+    font-weight: var(--fw-black);
+  }
+  .cmp-rel__life {
+    color: var(--tone-green-ink);
+  }
+  .cmp-rel__why {
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-loading {
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+  }
+
+  /* ================= Sections ================= */
+  .cmp-section {
+    gap: var(--space-4);
+  }
+  @media (max-width: 40rem) {
+    .cmp-section .card__head .seg {
+      width: 100%;
+      display: grid;
+      grid-auto-columns: minmax(0, 1fr);
+      grid-auto-flow: column;
+    }
+    .cmp-section .card__head .seg__btn {
+      padding-inline: 0.4em;
+      font-size: var(--fs-xs);
+    }
+  }
+  .cmp-scroll {
+    overflow-x: auto;
+    border-radius: var(--radius-md);
+    box-shadow: inset 0 0 0 2px var(--color-border);
+    overscroll-behavior-x: contain;
+  }
+  .cmp-table {
+    width: 100%;
+    font-size: var(--fs-sm);
+    font-variant-numeric: tabular-nums;
+  }
+  .cmp-table th,
+  .cmp-table td {
+    padding: 0.6em 0.9em;
+    text-align: left;
+    vertical-align: middle;
+  }
+  .cmp-table thead th,
+  .cmp-table thead td {
+    background: var(--color-surface-sunken);
+    vertical-align: bottom;
+  }
+  .cmp-table thead th {
+    min-width: 9rem;
+    font-weight: var(--fw-black);
+    color: var(--color-heading);
+  }
+  .cmp-table tbody th[scope="row"] {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    min-width: 10rem;
+    background: var(--color-surface);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+  }
+  .cmp-table thead td:first-child {
+    position: sticky;
+    left: 0;
+    z-index: 1;
+  }
+  .cmp-table tbody tr + tr > * {
+    border-top: 1px solid var(--color-border);
+  }
+  .cmp-table td {
+    font-weight: var(--fw-black);
+  }
+  /* Taller hit area for links in table cells without changing the row height. */
+  .cmp-table a {
+    display: inline-block;
+    padding-block: 12px;
+    margin-block: -12px;
+  }
+  .cmp-table__group th {
+    padding-top: var(--space-4);
+    background: var(--color-surface);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--tone-green-ink);
+  }
+  .cmp-table__group th[scope="rowgroup"] {
+    position: sticky;
+    left: 0;
+  }
+  .cmp-th {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: var(--space-2);
+    line-height: 1.25;
+  }
+  .cmp-th .cmp-marker {
+    margin-top: 2px;
+  }
+  .cmp-th__sci {
+    display: block;
+    font-size: var(--fs-xs);
+    font-style: italic;
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-val {
+    display: block;
+    white-space: nowrap;
+  }
+  .cmp-bar {
+    display: block;
+    height: 5px;
+    margin-top: 4px;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    overflow: hidden;
+  }
+  .cmp-bar > span {
+    display: block;
+    height: 100%;
+    border-radius: var(--radius-pill);
+  }
+  @media (max-width: 40rem) {
+    /* Two species columns fit next to the sticky row labels on a phone; the rest scroll. */
+    .cmp-table th,
+    .cmp-table td {
+      padding: 0.55em 0.6em;
+    }
+    .cmp-table tbody th[scope="row"] {
+      min-width: 6.4rem;
+      max-width: 7.5rem;
+      font-size: var(--fs-xs);
+    }
+    .cmp-table thead th {
+      min-width: 6.6rem;
+    }
+  }
+  .cmp-table--compact th,
+  .cmp-table--compact td {
+    padding: 0.45em 0.8em;
+  }
+  .cmp-table--compact tbody th[scope="row"] {
+    min-width: 6rem;
+    color: var(--color-text);
+  }
+
+  /* ================= Composition ================= */
+  .cmp-comp {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+    gap: var(--space-5) var(--space-8);
+  }
+  .cmp-comp__region {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    min-width: 0;
+  }
+  .cmp-comp__title {
+    font-size: var(--fs-base);
+  }
+  .cmp-comp__row {
+    display: grid;
+    grid-template-columns: minmax(0, 10.5rem) minmax(0, 1fr) 3.4rem;
+    align-items: center;
+    gap: var(--space-3);
+  }
+  .cmp-comp__who {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+  }
+  .cmp-comp__who > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .cmp-comp__gc {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .cmp-comp__na {
+    grid-column: span 2;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cmp-comp .comp-bar {
+    --h: 16px;
+  }
+  @media (max-width: 30rem) {
+    .cmp-comp__row {
+      grid-template-columns: minmax(0, 1fr) 3.4rem;
+      gap: 4px var(--space-3);
+    }
+    .cmp-comp__who {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* ================= Dot plot ================= */
+  .cmp-dot {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .cmp-dot__frame {
+    position: relative;
+    width: 100%;
+    touch-action: pan-y;
+  }
+  .cmp-dot__svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    font-family: var(--font-sans);
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .cmp-dot__band {
+    fill: var(--color-surface-2);
+  }
+  .cmp-dot__label {
+    fill: var(--chart-label);
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .cmp-dot__spread {
+    stroke: var(--color-border-strong);
+    stroke-width: 6;
+    stroke-linecap: round;
+  }
+  .cmp-details {
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    padding: 0 var(--space-4);
+  }
+  .cmp-details summary {
+    display: flex;
+    align-items: center;
+    min-height: var(--tap);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    color: var(--color-link);
+    cursor: pointer;
+  }
+  .cmp-details[open] {
+    padding-bottom: var(--space-4);
+  }
+  .cmp-details .cmp-scroll {
+    background: var(--color-surface);
+  }
+}
