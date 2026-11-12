@@ -150,8 +150,8 @@ export const badgeMarkup = (id: string, text: BadgeTextOptions = {}): string => 
 <path d="M-6 -16C-6 -8 6 -8 6 0S-6 8 -6 16"/><path d="M6 -16C6 -8 -6 -8 -6 0S6 8 6 16"/>
 <path d="M-4.6 -12.5H4.6M-4.6 12.5H4.6M-2.2 -4.5H2.2M-2.2 4.5H2.2" stroke-width="1.8"/></g>`;
   const hourglass = `<g transform="translate(271 150)" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-<path d="M-8 -15H8M-8 15H8"/><path d="M-5.5 -15C-5.5 -5 5.5 -5 5.5 0S-5.5 5 -5.5 15M5.5 -15C5.5 -5 -5.5 -5 -5.5 0S5.5 5 5.5 15"/>
-<path d="M-3 11.5H3L0 6.5Z" fill="#fff" stroke-width="1.4"/></g>`;
+<path d="M-9 -16H9M-9 16H9"/><path d="M-6.5 -16L-1.4 -2.2Q0 -0.6 1.4 -2.2L6.5 -16M-6.5 16L-1.4 2.2Q0 0.6 1.4 2.2L6.5 16"/>
+<path d="M-4 13.5H4L0 7Z" fill="#fff" stroke-width="1.2"/><path d="M-3 -11.5H3L0 -7.5Z" fill="#fff" stroke-width="1.2"/></g>`;
   return `<defs>
 <radialGradient id="${id}-ring" cx="0.35" cy="0.25" r="0.9"><stop offset="0" stop-color="#6dbe3a"/><stop offset="0.55" stop-color="#2e9a3c"/><stop offset="1" stop-color="#1a7d35"/></radialGradient>
 <radialGradient id="${id}-disc" cx="0.4" cy="0.32" r="0.75"><stop offset="0" stop-color="#fbfef3"/><stop offset="1" stop-color="#dff0c0"/></radialGradient>

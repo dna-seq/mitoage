@@ -13,5 +13,5 @@ export const GET: APIRoute = ({ props }) => {
     codonUsage: getCodonUsage(s.id),
     genomeFeatures: getGenomeFeatures(s.id),
   };
-  return new Response(JSON.stringify(body, null, 1), { headers: { "Content-Type": "application/json" } });
+  return new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json" } });
 };
