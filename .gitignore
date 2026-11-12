@@ -38,3 +38,6 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 
 # pipeline download cache (GenBank, AnAge, trees)
 data/cache
+
+# Agent worktrees
+.claude/worktrees/
