@@ -205,3 +205,6 @@ machine and this project that reading the code does not reveal.
   with the cost named (the push deploys the site): "Push to main". The reason is the global
   instructions' own: "I mostly work alone on my repositories". The question was put on one commit; that
   the answer stands for later sessions is the asking session's reading, announced before the answer.
+- 2026-11-13, the maintainer, relayed by the lead: "I am fine with parquet writing". The committed data
+  is parquet (`public/data/`), read by `src/data/index.ts` at build time; derived tables (feature
+  values, correlations, explorer.json) are computed during the site build, never committed (D3).

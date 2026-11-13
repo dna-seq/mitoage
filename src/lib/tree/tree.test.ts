@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
-import { getTaxa } from "~/data";
+import { getAllSpecies, getPhylogeny, getTaxa } from "~/data";
+import type { PhyloNode } from "../../../pipeline/lib/stats";
 import type { TaxonNode } from "~/data/schema";
 import { buildTreePayload, checkDating, datingReport, nodeAges } from "./build";
 import {
@@ -52,7 +53,17 @@ describe("dated tree", () => {
     expect(r.dated).toBe(true);
     expect(r.rootAge).toBeGreaterThan(600);
     expect(r.maxDeviation).toBeLessThan(0.01);
-    expect(r.incompleteTips).toBeLessThanOrEqual(5);
+    // Exactly the species the dated tree (Open Tree induced subtree) does not contain lack a branch.
+    const leaves = new Set<number>();
+    const walk = (n: PhyloNode) => {
+      if (n.leaf !== undefined) leaves.add(n.leaf);
+      n.children.forEach(walk);
+    };
+    const phylo = getPhylogeny();
+    expect(phylo).not.toBeNull();
+    walk(phylo!.root);
+    expect(r.incompleteTips).toBe(getAllSpecies().filter((s) => !leaves.has(s.id)).length);
+    expect(r.incompleteTips).toBeLessThan(r.tips * 0.05);
   });
 
   test("a tree whose tips end at different times is not dated", () => {

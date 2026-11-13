@@ -85,7 +85,12 @@ Old URLs get static redirects: `/explore/` (keeps the query), `/compare/?species
 `/stats-for/...`, `/export-section/...`, `/browse/...`, `/statistics/` and `/view/{id}/species/`.
 They are left out of the sitemap (`astro.config.ts`).
 
-Pages read data only through `~/data` (`src/data/index.ts`), which is server-side. Islands receive
+Pages read data only through `~/data` (`src/data/index.ts`), which is server-side. It loads the committed
+parquet downloads in `public/data/` (species, region_stats, codon_usage, genome_features) with hyparquet once, at
+build time (a top-level await), plus the small JSON in `src/data/generated/` (build-info, taxonomy, phylogeny);
+feature values and correlations are derived from them during the build (decision D3), using the pure
+functions in `pipeline/steps/` and `pipeline/lib/` (never `pipeline/lib/cache.ts`, which is Bun-only).
+`/data/explorer.json` and `/data/correlations.parquet` are build-time endpoints (`src/pages/data/`). Islands receive
 data as props or fetch static JSON emitted at build time (`/search-index.json`,
 `/species/gc-lifespan.json`, `/species/{slug}.json`, `/species/table.json`, `/tree/tree.json`,
 `/genes/{gene}/gc-lifespan.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
@@ -140,7 +145,10 @@ heavy rounded type (Nunito, self-hosted).
 
 ## Data sources and citation
 
-Mitochondrial genomes from NCBI RefSeq; lifespan and life-history traits from AnAge.
+Mitochondrial genomes from NCBI RefSeq (build 2: release 237); lifespan and life-history traits from AnAge
+(build 15); where AnAge has no maximum lifespan, FishBase (fish), SeaLifeBase (aquatic invertebrates) and the USGS
+Bird Banding Laboratory (birds). FishBase and SeaLifeBase values are CC BY-NC 4.0. Build 1 is frozen in
+`public/data/build1/`; every change since is in `public/data/changelog.parquet`.
 
 Toren D, Barzilay T, Tacutu R, Lehmann G, Muradian KK, Fraifeld VE. MitoAge: a database for
 comparative analysis of mitochondrial DNA, with a special focus on animal longevity.

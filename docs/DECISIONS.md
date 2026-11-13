@@ -40,3 +40,22 @@ answered: "Push to main".
   asking session's reading, said to the maintainer before the answer ("I'll record it in `CLAUDE.md`
   so the next session does not ask again"). Tags, releases, branch deletion and history rewriting stay
   the maintainer's.
+
+## D3 — Parquet is the committed data format; derived tables are computed at site build (2026-11-13)
+
+The maintainer, relayed by the lead seat on 2026-11-13: "I am fine with parquet writing".
+
+- **What:** the site's data layer (`src/data/index.ts`) reads the committed parquet downloads in
+  `public/data/` (species, region_stats, codon_usage, genome_features) with hyparquet at build time,
+  keeping every DataApi signature. Only small JSON stays in `src/data/generated/` (build-info,
+  taxonomy tree, dated phylogeny). Feature values, correlations (both datasets, PIC on the committed
+  tree) and `explorer.json` are computed during `bun run build` and served from `dist/`
+  (`/data/correlations.parquet`, `/data/explorer.json`), not committed.
+- **Why:** with build 2 (2,335 species, about 2.5 times build 1) the committed JSON copies
+  (`feature-values.json` 6.1 MB, `correlations.json` 5.3 MB in build 1) break the rule that no
+  committed file exceeds about 5 MB; the parquet files are the downloads anyway, so the site reads
+  one copy of the data instead of two.
+- **Rejected:** Git LFS (needs LFS in the deploy workflow and on every clone, and moves the data out
+  of plain git), and keeping the committed JSON copies (over the size limit, and a second copy of
+  every value).
+
