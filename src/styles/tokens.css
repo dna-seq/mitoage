@@ -139,10 +139,10 @@
     --space-9: 3.5rem;
     --space-10: 4.5rem;
     --gutter: clamp(1rem, 3.6vw, 2rem);
-    --container: 75rem;
+    --container: 84rem;
     --container-narrow: 50rem;
     --section-gap: clamp(2.5rem, 5vw, 4rem);
-    --tap: 44px;
+    --tap: 2.75rem;
 
     /* ---------- Typography ---------- */
     --font-sans: "Nunito Variable", "Nunito", ui-rounded, system-ui, -apple-system, "Segoe UI", sans-serif;

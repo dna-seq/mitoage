@@ -6,6 +6,7 @@
 import { scaleLinear } from "d3-scale";
 import { createMemo, createSignal, For, onCleanup, onMount, Show } from "solid-js";
 import { MarkerShape, Marker } from "./Marker";
+import { uiScale } from "~/lib/uiScale";
 
 export interface DotRow {
   key: string;
@@ -57,7 +58,7 @@ export default function DotPlot(props: Props) {
     if (frame && "ResizeObserver" in window) {
       const ro = new ResizeObserver((e) => {
         const w = e[0]?.contentRect.width ?? 640;
-        if (w > 0) setW(Math.round(Math.max(260, Math.min(1100, w))));
+        if (w > 0) setW(Math.round(Math.max(260, Math.min(1100, w / uiScale()))));
       });
       ro.observe(frame);
       onCleanup(() => ro.disconnect());

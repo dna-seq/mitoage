@@ -24,6 +24,7 @@ import { scaleLinear, scaleLog } from "d3-scale";
 import { createMemo, createSignal, createUniqueId, For, onCleanup, onMount, Show } from "solid-js";
 import { fmtLifespan, fmtNum, fmtPct } from "~/lib/format";
 import { payloadToPoints, type ScatterGroup, type ScatterPayload, type ScatterPoint } from "~/lib/scatterTypes";
+import { uiScale } from "~/lib/uiScale";
 
 export type AxisFormat = "lifespan" | "percent" | "number" | "integer";
 
@@ -153,7 +154,7 @@ export default function Scatter(props: ScatterProps) {
     if (frame && "ResizeObserver" in window) {
       const ro = new ResizeObserver((entries) => {
         const w = entries[0]?.contentRect.width ?? DEFAULT_W;
-        if (w > 0) setW(Math.round(Math.min(900, Math.max(280, w))));
+        if (w > 0) setW(Math.round(Math.min(900, Math.max(280, w / uiScale()))));
       });
       ro.observe(frame);
       onCleanup(() => ro.disconnect());

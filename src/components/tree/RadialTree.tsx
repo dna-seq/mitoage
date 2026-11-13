@@ -42,6 +42,7 @@ import { metricInfo, RAMP_MID, rampFill, RING_METRICS, ringScale, type Metric } 
 import { CLASS_DEPTH, nodeKey, parseKey, RANKS, SPECIES_DEPTH, type TNode, type TreeModel } from "~/lib/tree/types";
 import { speciesUrl, taxonUrl } from "~/lib/urls";
 import TreeSearch from "./TreeSearch";
+import { uiScale } from "~/lib/uiScale";
 
 export interface RadialTreeProps {
   /** Accessible name of the chart. */
@@ -252,7 +253,7 @@ export default function RadialTree(props: RadialTreeProps) {
     if (sizer && "ResizeObserver" in window) {
       const ro = new ResizeObserver((entries) => {
         const w = entries[0]?.contentRect.width ?? 0;
-        if (w > 0) setS(Math.round(Math.min(props.maxSize ?? 860, Math.max(260, w))));
+        if (w > 0) setS(Math.round(Math.min(props.maxSize ?? 860, Math.max(260, w / uiScale()))));
       });
       ro.observe(sizer);
       onCleanup(() => ro.disconnect());
@@ -1080,7 +1081,7 @@ export default function RadialTree(props: RadialTreeProps) {
       </nav>
 
       <div class="rtree__body">
-        <div class="rtree__sizer" ref={sizer} style={{ "--rt-max": `${props.maxSize ?? 860}px` }}>
+        <div class="rtree__sizer" ref={sizer} style={{ "--rt-max": `${(props.maxSize ?? 860) / 16}rem` }}>
           <div class="rtree__frame" ref={frameEl}>
             <svg
               ref={svgEl}

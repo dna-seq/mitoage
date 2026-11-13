@@ -15,8 +15,8 @@ const { name, size = 20, label, class: className, strokeWidth = 2.4 } = Astro.pr
 <svg
   class:list={["icon", className]}
   viewBox="0 0 24 24"
-  width={size}
-  height={size}
+  width={`${size / 16}rem`}
+  height={`${size / 16}rem`}
   fill="none"
   stroke="currentColor"
   stroke-width={strokeWidth}

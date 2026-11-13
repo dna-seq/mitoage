@@ -2,7 +2,7 @@
 /**
  * Slim dark-green site header with a thin orange underline.
  * Navigation comes from NAV_ITEMS in src/lib/site.ts.
- * Desktop (>= 68rem): logo, nav, search, theme toggle in one row.
+ * Desktop (>= 72rem): logo, nav, search, theme toggle in one row.
  * Narrower: logo, theme toggle and a menu button; the menu panel holds search + nav.
  */
 import { NAV_ITEMS } from "~/lib/site";
@@ -24,7 +24,7 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
 <header class="site-header">
   <div class="container site-header__bar">
     <a class="brand" href={href("/")} aria-label="MitoAge home">
-      <LogoIcon size={40} />
+      <LogoIcon size={46} />
       <span class="brand__word">MitoAge</span>
     </a>
     <div class="site-menu" id="site-menu" data-open="false">
@@ -83,7 +83,7 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
         btn.focus();
       }
     });
-    window.matchMedia("(min-width: 68rem)").addEventListener("change", (m) => {
+    window.matchMedia("(min-width: 72rem)").addEventListener("change", (m) => {
       if (m.matches) set(false);
     });
   }
@@ -101,8 +101,8 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
     display: flex;
     align-items: center;
     gap: var(--space-4);
-    min-height: 64px;
-    padding-block: 6px;
+    min-height: 4rem;
+    padding-block: 0.375rem;
   }
   .brand {
     flex: none;
@@ -155,13 +155,13 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
     top: 100%;
     left: 0;
     right: 0;
-    margin-top: 4px;
+    margin-top: 0.25rem;
     padding: var(--space-4) var(--gutter) var(--space-6);
     background: var(--color-header-bg);
     box-shadow: 0 18px 30px rgb(0 0 0 / 0.25);
     flex-direction: column;
     gap: var(--space-4);
-    max-height: calc(100dvh - 72px);
+    max-height: calc(100dvh - 4.5rem);
     overflow-y: auto;
   }
   .site-menu[data-open="true"] {
@@ -180,7 +180,7 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 56px;
+    min-height: 3.5rem;
     padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-md);
     color: var(--color-header-text);
@@ -206,7 +206,7 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
   }
 
   /* ----- Wide: one row ----- */
-  @media (min-width: 68rem) {
+  @media (min-width: 72rem) {
     .menu-btn {
       display: none;
     }
@@ -257,6 +257,30 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
     .site-search :global(.search__panel) {
       left: auto;
       width: max(100%, 24rem);
+    }
+  }
+
+  /* ----- Wider: a bigger bar, larger menu labels and taller pills ----- */
+  @media (min-width: 80rem) {
+    .site-header__bar {
+      min-height: 4.75rem;
+      gap: var(--space-6);
+    }
+    .brand__word {
+      font-size: 1.75rem;
+    }
+    .site-nav ul {
+      gap: var(--space-1);
+    }
+    .site-nav a {
+      min-height: 3.25rem;
+      padding: 0 1em;
+    }
+    .site-nav__label {
+      font-size: var(--fs-md);
+    }
+    .site-search {
+      max-width: 24rem;
     }
   }
 </style>

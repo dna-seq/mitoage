@@ -66,6 +66,11 @@
   html {
     background: var(--color-bg);
     scroll-padding-top: 5rem;
+    /* Fluid UI scale: 100% (16px) up to a 1440px-wide window, then growing linearly to 137.5%
+       (22px) at 2560px and capped at 150%. Everything sized in rem (type, spacing, controls,
+       the container) grows with it, so wide screens get a wider page and bigger controls.
+       Media queries are unaffected: rem in a media query always means the initial 16px. */
+    font-size: clamp(100%, 0.5179rem + 0.5357vw, 150%);
   }
   @media (prefers-reduced-motion: no-preference) {
     html {
@@ -213,6 +218,9 @@
   }
   .visually-hidden {
     position: absolute !important;
+    /* Pin to the left edge: at its static position a hidden label inside a wide, horizontally
+       scrolling table would stretch the page sideways on phones. */
+    left: 0;
     width: 1px;
     height: 1px;
     padding: 0;
@@ -226,7 +234,7 @@
   .skip-link {
     position: absolute;
     left: var(--space-4);
-    top: -100px;
+    top: -6.25rem;
     z-index: 100;
     padding: var(--space-3) var(--space-5);
     border-radius: var(--radius-pill);

@@ -84,8 +84,8 @@
     position: absolute;
     left: 0.95rem;
     top: 50%;
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
     transform: translateY(-50%);
     color: var(--color-input-icon);
     pointer-events: none;
@@ -93,7 +93,7 @@
   .rtree-search__panel {
     position: absolute;
     z-index: 40;
-    top: calc(100% + 6px);
+    top: calc(100% + 0.375rem);
     left: 0;
     right: 0;
     min-width: min(20rem, 86vw);
@@ -127,7 +127,7 @@
   .rtree-search__rank {
     flex: none;
     min-width: 4.4rem;
-    padding: 2px 8px;
+    padding: 2px 0.5rem;
     border-radius: var(--radius-pill);
     background: var(--color-surface-sunken);
     color: var(--tone-green-ink);
@@ -174,8 +174,8 @@
     gap: 2px;
   }
   .rtree__sep {
-    width: 14px;
-    height: 14px;
+    width: 0.875rem;
+    height: 0.875rem;
     fill: none;
     stroke: currentColor;
     stroke-width: 3;
@@ -206,7 +206,7 @@
   }
   .rtree__sizer {
     width: 100%;
-    max-width: var(--rt-max, 860px);
+    max-width: var(--rt-max, 53.75rem);
     margin-inline: auto;
     min-width: 0;
   }
@@ -401,8 +401,8 @@
     transform: translate(-50%, -50%) scale(1.06);
   }
   .rtree__up svg {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .rtree__tip {
@@ -429,7 +429,7 @@
     display: grid;
     grid-template-columns: repeat(3, auto);
     gap: var(--space-3);
-    margin-top: 4px;
+    margin-top: 0.25rem;
   }
   .rtree__tip-vals dt {
     font-size: 0.75rem;
@@ -551,18 +551,18 @@
   }
   .rtree__ramp {
     position: relative;
-    height: 34px;
-    margin-inline: 4px;
+    height: 2.125rem;
+    margin-inline: 0.25rem;
   }
   .rtree__ramp-bar {
-    height: 12px;
+    height: 0.75rem;
     border-radius: var(--radius-pill);
     background: linear-gradient(90deg, var(--ring-lo), var(--ring-mid) var(--ramp-mid, 50%), var(--ring-hi));
     box-shadow: inset 0 0 0 1px var(--color-border);
   }
   .rtree__ramp-tick {
     position: absolute;
-    top: 16px;
+    top: 1rem;
     transform: translateX(-50%);
     font-size: var(--fs-xs);
     font-weight: var(--fw-heavy);
@@ -574,9 +574,9 @@
     content: "";
     position: absolute;
     left: 50%;
-    top: -8px;
+    top: -0.5rem;
     width: 2px;
-    height: 7px;
+    height: 0.4375rem;
     border-radius: 1px;
     background: var(--color-border-strong);
   }
@@ -623,8 +623,8 @@
   }
   .tx-bar {
     display: block;
-    height: 6px;
-    margin-top: 6px;
+    height: 0.375rem;
+    margin-top: 0.375rem;
     border-radius: var(--radius-pill);
     background: var(--color-surface-sunken);
     overflow: hidden;
@@ -706,8 +706,8 @@
   .corr__bar {
     position: relative;
     display: block;
-    height: 8px;
-    margin-top: 3px;
+    height: 0.5rem;
+    margin-top: 0.1875rem;
     border-radius: var(--radius-pill);
     background: var(--color-surface-sunken);
   }
@@ -735,7 +735,7 @@
   }
   .corr__q {
     display: inline-block;
-    padding: 1px 8px;
+    padding: 1px 0.5rem;
     border-radius: var(--radius-pill);
     font-weight: var(--fw-bold);
   }
@@ -837,7 +837,7 @@
       ". bar bar";
     align-items: center;
     column-gap: var(--space-2);
-    row-gap: 4px;
+    row-gap: 0.25rem;
     padding: var(--space-2) 0;
   }
   .leaders__row + .leaders__row {
@@ -881,7 +881,7 @@
   }
   .leaders__bar {
     grid-area: bar;
-    height: 8px;
+    height: 0.5rem;
     border-radius: var(--radius-pill);
     background: var(--color-surface-sunken);
     overflow: hidden;
@@ -938,7 +938,7 @@
     display: flex;
     align-items: center;
     gap: var(--space-3);
-    min-height: 56px;
+    min-height: 3.5rem;
     padding: var(--space-3) var(--space-4);
     border-radius: var(--radius-md);
     font-size: var(--fs-md);
@@ -1023,8 +1023,8 @@
   /* ---------- ChildTaxa.astro: chevron drawn with a mask, not an inline SVG per row ---------- */
   .tx-chev {
     flex: none;
-    width: 18px;
-    height: 18px;
+    width: 1.125rem;
+    height: 1.125rem;
     background: var(--color-text-muted);
     -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
     mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 6l6 6-6 6'/%3E%3C/svg%3E") center / contain no-repeat;
@@ -1035,8 +1035,8 @@
     .tx-children--scroll {
       max-height: 40rem;
       overflow: auto;
-      padding: 4px 6px 12px 2px;
-      margin: -4px -6px -12px -2px;
+      padding: 0.25rem 0.375rem 0.75rem 2px;
+      margin: -0.25rem -0.375rem -0.75rem -2px;
       scrollbar-width: thin;
     }
   }
