@@ -18,7 +18,7 @@ export const MAX_COMMITTED_BYTES = 5_000_000;
 const EXPLORER_TARGET_BYTES = 1_500_000;
 const BUILD1_SPECIES = 922;
 
-const FISH = new Set(["Actinopterygii", "Chondrichthyes", "Hyperoartia", "Myxini", "Dipnoi", "Coelacanthi"]);
+const FISH = new Set(["Actinopterygii", "Chondrichthyes", "Cephalaspidomorphi", "Myxini", "Sarcopterygii"]);
 /** Chordate classes outside Vertebrata (lancelets, tunicates): invertebrates for the lifespan priority. */
 const INVERTEBRATE_CHORDATES = new Set(["Leptocardii", "Ascidiacea", "Thaliacea", "Appendicularia"]);
 /** Taxon group of a species from its (build 1 scheme) class and phylum, for the priority check. */

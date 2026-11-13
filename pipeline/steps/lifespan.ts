@@ -45,9 +45,9 @@ export function harmonisedClass(lineage: string, ncbiClass: string): string | nu
   if (p.includes("Mammalia")) return "Mammalia";
   if (p.includes("Amphibia")) return "Amphibia";
   if (p.includes("Chondrichthyes")) return "Chondrichthyes";
-  if (p.includes("Dipnomorpha")) return "Dipnoi";
-  if (p.includes("Actinistia")) return "Coelacanthi";
-  if (p.includes("Hyperoartia")) return "Hyperoartia";
+  // Build 1 labels lungfish and coelacanths "Sarcopterygii", lampreys "Cephalaspidomorphi".
+  if (p.includes("Dipnomorpha") || p.includes("Actinistia")) return "Sarcopterygii";
+  if (p.includes("Hyperoartia")) return "Cephalaspidomorphi";
   if (p.includes("Myxini")) return "Myxini";
   return ncbiClass || null;
 }

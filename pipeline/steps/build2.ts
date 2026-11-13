@@ -176,7 +176,7 @@ export function primaryText(acc: string): { accession: string; text: string } | 
   return { accession: files[0]!.slice(0, -3), text: readFileSync(join(PRIMARY_DIR, files[0]!), "utf8") };
 }
 
-const FISH_CLASSES = new Set(["Actinopterygii", "Chondrichthyes", "Hyperoartia", "Myxini", "Dipnoi", "Coelacanthi", "Sarcopterygii", "Cephalaspidomorphi"]);
+const FISH_CLASSES = new Set(["Actinopterygii", "Chondrichthyes", "Myxini", "Sarcopterygii", "Cephalaspidomorphi"]);
 /** Taxon group of a build 1 species from its build 1 classification. */
 export function groupOfBuild1(s: { phylum: string; class: string }): TaxonGroup {
   if (s.class === "Aves") return "bird";

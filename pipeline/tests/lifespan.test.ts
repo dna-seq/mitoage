@@ -33,6 +33,7 @@ describe("taxon groups and the build 1 class scheme", () => {
     expect(harmonisedClass(LINEAGES.chicken, "Aves")).toBe("Aves");
     expect(harmonisedClass(LINEAGES.oyster, "Bivalvia")).toBe("Bivalvia");
     expect(harmonisedClass(LINEAGES.oyster, "")).toBeNull();
+    expect(harmonisedClass(LINEAGES.lamprey, "Hyperoartia")).toBe("Cephalaspidomorphi");
   });
   test("priority table: AnAge first everywhere, secondary sources only for their taxa", () => {
     for (const g of Object.values(PRECEDENCE)) expect(g[0]).toBe("AnAge");
