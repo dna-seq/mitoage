@@ -59,7 +59,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** unattended (steps 1 to 3); steps 4 and 5 after 3; where the code is published: blocked: desk #30 (if nobody answers, it stays in a working folder and results are reported in the channel) · **Owner:** lead
+**State:** unattended (steps 1 to 4 ran on 2026-11-13; a continuous-trait model runs until about 2026-11-15; step 5 after it); the code is published in `dna-seq/mitoage-pipelines` · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
