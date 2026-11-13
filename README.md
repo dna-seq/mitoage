@@ -50,7 +50,8 @@ src/
     brand/         the mitochondrion, the round badge, the compact icon
     ui/            Header, Footer, Hero, Card, StatCard, Button, Chip, Breadcrumb, TabNav (in-page),
                    SectionTabs (between the pages of a section), CompositionBar, DataTable (sortable,
-                   filterable, CSV export), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
+                   filterable, CSV export, FASTA of the filtered rows), SearchBox, CodonHeatmap,
+                   LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island)
     genome/        circular genome map (GenomeExplorer adds the species switch of the genes
                    pages), gene-page charts and correlation tables
@@ -60,7 +61,8 @@ src/
                    child taxa, codon usage, every species of a region); Compare.tsx, DotPlot and
                    Marker are the species side-by-side view
     explore/       the plot explorer (shown at /compare/plot/): axis picker, strongest correlations
-  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders, CSV;
+  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders, CSV,
+                   FASTA from NCBI (fasta.ts; testdata/ holds three real records for its tests);
                    genome/, tree/, explore/ and compare/ hold the logic behind those components
                    (compare/legacy.ts maps the old site's taxon ids for redirects)
   pages/           routes, below
@@ -70,7 +72,7 @@ The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · 
 
 | Route | What it is |
 | --- | --- |
-| `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; one page per species |
+| `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; the filtered rows download as CSV and their genomes as one FASTA file; one page per species |
 | `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages |
 | `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop |
 | `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage |
@@ -90,6 +92,13 @@ data as props or fetch static JSON emitted at build time (`/search-index.json`,
 `/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
 and `.csv`, `/data/*`). Large tables render their first view at build time and load the rest, and
 island props are packed (`packRows` in `src/lib/compare/rows.ts`), to keep pages under about 150 KB.
+
+The site hosts no sequences. A species page links to its FASTA and GenBank record at NCBI, and
+"FASTA of these rows" on the species list (`DataTable`'s `fasta` prop, `src/lib/fasta.ts`) fetches
+the filtered species' RefSeq records from NCBI E-utilities in the browser, 100 accessions a request,
+and offers them as one file in the table's order. NCBI answers 200 and leaves out a record it does
+not have, so every answer is checked against the accessions asked for: the page names the missing
+ones, and a request that fails (after three attempts for no answer, a 429 or a 5xx) saves nothing.
 
 The taxonomy tree (`src/components/tree/RadialTree.tsx`) draws on a canvas and zooms with d3-zoom
 (part of `d3`). Its maths is pure and tested in `src/lib/tree/`: `layout.ts` places the tree,

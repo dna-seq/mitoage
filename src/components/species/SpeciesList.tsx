@@ -54,6 +54,7 @@ export default function SpeciesList(props: SpeciesListProps) {
         urlParam="q"
         noun={["species", "species"]}
         csv={{ filename: props.view === "genome" ? "mitoage-species-genomes.csv" : "mitoage-species-life-history.csv", label: "CSV of these rows" }}
+        fasta={{ key: "refseq", filename: "mitoage-mitochondrial-genomes.fasta", label: "FASTA of these rows" }}
       />
     </>
   );

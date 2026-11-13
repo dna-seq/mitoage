@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- The species list (`/species/`, `/species/life-history/`) has a "FASTA of these rows" button: the
+  mitochondrial genomes of the filtered species as one file, in the table's order. The site still
+  hosts no sequences: the browser fetches the RefSeq records from NCBI E-utilities, 100 accessions a
+  request (`src/lib/fasta.ts`, `DataTable`'s `fasta` prop). NCBI answers 200 and leaves out a record
+  it does not have, so every answer is checked against the accessions asked for and the page names
+  any that are missing; a request that fails saves nothing and says why. `/species/table.json` gains
+  a `refseq` field. Not on the taxon pages' species tables, nor on the species side-by-side view.
+
 - The genome map on the genes index and on every gene page switches species: a search box and
   quick picks (human, house mouse, naked mole-rat, bowhead whale, chicken, zebrafish, fruit fly)
   load `/species/{slug}.json` and redraw the map, keeping the gene of the page highlighted. The

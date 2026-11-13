@@ -15,9 +15,10 @@
  *   pageSize={50} search={{ keys: ["name", "common"], placeholder: "Filter species" }}
  *   facets={[{ key: "class", label: "Class" }]} urlParam="q" />
  */
-import { createEffect, createMemo, createSignal, For, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show } from "solid-js";
 import { basePercents } from "~/lib/composition";
 import { downloadText, toCsv } from "~/lib/csv";
+import { describeFasta, type FastaNote, fastaToSave, fetchFasta } from "~/lib/fasta";
 import { fmtP, fmtR } from "~/lib/explore/format";
 import {
   fmtBp,
@@ -102,6 +103,11 @@ export interface DataTableProps {
   noun?: [string, string];
   /** Show a "Download CSV" button that exports the filtered, sorted rows (every page). */
   csv?: { filename: string; label?: string };
+  /**
+   * Show a "Download FASTA" button: the sequences of the filtered, sorted rows (every page) as
+   * one file, fetched from NCBI in the browser. `key` is the row key holding the RefSeq accession.
+   */
+  fasta?: { key: string; filename: string; label?: string };
 }
 
 const isNumCol = (c: Column) =>
@@ -177,8 +183,14 @@ const Comp = (p: { v: Cell }) => {
   );
 };
 
-const CsvButton = (p: { label?: string | undefined; onClick: () => void }) => (
-  <button type="button" class="btn btn--soft btn--sm dtable__csv" onClick={() => p.onClick()}>
+const CsvButton = (p: { label?: string | undefined; onClick: () => void; disabled?: boolean; busy?: boolean }) => (
+  <button
+    type="button"
+    class="btn btn--soft btn--sm dtable__csv"
+    disabled={p.disabled}
+    aria-busy={p.busy ? "true" : undefined}
+    onClick={() => p.onClick()}
+  >
     <svg
       viewBox="0 0 24 24"
       fill="none"
@@ -306,7 +318,77 @@ export default function DataTable(props: DataTableProps) {
     });
     downloadText(csv.filename, toCsv(header, body), "text/csv");
   };
-  const noun = (n: number) => (n === 1 ? (props.noun?.[0] ?? "row") : (props.noun?.[1] ?? "rows"));
+
+  const [fastaBusy, setFastaBusy] = createSignal(false);
+  const [fastaNote, setFastaNote] = createSignal<{ tone: "info" | FastaNote["tone"]; text: string } | null>(null);
+  let fastaStop: AbortController | undefined;
+  onCleanup(() => fastaStop?.abort());
+  /** Accessions of the filtered rows, in the order shown. */
+  const fastaIds = createMemo(() => {
+    const key = props.fasta?.key;
+    if (!key) return [];
+    return sorted().flatMap((r) => {
+      const v = r[key];
+      return typeof v === "string" && v ? [v] : [];
+    });
+  });
+  // A note about one selection does not outlive it.
+  createEffect(
+    on([text, facetVals], () => {
+      if (!fastaBusy()) setFastaNote(null);
+    }, { defer: true }),
+  );
+  const exportFasta = async () => {
+    const spec = props.fasta;
+    const ids = fastaIds();
+    if (!spec || fastaBusy() || !ids.length) return;
+    const without = sorted().length - ids.length;
+    const n = (v: number) => v.toLocaleString("en-US");
+    fastaStop = new AbortController();
+    setFastaBusy(true);
+    setFastaNote({ tone: "info", text: `Fetching ${n(ids.length)} ${ids.length === 1 ? "sequence" : "sequences"} from NCBI…` });
+    const result = await fetchFasta(ids, {
+      signal: fastaStop.signal,
+      onProgress: (done, total) => setFastaNote({ tone: "info", text: `Fetching sequences from NCBI: ${n(done)} of ${n(total)}…` }),
+    });
+    setFastaBusy(false);
+    const file = fastaToSave(result);
+    if (file !== null) downloadText(spec.filename, file, "text/x-fasta");
+    const said = describeFasta(result, spec.filename);
+    setFastaNote(
+      without > 0
+        ? {
+            tone: said.tone === "ok" ? "warn" : said.tone,
+            text: `${said.text} ${n(without)} ${without === 1 ? "row has" : "rows have"} no accession and ${without === 1 ? "was" : "were"} left out.`,
+          }
+        : said,
+    );
+  };
+  const actions = () => (
+    <div class="dtable__actions">
+      <Show when={props.csv}>
+        <CsvButton label={props.csv?.label} onClick={exportCsv} />
+      </Show>
+      <Show when={props.fasta}>
+        <CsvButton
+          label={props.fasta?.label ?? "Download FASTA"}
+          onClick={exportFasta}
+          disabled={fastaBusy() || !fastaIds().length}
+          busy={fastaBusy()}
+        />
+      </Show>
+    </div>
+  );
+  const note = () => (
+    <Show when={fastaNote()}>
+      {(v) => (
+        <p class="dtable__note" role="status" data-tone={v().tone}>
+          {v().text}
+        </p>
+      )}
+    </Show>
+  );
+  const noun =(n: number) => (n === 1 ? (props.noun?.[0] ?? "row") : (props.noun?.[1] ?? "rows"));
   const gotoPage = (p: number) => {
     setPage(p);
     scrollEl?.scrollIntoView({ block: "nearest", behavior: "smooth" });
@@ -361,9 +443,7 @@ export default function DataTable(props: DataTableProps) {
               </label>
             )}
           </For>
-          <Show when={props.csv}>
-            <CsvButton label={props.csv?.label} onClick={exportCsv} />
-          </Show>
+          <Show when={props.csv || props.fasta}>{actions()}</Show>
           <label class="field dtable__mobile-sort">
             Sort by
             <select
@@ -403,6 +483,7 @@ export default function DataTable(props: DataTableProps) {
             ? `${props.rows.length.toLocaleString("en-US")} ${noun(props.rows.length)}`
             : `${sorted().length.toLocaleString("en-US")} of ${props.rows.length.toLocaleString("en-US")} ${noun(props.rows.length)}`}
         </p>
+        {note()}
       </Show>
       <div class="dtable__scroll" ref={scrollEl} tabIndex={0} role="region" aria-label={props.caption}>
         <table>
@@ -503,10 +584,9 @@ export default function DataTable(props: DataTableProps) {
           <p class="search__empty">No rows match these filters.</p>
         </Show>
       </div>
-      <Show when={props.csv && !(props.search || props.facets?.length)}>
-        <div class="dtable__foot">
-          <CsvButton label={props.csv?.label} onClick={exportCsv} />
-        </div>
+      <Show when={(props.csv || props.fasta) && !(props.search || props.facets?.length)}>
+        <div class="dtable__foot">{actions()}</div>
+        {note()}
       </Show>
       <Show when={pages() > 1}>
         <nav class="dtable__pager" aria-label="Pages">

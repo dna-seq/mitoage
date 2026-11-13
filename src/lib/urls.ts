@@ -40,11 +40,14 @@ export const anageUrl = (scientificName: string): string =>
 export const refseqUrl = (accession: string): string =>
   `https://www.ncbi.nlm.nih.gov/nuccore/${encodeURIComponent(accession)}`;
 
+/** FASTA of several RefSeq records in one NCBI E-utilities request (ids comma-separated). */
+export const refseqFastaBatchUrl = (accessions: readonly string[]): string =>
+  `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${accessions
+    .map(encodeURIComponent)
+    .join(",")}&rettype=fasta&retmode=text`;
+
 /** Direct FASTA download of a RefSeq record through NCBI E-utilities. */
-export const refseqFastaUrl = (accession: string): string =>
-  `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${encodeURIComponent(
-    accession,
-  )}&rettype=fasta&retmode=text`;
+export const refseqFastaUrl = (accession: string): string => refseqFastaBatchUrl([accession]);
 
 export const refseqGenbankUrl = (accession: string): string =>
   `https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=${encodeURIComponent(

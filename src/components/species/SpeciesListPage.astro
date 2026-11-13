@@ -24,6 +24,7 @@ const raw = species.map((s) => {
     s.maxLongevityYears, s.mtdnaSizeBp, s.gcPercent, whole?.gcSkew ?? null, whole?.atSkew ?? null, s.nonCodingBp,
     t.adultWeightG, t.birthWeightG, t.femaleMaturityDays, t.maleMaturityDays, t.gestationDays,
     t.litterSize, t.littersPerYear, t.growthRatePerDay, t.metabolicRateW, t.bodyTemperatureK,
+    s.refseq,
   ];
 });
 const initialSort = view === "genome" ? ({ key: "name", dir: "asc" } as const) : ({ key: "lifespan", dir: "desc" } as const);

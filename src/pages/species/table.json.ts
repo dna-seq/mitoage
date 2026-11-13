@@ -17,6 +17,7 @@ export const GET: APIRoute = () => {
         s.maxLongevityYears, s.mtdnaSizeBp, r(s.gcPercent, 3), r(whole?.gcSkew, 4), r(whole?.atSkew, 4), s.nonCodingBp,
         t.adultWeightG, t.birthWeightG, t.femaleMaturityDays, t.maleMaturityDays, t.gestationDays,
         t.litterSize, t.littersPerYear, t.growthRatePerDay, t.metabolicRateW, t.bodyTemperatureK,
+        s.refseq,
       ];
     }),
   };

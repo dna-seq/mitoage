@@ -15,6 +15,7 @@ export const TABLE_FIELDS = [
   "lifespan", "size", "gc", "gcSkew", "atSkew", "nonCoding",
   "adultWeightG", "birthWeightG", "femaleMaturityDays", "maleMaturityDays", "gestationDays",
   "litterSize", "littersPerYear", "growthRatePerDay", "metabolicRateW", "bodyTemperatureK",
+  "refseq",
 ] as const;
 export type TableField = (typeof TABLE_FIELDS)[number];
 

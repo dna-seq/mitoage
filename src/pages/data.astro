@@ -115,6 +115,10 @@ const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)
           JSON, and its region composition as CSV, at <code>/species/&lt;name&gt;.json</code> and
           <code>/species/&lt;name&gt;.csv</code>.
         </p>
+        <p>
+          For the sequences of several species, filter the species list and choose "FASTA of these rows": the genomes
+          come from NCBI as one file.
+        </p>
         <a href={href("/species/")}>Find a species</a>
       </Card>
       <Card title="Read Parquet in one line" level={2}>
