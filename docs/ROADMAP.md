@@ -121,7 +121,7 @@ questions, in order:
    kept beyond the null.
 
 A kept frame is not a translated peptide: the data has no ribosome profiling and no mass spectrometry, and
-nuclear copies (humanin has them) are out of its sight. The code lives with RM12's (blocked: desk #30).
+nuclear copies (humanin has them) are out of its sight. The code lives in `dna-seq/mitoage-pipelines`.
 Reported in `#mitoage`; nothing goes on the site before the maintainer has seen it.
 
 ## RM13 — Structural alignments: a check
@@ -134,7 +134,7 @@ the columns of the well-conserved core, and at what cost for 2,300 species.
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** urgent (the maintainer, 2026-11-13: "start this research ... and report in the mitoport topic"); where its code lives is still desk #30 · **Owner:** lead
+**State:** urgent (the maintainer, 2026-11-13: "start this research ... and report in the mitoport topic"); its code lives in `dna-seq/mitoage-pipelines` (the maintainer created it on 2026-11-14 and asked for a reproducible project there, with downloaders, for reviewers of a future manuscript) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
@@ -159,7 +159,7 @@ are a new data source (the maintainer's), and where the code lives (a separate r
 
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
-**State:** blocked: the maintainer's go on a design, asked in the chat on 2026-11-13 (to the desk when he is away) · **Owner:** lead
+**State:** after RM11 (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); its design goes to him in screenshots before it is live · **Owner:** lead
 
 The maintainer: "can we extend mitoage website with page on interactions with complexes and provide
 complexes for all those species in comparative way?" Proposed to him: a page per complex (I, III, IV, V)
