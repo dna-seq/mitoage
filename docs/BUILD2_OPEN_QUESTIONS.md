@@ -97,6 +97,6 @@ and do not enter PIC; nothing is imputed for them.
 11. **Non-commercial values on the site.** 549 species show FishBase/SeaLifeBase values (CC BY-NC 4.0);
     the downloads README says so and every row carries its licence. The site pages do not show the
     licence per species.
-12. **Committing large outputs.** No longer a question: D2 moved the site to parquet and D3 dropped the
+12. **Committing large outputs.** No longer a question: D3 moved the site to parquet and D4 dropped the
     5 MB rule. Every committed output is under 2.4 MB; correlations.parquet (8.5 MB) and explorer.json
     are built at site build and not committed.

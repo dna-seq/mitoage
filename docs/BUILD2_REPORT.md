@@ -19,7 +19,7 @@ tables is in `docs/BUILD2_CROSSCHECK.md` (`bun run pipeline/crosscheck.ts`). Ope
   counting of join() features. **Lifespan observations**: 7,197 rows from AnAge, FishBase, SeaLifeBase,
   USGS BBL and the build 1 value. **Review list**: 95 items. **Build 1** is frozen verbatim in
   `public/data/build1/` (34 parquet files and a README with the SHA-256 of every CSV).
-- **Correlations** (computed at site build, decision D2): `default` 2,202 species (any curated source,
+- **Correlations** (computed at site build, decision D3): `default` 2,202 species (any curated source,
   no estimated, low- or questionable-quality lifespans), `anage_only` 1,710. Across all 1,257 features, r
   with log10 maximum lifespan in the two datasets correlates at 0.975 (scope all); 906 vs 1,037 features
   have q < 0.05. Example, whole-genome AT skew vs log10 lifespan (scope all): r = 0.336 in build 1 on 922
@@ -104,7 +104,7 @@ Each new test was checked by breaking the code it guards:
 
 Every committed output is under 2.4 MB (47 files, 12.9 MB in total; the full list is at the end).
 `correlations.parquet` (8.5 MB) and `explorer.json` (2.7 MB) are produced into `dist/data/` by the site
-build and not committed (D2).
+build and not committed (D3).
 
 ## Not done
 

@@ -3,7 +3,7 @@
  *
  * src/data/generated/: small JSON the site reads directly (build-info, taxonomy tree, dated
  * phylogeny). public/data/: the parquet downloads, which are also the site's data source (the
- * data layer reads them at build time, decision D2); derived tables (feature values, correlations,
+ * data layer reads them at build time, decision D3); derived tables (feature values, correlations,
  * explorer.json) are computed during the site build and are not committed.
  */
 import { mkdirSync, rmSync } from "node:fs";

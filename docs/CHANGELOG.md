@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Decision numbers after rebasing onto main (which recorded its own D2): the parquet data layer is D3 and the dropped size rule D4 in code comments and the build 2 report.
 - The FASTA download test formats its expected counts with the thousands separator the message uses (it failed once the species list passed 1,000 rows with build 2).
 - Regenerated build 2 data (`bun run data`, 2026-11-13): 2,335 species; `public/data/` holds species, region_stats, codon_usage, genome_features, lifespan_observations and changelog parquet, species.csv, review_list.csv, README and the frozen build1/; `src/data/generated/` holds build-info, taxonomy and phylogeny JSON. The JSON copies of the large tables (species, region stats, codon usage, genome features, feature defs and values, correlations) and the committed explorer.json/correlations.parquet are removed (D2).
 - Build 2 documents: `docs/BUILD2_REPORT.md` (counts, change tables, lifespan source x class, AnAge-only vs extended correlations, pinned versions, cross-check agreement, file sizes, what was not done; tables from `bun run pipeline/report.ts`), `docs/BUILD2_CROSSCHECK.md` (from `bun run pipeline/crosscheck.ts`) and `docs/BUILD2_OPEN_QUESTIONS.md` (each default with its alternative and cost).
