@@ -96,6 +96,29 @@ gene-level results are not independent tests.
 Each tool's current version and limits are checked before use: the method names above are from memory of the
 literature. Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
 
+## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
+
+**State:** unattended (the pilot ran with the maintainer present) · **Owner:** lead
+
+The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
+can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
+SHLP1 to 6, MOTS-c), inside other frames of the protein genes (MTALTND4, MTALTCO1, MENTSH) and in the
+D-loop (MASL); nearly all the evidence is from human. With the alignments this repository has four
+questions, in order:
+
+1. Is each published frame there in each species: a start, no early stop, the length; read with the
+   species' own mitochondrial code and with the standard code.
+2. Is it kept beyond what its host gene's conservation gives for free: against windows of the same length
+   in the same gene and frame, then against the host's synonymous codons shuffled.
+3. Frame kept or lost, and its sequence, against maximum lifespan, with the tree taken into account (the
+   same controls as RM12).
+4. A blind scan: every frame of 20 codons or more, six frames, all species, ranked by how widely it is
+   kept beyond the null.
+
+A kept frame is not a translated peptide: the data has no ribosome profiling and no mass spectrometry, and
+nuclear copies (humanin has them) are out of its sight. The code lives with RM12's (blocked: desk #30).
+Reported in `#mitoage`; nothing goes on the site before the maintainer has seen it.
+
 ## RM13 — Structural alignments: a check
 
 **State:** after RM12 · **Owner:** lead

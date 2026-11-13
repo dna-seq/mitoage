@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Roadmap: RM16, the peptides encoded inside mtDNA (humanin, MOTS-c, the alternative frames of ND4 and COX1 and the rest), asked by the maintainer; the aligner check, RM12's first step, is done and reported in `#mitoalignments`. Documents only.
 - **Gene pages no longer scroll sideways on a phone.** The button under the class chart ("Compare ND6 across
   taxa: every parameter, every species") was wider than a phone's screen and widened the whole page by 135
   pixels; its label is now "Compare ND6 across taxa". Found by reading the live build 2 site (RM3): 20 pages
