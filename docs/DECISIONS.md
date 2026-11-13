@@ -59,3 +59,17 @@ The maintainer, relayed by the lead seat on 2026-11-13: "I am fine with parquet 
   of plain git), and keeping the committed JSON copies (over the size limit, and a second copy of
   every value).
 
+## D4 — No per-file size limit of our own (2026-11-13)
+
+The maintainer, asked whether the 5 MB limit was a git or LFS restriction and told it was a CLAUDE.md
+rule only: "so drop this rule".
+
+- **What:** the rule "never commit a file over about 5 MB; larger files go through Git LFS" is removed
+  from CLAUDE.md. The only limits left are GitHub's: it warns about files over 50 MB and rejects files
+  over 100 MB. `pipeline/validate.ts` fails on a committed output file at 100 MB and warns at 50 MB.
+- **Why:** the limit was not a constraint of git, GitHub or the deploy, and it forced work (D3's
+  move away from committed JSON copies was partly driven by it) without a reason the maintainer holds.
+- **Rejected:** keeping the 5 MB rule and handling large files with Git LFS or by splitting them into
+  chunks. D3 (parquet as the committed format, derived tables computed at site build) stands on its
+  own and is kept.
+

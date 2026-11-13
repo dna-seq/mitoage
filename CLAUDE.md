@@ -83,8 +83,6 @@ reason gets argued away at 2 a.m.
   reproducible build say the bytes came out the same, not that they mean what was intended.
 - **Never commit a placeholder path or a made-up example value.** It proves nothing and outlives
   the session that invented it.
-- **Never commit large data.** Anything over about 5 MB that must travel goes through Git LFS; a
-  large blob in history is very hard to remove afterwards.
 - **Never track `.leak_words` or `.leak_allow`.** They name everything the leak gate protects
   (copy `.leak_words.template` to `.leak_words` and fill it; the kit's `bin/leak-gate.sh install`
   turns the gate on). Never commit with `--no-verify`.
@@ -208,3 +206,4 @@ machine and this project that reading the code does not reveal.
 - 2026-11-13, the maintainer, relayed by the lead: "I am fine with parquet writing". The committed data
   is parquet (`public/data/`), read by `src/data/index.ts` at build time; derived tables (feature
   values, correlations, explorer.json) are computed during the site build, never committed (D3).
+- 2026-11-13, the maintainer: "so drop this rule" (the 5 MB per-file limit). GitHub itself warns at 50 MB and rejects files over 100 MB; those are GitHub limits, not a project rule.

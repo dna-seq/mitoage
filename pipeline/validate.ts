@@ -13,8 +13,9 @@ import { buildExplorer } from "./steps/explorer";
 import { PRECEDENCE, type TaxonGroup } from "./steps/lifespan";
 import { GENERATED_DIR, PUBLIC_DATA_DIR } from "./steps/output";
 
-/** Committed output files must stay below this size (CLAUDE.md: no large data in git). */
-export const MAX_COMMITTED_BYTES = 5_000_000;
+/** GitHub rejects files over 100 MB and warns over 50 MB (no project limit of our own: decision D4). */
+export const MAX_COMMITTED_BYTES = 100_000_000;
+const WARN_COMMITTED_BYTES = 50_000_000;
 const EXPLORER_TARGET_BYTES = 1_500_000;
 const BUILD1_SPECIES = 922;
 
@@ -340,7 +341,6 @@ export async function validateGenerated(): Promise<string[]> {
     }
   }
   const explorerBytes = Buffer.byteLength(JSON.stringify(buildExplorer(species, defs, data.getFeatureValueArrays().values, info)));
-  check(explorerBytes < MAX_COMMITTED_BYTES, `explorer.json would be ${explorerBytes} bytes`);
   if (explorerBytes >= EXPLORER_TARGET_BYTES) {
     console.warn(`  WARNING: explorer.json is ${explorerBytes} bytes, above the ${EXPLORER_TARGET_BYTES}-byte page-weight target (served, not committed)`);
   }
@@ -353,7 +353,8 @@ export async function validateGenerated(): Promise<string[]> {
   for (const dir of [PUBLIC_DATA_DIR, GENERATED_DIR]) {
     for (const f of walkFiles(dir)) {
       const size = statSync(f).size;
-      check(size < MAX_COMMITTED_BYTES, `${relative(ROOT, f)} is ${size} bytes (limit ${MAX_COMMITTED_BYTES})`);
+      check(size < MAX_COMMITTED_BYTES, `${relative(ROOT, f)} is ${size} bytes (GitHub rejects files over ${MAX_COMMITTED_BYTES})`);
+      if (size >= WARN_COMMITTED_BYTES) console.warn(`  WARNING: ${relative(ROOT, f)} is ${size} bytes (GitHub warns over ${WARN_COMMITTED_BYTES})`);
     }
   }
   const b1 = await readParquet(join(PUBLIC_DATA_DIR, "build1", "total_mtDNA_base_composition.parquet"), ["HAGRID"]);
