@@ -101,6 +101,9 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - Step 4 (HyPhy RELAX, long-lived against short-lived tips balanced within orders): ND3 and CYTB relaxed
   in the first draw, neither in a second disjoint draw. Withdrawn. Each gene takes 5 to 40 minutes on 4
   cores for about 110 species. `watchdog.py send` must be run from inside the repository.
+- mitoport is going (the maintainer's go, relayed to desk #31): its files are in the run folder under
+  `mitoport/`. IQ-TREE with a fixed tree needs `--keep-ident`, or it re-places identical sequences and the
+  trees of two proteins no longer share branches. Two Coevol chains run until about 2026-11-15 midday.
 - Next: lifespan as a continuous trait on all branches (Coevol or the like), one gene first for the time;
   then step 5 (convergence), then RM16 steps 2 and 4.
 

@@ -134,7 +134,15 @@ the columns of the well-conserved core, and at what cost for 2,300 species.
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** blocked: desk #31 (the go on the calibration; if nobody answers, nothing is started), and desk #30 for where its code lives · **Owner:** lead
+**State:** urgent (the maintainer, 2026-11-13: "start this research ... and report in the mitoport topic"); where its code lives is still desk #30 · **Owner:** lead
+
+Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
+mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
+mitochondrial COX genes and no others (the positive control); complex III shows nothing. Next: more
+species by pairwise pruning, contact against non-contact residues, then lifespan; embeddings asked of the
+kron seat. The maintainer widened the idea the same day: "paired selection between mitochondria proteins
+and their nuclear interaction partners ... both with evolutionary pressure methods and esm coembedding
+like approaches".
 
 The maintainer's idea (2026-11-13): borrow from `longevity-genie/longevity-port-pipelines`, narrowed to
 mitochondria, "to see how interactions between mitgenes and nuclear genes differ in organisms to search for
