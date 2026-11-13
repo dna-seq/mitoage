@@ -943,6 +943,22 @@
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+  /* Species picker (SpeciesCombobox.tsx): the search box used to pick, not to navigate. */
+  .sp-combo .search__box {
+    box-shadow: inset 0 0 0 2px var(--color-border);
+  }
+  .sp-combo__dot {
+    flex: none;
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-inline: 0.625rem;
+    border-radius: 50%;
+    background: var(--dot, var(--class-other));
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot, var(--class-other)) 22%, transparent);
+  }
+  .sp-combo .search__option {
+    cursor: pointer;
+  }
   .search__empty {
     padding: var(--space-4);
     color: var(--color-text-muted);

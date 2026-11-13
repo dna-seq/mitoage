@@ -219,24 +219,11 @@
   .xp-scope .select:disabled {
     opacity: 0.7;
   }
-  .xp-search .search__box,
-  .sp-combo .search__box {
+  .xp-search .search__box {
     box-shadow: inset 0 0 0 2px var(--color-border);
   }
   .xp-search .search__box {
     height: var(--tap);
-  }
-  .sp-combo__dot {
-    flex: none;
-    width: 0.875rem;
-    height: 0.875rem;
-    margin-inline: 0.625rem;
-    border-radius: 50%;
-    background: var(--dot, var(--class-other));
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot, var(--class-other)) 22%, transparent);
-  }
-  .sp-combo .search__option {
-    cursor: pointer;
   }
 
   .xp-chips {

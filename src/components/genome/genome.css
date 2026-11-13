@@ -416,6 +416,64 @@
     color: var(--color-text-muted);
   }
 
+  /* ================= Genome map with a species switch (GenomeExplorer.tsx) ================= */
+  .gx {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+  .gx__kicker {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+  }
+  .gx__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 0.5em;
+  }
+  .gx__sci {
+    font-size: 0.7em;
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .gx__desc {
+    margin-top: var(--space-1);
+  }
+  .gx__controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3) var(--space-4);
+  }
+  .gx__combo {
+    flex: 0 1 24rem;
+    min-width: min(100%, 16rem);
+  }
+  .gx__quick {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+  .gx__quick .chip {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .gx__status {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .gx__status:empty {
+    display: none;
+  }
+  .gx--loading {
+    opacity: 0.55;
+    transition: opacity var(--dur-fast) var(--ease-out);
+  }
+
   /* ================= Class distribution (strip + box plot) ================= */
   .cdist {
     display: flex;

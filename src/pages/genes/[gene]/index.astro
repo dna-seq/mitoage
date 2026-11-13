@@ -5,7 +5,8 @@ import Scatter from "~/components/charts/Scatter";
 import ClassDistribution from "~/components/genome/ClassDistribution.astro";
 import CodonSummary from "~/components/genome/CodonSummary.astro";
 import CorrelationTable from "~/components/genome/CorrelationTable.astro";
-import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
+import GenomeExplorer from "~/components/genome/GenomeExplorer";
+import "~/components/genome/genome.css";
 import Breadcrumb from "~/components/ui/Breadcrumb.astro";
 import Button from "~/components/ui/Button.astro";
 import Card from "~/components/ui/Card.astro";
@@ -26,8 +27,7 @@ import {
   isProtein,
   valuesByClass,
 } from "~/lib/genome/geneData";
-import { featureLength } from "~/lib/genome/layout";
-import { mapDataFor, referenceSpecies } from "~/lib/genome/mapData";
+import { mapDataFor, QUICK_MAP_SPECIES, referenceSpecies } from "~/lib/genome/mapData";
 import { featureSymbol } from "~/lib/genome/names";
 import { hashString } from "~/lib/random";
 import { keySpeciesPresent } from "~/lib/scatter";
@@ -54,7 +54,6 @@ const summary = geneSummary(region);
 // ---- Reference map (human) ----
 const ref = referenceSpecies();
 const refMap = mapDataFor(ref);
-const refFeat = refMap.features.find((f) => f.name === region);
 
 // ---- Distribution and scatter ----
 const gcKey = `gc:${region}`;
@@ -221,26 +220,14 @@ const scatterLegend = CLASS_GROUPS.filter((g) => points.some((p) => p.group === 
 
     <TabNav items={tabs} label="Gene sections" />
 
-    <section id="map" class="gene-section" aria-labelledby="map-title">
+    <section id="map" class="gene-section" aria-labelledby="gene-map-title">
       <Card>
-        <div class="card__head">
-          <h2 id="map-title" class="card__title">{symbol} in the human mitochondrial genome</h2>
-          <span class="card__desc">
-            <i>{ref.scientificName}</i>, RefSeq {ref.refseq}
-            {
-              refFeat &&
-                ` · ${fmtInt(refFeat.start)}–${fmtInt(refFeat.end)}, ${fmtBp(featureLength(refFeat, refMap.sizeBp))}${
-                  refFeat.type === "D-loop" ? "" : `, ${refFeat.strand === 1 ? "+" : "−"} strand`
-                }`
-            }
-          </span>
-        </div>
-        <GenomeMapFigure
+        <GenomeExplorer
+          client:idle
           id="gene-map"
-          data={refMap}
-          highlight={region}
-          load="idle"
-          label={`Circular map of the human mitochondrial genome with ${symbol} highlighted`}
+          initial={refMap}
+          highlight={{ region, symbol }}
+          quick={QUICK_MAP_SPECIES}
         />
       </Card>
     </section>

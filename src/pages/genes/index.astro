@@ -1,6 +1,7 @@
 ---
 import { getAllSpecies } from "~/data";
-import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
+import GenomeExplorer from "~/components/genome/GenomeExplorer";
+import "~/components/genome/genome.css";
 import Card from "~/components/ui/Card.astro";
 import Hero from "~/components/ui/Hero.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -11,7 +12,7 @@ import { REGION_INFO } from "~/lib/genes";
 import { GENE_GROUPS } from "~/lib/genome/geneFacts";
 import { geneSummary } from "~/lib/genome/geneData";
 import { featureAngles } from "~/lib/genome/layout";
-import { mapDataFor, referenceSpecies } from "~/lib/genome/mapData";
+import { mapDataFor, QUICK_MAP_SPECIES, referenceSpecies } from "~/lib/genome/mapData";
 import { FEATURE_COLOR, featureFullName, featureSymbol, trnaLetter } from "~/lib/genome/names";
 import { breadcrumbLd, type JsonLd } from "~/lib/seo";
 import { absoluteUrl, geneUrl } from "~/lib/urls";
@@ -101,13 +102,9 @@ const kinds = [
   </Hero>
 
   <div class="container genes-body">
-    <section aria-labelledby="ref-title">
+    <section aria-labelledby="genes-map-title">
       <Card>
-        <div class="card__head">
-          <h2 id="ref-title" class="card__title">The human mitochondrial genome</h2>
-          <span class="card__desc"><i>{ref.scientificName}</i>, RefSeq {ref.refseq}, {fmtBp(ref.mtdnaSizeBp)}. Select a gene to open its page.</span>
-        </div>
-        <GenomeMapFigure id="genes-map" data={refMap} load="idle" label="Circular map of the human mitochondrial genome; every gene links to its page" />
+        <GenomeExplorer client:idle id="genes-map" initial={refMap} quick={QUICK_MAP_SPECIES} />
       </Card>
     </section>
 

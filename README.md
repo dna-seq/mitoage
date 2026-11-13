@@ -52,7 +52,8 @@ src/
                    SectionTabs (between the pages of a section), CompositionBar, DataTable (sortable,
                    filterable, CSV export), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island)
-    genome/        circular genome map, gene-page charts and correlation tables
+    genome/        circular genome map (GenomeExplorer adds the species switch of the genes
+                   pages), gene-page charts and correlation tables
     tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table, taxon-page cards
     species/       the species list (genome and life-history views)
     compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
