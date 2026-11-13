@@ -73,6 +73,14 @@
     align-items: center;
     gap: var(--space-2);
   }
+  /* What the FASTA download says (the tones of .dtable__note), on a line of its own. */
+  .cmp-toolbar__note {
+    flex-basis: 100%;
+    margin: 0;
+  }
+  .cmp-toolbar__note:empty {
+    display: none;
+  }
 
   /* ================= Species cards ================= */
   .cmp-cards {

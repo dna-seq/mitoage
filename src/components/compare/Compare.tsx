@@ -1,13 +1,15 @@
 /**
  * Compare island: 2-6 species side by side. Reads ?species=a,b,c, fetches /species/{slug}.json
- * for each, and keeps the query string in sync as species are added or removed.
+ * for each, and keeps the query string in sync as species are added or removed. The genomes of
+ * the chosen species download as one FASTA file, fetched from NCBI in the browser.
  *
  * <Compare client:idle suggestions={...} speciesCount={922} />
  */
-import { createEffect, createMemo, createSignal, For, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show } from "solid-js";
 import { ICONS } from "~/components/ui/icons";
 import { PROTEIN_GENES, type Region, type RegionStats } from "~/data/schema";
 import { classColor, classLabel } from "~/lib/classes";
+import { compareFastaName, fastaChoice, leftOutSentence } from "~/lib/compare/speciesFasta";
 import { basePercents, NUCLEOTIDES } from "~/lib/composition";
 import {
   COMPARE_INDEX_URL,
@@ -19,6 +21,7 @@ import {
 } from "~/lib/explore/compareTypes";
 import { fmtSignedTick } from "~/lib/explore/format";
 import { codonAminoAcid } from "~/lib/explore/variables";
+import { type DownloadNote, downloadFasta } from "~/lib/fastaDownload";
 import { fmtBp, fmtFixed, fmtInt, fmtLifespan, fmtLifespanLong, fmtNum, fmtPct, fmtSigned } from "~/lib/format";
 import { regionLabel } from "~/lib/genes";
 import { AMINO_ACIDS, CODONS } from "~/lib/geneticCode";
@@ -236,6 +239,39 @@ export default function Compare(props: Props) {
   const pending = () => slugs().some((s) => entries().get(s)?.status !== "ok" && entries().get(s)?.status !== "error");
   const full = () => slugs().length >= MAX_COMPARE;
 
+  // ------------------------------------------------------------ FASTA of the chosen species
+  const [fastaBusy, setFastaBusy] = createSignal(false);
+  const [fastaNote, setFastaNote] = createSignal<DownloadNote | null>(null);
+  let fastaStop: AbortController | undefined;
+  onCleanup(() => fastaStop?.abort());
+  // A note about one selection does not outlive it.
+  createEffect(
+    on(slugs, () => {
+      if (!fastaBusy()) setFastaNote(null);
+    }, { defer: true }),
+  );
+  /** The genomes of the chosen species, in the order of their cards. */
+  const exportFasta = async () => {
+    if (fastaBusy() || pending()) return;
+    const choice = fastaChoice(
+      slugs().map((slug) => {
+        const e = entries().get(slug);
+        return { slug, refseq: e?.status === "ok" ? e.data.species.refseq : null };
+      }),
+    );
+    if (!choice.accessions.length) return;
+    const leftOut = leftOutSentence(choice.leftOut);
+    fastaStop = new AbortController();
+    setFastaBusy(true);
+    const said = await downloadFasta(choice.accessions, compareFastaName(choice.slugs), {
+      signal: fastaStop.signal,
+      onNote: setFastaNote,
+      ...(leftOut ? { leftOut } : {}),
+    });
+    setFastaBusy(false);
+    setFastaNote(said);
+  };
+
   // One species: load the species list to suggest relatives.
   createEffect(() => {
     if (ready() && ok().length === 1 && !pending() && !index()) loadIndex().then(setIndex).catch(() => undefined);
@@ -378,6 +414,16 @@ export default function Compare(props: Props) {
               <a class="btn btn--soft btn--sm" href={exploreUrl({ highlight: ok().map((x) => x.slug).join(",") })}>
                 Show in the plot
               </a>
+              <button
+                type="button"
+                class="btn btn--soft btn--sm dtable__csv"
+                disabled={fastaBusy() || pending()}
+                aria-busy={fastaBusy() ? "true" : undefined}
+                onClick={exportFasta}
+              >
+                <Svg name="download" size={16} />
+                {ok().length === 1 ? "FASTA of this species" : "FASTA of these species"}
+              </button>
             </Show>
             <button type="button" class="btn btn--soft btn--sm" onClick={() => setSlugs([])}>
               Clear
@@ -386,6 +432,9 @@ export default function Compare(props: Props) {
               Copy link
             </button>
           </div>
+          <p class="dtable__note cmp-toolbar__note" role="status" data-tone={fastaNote()?.tone}>
+            {fastaNote()?.text}
+          </p>
         </div>
       </Show>
 

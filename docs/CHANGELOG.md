@@ -4,6 +4,28 @@ Newest first.
 
 ## Unreleased
 
+- **FASTA of a hand-picked set of species and of a taxon's species**, the two places the species
+  list's download did not reach (see its entry below):
+  - `/compare/species/?species=a,b`: "FASTA of these species" downloads the genomes of exactly the
+    chosen species, in the order of their cards. A chosen entry that did not load is named as left
+    out.
+  - `/taxa/{rank}/{slug}/`: the species table has the same button, for the rows the table shows
+    after its filter and in its order. On a clade of more than 30 species the button appears once
+    the rest of the rows has loaded, not while the table holds its first page only.
+
+  Both show what the species list shows for a complete, an incomplete and a failed download: the
+  flow moved out of `DataTable` into `src/lib/fastaDownload.ts`, and `src/lib/fasta.ts` is
+  unchanged. `/tree/tree.json` gains `leaf.refseq`, the versioned accession of every species. On
+  the build 2 data (2,335 species) the file grows from 306,425 to 339,126 bytes (+32,701, 10.7%),
+  with `gzip -9` from 96,650 to 104,765 (+8,115, 8.4%). Two integers per species instead of the
+  string would have made it 324,697 bytes (103,415 gzipped), 1.35 KB less on the wire, and tied the
+  format to `NC_` plus six digits; the string was kept. `/compare/species-index.json` is unchanged,
+  since the side-by-side view already loads each species' record with its accession. Each inline
+  row of a taxon page's table carries the accession too.
+
+  Found on the way and left as it is: the 50 species of build 2 without an order or a family have
+  an empty group in a taxon page's inline rows and "Unknown order" or "Unknown family" in the rows
+  loaded from the tree (`src/lib/tree/speciesRows.test.ts` states the difference).
 - Roadmap: RM16, the peptides encoded inside mtDNA (humanin, MOTS-c, the alternative frames of ND4 and COX1 and the rest), asked by the maintainer; the aligner check, RM12's first step, is done and reported in `#mitoalignments`. Documents only.
 - **Gene pages no longer scroll sideways on a phone.** The button under the class chart ("Compare ND6 across
   taxa: every parameter, every species") was wider than a phone's screen and widened the whole page by 135

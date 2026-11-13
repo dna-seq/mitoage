@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import { getAllSpecies, getCorrelations, getSpeciesById, getSpeciesInTaxon, getTaxa, type Rank, type Species, type TaxonNode } from "~/data";
 import Scatter from "~/components/charts/Scatter";
 import CladeScatter from "~/components/tree/CladeScatter";
-import CladeSpeciesTable, { groupLabel } from "~/components/tree/CladeSpeciesTable";
+import CladeSpeciesTable from "~/components/tree/CladeSpeciesTable";
 import ChildTaxa from "~/components/tree/ChildTaxa.astro";
 import CorrelationCard from "~/components/tree/CorrelationCard.astro";
 import LifespanLeaders from "~/components/tree/LifespanLeaders.astro";
@@ -26,6 +26,7 @@ import { breadcrumbLd } from "~/lib/seo";
 import { ancestorsOf, cladeStats } from "~/lib/tree/build";
 import { treeUrl } from "~/lib/tree/data";
 import { childRank, RANK_LABEL, rankCount, rankPlural } from "~/lib/tree/names";
+import { speciesRow } from "~/lib/tree/speciesRows";
 import { cladeLd } from "~/lib/tree/seo";
 import { speciesUrl, taxonUrl } from "~/lib/urls";
 import { statsGroupForTaxon } from "~/lib/compare/build";
@@ -113,18 +114,7 @@ const PAGE = 20;
 const groupRank: Rank | undefined =
   rank === "kingdom" || rank === "phylum" ? "class" : rank === "class" ? "order" : rank === "order" ? "family" : undefined;
 const byLife = [...species].sort((a, b) => b.maxLongevityYears - a.maxLongevityYears);
-const tableRows: Row[] = (species.length <= INLINE_MAX ? byLife : byLife.slice(0, PAGE)).map((s) => {
-  const row: Row = {
-    name: s.scientificName,
-    common: s.commonName,
-    href: speciesUrl(s.slug),
-    life: s.maxLongevityYears,
-    size: s.mtdnaSizeBp,
-    gc: s.gcPercent,
-  };
-  if (groupRank) row["group"] = groupLabel(groupRank, s.taxonomy[groupRank as keyof Species["taxonomy"]]);
-  return row;
-});
+const tableRows: Row[] = (species.length <= INLINE_MAX ? byLife : byLife.slice(0, PAGE)).map((s) => speciesRow(s, groupRank));
 
 // ---- correlations
 const scope = rank === "kingdom" ? "all" : rank === "class" || rank === "order" ? `${rank}:${name}` : null;

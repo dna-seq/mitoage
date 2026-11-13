@@ -58,15 +58,17 @@ src/
     genome/        circular genome map (GenomeExplorer adds the species switch of the genes
                    pages), gene-page charts and correlation tables, AlignmentViewer (the gene's
                    alignment on a canvas: species by columns, conservation, lifespan beside the rows)
-    tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table, taxon-page cards
+    tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table (with the
+                   FASTA of its species), taxon-page cards
     species/       the species list (genome and life-history views)
     compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
                    child taxa, codon usage, every species of a region) and their charts (RowsChart,
                    CorrMap, CodonBars, SpeciesScatter); Compare.tsx, DotPlot and Marker are the
-                   species side-by-side view
+                   species side-by-side view (with the FASTA of the chosen species)
     explore/       the plot explorer (shown at /compare/plot/): axis picker, strongest correlations
   lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders, CSV,
-                   FASTA from NCBI (fasta.ts; testdata/ holds three real records for its tests);
+                   FASTA from NCBI (fasta.ts asks, fastaDownload.ts is the download an island
+                   starts; testdata/ holds three real records for their tests);
                    genome/, tree/, explore/ and compare/ hold the logic behind those components
                    (compare/legacy.ts maps the old site's taxon ids for redirects)
   pages/           routes, below
@@ -77,11 +79,11 @@ The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · 
 | Route | What it is |
 | --- | --- |
 | `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; the filtered rows download as CSV and their genomes as one FASTA file; one page per species |
-| `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages |
+| `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages; a taxon page's species table offers the genomes of its species (after the table's filter) as one FASTA file |
 | `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop; each protein and rRNA page shows the gene aligned across species (`public/data/alignments/`) |
 | `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage. Each table has a chart of its rows (`?chart=`: distribution, variation, lifespan r with its 95% interval, or the map of r for every region and parameter); codon usage is also drawn by amino acid (`?bars=share`) |
 | `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family (with the same chart), and each species' values, with a scatter of the listed species on any two parameters or lifespan (`?x=&y=`) |
-| `/compare/species/?species=a,b` | Two to six species side by side, genome first |
+| `/compare/species/?species=a,b` | Two to six species side by side, genome first; their genomes download as one FASTA file, in the order chosen |
 | `/compare/plot/?x=&y=&scope=` | Plot explorer: any two mtDNA features, or one against a life-history trait |
 
 Old URLs get static redirects: `/explore/` (keeps the query), `/compare/?species=`,
@@ -108,6 +110,20 @@ the filtered species' RefSeq records from NCBI E-utilities in the browser, 100 a
 and offers them as one file in the table's order. NCBI answers 200 and leaves out a record it does
 not have, so every answer is checked against the accessions asked for: the page names the missing
 ones, and a request that fails (after three attempts for no answer, a 429 or a 5xx) saves nothing.
+
+The same download, `downloadFasta` in `src/lib/fastaDownload.ts` (fetch, save, and the sentence
+shown), serves two more places, so all three say the same things:
+
+- **Taxon pages**: the species table (`CladeSpeciesTable`) passes `fasta` to its `DataTable` once it
+  holds every species of the clade. A large clade starts with its first page of rows and loads the
+  rest from `/tree/tree.json`; until then there is no button, because a file of the first 20 genomes
+  would pass for the clade's. Both sources build their rows in `src/lib/tree/speciesRows.ts`, and
+  the tree payload carries each species' accession for this (`leaf.refseq`, which added 32.7 KB to
+  the 306.4 KB file of build 2, 8.1 KB to its 96.7 KB gzipped).
+- **Species side by side**: "FASTA of these species" asks for the chosen species in the order of
+  their cards (`src/lib/compare/speciesFasta.ts`). The accession comes with each species' record
+  (`/species/{slug}.json`), so `/compare/species-index.json` is unchanged. A chosen entry that did not
+  load is named as left out.
 
 The charts of the Compare section draw what `src/lib/compare/charts.ts` returns: it turns the rows
 of a table into the marks of a range chart, a group's summaries into the lifespan-correlation map

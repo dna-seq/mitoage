@@ -31,7 +31,7 @@ import {
 } from "solid-js";
 import { basePercents } from "~/lib/composition";
 import { downloadText, toCsv } from "~/lib/csv";
-import { describeFasta, type FastaNote, fastaToSave, fetchFasta } from "~/lib/fasta";
+import { type DownloadNote, downloadFasta } from "~/lib/fastaDownload";
 import { fmtP, fmtR } from "~/lib/explore/format";
 import {
   fmtBp,
@@ -340,7 +340,7 @@ export default function DataTable(props: DataTableProps) {
   };
 
   const [fastaBusy, setFastaBusy] = createSignal(false);
-  const [fastaNote, setFastaNote] = createSignal<{ tone: "info" | FastaNote["tone"]; text: string } | null>(null);
+  const [fastaNote, setFastaNote] = createSignal<DownloadNote | null>(null);
   let fastaStop: AbortController | undefined;
   onCleanup(() => fastaStop?.abort());
   /** Accessions of the filtered rows, in the order shown. */
@@ -366,23 +366,17 @@ export default function DataTable(props: DataTableProps) {
     const n = (v: number) => v.toLocaleString("en-US");
     fastaStop = new AbortController();
     setFastaBusy(true);
-    setFastaNote({ tone: "info", text: `Fetching ${n(ids.length)} ${ids.length === 1 ? "sequence" : "sequences"} from NCBI…` });
-    const result = await fetchFasta(ids, {
+    const said = await downloadFasta(ids, spec.filename, {
       signal: fastaStop.signal,
-      onProgress: (done, total) => setFastaNote({ tone: "info", text: `Fetching sequences from NCBI: ${n(done)} of ${n(total)}…` }),
+      onNote: setFastaNote,
+      ...(without > 0
+        ? {
+            leftOut: `${n(without)} ${without === 1 ? "row has" : "rows have"} no accession and ${without === 1 ? "was" : "were"} left out.`,
+          }
+        : {}),
     });
     setFastaBusy(false);
-    const file = fastaToSave(result);
-    if (file !== null) downloadText(spec.filename, file, "text/x-fasta");
-    const said = describeFasta(result, spec.filename);
-    setFastaNote(
-      without > 0
-        ? {
-            tone: said.tone === "ok" ? "warn" : said.tone,
-            text: `${said.text} ${n(without)} ${without === 1 ? "row has" : "rows have"} no accession and ${without === 1 ? "was" : "were"} left out.`,
-          }
-        : said,
-    );
+    setFastaNote(said);
   };
   const actions = () => (
     <div class="dtable__actions">

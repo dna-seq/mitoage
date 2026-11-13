@@ -101,7 +101,7 @@ export const buildTreePayload = (): TreePayload => {
     parent: [],
     age: [],
     cls: [],
-    leaf: { node: [], common: [], life: [], gc: [], size: [] },
+    leaf: { node: [], common: [], life: [], gc: [], size: [], refseq: [] },
   };
   const walk = (n: TaxonNode, parent: number, cls: number) => {
     const i = out.name.length;
@@ -128,6 +128,7 @@ export const buildTreePayload = (): TreePayload => {
       out.leaf.life.push(s ? round(s.maxLongevityYears, 2) : Number.NaN);
       out.leaf.gc.push(s ? round(s.gcPercent, 2) : Number.NaN);
       out.leaf.size.push(s?.mtdnaSizeBp ?? Number.NaN);
+      out.leaf.refseq.push(s?.refseq ?? "");
     }
     n.children.forEach((ch) => walk(ch, i, c));
   };

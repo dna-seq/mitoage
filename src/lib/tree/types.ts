@@ -43,6 +43,8 @@ export interface TreePayload {
     gc: number[];
     /** mtDNA length, bp. */
     size: number[];
+    /** Versioned RefSeq accession of the genome, e.g. "NC_012920.1". */
+    refseq: string[];
   };
 }
 
@@ -51,6 +53,8 @@ export interface SpeciesInfo {
   life: number;
   gc: number;
   size: number;
+  /** Versioned RefSeq accession; "" when the payload has none for the species. */
+  refseq: string;
 }
 
 export interface TaxonDatum {
@@ -117,6 +121,8 @@ export const decodeTree = (p: TreePayload): TreeModel => {
       life: p.leaf.life[k] ?? Number.NaN,
       gc: p.leaf.gc[k] ?? Number.NaN,
       size: p.leaf.size[k] ?? Number.NaN,
+      // `refseq` is missing from a payload cached before the field existed.
+      refseq: (p.leaf.refseq as string[] | undefined)?.[k] ?? "",
     };
   });
   const root = stratify<TaxonDatum>()
