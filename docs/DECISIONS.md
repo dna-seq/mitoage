@@ -92,3 +92,24 @@ structural alignments".
   to the maintainer as point 2 of the design and not objected to; the go was given on the design as a whole.
 - **Rejected:** a whole-genome alignment (gene order differs between phyla, so its columns would not mean
   much), and an aligner written in TypeScript (far slower and worse on 2,300 sequences).
+
+## D6 — The build is mirrored on Hugging Face; the site keeps building from git (2026-11-13)
+
+The maintainer, on the alignments: "What size is it? Can we push it to hf as dataset?", then, on the
+proposal below, "Go". Asked whether a columnar format exists for alignments ("Are there any modern parquet
+or zarr like formats for MSA?"): none is a standard; the answer given was parquet with one row per species
+and gene.
+
+- The dataset is `longevity-genie/mitoage`, public, and holds the whole build: the data files as the site
+  serves them, the alignments as FASTA and as one parquet table, and a card. One dataset matches one build.
+- Its licence is stated as mixed: the lifespan values from FishBase and SeaLifeBase are CC BY-NC 4.0.
+- `bun run hf` packages it; the upload is one command run by hand with the maintainer's login. Pushed with
+  each build.
+- The site builds from the files in git and reads nothing from Hugging Face.
+
+Rejected: the alignments alone as the dataset (a second dataset would then be needed for the tables they
+join to). The site reading its data from Hugging Face at build time or in the browser (the maintainer asked
+"if mitoage overall cann serve hf data from static website or there are issues?"): possible, not done; the
+build would need the network and the pages a pinned revision, and at 23 MB of data nothing presses for it;
+that it works from the browser was not tested. A matrix store such as Zarr for the alignments: nothing to
+gain at 2,316 rows. `alignments.parquet` in git: 22 MB more for a file made from files already there.

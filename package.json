@@ -24,6 +24,7 @@
     "preview": "astro preview",
     "check": "tsc --noEmit",
     "data": "bun run pipeline/build.ts",
-    "align": "bun run pipeline/align.ts"
+    "align": "bun run pipeline/align.ts",
+    "hf": "bun run pipeline/hf.ts"
   }
 }

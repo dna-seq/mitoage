@@ -131,6 +131,7 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | `bun install` | install dependencies |
 | `bun run data` | run the data pipeline, writing `src/data/generated/` and `public/data/`; it needs the raw inputs, which are not in git |
 | `bun run align` | align the mitochondrial genes of the committed build with MAFFT, writing `public/data/alignments/`; it needs MAFFT at the pinned version and the pinned RefSeq release in `data/cache/` |
+| `bun run hf` | package the committed build for Hugging Face into `out/hf/` (the data files, `alignments/alignments.parquet`, the dataset card); the upload is run by hand, `hf upload longevity-genie/mitoage out/hf . --repo-type dataset` (D6) |
 | `bun run dev` | dev server |
 | `bun run build` | build the static site into `dist/` |
 | `bun run preview` | serve `dist/` locally, with the same `BASE_PATH` as the build |
