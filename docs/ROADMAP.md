@@ -82,7 +82,10 @@ the downloads; the Data page lists the files. The viewer loads one gene's file, 
 
 **State:** unattended · **Owner:** lead
 
-Per-site association of each alignment column with maximum lifespan on the dated tree, controlling for
+First, the aligner (the maintainer asked whether newer tools do better; no Rust one was found, the
+contenders are FAMSA2 and Muscle5): the 13 proteins aligned with MAFFT's fast mode (the pin), a more
+accurate MAFFT mode, FAMSA2 and Muscle5, how much the columns differ and where, reported in the channel;
+the pin changes only on a clear difference. Then: per-site association of each alignment column with maximum lifespan on the dated tree, controlling for
 body mass and for nucleotide bias (Jobson 2010, Aledo 2012), corrected for the number of sites. Positive
 controls first: cysteine, methionine and threonine content against lifespan must come out as published.
 Hits are compared with the positions of Mariadassou & Pellay 2014 (doi:10.1016/j.exger.2014.03.009), whose
@@ -105,6 +108,11 @@ The maintainer's idea (2026-11-13): borrow from `longevity-genie/longevity-port-
 mitochondria, "to see how interactions between mitgenes and nuclear genes differ in organisms to search for
 longevity connections". Proposed there: one complex first (cytochrome c oxidase), contact residues from a
 solved structure, the species of build 2 that also have nuclear orthologs, co-change at contacts against
-lifespan on the dated tree with buried non-contact positions as the control, and a stop rule. The port
+lifespan on the dated tree with buried non-contact positions as the control, and a stop rule. The maintainer
+added that the port project's null need not hold for mitochondria and that cybrids give measured
+compatibility; so the first step became a calibration: for the published cybrid series (apes on a human
+nucleus, rodents on a mouse nucleus, about 12 pairs with activity per complex; a helper's literature table
+is in `#mitoage>mitoport`, unchecked), does a contact-residue mismatch score per complex order the pairs as
+the measurements do. The port
 project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
 are a new data source (the maintainer's), and where the code lives (a separate repository is the default).

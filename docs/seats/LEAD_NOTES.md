@@ -46,6 +46,18 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
   the screenshot library may be a development dependency, and the build 2 defaults (RM4).
 - Next unattended items, in order: RM3 (read every section's screenshots), RM2, RM8.
 
+### Evening of 2026-11-13
+
+- The alignments landed (5bdbbfc, D5): `bun run align`, live under `/data/alignments/`. MAFFT sits in an
+  environment outside the repository and is put on the PATH by the batch job that runs the command.
+- The site build of a branch runs as a batch job that names the worktree: check the folder it names before
+  trusting its result (one branch build ran in the wrong folder; the build of main was rerun and passed).
+- The seat table's `wake_people` gained `mitoalignments`, the secretary's channel for the arm; the
+  maintainer writes in the topic of that name in the repository's channel, where the posts go.
+- Open with the maintainer, in the chat: the go on mitoport's calibration and where its code lives (RM11);
+  the pipeline inputs (RM7); the screenshot library as a development dependency; the build 2 defaults (RM4).
+- Next: RM10 (the viewer), then RM12 starting with the aligner comparison.
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).
