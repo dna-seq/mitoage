@@ -85,6 +85,17 @@ columns carry one residue in 90 % of species), ATP8 and ND6 the least. Six recor
 the release file and need the fetch the pipeline already does for them. No insight was looked for yet:
 the run shows cost and size only.
 
+Prior art, asked by the maintainer before any pipeline work ("check if smb already done and published";
+a helper agent's search of 2026-11-13, unchecked except where said): no live resource offers per-gene
+alignments of mitochondrial genes for a species set like this one, and none attaches lifespan (the old
+alignment databases are offline; MitoFish, MIDORI2 and RefSeq give unaligned sequences). A site-level screen
+against lifespan was published once: Mariadassou & Pellay 2014, Exp Gerontol 56:53,
+doi:10.1016/j.exger.2014.03.009 (the record checked at PubMed; its methods and data release not read, the
+paper is paywalled). The rest is composition (cysteine, methionine, threonine against lifespan, and the
+rebuttal that these follow nucleotide bias: Jobson 2010, Aledo 2012) or rates of evolution. So the design
+gains two points: hits are compared with the 2014 paper's positions, and the screen controls for body mass
+and nucleotide bias, with the three amino-acid results as positive controls.
+
 The design proposed, each point the maintainer's to change:
 
 1. **What is aligned:** each of the 13 proteins as amino acids, the codon alignment derived from it, and
@@ -97,3 +108,15 @@ The design proposed, each point the maintainer's to change:
    sites; nothing claimed from an uncorrected comparison.
 4. **The site:** on each gene page an alignment viewer (rows in the tree's order, a conservation track,
    lifespan beside each row, a filter by taxon) and the aligned FASTA as a download.
+
+## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
+
+**State:** waits until 2026-11-14: the maintainer's go on a bounded test, asked in `#mitoage>mitoport` on 2026-11-13; unanswered, it goes to the desk · **Owner:** lead
+
+The maintainer's idea (2026-11-13): borrow from `longevity-genie/longevity-port-pipelines`, narrowed to
+mitochondria, "to see how interactions between mitgenes and nuclear genes differ in organisms to search for
+longevity connections". Proposed there: one complex first (cytochrome c oxidase), contact residues from a
+solved structure, the species of build 2 that also have nuclear orthologs, co-change at contacts against
+lifespan on the dated tree with buried non-contact positions as the control, and a stop rule. The port
+project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
+are a new data source (the maintainer's), and where the code lives (a separate repository is the default).

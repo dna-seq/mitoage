@@ -37,6 +37,15 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 | USGS BBL | v2025.1 | not checked |
 | EURING | not retrieved | the site answers again (a redirect); the list itself not fetched (RM5) |
 
+### Later on 2026-11-13
+
+- RM1 landed (3e791c6): species pages name the real lifespan source; milestone posted with screenshots.
+- The maintainer: visual work is done on the cluster and proved by screenshots in the channel (`CLAUDE.md` §8).
+- Waiting in the chat, each to go to the desk if unanswered on 2026-11-14: the go on RM10's design (after
+  the prior-art report), the go on RM11's test and where its code lives, the pipeline inputs (RM7), whether
+  the screenshot library may be a development dependency, and the build 2 defaults (RM4).
+- Next unattended items, in order: RM3 (read every section's screenshots), RM2, RM8.
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).

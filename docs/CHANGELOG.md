@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Roadmap: RM10 gains the prior-art check on alignments and site-level lifespan screens; RM11 records the mitoport idea and the bounded test proposed for it. Documents only.
 - **A species page says where its record comes from** (RM1). The lifespan card and the life-history card
   link to the source that holds the value (AnAge, FishBase, SeaLifeBase or the USGS longevity records);
   before, every species linked to AnAge, also the 575 whose value comes from another source. A new card,
