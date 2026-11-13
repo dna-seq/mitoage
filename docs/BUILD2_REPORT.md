@@ -75,10 +75,10 @@ and stops if a pinned file is missing (EURING excepted, recorded as not retrieve
 ## Commands
 
 All four run in the worktree on the final state: `bun run data` (validation: all checks passed),
-`bun test` (144 tests pass), `bun run check`, `bun run build` (about 7,800 pages; the build computes
+`bun test` (192 tests pass across 14 files, rerun after the rebase onto origin/main), `bun run check`, `bun run build` (about 7,800 pages; the build computes
 feature values and both correlation datasets with PIC, about 25 s of it).
 
-Each new test was checked by breaking the code it guards:
+Each new test was checked by breaking the code it guards (the table lists the checks; the FASTA thousands-separator test was added after it and was checked the same way):
 
 | break | file | test |
 | --- | --- | --- |
