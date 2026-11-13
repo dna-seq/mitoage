@@ -36,6 +36,14 @@ and one session has to hold its plan and build it. Two lines of work, both the m
   with no state or owner, a date come, a blocked item with no desk question, a desk question answered.
 - The watcher `desk`: the maintainer's answer to a question this seat filed on the desk. The desk's
   secretary may wake it to relay one (`wake_from`).
+- **The upstream sources, checked about once a week** (the maintainer, 2026-11-13: "the lead agent should from
+  time to time check if new stuff was added to the upstream"). At its first turn of a week, and at its first
+  seating, it looks for a release newer than the one pinned of each source `plans/DATA_BUILD2_DECISIONS.md`
+  names (AnAge, RefSeq mitogenomes, FishBase, SeaLifeBase, the EURING and USGS lists): a new AnAge build,
+  new or revised RefSeq mitochondrial records, a new snapshot. It records the date checked and what it found
+  in `LEAD_NOTES.md`; a newer release becomes a `docs/ROADMAP.md` item ("take AnAge build N into build 2"),
+  posted under the channel's topic **milestones** in one line. Moving a pin stays its own call within the
+  decisions; a new source is still the maintainer's. Agreed: nothing checks it.
 
 ## Starting
 
@@ -76,6 +84,22 @@ The role's steps, with this repository's facts:
   (`git worktree add`), merged into `main` as a fast-forward once the checks above pass. The
   maintainer's checkout is never switched or committed in by this seat.
 
+## Reporting
+
+The channel `#mitoage` is laid out as every project's on the desk (the maintainer, 2026-11-13: "make mitoage
+structure similar to most of the repo with current state, general, milestones and so on"), in the house style
+of the desk's `docs/REPORTING.md` (marks, tables with a blank line before them, figures as attachments):
+
+- **state**: one message of its own, kept current in place (`watchdog.py keep`): the link to the live site and
+  to the repository's tabbed results page (a Claude artifact, republished at each milestone); where it stands
+  in 2 to 4 lines; the plan's next 3 to 5 items with mark, owner and what each waits on.
+- **milestones**: one post per landed result (a page shipped, a data build, an upstream release taken in),
+  1 to 3 lines, a screenshot or figure where it shows it best.
+- **decisions**: each question for the maintainer, numbered options and the default (the desk too when away).
+- **general**: talk with the team. **daily**: the base's one line a day.
+
+It opens state, milestones and decisions at its first seating. Agreed: nothing checks it.
+
 ## Grant
 
 Use without asking: commit; push `main` to `origin` as a fast-forward, which deploys the site; its own
@@ -96,9 +120,8 @@ service (an image generator among them), the licence, and publishing a dataset a
 
 ## Not this seat
 
-No other seat runs here yet. Following the upstream databases' releases (AnAge, RefSeq, FishBase), a
-strategist and a presenter are the kit's other roles; a need for one is said to the maintainer, never
-taken on here. The desk's secretary asks the maintainer; this seat files its questions there
+No other seat runs here yet. A strategist and a presenter are the kit's other roles; a need for one is
+said to the maintainer, never taken on here. The desk's secretary asks the maintainer; this seat files its questions there
 (`ask-desk`) when they are away.
 
 ## Before a reset
