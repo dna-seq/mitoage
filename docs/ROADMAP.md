@@ -93,6 +93,11 @@ gene-level results are not independent tests.
    genes).
 6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11 and RM13).
 
+Done so far (2026-11-13, reported in `#mitoalignments`): steps 1 and 2, and step 3 for mammals with a tree
+built from the 13 proteins. Two sites pass, one of them a clade marker (ND5 200, the marsupials); the one
+to follow is cytochrome b 43, methionine in at least eight separate long-lived lines. Next: the same for
+birds, then steps 4 to 6 on that short list.
+
 Each tool's current version and limits are checked before use: the method names above are from memory of the
 literature. Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
 
@@ -164,3 +169,8 @@ on any): the hero's decorative stars show through the translucent buttons and ch
 live statistics says "No clear relationship" where Pearson r is -0.20 with p = 8e-23 and Spearman is -0.015,
 so which statistic the sentence follows should be said. Not read: the old addresses kept for links from
 the 2015 site (`/browse/`, `/view/`, `/stats-for/`, `/export-section/`).
+
+Seen in the data on the same day, during the site-by-site analysis (RM12): whale families are filed under
+two orders in the species table (Balaenidae, Delphinidae and Monodontidae appear under both Artiodactyla
+and Cetacea), so a taxon page or a per-order statistic splits them. Which source gives which, and the rule
+that makes them one, are not looked at yet.
