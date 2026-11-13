@@ -1,34 +1,41 @@
-/** Writers for generated JSON (site build), Parquet/CSV downloads and the explorer payload. */
+/**
+ * Writers for the committed pipeline output.
+ *
+ * src/data/generated/: small JSON the site reads directly (build-info, taxonomy tree, dated
+ * phylogeny). public/data/: the parquet downloads, which are also the site's data source (the
+ * data layer reads them at build time, decision D2); derived tables (feature values, correlations,
+ * explorer.json) are computed during the site build and are not committed.
+ */
 import { mkdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
-import { parquetWriteFile } from "hyparquet-writer";
 import type {
   BuildInfo,
-  Correlation,
-  FeatureDef,
+  ChangelogEntry,
+  CodonUsage,
   GenomeFeature,
-  Region,
+  LifespanObservation,
   RegionStats,
+  RowProvenance,
   Species,
   TaxonNode,
 } from "../../src/data/schema";
 import { ROOT } from "../lib/cache";
 import { toCsv } from "../lib/csv";
 import { AMINO_ACIDS, CODONS } from "../lib/genetic-code";
-import { round, roundSig } from "../lib/stats";
-import type { buildCodonUsage } from "./regions";
-import { TRAIT_KEYS, traitValue } from "./correlations";
+import { type Column, writeParquet } from "../lib/parquet";
+import type { PhyloNode } from "../lib/stats";
+import { featureKeys } from "./diff";
 
 export const GENERATED_DIR = join(ROOT, "src", "data", "generated");
 export const PUBLIC_DATA_DIR = join(ROOT, "public", "data");
 
-type Usage = ReturnType<typeof buildCodonUsage>["usage"];
+type Usage = CodonUsage & { source: "mitoage" | "genbank"; translTable: number };
 
 const json = (v: unknown) => JSON.stringify(v);
 
 async function write(path: string, content: string): Promise<number> {
   await Bun.write(path, content);
-  return content.length;
+  return Buffer.byteLength(content);
 }
 
 export function resetDir(dir: string): void {
@@ -36,196 +43,145 @@ export function resetDir(dir: string): void {
   mkdirSync(dir, { recursive: true });
 }
 
-const AA_KEYS = [...AMINO_ACIDS, "*"];
+export const AA_KEYS = [...AMINO_ACIDS, "*"];
 
 export interface GeneratedPayload {
   buildInfo: BuildInfo;
-  species: Species[];
   taxonomy: TaxonNode;
-  stats: RegionStats[];
-  usage: Usage;
-  features: Map<number, GenomeFeature[]>;
-  defs: FeatureDef[];
-  values: Map<string, (number | null)[]>;
-  speciesIds: number[];
-  correlations: Correlation[];
+  /** Dated tree (leaf = species id), or null when no phylogeny could be built. */
+  phylogeny: { version: string; root: PhyloNode } | null;
 }
 
-/** src/data/generated/*.json, consumed by src/data/index.ts. Returns file sizes. */
+/** src/data/generated/*.json. Returns file sizes. */
 export async function writeGenerated(p: GeneratedPayload): Promise<Record<string, number>> {
   resetDir(GENERATED_DIR);
   const sizes: Record<string, number> = {};
-  const w = async (name: string, v: unknown) => {
-    sizes[name] = await write(join(GENERATED_DIR, name), json(v));
-  };
-  await w("build-info.json", p.buildInfo);
-  await w("species.json", p.species);
-  await w("taxonomy.json", p.taxonomy);
-
-  const regions = [...new Set(p.stats.map((s) => s.region))] as Region[];
-  const rIdx = new Map(regions.map((r, i) => [r, i]));
-  await w("region-stats.json", {
-    regions,
-    sources: ["mitoage", "genbank"],
-    columns: {
-      speciesId: p.stats.map((s) => s.speciesId),
-      region: p.stats.map((s) => rIdx.get(s.region)!),
-      lengthBp: p.stats.map((s) => s.lengthBp),
-      a: p.stats.map((s) => s.a),
-      c: p.stats.map((s) => s.c),
-      g: p.stats.map((s) => s.g),
-      t: p.stats.map((s) => s.t),
-      other: p.stats.map((s) => s.other),
-      gcPercent: p.stats.map((s) => s.gcPercent),
-      gcSkew: p.stats.map((s) => s.gcSkew),
-      atSkew: p.stats.map((s) => s.atSkew),
-      source: p.stats.map((s) => (s.source === "genbank" ? 1 : 0)),
-    },
-  });
-
-  const cRegions = [...new Set(p.usage.map((u) => u.region))];
-  const cIdx = new Map(cRegions.map((r, i) => [r, i]));
-  await w("codon-usage.json", {
-    codons: CODONS,
-    aminoAcids: AA_KEYS,
-    regions: cRegions,
-    sources: ["mitoage", "genbank"],
-    rows: {
-      speciesId: p.usage.map((u) => u.speciesId),
-      region: p.usage.map((u) => cIdx.get(u.region)!),
-      translTable: p.usage.map((u) => u.translTable),
-      source: p.usage.map((u) => (u.source === "genbank" ? 1 : 0)),
-    },
-    counts: p.usage.map((u) => CODONS.map((c) => u.counts[c] ?? 0)),
-    aminoAcidCounts: p.usage.map((u) => AA_KEYS.map((a) => u.aminoAcids[a] ?? 0)),
-  });
-
-  const names: string[] = [];
-  const nIdx = new Map<string, number>();
-  const types = ["CDS", "rRNA", "tRNA", "D-loop"] as const;
-  const bySpecies: Record<string, number[]> = {};
-  for (const [id, feats] of p.features) {
-    const flat: number[] = [];
-    for (const f of feats) {
-      if (!nIdx.has(f.name)) {
-        nIdx.set(f.name, names.length);
-        names.push(f.name);
-      }
-      flat.push(nIdx.get(f.name)!, types.indexOf(f.type), f.start, f.end, f.strand);
-    }
-    bySpecies[id] = flat;
-  }
-  await w("genome-features.json", { names, types, stride: 5, bySpecies });
-  await w("feature-defs.json", p.defs);
-  await w("feature-values.json", {
-    speciesIds: p.speciesIds,
-    values: Object.fromEntries(p.defs.map((d) => [d.key, p.values.get(d.key)])),
-  });
-
-  const fKeys = [...new Set(p.correlations.map((c) => c.featureKey))];
-  const tKeys = [...new Set(p.correlations.map((c) => c.trait))];
-  const sKeys = [...new Set(p.correlations.map((c) => c.scope))];
-  const fI = new Map(fKeys.map((k, i) => [k, i]));
-  const tI = new Map(tKeys.map((k, i) => [k, i]));
-  const sI = new Map(sKeys.map((k, i) => [k, i]));
-  const r4 = (v: number | null | undefined) => (v === null || v === undefined || !Number.isFinite(v) ? null : round(v, 4));
-  const p3 = (v: number | null | undefined) => (v === null || v === undefined || !Number.isFinite(v) ? null : roundSig(v, 3));
-  const cs = p.correlations;
-  await w("correlations.json", {
-    features: fKeys,
-    traits: tKeys,
-    scopes: sKeys,
-    columns: {
-      feature: cs.map((c) => fI.get(c.featureKey)!),
-      trait: cs.map((c) => tI.get(c.trait)!),
-      scope: cs.map((c) => sI.get(c.scope)!),
-      n: cs.map((c) => c.n),
-      pearsonR: cs.map((c) => r4(c.pearsonR)),
-      spearmanRho: cs.map((c) => r4(c.spearmanRho)),
-      pValue: cs.map((c) => p3(c.pValue)),
-      qValue: cs.map((c) => p3(c.qValue)),
-      picR: cs.map((c) => r4(c.picR)),
-      picPValue: cs.map((c) => p3(c.picPValue)),
-      partialR: cs.map((c) => r4(c.partialR)),
-      partialPValue: cs.map((c) => p3(c.partialPValue)),
-      partialN: cs.map((c) => c.partialN ?? null),
-    },
-  });
+  sizes["build-info.json"] = await write(join(GENERATED_DIR, "build-info.json"), json(p.buildInfo));
+  sizes["taxonomy.json"] = await write(join(GENERATED_DIR, "taxonomy.json"), json(p.taxonomy));
+  sizes["phylogeny.json"] = await write(join(GENERATED_DIR, "phylogeny.json"), json(p.phylogeny));
   return sizes;
 }
 
 // ---------------- public/data downloads ----------------
 
-export interface PublicExtras {
-  /** Extra per-species columns for the downloads (AnAge 15 longevity, match info, NCBI taxon). */
-  extra: Map<
-    number,
-    { anageHagrid: string | null; anageMatch: string; anageMaxLongevityYears: number | null; ncbiTaxid: number | null; translTable: number }
-  >;
+export interface SpeciesExtra {
+  anageHagrid: string | null;
+  anageMatch: string;
+  anageMaxLongevityYears: number | null;
+  ncbiTaxid: number | null;
+  translTable: number;
 }
 
-const SPECIES_COLUMNS = [
-  "id", "slug", "scientific_name", "common_name", "refseq", "kingdom", "phylum", "class", "order", "family", "genus",
-  "max_longevity_years", "mtdna_size_bp", "non_coding_bp", "gc_percent", "legacy_id",
-  "adult_weight_g", "birth_weight_g", "metabolic_rate_w", "body_temperature_k", "female_maturity_days",
-  "male_maturity_days", "gestation_days", "litter_size", "litters_per_year", "growth_rate_per_day",
-  "traits_source", "anage_build15_hagrid", "anage_match", "anage_build15_max_longevity_years", "ncbi_taxid", "transl_table",
-] as const;
-
-function speciesRows(species: Species[], x: PublicExtras): unknown[][] {
-  return species.map((s) => {
-    const e = x.extra.get(s.id);
-    const t = s.traits;
-    return [
-      s.id, s.slug, s.scientificName, s.commonName, s.refseq, s.taxonomy.kingdom, s.taxonomy.phylum, s.taxonomy.class,
-      s.taxonomy.order, s.taxonomy.family, s.taxonomy.genus, s.maxLongevityYears, s.mtdnaSizeBp, s.nonCodingBp,
-      s.gcPercent, s.legacyId, t.adultWeightG, t.birthWeightG, t.metabolicRateW, t.bodyTemperatureK,
-      t.femaleMaturityDays, t.maleMaturityDays, t.gestationDays, t.litterSize, t.littersPerYear, t.growthRatePerDay,
-      t.source, e?.anageHagrid ?? null, e?.anageMatch ?? "none", e?.anageMaxLongevityYears ?? null, e?.ncbiTaxid ?? null,
-      e?.translTable ?? null,
-    ];
-  });
+export interface ReviewRow {
+  reviewType: string;
+  ncbiTaxid: number | null;
+  scientificName: string | null;
+  refseq: string | null;
+  source: string | null;
+  sourceName: string | null;
+  detail: string;
 }
 
-const INT_COLS = new Set(["id", "mtdna_size_bp", "non_coding_bp", "legacy_id", "ncbi_taxid", "transl_table"]);
-const STRING_COLS = new Set([
-  "slug", "scientific_name", "common_name", "refseq", "kingdom", "phylum", "class", "order", "family", "genus",
-  "traits_source", "anage_build15_hagrid", "anage_match",
-]);
-
-type ColType = "INT32" | "DOUBLE" | "STRING";
-function parquet(path: string, cols: { name: string; type: ColType; data: unknown[] }[]): void {
-  parquetWriteFile({
-    filename: path,
-    columnData: cols.map((c) => ({ name: c.name, type: c.type, data: c.data as never })),
-  });
+export interface PublicPayload {
+  species: Species[];
+  stats: RegionStats[];
+  usage: Usage[];
+  features: Map<number, GenomeFeature[]>;
+  observations: LifespanObservation[];
+  changelog: ChangelogEntry[];
+  review: ReviewRow[];
+  extra: Map<number, SpeciesExtra>;
 }
 
-export async function writePublic(
-  p: GeneratedPayload,
-  x: PublicExtras,
-  explorer: unknown,
-  readme: string,
-): Promise<Record<string, number>> {
+export const PROVENANCE_COLUMNS = ["added_in_build", "added_at", "last_modified_build", "last_modified_at", "record_status", "source_version"] as const;
+
+function provenanceColumns(rows: (RowProvenance | undefined)[]): Column[] {
+  const get = (f: (p: RowProvenance) => unknown) =>
+    rows.map((p) => {
+      if (!p) throw new Error("row without provenance");
+      return f(p);
+    });
+  return [
+    { name: "added_in_build", type: "INT32", data: get((p) => p.addedInBuild) },
+    { name: "added_at", type: "STRING", data: get((p) => p.addedAt) },
+    { name: "last_modified_build", type: "INT32", data: get((p) => p.lastModifiedBuild) },
+    { name: "last_modified_at", type: "STRING", data: get((p) => p.lastModifiedAt) },
+    { name: "record_status", type: "STRING", data: get((p) => p.recordStatus) },
+    { name: "source_version", type: "STRING", data: get((p) => p.sourceVersion) },
+  ];
+}
+
+const list = (v: string[] | undefined) => (v && v.length ? v.join("; ") : null);
+
+export function speciesColumns(species: Species[], extra: Map<number, SpeciesExtra>): Column[] {
+  const e = (s: Species) => extra.get(s.id);
+  const col = (name: string, type: Column["type"], f: (s: Species) => unknown): Column => ({ name, type, data: species.map(f) });
+  return [
+    col("id", "INT32", (s) => s.id),
+    col("slug", "STRING", (s) => s.slug),
+    col("scientific_name", "STRING", (s) => s.scientificName),
+    col("common_name", "STRING", (s) => s.commonName),
+    col("refseq", "STRING", (s) => s.refseq),
+    col("kingdom", "STRING", (s) => s.taxonomy.kingdom),
+    col("phylum", "STRING", (s) => s.taxonomy.phylum),
+    col("class", "STRING", (s) => s.taxonomy.class),
+    col("order", "STRING", (s) => s.taxonomy.order),
+    col("family", "STRING", (s) => s.taxonomy.family),
+    col("genus", "STRING", (s) => s.taxonomy.genus),
+    col("max_longevity_years", "DOUBLE", (s) => s.maxLongevityYears),
+    col("mtdna_size_bp", "INT32", (s) => s.mtdnaSizeBp),
+    col("non_coding_bp", "INT32", (s) => s.nonCodingBp),
+    col("gc_percent", "DOUBLE", (s) => s.gcPercent),
+    col("legacy_id", "INT32", (s) => s.legacyId),
+    col("adult_weight_g", "DOUBLE", (s) => s.traits.adultWeightG),
+    col("birth_weight_g", "DOUBLE", (s) => s.traits.birthWeightG),
+    col("metabolic_rate_w", "DOUBLE", (s) => s.traits.metabolicRateW),
+    col("body_temperature_k", "DOUBLE", (s) => s.traits.bodyTemperatureK),
+    col("female_maturity_days", "DOUBLE", (s) => s.traits.femaleMaturityDays),
+    col("male_maturity_days", "DOUBLE", (s) => s.traits.maleMaturityDays),
+    col("gestation_days", "DOUBLE", (s) => s.traits.gestationDays),
+    col("litter_size", "DOUBLE", (s) => s.traits.litterSize),
+    col("litters_per_year", "DOUBLE", (s) => s.traits.littersPerYear),
+    col("growth_rate_per_day", "DOUBLE", (s) => s.traits.growthRatePerDay),
+    col("traits_source", "STRING", (s) => s.traits.source),
+    col("anage_build15_hagrid", "STRING", (s) => e(s)?.anageHagrid ?? null),
+    col("anage_match", "STRING", (s) => e(s)?.anageMatch ?? "none"),
+    col("anage_build15_max_longevity_years", "DOUBLE", (s) => e(s)?.anageMaxLongevityYears ?? null),
+    col("ncbi_taxid", "INT32", (s) => s.ncbiTaxid ?? null),
+    col("ncbi_species_taxid", "INT32", (s) => s.ncbiSpeciesTaxid ?? null),
+    col("transl_table", "INT32", (s) => e(s)?.translTable ?? null),
+    col("lifespan_source", "STRING", (s) => s.lifespan?.source ?? null),
+    col("lifespan_source_version", "STRING", (s) => s.lifespan?.sourceVersion ?? null),
+    col("lifespan_source_record_id", "STRING", (s) => s.lifespan?.sourceRecordId ?? null),
+    col("lifespan_quality", "STRING", (s) => s.lifespan?.quality ?? null),
+    col("lifespan_sample_size", "STRING", (s) => s.lifespan?.sampleSize ?? null),
+    col("lifespan_record_type", "STRING", (s) => s.lifespan?.recordType ?? null),
+    col("lifespan_license", "STRING", (s) => s.lifespan?.license ?? null),
+    col("previous_scientific_names", "STRING", (s) => list(s.previousScientificNames)),
+    col("retired_reason", "STRING", (s) => s.retiredReason ?? null),
+    col("review_flags", "STRING", (s) => list(s.reviewFlags)),
+    col("change_kinds", "STRING", (s) => list(s.changeKinds)),
+    ...provenanceColumns(species.map((s) => s.provenance)),
+  ];
+}
+
+export async function writePublic(p: PublicPayload, readme: string): Promise<Record<string, number>> {
   resetDir(PUBLIC_DATA_DIR);
   const sizes: Record<string, number> = {};
   const slugOf = new Map(p.species.map((s) => [s.id, s.slug]));
+  const out = async (name: string, cols: Column[]) => {
+    sizes[name] = await writeParquet(join(PUBLIC_DATA_DIR, name), cols);
+  };
 
-  // species
-  const rows = speciesRows(p.species, x);
-  sizes["species.csv"] = await write(join(PUBLIC_DATA_DIR, "species.csv"), toCsv([...SPECIES_COLUMNS], rows));
-  parquet(
-    join(PUBLIC_DATA_DIR, "species.parquet"),
-    SPECIES_COLUMNS.map((name, i) => ({
-      name,
-      type: INT_COLS.has(name) ? "INT32" : STRING_COLS.has(name) ? "STRING" : "DOUBLE",
-      data: rows.map((r) => r[i] ?? null),
-    })),
+  const sc = speciesColumns(p.species, p.extra);
+  await out("species.parquet", sc);
+  sizes["species.csv"] = await write(
+    join(PUBLIC_DATA_DIR, "species.csv"),
+    toCsv(sc.map((c) => c.name), p.species.map((_, i) => sc.map((c) => c.data[i]))),
   );
 
-  // region stats
   const st = p.stats;
-  parquet(join(PUBLIC_DATA_DIR, "region_stats.parquet"), [
+  await out("region_stats.parquet", [
     { name: "species_id", type: "INT32", data: st.map((s) => s.speciesId) },
     { name: "slug", type: "STRING", data: st.map((s) => slugOf.get(s.speciesId) ?? null) },
     { name: "region", type: "STRING", data: st.map((s) => s.region) },
@@ -239,94 +195,82 @@ export async function writePublic(
     { name: "gc_skew", type: "DOUBLE", data: st.map((s) => s.gcSkew) },
     { name: "at_skew", type: "DOUBLE", data: st.map((s) => s.atSkew) },
     { name: "source", type: "STRING", data: st.map((s) => s.source ?? "mitoage") },
+    ...provenanceColumns(st.map((s) => s.provenance)),
   ]);
 
-  // codon usage (wide: one column per codon, plus amino-acid counts)
   const u = p.usage;
-  parquet(join(PUBLIC_DATA_DIR, "codon_usage.parquet"), [
+  await out("codon_usage.parquet", [
     { name: "species_id", type: "INT32", data: u.map((r) => r.speciesId) },
     { name: "slug", type: "STRING", data: u.map((r) => slugOf.get(r.speciesId) ?? null) },
     { name: "region", type: "STRING", data: u.map((r) => r.region) },
     { name: "transl_table", type: "INT32", data: u.map((r) => r.translTable) },
     { name: "source", type: "STRING", data: u.map((r) => r.source) },
     ...CODONS.map((c) => ({ name: c, type: "INT32" as const, data: u.map((r) => r.counts[c] ?? 0) })),
-    ...AA_KEYS.map((a) => ({
-      name: a === "*" ? "aa_stop" : `aa_${a}`,
-      type: "INT32" as const,
-      data: u.map((r) => r.aminoAcids[a] ?? 0),
-    })),
+    ...AA_KEYS.map((a) => ({ name: a === "*" ? "aa_stop" : `aa_${a}`, type: "INT32" as const, data: u.map((r) => r.aminoAcids[a] ?? 0) })),
+    ...provenanceColumns(u.map((r) => r.provenance)),
   ]);
 
-  // genome features
-  const gf: { id: number; f: GenomeFeature }[] = [];
-  for (const [id, feats] of p.features) for (const f of feats) gf.push({ id, f });
-  parquet(join(PUBLIC_DATA_DIR, "genome_features.parquet"), [
+  const gf: { id: number; key: string; f: GenomeFeature }[] = [];
+  for (const [id, feats] of p.features) {
+    const keys = featureKeys(feats);
+    feats.forEach((f, i) => gf.push({ id, key: keys[i]!, f }));
+  }
+  await out("genome_features.parquet", [
     { name: "species_id", type: "INT32", data: gf.map((r) => r.id) },
     { name: "slug", type: "STRING", data: gf.map((r) => slugOf.get(r.id) ?? null) },
+    { name: "feature_key", type: "STRING", data: gf.map((r) => r.key) },
     { name: "name", type: "STRING", data: gf.map((r) => r.f.name) },
     { name: "type", type: "STRING", data: gf.map((r) => r.f.type) },
     { name: "start", type: "INT32", data: gf.map((r) => r.f.start) },
     { name: "end", type: "INT32", data: gf.map((r) => r.f.end) },
     { name: "strand", type: "INT32", data: gf.map((r) => r.f.strand) },
+    ...provenanceColumns(gf.map((r) => r.f.provenance)),
   ]);
 
-  // correlations
-  const cs = p.correlations;
-  const n = (v: number | null | undefined) => (v === undefined || v === null || !Number.isFinite(v) ? null : v);
-  parquet(join(PUBLIC_DATA_DIR, "correlations.parquet"), [
-    { name: "feature_key", type: "STRING", data: cs.map((c) => c.featureKey) },
-    { name: "trait", type: "STRING", data: cs.map((c) => c.trait) },
-    { name: "scope", type: "STRING", data: cs.map((c) => c.scope) },
-    { name: "n", type: "INT32", data: cs.map((c) => c.n) },
-    { name: "pearson_r", type: "DOUBLE", data: cs.map((c) => n(c.pearsonR)) },
-    { name: "spearman_rho", type: "DOUBLE", data: cs.map((c) => n(c.spearmanRho)) },
-    { name: "p_value", type: "DOUBLE", data: cs.map((c) => n(c.pValue)) },
-    { name: "q_value", type: "DOUBLE", data: cs.map((c) => n(c.qValue)) },
-    { name: "partial_r", type: "DOUBLE", data: cs.map((c) => n(c.partialR)) },
-    { name: "partial_p_value", type: "DOUBLE", data: cs.map((c) => n(c.partialPValue)) },
-    { name: "partial_n", type: "INT32", data: cs.map((c) => c.partialN ?? null) },
-    { name: "pic_r", type: "DOUBLE", data: cs.map((c) => n(c.picR)) },
-    { name: "pic_p_value", type: "DOUBLE", data: cs.map((c) => n(c.picPValue)) },
+  const o = p.observations;
+  await out("lifespan_observations.parquet", [
+    { name: "species_id", type: "INT32", data: o.map((r) => r.speciesId) },
+    { name: "slug", type: "STRING", data: o.map((r) => slugOf.get(r.speciesId) ?? null) },
+    { name: "ncbi_species_taxid", type: "INT32", data: o.map((r) => r.ncbiTaxid) },
+    { name: "source", type: "STRING", data: o.map((r) => r.source) },
+    { name: "source_record_id", type: "STRING", data: o.map((r) => r.sourceRecordId) },
+    { name: "source_name", type: "STRING", data: o.map((r) => r.sourceName) },
+    { name: "value_years", type: "DOUBLE", data: o.map((r) => r.valueYears) },
+    { name: "record_type", type: "STRING", data: o.map((r) => r.recordType) },
+    { name: "quality", type: "STRING", data: o.map((r) => r.quality) },
+    { name: "sample_size_text", type: "STRING", data: o.map((r) => r.sampleSizeText) },
+    { name: "sex", type: "STRING", data: o.map((r) => r.sex) },
+    { name: "detail", type: "STRING", data: o.map((r) => r.detail) },
+    { name: "reference", type: "STRING", data: o.map((r) => r.reference) },
+    { name: "license", type: "STRING", data: o.map((r) => r.license) },
+    { name: "match_method", type: "STRING", data: o.map((r) => r.matchMethod) },
+    { name: "is_chosen", type: "BOOLEAN", data: o.map((r) => r.isChosen) },
+    ...provenanceColumns(o.map((r) => r.provenance)),
   ]);
 
-  sizes["explorer.json"] = await write(join(PUBLIC_DATA_DIR, "explorer.json"), json(explorer));
+  const cl = p.changelog;
+  await out("changelog.parquet", [
+    { name: "build", type: "INT32", data: cl.map((c) => c.build) },
+    { name: "changed_at", type: "STRING", data: cl.map((c) => c.changedAt) },
+    { name: "table", type: "STRING", data: cl.map((c) => c.table) },
+    { name: "row_key", type: "STRING", data: cl.map((c) => c.rowKey) },
+    { name: "field", type: "STRING", data: cl.map((c) => c.field) },
+    { name: "old_value", type: "STRING", data: cl.map((c) => c.oldValue) },
+    { name: "new_value", type: "STRING", data: cl.map((c) => c.newValue) },
+    { name: "change_type", type: "STRING", data: cl.map((c) => c.changeType) },
+    { name: "diff_class", type: "STRING", data: cl.map((c) => c.diffClass) },
+    { name: "reason", type: "STRING", data: cl.map((c) => c.reason) },
+    { name: "upstream_source", type: "STRING", data: cl.map((c) => c.upstreamSource) },
+    { name: "upstream_version", type: "STRING", data: cl.map((c) => c.upstreamVersion) },
+    { name: "scope", type: "STRING", data: cl.map((c) => c.scope) },
+  ]);
+
+  const rv = p.review;
+  const rcols = ["review_type", "ncbi_taxid", "scientific_name", "refseq", "source", "source_name", "detail"];
+  sizes["review_list.csv"] = await write(
+    join(PUBLIC_DATA_DIR, "review_list.csv"),
+    toCsv(rcols, rv.map((r) => [r.reviewType, r.ncbiTaxid, r.scientificName, r.refseq, r.source, r.sourceName, r.detail])),
+  );
   sizes["README.md"] = await write(join(PUBLIC_DATA_DIR, "README.md"), readme);
-  for (const f of ["species", "region_stats", "codon_usage", "genome_features", "correlations"]) {
-    sizes[`${f}.parquet`] = Bun.file(join(PUBLIC_DATA_DIR, `${f}.parquet`)).size;
-  }
   return sizes;
-}
-
-/** Columnar payload for the in-browser scatter explorer. */
-export function buildExplorer(
-  species: Species[],
-  defs: FeatureDef[],
-  values: Map<string, (number | null)[]>,
-  buildInfo: BuildInfo,
-): unknown {
-  const classes = [...new Set(species.map((s) => s.taxonomy.class))].sort();
-  const orders = [...new Set(species.map((s) => s.taxonomy.order))].sort();
-  const families = [...new Set(species.map((s) => s.taxonomy.family))].sort();
-  const keep = defs.filter((d) => !/^(codon|aa):/.test(d.key) || d.key.includes(":total_pc:"));
-  const sig = (v: number | null) => (v === null ? null : Math.abs(v) >= 1000 ? Math.round(v) : roundSig(v, 4));
-  return {
-    build: buildInfo.build,
-    generatedAt: buildInfo.generatedAt,
-    n: species.length,
-    classes,
-    orders,
-    families,
-    species: {
-      id: species.map((s) => s.id),
-      slug: species.map((s) => s.slug),
-      scientificName: species.map((s) => s.scientificName),
-      commonName: species.map((s) => s.commonName),
-      class: species.map((s) => classes.indexOf(s.taxonomy.class)),
-      order: species.map((s) => orders.indexOf(s.taxonomy.order)),
-      family: species.map((s) => families.indexOf(s.taxonomy.family)),
-    },
-    traits: Object.fromEntries(TRAIT_KEYS.map((t) => [t, species.map((s) => sig(traitValue(s, t)))])),
-    features: keep.map((d) => ({ key: d.key, label: d.label, region: d.region, group: d.group })),
-    values: Object.fromEntries(keep.map((d) => [d.key, (values.get(d.key) ?? []).map(sig)])),
-  };
 }

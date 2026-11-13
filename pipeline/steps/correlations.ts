@@ -1,5 +1,5 @@
 /** Feature x trait correlations per scope, with BH q-values, partial correlations and PIC. */
-import type { Correlation, FeatureDef, Species, TraitKey } from "../../src/data/schema";
+import type { Correlation, CorrelationDataset, FeatureDef, Species, TraitKey } from "../../src/data/schema";
 import {
   type CompiledTree,
   benjaminiHochberg,
@@ -33,6 +33,22 @@ export function traitValue(s: Species, key: TraitKey): number | null {
 
 export const log10OrNull = (v: number | null): number | null => (v !== null && v > 0 ? Math.log10(v) : null);
 
+/**
+ * Whether a species belongs to a correlation dataset. Retired species never do. "default": the
+ * lifespan is neither estimated nor of low or questionable quality, from any source; "anage_only":
+ * the same, with the lifespan from AnAge. A species without lifespan metadata (a build 1 file) is
+ * in "default" only.
+ */
+export function inDataset(s: Species, d: CorrelationDataset): boolean {
+  if (s.provenance?.recordStatus === "retired") return false;
+  const l = s.lifespan;
+  if (!l) return d === "default";
+  if (l.recordType === "estimated" || l.quality === "low" || l.quality === "questionable") return false;
+  return d === "default" || l.source === "AnAge";
+}
+
+export const datasetMembers = (species: Species[], d: CorrelationDataset) => species.filter((s) => inDataset(s, d));
+
 export interface Scope {
   key: string;
   members: number[]; // indices into species array
@@ -40,11 +56,13 @@ export interface Scope {
   perGeneCodons: boolean;
 }
 
-export function buildScopes(species: Species[]): Scope[] {
-  const scopes: Scope[] = [{ key: "all", members: species.map((_, i) => i), perGeneCodons: true }];
+export function buildScopes(species: Species[], include: (s: Species) => boolean = () => true): Scope[] {
+  const all = species.map((_, i) => i).filter((i) => include(species[i]!));
+  const scopes: Scope[] = [{ key: "all", members: all, perGeneCodons: true }];
   for (const rank of ["class", "order"] as const) {
     const groups = new Map<string, number[]>();
-    species.forEach((s, i) => {
+    all.forEach((i) => {
+      const s = species[i]!;
       const k = s.taxonomy[rank];
       groups.set(k, [...(groups.get(k) ?? []), i]);
     });
@@ -62,8 +80,10 @@ export function computeCorrelations(
   defs: FeatureDef[],
   values: Map<string, (number | null)[]>,
   tree: CompiledTree | null,
+  dataset: CorrelationDataset = "default",
+  log: (msg: string) => void = () => {},
 ): { rows: Correlation[]; scopes: Scope[] } {
-  const scopes = buildScopes(species);
+  const scopes = buildScopes(species, (s) => inDataset(s, dataset));
   const logTraits = new Map<TraitKey, (number | null)[]>();
   for (const t of TRAIT_KEYS) logTraits.set(t, species.map((s) => log10OrNull(traitValue(s, t))));
   const logWeight = logTraits.get("adultWeightG")!;
@@ -111,6 +131,7 @@ export function computeCorrelations(
           qValue: NaN,
           picR: null,
           picPValue: null,
+          dataset,
         };
         if (trait === "maxLongevityYears") {
           const pr = pz.length >= MIN_PAIRS ? partialCorrelation(px, py, pz) : NaN;
@@ -142,7 +163,7 @@ export function computeCorrelations(
       });
       rows.push(...block);
     }
-    console.log(`    ${scope.key}: ${rows.length} correlations so far`);
+    log(`    ${dataset} ${scope.key}: ${rows.length} correlations so far`);
   }
   return { rows, scopes };
 }

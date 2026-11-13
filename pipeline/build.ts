@@ -1,26 +1,37 @@
 /**
- * MitoAge data pipeline. Run with `bun run data` (bun run pipeline/build.ts).
+ * MitoAge data pipeline, build 2. Run with `bun run data` (bun run pipeline/build.ts).
  *
- * Inputs: MitoAge build 1 CSV export (data/input), AnAge Build 15, NCBI RefSeq records,
- * legacy site ids, and optionally Open Tree of Life + TimeTree for a dated tree.
- * Outputs: src/data/generated/*.json, public/data/*.parquet|csv|json. Downloads are cached
- * in data/cache, so reruns are offline. Set MITOAGE_SKIP_TREE=1 to skip the phylogeny.
+ * Inputs: the MitoAge build 1 CSV export (data/input), the RefSeq records cited by build 1 (cached
+ * efetch copies), and the pinned build 2 sources in data/cache/build2/sources (RefSeq mitochondrion
+ * release 237, NCBI Taxonomy, AnAge build 15, FishBase and SeaLifeBase v26.06, USGS BBL v2025.1;
+ * EURING when present), optionally Open Tree of Life + TimeTree for a dated tree.
+ * Outputs: src/data/generated/{build-info,taxonomy,phylogeny}.json and public/data/ (parquet
+ * downloads, changelog, lifespan observations, review list, the frozen build 1 snapshot).
+ * Set MITOAGE_SKIP_TREE=1 to skip the phylogeny; MITOAGE_BUILD_DATE (YYYY-MM-DD) dates the build.
  */
-import type { BuildInfo, GenomeFeature, Species, Traits } from "../src/data/schema";
-import { compileTree } from "./lib/stats";
+import { join } from "node:path";
+import type { BuildInfo, GenomeFeature, RecordStatus, Species, Traits } from "../src/data/schema";
 import { round } from "./lib/stats";
-import { ANAGE_LICENSE, ANAGE_URL, type AnAgeEntry, loadAnAge } from "./sources/anage";
+import { ANAGE_URL, type AnAgeEntry, anageObservations, loadAnAge } from "./sources/anage";
+import { loadEuring } from "./sources/euring";
+import { loadFishBase } from "./sources/fishbase";
 import { loadLegacyIds } from "./sources/legacy";
 import { loadMitoAgeCsv } from "./sources/mitoage";
+import { NcbiTaxonomy } from "./sources/ncbi-taxonomy";
 import { fetchGenBank } from "./sources/ncbi";
+import { ANAGE_PINNED, EURING, FISHBASE, NCBI_TAXONOMY, REFSEQ_RELEASE, SEALIFEBASE, USGS_BBL } from "./sources/pinned";
+import { loadRefSeqRelease } from "./sources/refseq-release";
+import { loadSeaLifeBase } from "./sources/sealifebase";
 import { type DatedTree, buildDatedTree } from "./sources/tree";
-import { computeCorrelations } from "./steps/correlations";
-import { buildFeatureDefs, buildFeatureValues } from "./steps/features";
+import { loadUsgsBbl } from "./sources/usgs-bbl";
+import { BUILD1_DATE, writeBuild1Snapshot } from "./steps/build1";
+import { BUILD, assembleBuild2, fallbackTable } from "./steps/build2";
+import { datasetMembers } from "./steps/correlations";
 import { type SpeciesGenome, annotateGenome } from "./steps/genome";
-import { join } from "node:path";
-import { PUBLIC_DATA_DIR, buildExplorer, writeGenerated, writePublic } from "./steps/output";
-import { writeBuild1Snapshot } from "./steps/build1";
+import { matchSourceNames, wantedNameKeys } from "./steps/lifespan";
+import { PUBLIC_DATA_DIR, writeGenerated, writePublic } from "./steps/output";
 import { buildPublicReadme } from "./steps/readme";
+import { classifyRelease } from "./steps/refseq";
 import { buildCodonUsage, buildRegionStats, computeNonCoding, fixCsvLabels } from "./steps/regions";
 import { buildTaxonomyTree, flattenTaxa, uniqueSpeciesSlugs } from "./steps/taxonomy";
 import { validateGenerated } from "./validate";
@@ -28,7 +39,7 @@ import { validateGenerated } from "./validate";
 const t0 = Date.now();
 const step = (msg: string) => console.log(`\n[${((Date.now() - t0) / 1000).toFixed(1)}s] ${msg}`);
 const notes: string[] = [];
-const pct = (a: number, b: number) => (b === 0 ? "n/a" : `${((100 * a) / b).toFixed(1)}%`);
+const BUILD_DATE = `${process.env["MITOAGE_BUILD_DATE"] ?? "2026-11-13"}T00:00:00.000Z`;
 
 /** Records present in the CSV export that the published MitoAge release (922 species) excludes. */
 const EXCLUDED: Record<string, string> = {
@@ -36,7 +47,7 @@ const EXCLUDED: Record<string, string> = {
     "RefSeq NC_025626.1 is titled 'complete genome' but is only 9,243 bp (about 7 kb short of a complete avian mtDNA)",
 };
 
-// ------------------------------------------------------------------ inputs
+// ================================================================== build 1 baseline
 step("Loading MitoAge build 1 CSV export");
 const raw = await loadMitoAgeCsv();
 console.log(`  ${raw.files.length} files, ${raw.species.size} distinct HAGRIDs`);
@@ -46,312 +57,210 @@ const legacy = await loadLegacyIds();
 console.log(legacy ? `  ${legacy.ids.size} species on ${legacy.pages} pages` : "  unavailable, legacyId stays null");
 
 const allRaw = [...raw.species.values()].sort((a, b) => a.hagrid - b.hagrid);
-const excluded = allRaw.filter((s) => s.species in EXCLUDED);
 const kept = allRaw.filter((s) => !(s.species in EXCLUDED));
-for (const s of excluded) {
-  const onOldSite = legacy?.ids.has(s.species);
-  notes.push(
-    `The CSV export has ${allRaw.length} species but the published MitoAge release has ${kept.length}. The extra record is ${s.species} (HAGRID ${s.hagrid}, ${s.refseq}): ${EXCLUDED[s.species]}. It is not a duplicate${legacy ? ` and it is ${onOldSite ? "listed" : "not listed"} on the legacy site, whose total_mtDNA export lists ${legacy.ids.size} species` : ""}. It is excluded from this build.`,
-  );
-}
-if (legacy) {
-  const missing = kept.filter((s) => !legacy.ids.has(s.species));
-  if (missing.length) notes.push(`${missing.length} species have no legacy site id: ${missing.map((s) => s.species).join(", ")}.`);
+for (const s of allRaw.filter((x) => x.species in EXCLUDED)) {
+  notes.push(`The build 1 CSV export has ${allRaw.length} species but the published release has ${kept.length}: ${s.species} (HAGRID ${s.hagrid}, ${s.refseq}) is excluded: ${EXCLUDED[s.species]}.`);
 }
 
-step("Fetching RefSeq records from NCBI (cached)");
-const { texts, failed } = await fetchGenBank(kept.map((s) => s.refseq));
-if (failed.length) notes.push(`RefSeq records could not be downloaded for: ${failed.join(", ")}.`);
-const fallbackTable = (phylum: string) => (phylum === "Chordata" ? 2 : phylum === "Echinodermata" ? 9 : 5);
-const genomes = new Map<number, SpeciesGenome>();
-const unrecognised = new Map<string, number>();
+step("RefSeq records cited by build 1 (cached efetch copies)");
+const { texts: citedTexts, failed } = await fetchGenBank(kept.map((s) => s.refseq));
+if (failed.length) throw new Error(`RefSeq records cited by build 1 not available: ${failed.join(", ")}`);
+const cited = new Map<number, SpeciesGenome>();
+const citedText = new Map<number, string>();
 for (const s of kept) {
-  const text = texts.get(s.refseq);
-  if (!text) continue;
+  const text = citedTexts.get(s.refseq)!;
   const g = annotateGenome(text, fallbackTable(s.phylum), s.phylum === "Chordata");
   if (g.record.accessionVersion !== s.refseq) throw new Error(`Got ${g.record.accessionVersion} for ${s.refseq}`);
-  genomes.set(s.hagrid, g);
-  for (const u of g.unrecognised) unrecognised.set(u, (unrecognised.get(u) ?? 0) + 1);
+  cited.set(s.hagrid, g);
+  citedText.set(s.hagrid, text);
 }
-console.log(`  ${genomes.size}/${kept.length} records parsed`);
 
-step(`Loading AnAge (${ANAGE_URL})`);
+step(`Loading AnAge (${ANAGE_PINNED.version}, ${ANAGE_URL})`);
 const anage = await loadAnAge();
-console.log(`  ${anage.build}, released ${anage.releaseDate}, ${anage.entries.length} entries`);
+console.log(`  ${anage.build}, released ${anage.releaseDate}, ${anage.entries.length} entries, md5 ${anage.md5}`);
 const anageByName = new Map(anage.entries.map((e) => [e.scientificName.toLowerCase(), e]));
 const anageByCommon = new Map<string, AnAgeEntry[]>();
 for (const e of anage.entries) {
   const k = e.commonName.toLowerCase();
   anageByCommon.set(k, [...(anageByCommon.get(k) ?? []), e]);
 }
-
-// ------------------------------------------------------------------ species
-step("Assembling species");
-const slugs = uniqueSpeciesSlugs(kept.map((s) => ({ id: s.hagrid, scientificName: s.species, refseq: s.refseq })));
 const anageMatch = new Map<number, { entry: AnAgeEntry | null; how: string }>();
-const renamed: string[] = [];
 for (const s of kept) {
   const exact = anageByName.get(s.species.toLowerCase());
-  if (exact) {
-    anageMatch.set(s.hagrid, { entry: exact, how: "scientific name" });
-    continue;
-  }
-  const byCommon = anageByCommon.get(s.commonName.toLowerCase()) ?? [];
-  if (byCommon.length === 1) {
-    anageMatch.set(s.hagrid, { entry: byCommon[0]!, how: "common name" });
-    renamed.push(`${s.species} -> ${byCommon[0]!.scientificName}`);
-  } else {
-    anageMatch.set(s.hagrid, { entry: null, how: "none" });
+  if (exact) anageMatch.set(s.hagrid, { entry: exact, how: "scientific name" });
+  else {
+    const byCommon = anageByCommon.get(s.commonName.toLowerCase()) ?? [];
+    anageMatch.set(s.hagrid, byCommon.length === 1 ? { entry: byCommon[0]!, how: "common name" } : { entry: null, how: "none" });
   }
 }
+
+step("Build 1 view (CSV values with the base-label fix, gaps filled from the cited records)");
+const slugs1 = uniqueSpeciesSlugs(kept.map((s) => ({ id: s.hagrid, scientificName: s.species, refseq: s.refseq })));
 const totalRows = raw.composition.get("total_mtDNA")!;
 const totalPcRows = raw.composition.get("total_pc")!;
-const species: Species[] = kept.map((s) => {
+const baseSpecies: Species[] = kept.map((s) => {
   const total = totalRows.get(s.hagrid)?.[0];
   if (!total) throw new Error(`No total_mtDNA row for ${s.species}`);
   const fixed = fixCsvLabels(total);
   const m = anageMatch.get(s.hagrid)!;
-  const g = genomes.get(s.hagrid);
-  let nonCoding = total.nonCodingBp;
-  // Without protein-coding rows the CSV non-coding length counts the whole unannotated genome.
-  if (!totalPcRows.has(s.hagrid) && g) nonCoding = computeNonCoding(g);
+  const g = cited.get(s.hagrid)!;
+  const nonCoding = totalPcRows.has(s.hagrid) ? total.nonCodingBp : computeNonCoding(g);
   const traits: Traits = m.entry
     ? { ...m.entry.traits, source: `AnAge ${anage.build} (HAGRID ${m.entry.hagrid})` }
-    : {
-        adultWeightG: null, birthWeightG: null, metabolicRateW: null, bodyTemperatureK: null,
-        femaleMaturityDays: null, maleMaturityDays: null, gestationDays: null, litterSize: null,
-        littersPerYear: null, growthRatePerDay: null, source: null,
-      };
+    : { adultWeightG: null, birthWeightG: null, metabolicRateW: null, bodyTemperatureK: null, femaleMaturityDays: null, maleMaturityDays: null, gestationDays: null, litterSize: null, littersPerYear: null, growthRatePerDay: null, source: null };
   return {
-    id: s.hagrid,
-    slug: slugs.get(s.hagrid)!,
-    refseq: s.refseq,
-    scientificName: s.species,
-    commonName: s.commonName,
+    id: s.hagrid, slug: slugs1.get(s.hagrid)!, refseq: s.refseq, scientificName: s.species, commonName: s.commonName,
     taxonomy: { kingdom: s.kingdom, phylum: s.phylum, class: s.class, order: s.order, family: s.family, genus: s.genus },
-    maxLongevityYears: s.maxLongevityYears,
-    mtdnaSizeBp: total.lengthBp,
-    nonCodingBp: nonCoding,
-    gcPercent: round((100 * (fixed.g + fixed.c)) / (fixed.a + fixed.c + fixed.g + fixed.t), 3),
-    traits,
+    maxLongevityYears: s.maxLongevityYears, mtdnaSizeBp: total.lengthBp, nonCodingBp: nonCoding,
+    gcPercent: round((100 * (fixed.g + fixed.c)) / (fixed.a + fixed.c + fixed.g + fixed.t), 3), traits,
     legacyId: legacy?.ids.get(s.species) ?? null,
   };
 });
-const speciesIds = species.map((s) => s.id);
-const nMatched = [...anageMatch.values()].filter((m) => m.entry).length;
-const lonDiff = species.filter((s) => {
-  const e = anageMatch.get(s.id)?.entry;
-  return e && e.maxLongevityYears !== null && e.maxLongevityYears !== s.maxLongevityYears;
-}).length;
-notes.push(
-  `AnAge ${anage.build} renumbered HAGRIDs, so traits are joined on scientific name, not HAGRID: ${nMatched - renamed.length} species match by scientific name and ${renamed.length} by a unique common-name match after taxonomic renaming (${renamed.join("; ")}); ${species.length - nMatched} unmatched. Species ids remain the MitoAge (AnAge build 12-era) HAGRIDs; the current AnAge HAGRID is given in traits.source.`,
-);
-notes.push(
-  `maxLongevityYears is the MitoAge build 1 value (as in the 2016 paper). For ${lonDiff} species AnAge ${anage.build} now gives a different maximum longevity; the current value is in the downloads (anage_build15_max_longevity_years).`,
-);
+const baseIds = baseSpecies.map((s) => s.id);
+const { stats: baseStats } = buildRegionStats(baseIds, raw, cited);
+const tableOf1 = (id: number) => cited.get(id)!.translTable;
+const { usage: baseUsage } = buildCodonUsage(baseIds, raw, cited, tableOf1);
+const baseFeatures = new Map<number, GenomeFeature[]>();
+for (const id of baseIds) baseFeatures.set(id, cited.get(id)!.features.map((f) => ({ name: f.name, type: f.type, start: f.start, end: f.end, strand: f.strand })));
 
-// ------------------------------------------------------------------ composition
-step("Region base composition (CSV with label fix, checked against RefSeq)");
-const { stats, report } = buildRegionStats(speciesIds, raw, genomes);
-const human = species.find((s) => s.scientificName === "Homo sapiens");
-if (human) {
-  const hRow = totalRows.get(human.id)![0]!;
-  const hFix = stats.find((s) => s.speciesId === human.id && s.region === "total_mtDNA")!;
-  notes.push(
-    `Base-label bug: in every MitoAge CSV file the base columns are complement-labelled. The column "G" holds the number of C on the RefSeq strand, "C" holds G, "A" holds T and "T" holds A. Example: Homo sapiens ${human.refseq} has G=${hRow.labelG}, C=${hRow.labelC}, A=${hRow.labelA}, T=${hRow.labelT} in the CSV, while the deposited sequence (rCRS) has A=${hFix.a}, C=${hFix.c}, G=${hFix.g}, T=${hFix.t}. The same complement relation holds for total_mtDNA in all ${report.agreement["total_mtDNA"]?.exact ?? 0} of ${report.agreement["total_mtDNA"]?.compared ?? 0} species and for every gene and aggregate file on the RefSeq (+) strand, including minus-strand genes such as ND6 (it is not a gene-sense or strand effect: the original pipeline counted the complementary strand). All RegionStats a/c/g/t here are corrected to the RefSeq strand as deposited; GC% is unaffected, GC and AT skews change sign relative to the old site. Codon counts were verified separately and are correctly labelled (gene sense).`,
-  );
-}
-const agreeParts: string[] = [];
-let agreeTotal = 0;
-let comparedTotal = 0;
-let asLabelledTotal = 0;
-for (const [region, a] of Object.entries(report.agreement)) {
-  agreeParts.push(`${region} ${a.exact}/${a.compared}`);
-  agreeTotal += a.exact;
-  comparedTotal += a.compared;
-  asLabelledTotal += a.asLabelled;
-}
-notes.push(
-  `Recomputing every region from the RefSeq sequence and current annotation reproduces the label-fixed CSV counts exactly for ${agreeTotal}/${comparedTotal} species-region pairs (${pct(agreeTotal, comparedTotal)}); with the original labels only ${asLabelledTotal} match. Per region: ${agreeParts.join(", ")}. Mismatches are annotation updates in RefSeq since 2015 (typically CDS ends moved by 1-3 bp around incomplete stop codons, or frameshifted ND3 split into joined segments). CSV values are kept where present.`,
-);
-const filled = Object.entries(report.filledFromGenBank);
-if (filled.length) {
-  notes.push(
-    `Regions missing from the CSV export but annotated in the current RefSeq record were computed from the sequence (RegionStats.source = "genbank"): ${filled.map(([r, n]) => `${r} ${n}`).join(", ")}. D-loop values include misc_feature "control region" annotations when a record has no D-loop feature.`,
-  );
-}
-if (report.duplicateRowsResolved.length) {
-  notes.push(`Duplicate CSV rows resolved: ${report.duplicateRowsResolved.join("; ")}.`);
-}
-const noPc = kept.filter((s) => !totalPcRows.has(s.hagrid)).map((s) => s.species);
-if (noPc.length) {
-  notes.push(
-    `${noPc.length} species had no gene-level rows in the CSV export because their RefSeq records were unannotated in 2015 (${noPc.join(", ")}); their gene statistics, codon usage and non-coding length come from the current RefSeq annotation.`,
-  );
-}
+// ================================================================== build 2 sources
+step(`RefSeq mitochondrion ${REFSEQ_RELEASE.version}`);
+const release = await loadRefSeqRelease();
+console.log(`  ${release.headers.length} records, md5 ${release.md5}`);
 
-step("Codon usage");
-const tableOf = (id: number) => genomes.get(id)?.translTable ?? fallbackTable(raw.species.get(id)!.phylum);
-const { usage, report: codonReport } = buildCodonUsage(speciesIds, raw, genomes, tableOf);
+step(`NCBI Taxonomy (${NCBI_TAXONOMY.version})`);
+const tax = await NcbiTaxonomy.load();
+const lineageFor = new Set<number>();
+for (const h of release.headers) {
+  if (h.taxid === null) continue;
+  const sp = tax.speciesOf(h.taxid);
+  if (sp !== null) lineageFor.add(sp);
+}
+for (const g of cited.values()) if (g.taxid !== null) lineageFor.add(tax.speciesOf(g.taxid) ?? tax.current(g.taxid));
+
+step("Lifespan sources");
+const anageObs = anageObservations(anage);
+const fishbase = await loadFishBase();
+const sealifebase = await loadSeaLifeBase();
+const usgs = await loadUsgsBbl();
+const euring = loadEuring();
+if (!euring.retrieved) {
+  console.warn(`  ${euring.message}`);
+  notes.push(euring.message);
+}
+const observations = [...anageObs, ...fishbase.observations, ...sealifebase.observations, ...euring.observations, ...usgs];
+console.log(`  AnAge ${anageObs.length}, FishBase ${fishbase.observations.length}, SeaLifeBase ${sealifebase.observations.length}, USGS BBL ${usgs.length}, EURING ${euring.observations.length} observations`);
+const synonyms = new Map([["FishBase", fishbase.synonyms], ["SeaLifeBase", sealifebase.synonyms]]);
+const nameTaxids = new Set<number>(lineageFor);
+for (const g of cited.values()) if (g.taxid !== null) nameTaxids.add(tax.current(g.taxid));
+await tax.loadNames(wantedNameKeys(observations, synonyms), nameTaxids);
+
+step("Matching source names to NCBI species");
+const matches = matchSourceNames(observations, tax, synonyms);
 {
-  let ex = 0;
-  let cmp = 0;
-  for (const a of Object.values(codonReport.agreement)) {
-    ex += a.exact;
-    cmp += a.compared;
+  const by = new Map<string, number>();
+  for (const m of matches.values()) by.set(`${m.source} ${m.status}`, (by.get(`${m.source} ${m.status}`) ?? 0) + 1);
+  console.log(`  ${[...by].sort().map(([k, v]) => `${k}: ${v}`).join(", ")}`);
+  for (const m of matches.values()) if (m.speciesTaxid !== null) lineageFor.add(m.speciesTaxid);
+}
+await tax.loadLineages(lineageFor);
+const releaseRecords = classifyRelease(release, tax);
+
+step("Assembling build 2");
+const b2 = await assembleBuild2({
+  raw, kept, base: { species: baseSpecies, stats: baseStats, usage: baseUsage, features: baseFeatures, cited, citedText, anageMatch },
+  anage, release, releaseRecords, tax, observations, matches, euringRetrieved: euring.retrieved, buildDate: BUILD_DATE,
+  fetchWithParts: async (versions) => {
+    const { texts, failed } = await fetchGenBank(versions);
+    if (failed.length) throw new Error(`efetch (gbwithparts) failed for ${failed.join(", ")}`);
+    return texts;
+  },
+});
+{
+  const fetched = b2.report["contigOnlyFetched"] as string[];
+  if (fetched.length) {
+    notes.push(`${fetched.length} records used from ${REFSEQ_RELEASE.version} carry only a CONTIG line (no sequence) in the release file; their sequence and features were taken from the same accession.version retrieved with NCBI efetch (rettype gbwithparts), checked to have the release's length: ${fetched.join(", ")}.`);
   }
-  const tp = codonReport.totalPcEqualsGeneSum;
-  notes.push(
-    `Codon counts in the CSV are correctly labelled (gene sense, RNA alphabet): recounting codons from the RefSeq CDS features reproduces ${ex}/${cmp} gene rows exactly (${pct(ex, cmp)}); the rest differ only where CDS coordinates were re-annotated. total_pc equals the sum of the 13 genes in ${tp.equal}/${tp.compared} species. Amino-acid counts use the NCBI genetic code given in each record (/transl_table: 2 vertebrate, 5 invertebrate, 9 echinoderm mitochondrial); AGA/AGG count as stops under table 2.`,
-  );
 }
+const statusCounts: Partial<Record<RecordStatus, number>> = {};
+for (const s of b2.species) statusCounts[s.provenance!.recordStatus] = (statusCounts[s.provenance!.recordStatus] ?? 0) + 1;
+console.log(`  ${b2.species.length} species ${JSON.stringify(statusCounts)}; ${b2.changelog.length} changelog rows; ${b2.observations.length} lifespan observations; ${b2.review.length} review items; ${JSON.stringify({ ...b2.report, contigOnlyFetched: (b2.report["contigOnlyFetched"] as string[]).length })}`);
 
-step("Genome features");
-const features = new Map<number, GenomeFeature[]>();
-const viaCounts = new Map<string, number>();
-for (const id of speciesIds) {
-  const g = genomes.get(id);
-  if (!g) continue;
-  features.set(
-    id,
-    g.features.map((f) => ({ name: f.name, type: f.type, start: f.start, end: f.end, strand: f.strand })),
-  );
-  for (const f of g.features) if (f.via) viaCounts.set(f.via, (viaCounts.get(f.via) ?? 0) + 1);
-}
-{
-  const complete = [...features.values()].filter((fs) => {
-    const n = (t: string) => fs.filter((f) => f.type === t).length;
-    return n("CDS") >= 13 && n("rRNA") >= 2 && n("tRNA") >= 22;
-  }).length;
-  const unresolved = viaCounts.get("unresolved") ?? 0;
-  notes.push(
-    `Genome features come from the RefSeq feature tables (${features.size} species; ${complete} with at least 13 CDS, 2 rRNA and 22 tRNA). Names are normalised across synonyms (COI/COX1/CO1, ATPase6, cob/CYTB, s-rRNA/rrnS/12S, trnF/tRNA-Phe ...). The two leucine and two serine tRNAs are named by codon family (tRNA-Leu(UUR), tRNA-Leu(CUN), tRNA-Ser(UCN), tRNA-Ser(AGY)) from the /anticodon qualifier (${viaCounts.get("anticodon") ?? 0}), "codons recognized" notes (${viaCounts.get("codons") ?? 0}), product text (${viaCounts.get("name") ?? 0}), HGNC-style numbering TRNL1/TRNL2 (${viaCounts.get("numbering") ?? 0}) or conserved gene order (Leu(UUR) after 16S, Ser(UCN) after COX1: ${(viaCounts.get("position") ?? 0) + (viaCounts.get("complement") ?? 0)})${unresolved ? `; ${unresolved} remain plain tRNA-Leu/tRNA-Ser` : ""}. Coordinates are 1-based inclusive; start > end marks a feature spanning the origin.${unrecognised.size ? ` Unrecognised feature names: ${[...unrecognised].map(([k, v]) => `${k} (${v})`).join(", ")}.` : ""}`,
-  );
-}
-
-// ------------------------------------------------------------------ features
-step("Feature definitions and values");
-const defs = buildFeatureDefs();
-const nonCodingMap = new Map(species.map((s) => [s.id, s.nonCodingBp]));
-const values = buildFeatureValues(defs, speciesIds, stats, usage, nonCodingMap);
-console.log(`  ${defs.length} features`);
-
-// ------------------------------------------------------------------ phylogeny
+// ================================================================== phylogeny and taxonomy
 let dated: DatedTree | null = null;
 if (process.env["MITOAGE_SKIP_TREE"]) {
-  notes.push("Phylogeny skipped (MITOAGE_SKIP_TREE): branch lengths and PIC are not available in this build.");
+  notes.push("Phylogeny skipped (MITOAGE_SKIP_TREE): branch lengths and PIC values are unknown in this build.");
 } else {
   step("Dated phylogeny (Open Tree of Life topology + TimeTree node ages)");
   try {
     dated = await buildDatedTree(
-      kept.map((s) => {
-        const alt = anageMatch.get(s.hagrid)?.entry?.scientificName;
-        return {
-          id: s.hagrid,
-          names: alt && alt !== s.species ? [s.species, alt] : [s.species],
-          taxid: genomes.get(s.hagrid)?.taxid ?? null,
-        };
-      }),
+      b2.species.map((s) => ({
+        id: s.id,
+        names: [s.scientificName, ...(s.previousScientificNames ?? [])],
+        taxid: b2.taxidOf.get(s.id) ?? null,
+      })),
     );
     const st = dated.stats;
     console.log(`  ${JSON.stringify(st)}`);
+    const missing = b2.species.length - st.leaves;
     notes.push(
-      `Dated tree: topology from the Open Tree of Life synthetic tree (${dated.otlSynthVersion}, induced subtree of ${st.leaves} of ${species.length} species, polytomies kept); node ages from the TimeTree 5 API (MRCA age of representative descendants by NCBI taxon id) for ${st.datedByTimeTree} of ${st.internalNodes} internal nodes; ${st.interpolated} undated nodes were placed midway between parent and oldest child and ${st.madeMonotone} ages were raised to keep parents older than children. Root age ${st.rootAge.toFixed(0)} Mya. Taxonomy branchLengthMya is the difference between the crown ages (MRCA in this tree) of a taxon and its parent within this species set. PIC (Felsenstein 1985) correlations use this tree; polytomies are resolved with zero-length branches.`,
+      `Dated tree: topology from the Open Tree of Life synthetic tree (${dated.otlSynthVersion}, induced subtree of ${st.leaves} of ${b2.species.length} species, polytomies kept); node ages from the TimeTree 5 API for ${st.datedByTimeTree} of ${st.internalNodes} internal nodes; ${st.interpolated} undated nodes placed midway between parent and oldest child, ${st.madeMonotone} ages raised to keep parents older than children. ${missing} species are not in the tree: their PIC contribution is unknown (they are left out of PIC, not given values). PIC (Felsenstein 1985) correlations are computed during the site build on this tree.`,
     );
   } catch (e) {
     console.warn(`  phylogeny failed: ${(e as Error).message}`);
-    notes.push(`No dated phylogeny in this build (${(e as Error).message}); branchLengthMya is undefined and picR/picPValue are null.`);
+    notes.push(`No dated phylogeny in this build (${(e as Error).message}): branch lengths and PIC values are unknown for every species (null), the rest of the build is unaffected.`);
     dated = null;
   }
 }
-
 step("Taxonomy tree");
-const taxonomy = buildTaxonomyTree(species, dated ? (ids) => dated!.ageOf(ids) : undefined);
+const taxonomy = buildTaxonomyTree(b2.species, dated ? (ids) => dated!.ageOf(ids) : undefined);
 console.log(`  ${flattenTaxa(taxonomy).length} taxa above species rank`);
 
-// ------------------------------------------------------------------ correlations
-step("Correlations");
-const indexOf = new Map(speciesIds.map((id, i) => [id, i]));
-const compiled = dated ? compileTree(dated.root, (leaf) => indexOf.get(leaf)) : null;
-const { rows: correlations, scopes } = computeCorrelations(species, defs, values, compiled);
-console.log(`  ${correlations.length} rows in ${scopes.length} scopes`);
+// ================================================================== notes and build info
+const count = (f: (s: Species) => boolean) => b2.species.filter(f).length;
 notes.push(
-  `Correlations: Pearson r and Spearman rho between each feature and the log10-transformed trait, two-tailed p from the t distribution, Benjamini-Hochberg q within each (trait, scope). Scopes: all species, classes and orders with at least 20 species (${scopes.length} scopes); per-gene codon and amino-acid features are tested in "all" and class scopes only. Rows need at least 10 species with both values. For maxLongevityYears, partialR is the partial correlation with log10 lifespan controlling for log10 adult weight (AnAge).`,
+  `Build 2 (${BUILD_DATE.slice(0, 10)}): ${b2.species.length} species = ${kept.length} from build 1 + ${count((s) => s.provenance!.recordStatus === "new")} new. Record status: ${Object.entries(statusCounts).map(([k, v]) => `${k} ${v}`).join(", ")}. Every value of a build 1 species that changed is in changelog.parquet with its old value and the reason; build 1 itself is frozen in build1/.`,
+  `Genome values (region statistics, codon usage, genome features) of every live species are computed from the RefSeq record in ${REFSEQ_RELEASE.version}; for build 1 species that is the same accession.version they cited (or its newer version, or a live successor when the record was suppressed). Retired species keep their build 1 values.`,
+  `Base-label bug of build 1: in every MitoAge CSV file the base columns are complement-labelled ("G" holds C on the RefSeq strand, "C" holds G, "A" holds T, "T" holds A). All a/c/g/t here are on the RefSeq strand as deposited; GC% is unaffected, GC and AT skews change sign relative to the old site.`,
+  `Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds EURING (not retrieved) then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).`,
+  `Class labels follow the build 1 scheme (AnAge build 12-era: Actinopterygii, Reptilia, ...) for every species, so correlation scopes stay comparable with the 2016 paper; AnAge build 15's fish reclassification (Teleostei, ...) is not adopted.`,
 );
-
-// ------------------------------------------------------------------ write
-step("Writing outputs");
-const today = process.env["SOURCE_DATE_EPOCH"]
-  ? new Date(Number(process.env["SOURCE_DATE_EPOCH"]) * 1000).toISOString()
-  : `${new Date().toISOString().slice(0, 10)}T00:00:00.000Z`;
+const datasets = (["default", "anage_only"] as const).map((d) => ({
+  dataset: d,
+  filters: "record_status != retired; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)",
+  lifespanSources: d === "default" ? ["AnAge", "FishBase", "SeaLifeBase", "USGS_BBL"] : ["AnAge"],
+  species: datasetMembers(b2.species, d).length,
+}));
 const buildInfo: BuildInfo = {
-  build: `2.0 (${today.slice(0, 10)})`,
-  generatedAt: today,
-  speciesCount: species.length,
+  build: `2 (${BUILD_DATE.slice(0, 10)})`,
+  buildNumber: BUILD,
+  buildDate: BUILD_DATE,
+  generatedAt: BUILD_DATE,
+  speciesCount: b2.species.length,
+  recordStatusCounts: statusCounts,
+  correlationDatasets: datasets,
   sources: [
-    {
-      name: "MitoAge build 1",
-      version: "Build 1 (July 1, 2015), full database CSV export",
-      url: "https://www.mitoage.info/",
-      license: "Free for all purposes provided MitoAge is cited (Toren et al. 2016, Nucleic Acids Res 44:D1262-D1265)",
-    },
-    { name: "AnAge", version: `${anage.build} (released ${anage.releaseDate})`, url: ANAGE_URL, license: ANAGE_LICENSE },
-    {
-      name: "NCBI RefSeq (E-utilities efetch)",
-      version: `${genomes.size} versioned mitochondrial RefSeq records, retrieved ${today.slice(0, 10)} or earlier (cached)`,
-      url: "https://www.ncbi.nlm.nih.gov/refseq/",
-      license: "NCBI molecular data are free of use restrictions (NCBI website and data usage policies)",
-    },
+    { name: "MitoAge build 1", version: `Build 1 (${BUILD1_DATE.slice(0, 10)}), full database CSV export (frozen in public/data/build1/)`, url: "https://www.mitoage.info/", license: "Free for all purposes provided MitoAge is cited (Toren et al. 2016, Nucleic Acids Res 44:D1262-D1265)" },
+    ...[REFSEQ_RELEASE, NCBI_TAXONOMY, ANAGE_PINNED, FISHBASE, SEALIFEBASE, USGS_BBL].map((p) => ({ name: p.name, version: `${p.version}; retrieved ${p.retrieved}`, url: p.url, license: p.license })),
+    { name: EURING.name, version: euring.retrieved ? EURING.version : `${EURING.version}: NOT RETRIEVED (euring.org in maintenance on ${EURING.retrieved}); no EURING values used`, url: EURING.url, license: EURING.license },
+    { name: "NCBI RefSeq records cited by build 1 (E-utilities efetch, cached)", version: `${cited.size} versioned records`, url: "https://www.ncbi.nlm.nih.gov/refseq/", license: REFSEQ_RELEASE.license },
     ...(dated
       ? [
-          {
-            name: "Open Tree of Life synthetic tree",
-            version: dated.otlSynthVersion,
-            url: "https://tree.opentreeoflife.org/",
-            license: "CC0 1.0 (Open Tree of Life data); cite Hinchliff et al. 2015, PNAS 112:12764",
-          },
-          {
-            name: "TimeTree 5",
-            version: "public API (api.timetree.org)",
-            url: "https://timetree.org/",
-            license: "Free public resource; cite Kumar et al. 2022, Mol Biol Evol 39:msac174",
-          },
+          { name: "Open Tree of Life synthetic tree", version: dated.otlSynthVersion, url: "https://tree.opentreeoflife.org/", license: "CC0 1.0 (Open Tree of Life data); cite Hinchliff et al. 2015, PNAS 112:12764" },
+          { name: "TimeTree 5", version: "public API (api.timetree.org)", url: "https://timetree.org/", license: "Free public resource; cite Kumar et al. 2022, Mol Biol Evol 39:msac174" },
         ]
       : []),
   ],
   notes,
 };
 
-const payload = {
-  buildInfo,
-  species,
-  taxonomy,
-  stats,
-  usage,
-  features,
-  defs,
-  values,
-  speciesIds,
-  correlations,
-};
-const genSizes = await writeGenerated(payload);
-const extra = new Map(
-  species.map((s) => {
-    const m = anageMatch.get(s.id)!;
-    return [
-      s.id,
-      {
-        anageHagrid: m.entry?.hagrid ?? null,
-        anageMatch: m.how,
-        anageMaxLongevityYears: m.entry?.maxLongevityYears ?? null,
-        ncbiTaxid: genomes.get(s.id)?.taxid ?? null,
-        translTable: tableOf(s.id),
-      },
-    ];
-  }),
+// ================================================================== write
+step("Writing outputs");
+const genSizes = await writeGenerated({ buildInfo, taxonomy, phylogeny: dated ? { version: dated.otlSynthVersion, root: dated.root } : null });
+const pubSizes = await writePublic(
+  { species: b2.species, stats: b2.stats, usage: b2.usage, features: b2.features, observations: b2.observations, changelog: b2.changelog, review: b2.review, extra: b2.extra },
+  buildPublicReadme(buildInfo),
 );
-const explorer = buildExplorer(species, defs, values, buildInfo);
-const pubSizes = await writePublic(payload, { extra }, explorer, buildPublicReadme(buildInfo));
 for (const f of await writeBuild1Snapshot(join(PUBLIC_DATA_DIR, "build1"))) pubSizes[`build1/${f.parquet}`] = f.bytes;
 const fmt = (n: number) => (n > 1e6 ? `${(n / 1e6).toFixed(2)} MB` : `${(n / 1e3).toFixed(1)} kB`);
 for (const [k, v] of Object.entries(genSizes)) console.log(`  src/data/generated/${k}  ${fmt(v)}`);
@@ -363,4 +272,4 @@ if (problems.length) {
   console.error(problems.map((p) => `  FAIL ${p}`).join("\n"));
   process.exit(1);
 }
-step(`Done: ${species.length} species, ${stats.length} region stats, ${usage.length} codon tables, ${correlations.length} correlations`);
+step(`Done: ${b2.species.length} species, ${b2.stats.length} region stats, ${b2.usage.length} codon tables, ${b2.changelog.length} changelog rows`);

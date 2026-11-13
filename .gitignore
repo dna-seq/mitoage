@@ -36,8 +36,9 @@ report.[0-9]_.[0-9]_.[0-9]_.[0-9]_.json
 # astro
 .astro
 
-# pipeline download cache (GenBank, AnAge, trees)
+# pipeline download cache (GenBank, AnAge, trees) and raw inputs (not in git)
 data/cache
+data/input
 
 # Agent worktrees
 .claude/worktrees/

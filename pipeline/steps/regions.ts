@@ -159,7 +159,7 @@ export interface CodonReport {
 
 const CODON_REGIONS: (ProteinGene | "total_pc")[] = [...PROTEIN_GENES, "total_pc"];
 
-function computeGeneCodons(g: SpeciesGenome, gene: ProteinGene): Record<string, number> | null {
+export function computeGeneCodons(g: SpeciesGenome, gene: ProteinGene): Record<string, number> | null {
   const f = g.features.find((x) => x.type === "CDS" && x.name === gene);
   if (!f) return null;
   return countCodons(extractFeature(g.record.sequence, f.segments), f.codonStart).counts;
