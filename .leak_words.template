@@ -1,0 +1,14 @@
+# Copy to .leak_words (git-ignored) and put ONE pattern per line: a login, a hostname, an account,
+# a person's name, a repository or organisation that must not be named, an absolute path prefix, an
+# id that ties the kit to one owner. Lines are case-insensitive extended regexes; `#` starts a
+# comment. The pre-commit hook refuses to run without this file, so an empty gate cannot pass.
+#
+# Include this machine's hostname and the team chat server's address: `bin/claim.sh` checks a claim
+# tag's text against this list too, and a claim's stamp once carried both to the public remote.
+#
+# Before adding a value, ask whether it is already in tracked files or history: a pattern only
+# protects what has not shipped yet, and one that matches existing prose stalls every commit that
+# touches it. Anchor short words (\bword\b) so they do not match inside ordinary words.
+#
+# A value that is load-bearing but appears as prose in one place is a job for .leak_allow (see
+# .leak_allow.template), not for deleting the pattern.
