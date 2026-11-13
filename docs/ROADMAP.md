@@ -21,12 +21,16 @@ site's side, as the per-gene codon tables are.
 
 ## RM3 — Look at the build 2 site
 
-**State:** blocked: on the maintainer naming where pages are looked at · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 Build 2 landed on 2026-11-13 and the site was rebuilt on it: 2,335 species instead of 922, the species
-list past 1,000 rows, new classes in every chart and in the tree. On the cluster the seat builds and
-cannot view. Each section at a phone's and a desktop's width, light and dark; what looks wrong becomes
-its own item.
+list past 1,000 rows, new classes in every chart and in the tree. The seat can view pages where it runs:
+a headless browser screenshots the built site at a phone's and a desktop's width, light and dark (tried
+on 2026-11-13 on the home page, the species list, a species page, the tree and Compare: all 20 loaded
+without a script error; three were read, the home page, the species list on a phone in dark, the tree).
+Left: every section read screenshot by screenshot; what looks wrong becomes its own item. The screenshot
+script lives outside the repository until the maintainer says whether its browser library may become a
+development dependency.
 
 ## RM4 — The build 2 defaults, put to the maintainer
 
@@ -74,3 +78,31 @@ A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and
 
 `plans/DATA_BUILD2_DECISIONS.md`, section 7: each build is intended for a Zenodo DOI. The seat prepares
 the deposit's files and text; publishing is outside its grant.
+
+## RM10 — Multiple sequence alignments of the mitochondrial genes
+
+**State:** blocked: the maintainer's go on the design, asked in `#mitoage>decisions` on 2026-11-13 · **Owner:** lead
+
+Asked by the maintainer (2026-11-13): "check if we can prepare multiple sequence alignments between
+mitochondria of different species to find some insights and also provide it through website".
+
+It can be done. A hand run on 2026-11-13, from the pinned RefSeq release 237 and the 2,316 non-retired
+species of build 2: the 13 proteins and the two rRNAs extracted with the pipeline's own GenBank parser
+(12 s), each aligned with MAFFT 7.526 (`--auto`, 8 threads): every protein in 1 to 5 s, 12S rRNA in 12 s,
+16S in 29 s. All 15 alignments are 5.4 MB gzipped. COX1 is the most conserved (415 of 515 well-occupied
+columns carry one residue in 90 % of species), ATP8 and ND6 the least. Six records have no sequence in
+the release file and need the fetch the pipeline already does for them. No insight was looked for yet:
+the run shows cost and size only.
+
+The design proposed, each point the maintainer's to change:
+
+1. **What is aligned:** each of the 13 proteins as amino acids, the codon alignment derived from it, and
+   the two rRNAs. No whole-genome alignment: gene order differs between phyla, so it would not mean much.
+2. **The tool:** MAFFT, a program the pipeline calls, pinned by version. It is the first step of the
+   pipeline that is not TypeScript; the alignments are committed outputs, so the site build needs no
+   MAFFT. Rejected: an aligner written in TypeScript (far slower and worse on 2,300 sequences).
+3. **Insights, first set:** conservation per site; sites whose residue goes with maximum lifespan, tested
+   with the dated tree the pipeline already has (phylogenetic contrasts) and corrected for the number of
+   sites; nothing claimed from an uncorrected comparison.
+4. **The site:** on each gene page an alignment viewer (rows in the tree's order, a conservation track,
+   lifespan beside each row, a filter by taxon) and the aligned FASTA as a download.

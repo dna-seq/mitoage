@@ -13,12 +13,19 @@ this file, and the kit's role `classes/lead/LEAD.md`.
 - **On the cluster:** Bun 1.4.2 is installed outside the home directory and must be put on the PATH by
   hand. The type check passes; the tests pass except `pipeline/tests/lifespan.test.ts`, which stops on the
   missing pinned inputs (RM7). The site build runs as a small batch job on a CPU node, never on the login
-  node. No page can be viewed here (RM3).
+  node. Pages are viewed here by headless screenshots (RM3); the script and the browser sit outside
+  the repository, with the seat's other run files.
 - **Kept from before the kit:** `plans/handoffs/` (a record; no new file goes there) and
   `.claude/launch.json` (the preview launcher). Nothing retired, nothing moved under the watchdog.
 - **Acting duties:** milestones (the channel's `state` and `milestones` topics, as the priming's
   "Reporting" already says). upstream-index does not apply as written: its watcher reads the Python
   package index and this repository has no Python; the upstream data sources are RM6.
+
+### The alignment probe, 2026-11-13
+
+RM10 holds its numbers. The run's files (the extraction script, the batch job, the alignments) are outside
+the repository and are a probe, not pipeline code: the pipeline step is written fresh once the design is agreed.
+The pinned RefSeq release file is on the cluster now (checksum equal to the pin), outside the clone's cache.
 
 ### Upstream check, 2026-11-13
 
@@ -32,5 +39,6 @@ this file, and the kit's role `classes/lead/LEAD.md`.
 
 ### For the maintainer, by hand
 
-- Where pages are looked at (RM3), and where the pipeline's inputs come from (RM7).
+- Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).
+- The seat's picture: asked in the chat's avatars topic, since this machine cannot draw one.
 - The laptop's join line, from the secretary, to seat the lead there.

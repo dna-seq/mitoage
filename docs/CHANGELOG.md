@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Roadmap: RM10, multiple sequence alignments of the 13 proteins and two rRNAs, with the numbers of a hand run (MAFFT, all 2,316 live species, under a minute in total) and a proposed design waiting for the maintainer; RM3 is no longer blocked, since built pages can be viewed by headless screenshots where the seat runs. Documents only.
 - The roadmap is written (RM1 to RM9) from the build 2 report's "Not done", its open questions and the code as it is; the lead's notes record its first seating. Documents only. Checked on the pulled tree: type check, the site build as the workflow runs it (7,783 pages, link check passed); tests pass except `pipeline/tests/lifespan.test.ts`, which needs the pinned inputs this clone lacks (RM7). No page was viewed.
 - The build 2 report states the final test count (192, not 144).
 - Decision numbers after rebasing onto main (which recorded its own D2): the parquet data layer is D3 and the dropped size rule D4 in code comments and the build 2 report.
