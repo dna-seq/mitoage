@@ -22,3 +22,21 @@ with a written priming under `docs/seats/`. The maintainer's answers at adoption
 - **The id** is `mitoage`: the chat channel, the seat's account `mitoage/lead` and the desk's label.
 
 The last three were the wizard's defaults, left unchanged by the maintainer.
+
+## D2 — The maintainer's global permission to push holds for a session without a seat (2026-11-13)
+
+A session that holds no seat finished a change (the species list's FASTA download) and met two
+rules. The maintainer's global instructions say to "commit the changes and push them when the task is
+done, without asking first", to "push to `main` directly and avoid pull requests", because "I mostly
+work alone on my repositories". `CLAUDE.md` §2 left a push to the maintainer unless a seat's priming
+granted it. Asked which holds, with the cost named (the push deploys the site), the maintainer
+answered: "Push to main".
+
+- **Decided:** where the maintainer's global instructions give that standing permission, a session
+  without a seat pushes `main` to `origin` as a fast-forward once its task is done and checked
+  (`CLAUDE.md` §2 and §8). The lead's grant (D1) is unchanged.
+- **Rejected:** the work stays on its branch until the maintainer pushes it themself.
+- **Its limit:** the question was put on one commit. That the answer stands for later sessions is the
+  asking session's reading, said to the maintainer before the answer ("I'll record it in `CLAUDE.md`
+  so the next session does not ask again"). Tags, releases, branch deletion and history rewriting stay
+  the maintainer's.

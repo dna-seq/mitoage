@@ -4,6 +4,8 @@ Newest first.
 
 ## Unreleased
 
+- `CLAUDE.md` §2: a session without a seat pushes `main` as a fast-forward where the maintainer's
+  global instructions give a standing permission to push (D2 in `docs/DECISIONS.md`).
 - The species list (`/species/`, `/species/life-history/`) has a "FASTA of these rows" button: the
   mitochondrial genomes of the filtered species as one file, in the table's order. The site still
   hosts no sequences: the browser fetches the RefSeq records from NCBI E-utilities, 100 accessions a

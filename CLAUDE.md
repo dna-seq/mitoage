@@ -92,8 +92,11 @@ reason gets argued away at 2 a.m.
   changelog line. No conventional-commit prefixes. Stage explicit paths, never `git add -A` or
   `git add .`: they sweep in secrets, editor swap files and junk. Local branches are free to create
   and switch. No push, tags, releases, branch deletion or history rewriting: those are the
-  maintainer's, unless a seat's priming grants one in writing, by name. Never `git stash drop` or
-  `git stash clear`, even on request.
+  maintainer's, unless a seat's priming grants one in writing, by name. One exception (D2): where
+  the maintainer's global instructions give a standing permission to push, a session without a seat
+  pushes `main` to `origin` as a fast-forward once its task is done and checked (`bun run check`,
+  `bun test`, the build as the workflow runs it and its link check); that push deploys the site.
+  Never `git stash drop` or `git stash clear`, even on request.
 
 ---
 
@@ -197,3 +200,8 @@ machine and this project that reading the code does not reveal.
 - 2026-11-13, the maintainer, on the adoption's pull request: "so far no need of pr-s as I am th main
   developer". Work lands on `main` directly, as a fast-forward push where a seat's grant covers it; a
   pull request is opened only when the maintainer asks for one.
+- 2026-11-13, the maintainer, asked which rule holds for a session without a seat, the global
+  instructions' "push to `main` directly and avoid pull requests" or §2's push by a seat's grant only,
+  with the cost named (the push deploys the site): "Push to main". The reason is the global
+  instructions' own: "I mostly work alone on my repositories". The question was put on one commit; that
+  the answer stands for later sessions is the asking session's reading, announced before the answer.
