@@ -58,6 +58,29 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
   the pipeline inputs (RM7); the screenshot library as a development dependency; the build 2 defaults (RM4).
 - Next: RM10 (the viewer), then RM12 starting with the aligner comparison.
 
+### Night of 2026-11-13
+
+- RM10 landed (0a88aee): the alignment viewer on the gene pages; screenshots in `#mitoalignments`. Left
+  weak: in the dark theme the lifespan bars are a green close to the hydrophobic residues' green.
+- The build is on Hugging Face (D6, 562150f): `bun run hf` packages it, the upload is run by hand with the
+  maintainer's login, which the Hugging Face command line on this machine already holds. Pushed with each
+  build; whether the dataset viewer built its tables was not checked yet.
+- An island runs on the server too during the build: a browser-only call (an animation frame, a
+  decompression stream) outside `onMount` fails the build, not the type check. And two signals that feed
+  each other's effect need a comparison by value, or the page hangs with no error in the log.
+- A dev server in a worktree whose `node_modules` is a link to the main clone's refuses to serve the
+  islands; view a branch through its batch build and `preview`.
+- The batch build of a branch is `build-wt.sbatch` in the runs folder, given the folder as `WT`; it prints
+  the folder it builds. The shared CPU limit of the account can hold a 4-core job for half an hour.
+- Everything about the alignments is posted in `#mitoalignments>general chat` (the maintainer: "move msa
+  related answers and progress description to corresponding subchannel"). Python examples use polars and
+  polars-bio (his word).
+- The maintainer turned away at about 18:30 UTC. On his desk: #30 where the research code lives, #31 the go
+  on mitoport's calibration, #32 the pipeline inputs, #33 the screenshot library as a dependency, #34 the
+  five build 2 defaults that change results. The analysis plan (RM12) and its order were put to him in
+  `#mitoalignments`; the order is a default, not a question on the desk.
+- Next: RM12 step 1 (the aligner comparison), then the positive controls; RM3, RM2, RM8 after.
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).

@@ -4,6 +4,8 @@ Newest first.
 
 ## Unreleased
 
+- Roadmap: RM12 is now the whole longevity analysis on the alignments as planned with the maintainer (aligner check, positive controls, site by site, selection pressure, convergence, structures); RM4, RM7 and RM11 wait on the desk. Documents only.
+
 - **The build on Hugging Face** (D6). `bun run hf` packages the committed build into `out/hf/` (not in
   git): `public/data/` as it is, `alignments/alignments.parquet` (every row of every aligned FASTA as one
   table: gene, kind, slug, scientific name, accession, aligned sequence; 64,789 rows, 22 MB, read back and

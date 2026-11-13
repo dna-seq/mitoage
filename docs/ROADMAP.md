@@ -25,7 +25,7 @@ development dependency.
 
 ## RM4 — The build 2 defaults, put to the maintainer
 
-**State:** unattended, under the defaults applied · **Owner:** lead
+**State:** blocked: desk #34 (the five calls that change results; if nobody answers, the defaults stay) · **Owner:** lead
 
 `docs/BUILD2_OPEN_QUESTIONS.md` lists 20 calls made without confirmation. Asked in `#mitoage>decisions`,
 the ones that change results first: order and family not harmonised between AnAge and NCBI (e), the ids
@@ -50,7 +50,7 @@ The priming's weekly look for a release newer than each pin; the dates and findi
 
 ## RM7 — The pipeline's inputs on every machine that runs the seat
 
-**State:** waits until 2026-11-14: the maintainer's answer in `#mitoage>decisions` (asked 2026-11-13, default: data rebuilds stay on the laptop); unanswered, it goes to the desk · **Owner:** lead
+**State:** blocked: desk #32 (if nobody answers, data rebuilds stay on the laptop) · **Owner:** lead
 
 `bun run data` and one test file (`pipeline/tests/lifespan.test.ts`) need the build 1 CSVs (`data/input/`)
 and the pinned downloads (`data/cache/build2/sources/`), which are in no repository. A clone without them
@@ -70,19 +70,44 @@ A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and
 `plans/DATA_BUILD2_DECISIONS.md`, section 7: each build is intended for a Zenodo DOI. The seat prepares
 the deposit's files and text; publishing is outside its grant.
 
-## RM12 — Sites that go with lifespan
+## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** unattended · **Owner:** lead
+**State:** unattended (steps 1 to 3); steps 4 and 5 after 3; where the code is published: blocked: desk #30 (if nobody answers, it stays in a working folder and results are reported in the channel) · **Owner:** lead
 
-First, the aligner (the maintainer asked whether newer tools do better; no Rust one was found, the
-contenders are FAMSA2 and Muscle5): the 13 proteins aligned with MAFFT's fast mode (the pin), a more
-accurate MAFFT mode, FAMSA2 and Muscle5, how much the columns differ and where, reported in the channel;
-the pin changes only on a clear difference. Then: per-site association of each alignment column with maximum lifespan on the dated tree, controlling for
-body mass and for nucleotide bias (Jobson 2010, Aledo 2012), corrected for the number of sites. Positive
-controls first: cysteine, methionine and threonine content against lifespan must come out as published.
-Hits are compared with the positions of Mariadassou & Pellay 2014 (doi:10.1016/j.exger.2014.03.009), whose
-full text is needed. Poorly aligned columns are left out by an occupancy rule set before looking at results.
-Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
+The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
+assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
+for convergent evolution of unrelated species selected for longevity". The plan was posted in
+`#mitoalignments>general chat` the same day; he has not answered it yet, and its order is the default.
+Python reads the data with polars and polars-bio (his word: "For python default library to read must be
+polarsbio"), from the Hugging Face dataset (D6).
+
+Fixed before any result is seen: the tree is the dated species tree of the build, never one made from these
+genes; lifespan is log maximum lifespan and its residual on body mass, records of high or acceptable quality
+only; mammals and birds first, then fishes and reptiles, all species together only as a last look; a column
+rule (filled share, agreement between aligners) set before testing; body mass, base composition and strand
+bias in every model, body temperature for cold-blooded classes; the 13 genes are one linked molecule, so
+gene-level results are not independent tests.
+
+1. The aligner (the maintainer asked whether newer tools do better; no Rust one was found): the 13 proteins
+   with MAFFT's fast mode (the pin), a more accurate MAFFT mode, FAMSA2 and Muscle5; how many columns agree
+   and where they do not, reported in the channel; the pin changes only on a clear difference.
+2. Positive controls: cysteine, methionine and threonine content against lifespan with phylogenetic
+   regression must come out as published (Jobson 2010, Aledo 2012 for the nucleotide-bias control). If they
+   do not, stop: the method is wrong.
+3. Site by site: each column against lifespan with the tree and body mass in the model, corrected for the
+   number of columns; hits compared with the positions of Mariadassou & Pellay 2014
+   (doi:10.1016/j.exger.2014.03.009), whose full text is needed.
+4. Selection pressure, on the codon alignments, per class: Coevol (dN/dS along the tree jointly with
+   lifespan and body mass; a sample of a few hundred species), HyPhy RELAX (relaxed or intensified selection
+   on long-lived branches), aBSREL or BUSTED-PH (episodes of positive selection tied to the trait).
+5. Convergence: lineages that became long-lived independently, picked by lifespan relative to body mass,
+   each paired with a short-lived relative; CSUBST (convergent codon substitutions against chance), PCOC
+   (sites whose amino-acid preference shifts the same way), RERconverge (gene-level, weak with 13 linked
+   genes).
+6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11 and RM13).
+
+Each tool's current version and limits are checked before use: the method names above are from memory of the
+literature. Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
 
 ## RM13 — Structural alignments: a check
 
@@ -94,7 +119,7 @@ the columns of the well-conserved core, and at what cost for 2,300 species.
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** waits until 2026-11-14: the maintainer's go on a bounded test, asked in `#mitoage>mitoport` on 2026-11-13; unanswered, it goes to the desk · **Owner:** lead
+**State:** blocked: desk #31 (the go on the calibration; if nobody answers, nothing is started), and desk #30 for where its code lives · **Owner:** lead
 
 The maintainer's idea (2026-11-13): borrow from `longevity-genie/longevity-port-pipelines`, narrowed to
 mitochondria, "to see how interactions between mitgenes and nuclear genes differ in organisms to search for
