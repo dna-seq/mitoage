@@ -4,7 +4,7 @@
  * Three tiers:
  *   1. Raw palette   (--green-700, --navy-900 ...) - never used directly by components.
  *   2. Semantic      (--color-*, --grad-*, --shadow-*) - what components use.
- *   3. Data colours  (--nt-*, --class-*, --chart-*, --heat-*) - fixed meaning site-wide.
+ *   3. Data colours  (--nt-*, --class-*, --chart-*, --heat-*, --diverge-*) - fixed meaning site-wide.
  *
  * Light theme is the default. Dark theme applies when
  *   - the OS prefers dark and the user has not chosen light (data-theme="light"), or
@@ -178,6 +178,9 @@
     --nt-g: #f7a81b;
     --nt-t: #e8503a;
     --nt-other: #9aa3ae;
+    /* Text written on a nucleotide colour (codon bars): --nt-on-g for the lighter G colour. */
+    --nt-on: var(--white);
+    --nt-on-g: var(--navy-900);
 
     /* Taxonomic classes (scatter points, legends, browse list). */
     --class-mammalia: #1f8a3b;
@@ -211,6 +214,13 @@
     --heat-hi: #0e4a22;
     --heat-text-lo: var(--navy-900);
     --heat-text-hi: var(--white);
+
+    /* Diverging ramp (correlation map). Cells mix from zero to neg or pos by |r|; both ends stay
+       light enough for --diverge-text. */
+    --diverge-neg: var(--orange-400);
+    --diverge-pos: var(--sky-400);
+    --diverge-zero: var(--color-surface-2);
+    --diverge-text: var(--navy-900);
 
     color-scheme: light;
   }
@@ -269,6 +279,8 @@
     --nt-g: #f7b23a;
     --nt-t: #f06a55;
     --nt-other: #7f8a96;
+    --nt-on: #0b1916;
+    --nt-on-g: #0b1916;
 
     --class-mammalia: #4fbf5c;
     --class-aves: #f7b23a;
@@ -298,6 +310,11 @@
     --heat-hi: #b9dc35;
     --heat-text-lo: #e7f1e4;
     --heat-text-hi: #0b1916;
+
+    --diverge-neg: #a85f10;
+    --diverge-pos: #2a5db0;
+    --diverge-zero: #17322a;
+    --diverge-text: #f2f8ee;
 
     color-scheme: dark;
   }
@@ -356,6 +373,8 @@
       --nt-g: #f7b23a;
       --nt-t: #f06a55;
       --nt-other: #7f8a96;
+      --nt-on: #0b1916;
+      --nt-on-g: #0b1916;
 
       --class-mammalia: #4fbf5c;
       --class-aves: #f7b23a;
@@ -385,6 +404,11 @@
       --heat-hi: #b9dc35;
       --heat-text-lo: #e7f1e4;
       --heat-text-hi: #0b1916;
+
+      --diverge-neg: #a85f10;
+      --diverge-pos: #2a5db0;
+      --diverge-zero: #17322a;
+      --diverge-text: #f2f8ee;
 
       color-scheme: dark;
     }

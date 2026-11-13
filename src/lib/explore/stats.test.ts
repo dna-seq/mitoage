@@ -1,6 +1,12 @@
-/** Reference values from SciPy 1.16 (scipy.stats.pearsonr, spearmanr, linregress, t.sf). */
+/**
+ * Reference values from SciPy 1.16 (scipy.stats.pearsonr and its confidence_interval, spearmanr,
+ * linregress, t.sf, false_discovery_control).
+ */
 import { describe, expect, test } from "bun:test";
+import { benjaminiHochberg as pipelineBH } from "../../../pipeline/lib/stats";
 import {
+  benjaminiHochberg,
+  correlationCI,
   correlationP,
   describePairs,
   incompleteBeta,
@@ -117,5 +123,55 @@ describe("regression and summary", () => {
     expect(strengthWord(0.42)).toBe("moderate");
     expect(strengthWord(-0.8)).toBe("strong");
     expect(strengthWord(Number.NaN)).toBe("no clear");
+  });
+});
+
+describe("confidence interval and multiple testing", () => {
+  test("Fisher z interval of r (Anscombe I)", () => {
+    const r = pearson(AX, AY);
+    const ci = correlationCI(r, AX.length);
+    expect(ci?.[0]).toBeCloseTo(0.4243912133932152, 12);
+    expect(ci?.[1]).toBeCloseTo(0.9506932537865604, 12);
+  });
+
+  test("the interval contains r, mirrors with its sign and narrows with n", () => {
+    for (const r of [-0.9, -0.3, 0, 0.12, 0.7]) {
+      const [lo, hi] = correlationCI(r, 25)!;
+      expect(lo).toBeLessThan(r);
+      expect(hi).toBeGreaterThan(r);
+      const [mlo, mhi] = correlationCI(-r, 25)!;
+      expect(mlo).toBeCloseTo(-hi, 12);
+      expect(mhi).toBeCloseTo(-lo, 12);
+      const [wlo, whi] = correlationCI(r, 400)!;
+      expect(whi - wlo).toBeLessThan(hi - lo);
+    }
+  });
+
+  test("no interval without enough pairs or a coefficient", () => {
+    expect(correlationCI(0.5, 3)).toBeNull();
+    expect(correlationCI(Number.NaN, 50)).toBeNull();
+    expect(correlationCI(1, 10)).toEqual([1, 1]);
+  });
+
+  test("Benjamini-Hochberg q-values", () => {
+    const q = benjaminiHochberg([0.01, 0.04, 0.03, 0.005, 0.2, 0.9]);
+    [0.03, 0.06, 0.06, 0.03, 0.24, 0.9].forEach((v, i) => expect(q[i]).toBeCloseTo(v, 12));
+  });
+
+  test("missing p-values are not counted as tests, and the pipeline's procedure agrees", () => {
+    const p = [0.2, null, 0.0004, Number.NaN, 0.03, 0.03, undefined, 0.8, 1e-9, 0.049];
+    const q = benjaminiHochberg(p);
+    const dense = p.filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+    const qDense = benjaminiHochberg(dense);
+    const ref = pipelineBH(p.map((v) => (typeof v === "number" ? v : Number.NaN)));
+    let k = 0;
+    p.forEach((v, i) => {
+      if (typeof v === "number" && Number.isFinite(v)) {
+        expect(q[i]).toBeCloseTo(qDense[k++]!, 14);
+        expect(q[i]).toBeCloseTo(ref[i]!, 14);
+        expect(q[i]!).toBeGreaterThanOrEqual(v);
+      } else expect(Number.isNaN(q[i]!)).toBe(true);
+    });
+    expect(benjaminiHochberg([])).toEqual([]);
   });
 });

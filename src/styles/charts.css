@@ -184,4 +184,90 @@
     color: var(--color-text-muted);
     font-weight: var(--fw-heavy);
   }
+
+  /* ---------- Range chart (RangePlot.tsx): rows of ranges, bars, ticks and dots ---------- */
+  .rp {
+    --rp: var(--chart-tick);
+  }
+  .rp__band {
+    fill: transparent;
+  }
+  .rp__band.is-even {
+    fill: var(--color-surface-2);
+  }
+  .rp__band.is-hover {
+    fill: var(--color-surface-sunken);
+  }
+  .rp__label {
+    fill: var(--chart-label);
+    font-size: 13px;
+    font-weight: 900;
+  }
+  .rp__link .rp__label {
+    fill: var(--color-link);
+  }
+  .rp__link:hover .rp__label,
+  .rp__link:focus-visible .rp__label {
+    text-decoration: underline;
+  }
+  .rp__n,
+  .rp__empty {
+    fill: var(--chart-tick);
+    font-size: 12.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .rp__line {
+    stroke: var(--rp);
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+  .rp__box {
+    fill: color-mix(in srgb, var(--rp) 34%, transparent);
+    stroke: var(--rp);
+    stroke-width: 1.5;
+  }
+  .rp__bar {
+    fill: var(--rp);
+    fill-opacity: 0.9;
+  }
+  .rp__tick {
+    stroke: var(--chart-axis);
+    stroke-width: 2.5;
+    stroke-linecap: round;
+  }
+  .rp__dot {
+    fill: var(--rp);
+    stroke: var(--chart-point-stroke);
+    stroke-width: 1.6;
+  }
+  .rp__zero {
+    stroke: var(--chart-axis);
+    stroke-width: 1.5;
+  }
+  .rp__glyph {
+    flex: none;
+    overflow: visible;
+  }
+  .rp__key .chart__legend-btn {
+    min-height: 1.75rem;
+    padding-inline: 0.5em;
+  }
+  .rp__tip {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 1px var(--space-3);
+    margin: 2px 0 0;
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    font-variant-numeric: tabular-nums;
+  }
+  .rp__tip dt {
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .rp__tip dd {
+    margin: 0;
+    text-align: right;
+  }
 }

@@ -1,7 +1,8 @@
-/** Shared controls of the comparative tables: parameter switch, region and rank selects. */
+/** Shared controls of the comparative tables: chart and parameter switches, region and rank selects. */
 import { For } from "solid-js";
 import type { Region } from "~/data/schema";
 import { PROTEIN_GENES } from "~/data/schema";
+import { type PlotKey, PLOTS } from "~/lib/compare/charts";
 import { getParam, PARAMS, type ParamKey, STATS_REGIONS, statsRegionLabel } from "~/lib/compare/params";
 import type { TaxonRank } from "~/lib/compare/rows";
 
@@ -33,6 +34,41 @@ export function ParamSwitch(p: { value: ParamKey; onChange: (k: ParamKey) => voi
           onChange={(e) => p.onChange(getParam(e.currentTarget.value).key)}
         >
           <For each={PARAMS}>{(x) => <option value={x.key}>{x.label}</option>}</For>
+        </select>
+      </label>
+    </div>
+  );
+}
+
+/** What the chart above a table plots: pills on wide screens, a select on phones, like ParamSwitch. */
+export function PlotSwitch(p: { value: PlotKey; onChange: (k: PlotKey) => void; id: string; plots?: readonly PlotKey[] }) {
+  const list = () => PLOTS.filter((x) => !p.plots || p.plots.includes(x.key));
+  return (
+    <div class="cs-param">
+      <div class="seg cs-param__seg" role="group" aria-label="Chart">
+        <For each={list()}>
+          {(x) => (
+            <button
+              type="button"
+              class="seg__btn"
+              aria-pressed={p.value === x.key}
+              title={x.title}
+              onClick={() => p.onChange(x.key)}
+            >
+              {x.label}
+            </button>
+          )}
+        </For>
+      </div>
+      <label class="field cs-param__select" for={`${p.id}-plot`}>
+        Chart
+        <select
+          id={`${p.id}-plot`}
+          class="select"
+          value={p.value}
+          onChange={(e) => p.onChange((list().find((x) => x.key === e.currentTarget.value) ?? list()[0]!).key)}
+        >
+          <For each={list()}>{(x) => <option value={x.key}>{x.label}</option>}</For>
         </select>
       </label>
     </div>

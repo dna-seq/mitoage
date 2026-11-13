@@ -4,6 +4,22 @@ Newest first.
 
 ## Unreleased
 
+- **Charts in the Compare section.** Every comparative table now has a chart of its rows above it,
+  with a switch for what the chart shows (`?chart=`):
+  - *Distribution*: range, mean ± SD, median and mean of the parameter, one row per region or taxon
+    (lengths of the regions on a log scale).
+  - *Variation*: the coefficient of variation, or the SD for the skews.
+  - *Lifespan r*: Pearson r with log10 maximum lifespan and its 95% confidence interval (Fisher z).
+  - *Lifespan map* (regions only): r of every parameter in every region of the group, with the cells
+    whose Benjamini–Hochberg q-value over the map is below 0.05 in bold. AT % is left out of the
+    map, as the mirror of GC %.
+
+  The chart follows the table's sorting and page. Region pages gain a scatter of the listed species
+  with selectable axes (any two of the region's parameters, or one against lifespan; `?x=&y=`), which
+  narrows with the table's search and class filter and reports Pearson and Spearman for the plotted
+  species. Codon usage is drawn by amino acid, each codon a segment coloured by its third base, as a
+  share of all codons or within the amino acid (`?bars=share`). None of the charts' statistics is
+  corrected for shared ancestry; the plot explorer remains the place for phylogenetic contrasts.
 - `CLAUDE.md` §2: a session without a seat pushes `main` as a fast-forward where the maintainer's
   global instructions give a standing permission to push (D2 in `docs/DECISIONS.md`).
 - The species list (`/species/`, `/species/life-history/`) has a "FASTA of these rows" button: the

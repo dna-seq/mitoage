@@ -1,7 +1,8 @@
 /**
  * Every species' values for one region (region page): length, base counts, GC %, skews and
  * lifespan, searchable by name or taxon (?q=), filterable by class, sortable, with a CSV of the
- * filtered rows. Loads /compare/taxonomy.json and /compare/values/{region}.json when visible.
+ * filtered rows, and above the table a scatter of the same rows with selectable axes. Loads
+ * /compare/taxonomy.json and /compare/values/{region}.json when visible.
  */
 import { createSignal, onMount, Show } from "solid-js";
 import DataTable, { type Row } from "~/components/ui/DataTable";
@@ -9,6 +10,7 @@ import type { Region } from "~/data/schema";
 import { loadRegionValues, loadTaxonomy } from "~/lib/compare/client";
 import { regionSlug, regionValuesCsvUrl, statsRegionLabel } from "~/lib/compare/params";
 import { speciesColumns, speciesRows } from "~/lib/compare/rows";
+import SpeciesScatter from "./SpeciesScatter";
 
 export default function SpeciesValues(props: { region: Region; count: number }) {
   // Load in the browser only: fetching during server rendering would fail and be serialised.
@@ -46,6 +48,7 @@ export default function SpeciesValues(props: { region: Region; count: number }) 
           urlParam="q"
           noun={["species", "species"]}
           csv={{ filename: `mitoage-${regionSlug(props.region)}-species.csv`, label: "CSV of these rows" }}
+          figure={({ sorted }) => <SpeciesScatter rows={sorted()} region={props.region} />}
         />
       )}
     </Show>

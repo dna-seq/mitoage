@@ -14,8 +14,21 @@
  *   initialSort={{ key: "lifespan", dir: "desc" }}
  *   pageSize={50} search={{ keys: ["name", "common"], placeholder: "Filter species" }}
  *   facets={[{ key: "class", label: "Class" }]} urlParam="q" />
+ *
+ * An island that embeds the table can pass `figure` to draw a chart of the rows the table shows.
  */
-import { createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show } from "solid-js";
+import {
+  type Accessor,
+  createEffect,
+  createMemo,
+  createSignal,
+  For,
+  type JSX,
+  on,
+  onCleanup,
+  onMount,
+  Show,
+} from "solid-js";
 import { basePercents } from "~/lib/composition";
 import { downloadText, toCsv } from "~/lib/csv";
 import { describeFasta, type FastaNote, fastaToSave, fetchFasta } from "~/lib/fasta";
@@ -108,6 +121,13 @@ export interface DataTableProps {
    * one file, fetched from NCBI in the browser. `key` is the row key holding the RefSeq accession.
    */
   fasta?: { key: string; filename: string; label?: string };
+  /**
+   * A figure drawn between the toolbar and the table from the rows the table shows, so a chart
+   * follows the table's filters, sorting and page: `visible` is the current page in its current
+   * order, `sorted` every row that passes the filters. Islands only (a function cannot be passed
+   * from an Astro page).
+   */
+  figure?: (view: { visible: Accessor<Row[]>; sorted: Accessor<Row[]> }) => JSX.Element;
 }
 
 const isNumCol = (c: Column) =>
@@ -485,6 +505,7 @@ export default function DataTable(props: DataTableProps) {
         </p>
         {note()}
       </Show>
+      {props.figure?.({ visible, sorted })}
       <div class="dtable__scroll" ref={scrollEl} tabIndex={0} role="region" aria-label={props.caption}>
         <table>
           <caption class={props.showCaption ? "card__title" : "visually-hidden"}>{props.caption}</caption>

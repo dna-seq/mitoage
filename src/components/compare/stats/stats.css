@@ -1,7 +1,7 @@
 @layer tokens, reset, base, components, utilities;
 
-/* Compare section: section tabs, comparative stats tables and their controls. Imported by the
-   compare pages (not the islands). */
+/* Compare section: section tabs, comparative stats tables, their charts and controls. Imported by
+   the compare pages (not the islands). */
 @layer components {
   /* ---------- page layout ---------- */
   .cs-page {
@@ -77,6 +77,329 @@
     .cs-controls .field,
     .cs-controls .field .select {
       width: 100%;
+    }
+  }
+
+  /* Holds the height of a chart drawn after hydration (RowsChart.tsx): the rows of RangePlot
+     (30 units each under a 54-unit header, as px at the base font size) and its key. */
+  .cs-chart-hold {
+    --rows: 0;
+    min-height: calc((54 + var(--rows) * 30) / 16 * 1rem + 4.5rem);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+  }
+
+  /* ---------- lifespan-correlation map (CorrMap.tsx) ---------- */
+  .cmap {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .cmap__scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+  .cmap__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 3px;
+    font-variant-numeric: tabular-nums;
+    table-layout: fixed;
+  }
+  .cmap__table th,
+  .cmap__table td {
+    padding: 0;
+  }
+  .cmap__corner {
+    width: 8.5rem;
+  }
+  .cmap__table tbody th {
+    padding-right: var(--space-2);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    text-align: right;
+    white-space: nowrap;
+  }
+  .cmap__col {
+    width: 100%;
+    min-height: 2.25rem;
+    padding: 0 0.3em;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    color: var(--color-text);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-black);
+    white-space: nowrap;
+  }
+  .cmap__col:hover {
+    box-shadow: inset 0 0 0 2px var(--color-border-strong);
+  }
+  .cmap__col[aria-pressed="true"] {
+    color: var(--white);
+    background: var(--grad-primary);
+  }
+  .cmap__cell {
+    --t: 0%;
+    height: 1.9rem;
+    border-radius: 8px;
+    background: color-mix(in oklab, var(--cmap-end, var(--diverge-zero)) var(--t), var(--diverge-zero));
+    color: var(--diverge-text);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-semibold);
+    text-align: center;
+    cursor: default;
+  }
+  .cmap__cell.is-pos {
+    --cmap-end: var(--diverge-pos);
+  }
+  .cmap__cell.is-neg {
+    --cmap-end: var(--diverge-neg);
+  }
+  .cmap__cell.is-sig {
+    font-weight: var(--fw-black);
+  }
+  .cmap__cell.is-none {
+    color: var(--color-text-muted);
+  }
+  .cmap__cell.is-active {
+    box-shadow: inset 0 0 0 2px var(--chart-axis);
+  }
+  .cmap__detail {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1) var(--space-3);
+    min-height: var(--tap);
+    padding: var(--space-2) var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+  .cmap__detail b {
+    font-weight: var(--fw-black);
+    color: var(--color-text);
+  }
+  .cmap__go {
+    margin-left: auto;
+    min-height: 2.25rem;
+    padding: 0 0.9em;
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface-sunken);
+    color: var(--color-link);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+  }
+  .cmap__go:hover {
+    box-shadow: inset 0 0 0 2px var(--color-border-strong);
+  }
+  .cmap__scale {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2) var(--space-3);
+    font-size: var(--fs-xs);
+    font-weight: var(--fw-heavy);
+    color: var(--color-text-muted);
+  }
+  .cmap__ramp {
+    width: 10rem;
+    height: 0.625rem;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(90deg in oklab, var(--diverge-neg), var(--diverge-zero), var(--diverge-pos));
+    box-shadow: inset 0 0 0 1px var(--color-border);
+  }
+  .cmap__sig b {
+    font-weight: var(--fw-black);
+    color: var(--color-text);
+  }
+  @media (max-width: 40rem) {
+    .cmap__table {
+      border-spacing: 2px;
+    }
+    .cmap__corner {
+      width: 6rem;
+    }
+    .cmap__table tbody th {
+      padding-right: var(--space-1);
+      font-size: 0.75rem;
+    }
+    .cmap__cell {
+      font-size: 0.6875rem;
+      border-radius: 6px;
+    }
+    /* Column names read bottom to top, so eight columns fit a phone. */
+    .cmap__col {
+      min-height: 4.75rem;
+      padding: 0.4em 0;
+    }
+    .cmap__col span {
+      display: inline-block;
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+  }
+
+  /* ---------- codon usage rows (CodonBars.tsx) ---------- */
+  .cbar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+  }
+  .cbar__rows {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .cbar__row {
+    display: grid;
+    grid-template-columns: 2.75rem minmax(0, 1fr) 4rem;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cbar__aa {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    text-align: right;
+  }
+  .cbar__track {
+    min-width: 0;
+    border-radius: 8px;
+    background: var(--color-surface-2);
+  }
+  .cbar__bar {
+    display: flex;
+    gap: 2px;
+    min-width: 2px;
+    height: 1.625rem;
+  }
+  .cbar__seg {
+    flex-basis: 0;
+    min-width: 0;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    border-radius: 5px;
+    /* Codons are written at 14px black: --nt-on reaches 3:1 on the A, T and C colours, G takes --nt-on-g. */
+    color: var(--nt-on);
+    font-family: var(--font-mono);
+    font-size: 0.875rem;
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    cursor: default;
+  }
+  .cbar__seg.nt-g {
+    color: var(--nt-on-g);
+  }
+  .cbar__seg.is-active {
+    box-shadow: inset 0 0 0 2px var(--chart-axis);
+  }
+  .cbar__total {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    color: var(--color-text-muted);
+  }
+  .cbar__legend-title {
+    padding-inline: 0;
+    color: var(--color-text-muted);
+  }
+  @media (max-width: 40rem) {
+    .cbar__row {
+      grid-template-columns: 2.25rem minmax(0, 1fr) 3.4rem;
+      gap: var(--space-1);
+    }
+    .cbar__seg {
+      font-size: 0.75rem;
+    }
+  }
+
+  /* ---------- species scatter (SpeciesScatter.tsx) ---------- */
+  .sps {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-width: 0;
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-2);
+  }
+  .sps__swap {
+    align-self: flex-end;
+  }
+  .sps__switch {
+    align-self: flex-end;
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: var(--tap);
+    padding: 0 var(--space-2);
+    border: 0;
+    border-radius: var(--radius-pill);
+    background: transparent;
+    color: var(--color-text);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+    white-space: nowrap;
+  }
+  .sps__switch:hover {
+    background: var(--color-surface-sunken);
+  }
+  .sps__switch-track {
+    position: relative;
+    width: 2.5rem;
+    height: 1.5rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-border-strong);
+    transition: background var(--dur-fast) var(--ease-out);
+  }
+  .sps__switch-track::after {
+    content: "";
+    position: absolute;
+    top: 0.1875rem;
+    left: 0.1875rem;
+    width: 1.125rem;
+    height: 1.125rem;
+    border-radius: 50%;
+    background: var(--color-surface);
+    box-shadow: var(--shadow-xs);
+    transition: transform var(--dur-med) var(--ease-out);
+  }
+  .sps__switch[aria-checked="true"] .sps__switch-track {
+    background: var(--grad-primary);
+  }
+  .sps__switch[aria-checked="true"] .sps__switch-track::after {
+    transform: translateX(1rem);
+  }
+  .sps__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-4);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    font-variant-numeric: tabular-nums;
+    color: var(--color-text-muted);
+  }
+  .sps__stats b {
+    font-weight: var(--fw-black);
+    color: var(--color-text);
+  }
+  @media (max-width: 40rem) {
+    .sps {
+      padding: var(--space-3);
+    }
+    .sps__swap,
+    .sps__switch {
+      align-self: flex-start;
     }
   }
 

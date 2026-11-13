@@ -215,3 +215,41 @@ export function strengthWord(r: number): "no clear" | "weak" | "moderate" | "str
   if (a < 0.5) return "moderate";
   return "strong";
 }
+
+// ---------------------------------------------------------------- intervals and multiple testing
+
+/**
+ * Confidence interval of a correlation coefficient from n pairs, by Fisher's z transformation
+ * (95% by default). Null when r is not finite or there are fewer than 4 pairs.
+ */
+export function correlationCI(r: number, n: number, z = 1.959963984540054): [number, number] | null {
+  if (!Number.isFinite(r) || n < 4) return null;
+  if (Math.abs(r) >= 1) return [r, r];
+  const zr = Math.atanh(r);
+  const se = 1 / Math.sqrt(n - 3);
+  return [Math.tanh(zr - z * se), Math.tanh(zr + z * se)];
+}
+
+/**
+ * Benjamini-Hochberg adjusted q-values. Missing and non-finite p-values stay NaN and are not
+ * counted as tests. Same procedure as the pipeline's (pipeline/lib/stats.ts); stats.test.ts
+ * checks that the two agree.
+ */
+export function benjaminiHochberg(p: ArrayLike<number | null | undefined>): number[] {
+  const valid: [number, number][] = [];
+  const q: number[] = [];
+  for (let i = 0; i < p.length; i++) {
+    const v = p[i];
+    q.push(Number.NaN);
+    if (v !== null && v !== undefined && Number.isFinite(v)) valid.push([v, i]);
+  }
+  valid.sort((a, b) => a[0] - b[0]);
+  const m = valid.length;
+  let prev = 1;
+  for (let k = m - 1; k >= 0; k--) {
+    const [v, i] = valid[k]!;
+    prev = Math.min(prev, (v * m) / (k + 1));
+    q[i] = Math.min(1, prev);
+  }
+  return q;
+}

@@ -1,15 +1,18 @@
 /**
  * Codon usage across a group: for all protein-coding genes or one gene, each codon's (or amino
- * acid's) frequency summarised over the group's species. Data: /compare/codons/{group}.json,
- * loaded when the island hydrates (the page renders only the frame, to stay small).
- * Mirrors ?gene= and ?usage=aa in the query string.
+ * acid's) frequency summarised over the group's species, as stacked rows by amino acid and as a
+ * table. Data: /compare/codons/{group}.json, loaded when the island hydrates (the page renders
+ * only the frame, to stay small). Mirrors ?gene=, ?usage=aa and ?bars=share in the query string.
  */
-import { createEffect, createSignal, on, onMount, Show } from "solid-js";
+import { createEffect, createMemo, createSignal, on, onMount, Show } from "solid-js";
 import DataTable, { type Row } from "~/components/ui/DataTable";
 import type { Region } from "~/data/schema";
+import { codonBarRows } from "~/lib/compare/charts";
 import { loadGroupCodons, queryParam, setQuery } from "~/lib/compare/client";
 import { CODON_REGIONS, regionFromSlug, regionSlug, statsRegionLabel } from "~/lib/compare/params";
 import { type CodonMode, codonColumns, codonRows } from "~/lib/compare/rows";
+import type { GroupCodonsFile } from "~/lib/compare/wire";
+import CodonBars, { type CodonScale } from "./CodonBars";
 import { RegionSelect } from "./Controls";
 
 export interface CodonStatsProps {
@@ -24,6 +27,8 @@ export default function CodonStats(props: CodonStatsProps) {
   const [mode, setMode] = createSignal<CodonMode>("codon");
   const [shown, setShown] = createSignal<{ gene: Region; mode: CodonMode } | null>(null);
   const [rows, setRows] = createSignal<Row[]>([]);
+  const [file, setFile] = createSignal<GroupCodonsFile | null>(null);
+  const [scale, setScale] = createSignal<CodonScale>("usage");
   const [status, setStatus] = createSignal("Loading codon usage…");
   const [ready, setReady] = createSignal(false);
 
@@ -31,6 +36,7 @@ export default function CodonStats(props: CodonStatsProps) {
     const g = regionFromSlug(queryParam("gene") ?? "");
     if (g && CODON_REGIONS.includes(g)) setGene(g);
     if (queryParam("usage") === "aa") setMode("aa");
+    if (queryParam("bars") === "share") setScale("share");
     setReady(true);
   });
 
@@ -43,6 +49,7 @@ export default function CodonStats(props: CodonStatsProps) {
       setStatus("Loading…");
       loadGroupCodons(props.groupKey)
         .then((file) => {
+          setFile(file);
           setRows(codonRows(file, g, m));
           setShown({ gene: g, mode: m });
           setStatus("");
@@ -51,7 +58,14 @@ export default function CodonStats(props: CodonStatsProps) {
     }),
   );
 
+  createEffect(on(scale, (s) => setQuery({ bars: s === "usage" ? null : s }), { defer: true }));
+
   const view = () => shown() ?? { gene: gene(), mode: mode() };
+  const bars = createMemo(() => {
+    const f = file();
+    const v = shown();
+    return f && v ? codonBarRows(f, v.gene) : [];
+  });
   const label = () => (view().gene === "total_pc" ? "all 13 protein-coding genes" : view().gene);
   return (
     <section class="card cs-card" id="codons" aria-labelledby="codons-title">
@@ -79,6 +93,7 @@ export default function CodonStats(props: CodonStatsProps) {
         {status()}
       </p>
       <Show when={shown()}>
+      <CodonBars rows={bars()} scale={scale()} onScale={setScale} what={label()} />
       <DataTable
         caption={`${view().mode === "codon" ? "Codon" : "Amino acid"} usage in ${statsRegionLabel(view().gene)}`}
         columns={codonColumns(view().mode)}

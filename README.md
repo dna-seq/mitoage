@@ -50,16 +50,17 @@ src/
     brand/         the mitochondrion, the round badge, the compact icon
     ui/            Header, Footer, Hero, Card, StatCard, Button, Chip, Breadcrumb, TabNav (in-page),
                    SectionTabs (between the pages of a section), CompositionBar, DataTable (sortable,
-                   filterable, CSV export, FASTA of the filtered rows), SearchBox, CodonHeatmap,
-                   LinearGenomeTrack (unused)
-    charts/        Scatter (reusable scatter-plot island)
+                   filterable, CSV export, FASTA of the filtered rows; `figure` draws a chart of
+                   the rows it shows), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
+    charts/        Scatter (reusable scatter-plot island), RangePlot (rows of ranges, bars and dots)
     genome/        circular genome map (GenomeExplorer adds the species switch of the genes
                    pages), gene-page charts and correlation tables
     tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table, taxon-page cards
     species/       the species list (genome and life-history views)
     compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
-                   child taxa, codon usage, every species of a region); Compare.tsx, DotPlot and
-                   Marker are the species side-by-side view
+                   child taxa, codon usage, every species of a region) and their charts (RowsChart,
+                   CorrMap, CodonBars, SpeciesScatter); Compare.tsx, DotPlot and Marker are the
+                   species side-by-side view
     explore/       the plot explorer (shown at /compare/plot/): axis picker, strongest correlations
   lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders, CSV,
                    FASTA from NCBI (fasta.ts; testdata/ holds three real records for its tests);
@@ -75,8 +76,8 @@ The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · 
 | `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; the filtered rows download as CSV and their genomes as one FASTA file; one page per species |
 | `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages |
 | `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop |
-| `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage |
-| `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family, and each species' values |
+| `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage. Each table has a chart of its rows (`?chart=`: distribution, variation, lifespan r with its 95% interval, or the map of r for every region and parameter); codon usage is also drawn by amino acid (`?bars=share`) |
+| `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family (with the same chart), and each species' values, with a scatter of the listed species on any two parameters or lifespan (`?x=&y=`) |
 | `/compare/species/?species=a,b` | Two to six species side by side, genome first |
 | `/compare/plot/?x=&y=&scope=` | Plot explorer: any two mtDNA features, or one against a life-history trait |
 
@@ -99,6 +100,13 @@ the filtered species' RefSeq records from NCBI E-utilities in the browser, 100 a
 and offers them as one file in the table's order. NCBI answers 200 and leaves out a record it does
 not have, so every answer is checked against the accessions asked for: the page names the missing
 ones, and a request that fails (after three attempts for no answer, a 429 or a 5xx) saves nothing.
+
+The charts of the Compare section draw what `src/lib/compare/charts.ts` returns: it turns the rows
+of a table into the marks of a range chart, a group's summaries into the lifespan-correlation map
+(q-values by Benjamini–Hochberg over the map), codon summaries into rows by amino acid and species
+rows into scatter points. A chart inside a `DataTable` (`figure`) is given the rows the table shows,
+so it follows the table's sorting, page and filters and cannot disagree with it. A chart that is
+itself a `<table>` (CorrMap) stays outside the `DataTable`, whose cell styles would reach it.
 
 The taxonomy tree (`src/components/tree/RadialTree.tsx`) draws on a canvas and zooms with d3-zoom
 (part of `d3`). Its maths is pure and tested in `src/lib/tree/`: `layout.ts` places the tree,
@@ -126,7 +134,8 @@ heavy rounded type (Nunito, self-hosted).
 * **Data colours** are fixed site-wide: nucleotides `--nt-a`, `--nt-t`, `--nt-g`, `--nt-c`,
   `--nt-other`; taxonomic classes `--class-*` (see `src/lib/classes.ts`); genome feature types
   `--feat-cds`, `--feat-rrna`, `--feat-trna`, `--feat-dloop`; charts `--chart-*`; heatmap
-  `--heat-lo`, `--heat-hi`.
+  `--heat-lo`, `--heat-hi`; the diverging ramp of correlation maps `--diverge-neg`,
+  `--diverge-zero`, `--diverge-pos`; text on a nucleotide colour `--nt-on`, `--nt-on-g`.
 * **Navigation** comes from `NAV_ITEMS` and `FOOTER_LINKS` in `src/lib/site.ts`.
 
 ## Data sources and citation

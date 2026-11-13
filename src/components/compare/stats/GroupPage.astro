@@ -1,8 +1,9 @@
 ---
 /**
  * Comparative mtDNA statistics of one group: /compare/ (all species) and
- * /compare/{class|order|family}/{slug}/. Regions table and child-taxa table (GroupStats island),
- * codon usage (CodonStats island), a group picker and notes on the statistics.
+ * /compare/{class|order|family}/{slug}/. Regions and child-taxa tables, each with a chart of its
+ * rows and the lifespan-correlation map (GroupStats island), codon usage as stacked rows and a
+ * table (CodonStats island), a group picker and notes on the statistics.
  */
 import type { Region } from "~/data";
 import CompareNav from "~/components/compare/CompareNav.astro";
@@ -203,7 +204,21 @@ const ld = breadcrumbLd(Astro.site, [
         </Fragment>
     </Card>
 
-    <section class="cs-notes" aria-label="How to read the tables">
+    <section class="cs-notes" aria-label="How to read the charts and tables">
+      <Card title="The charts" level={2} variant="flat">
+        <ul>
+          <li>
+            Each chart draws the rows of the table under it, in the table's order: sort a column to reorder the chart.
+            <b>Chart</b> sets its axis.
+          </li>
+          <li><b>Distribution</b>: the range (line), mean ± SD (bar), median (tick) and mean (dot). Lengths of the regions are on a log scale.</li>
+          <li><b>Variation</b>: the coefficient of variation, or the SD for the skews, which vary around zero.</li>
+          <li>
+            <b>Lifespan r</b>: r with its 95% confidence interval (Fisher z). <b>Lifespan map</b>: r of every parameter
+            in every region at once, bold where the Benjamini–Hochberg q-value over the map is below 0.05.
+          </li>
+        </ul>
+      </Card>
       <Card title="What the numbers are" level={2} variant="flat">
         <ul>
           <li><b>Species</b>: species with the region annotated. <b>SD</b> is the sample standard deviation, <b>CV</b> = SD / mean.</li>

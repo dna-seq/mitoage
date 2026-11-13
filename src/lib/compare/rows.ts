@@ -85,6 +85,7 @@ export function regionRows(file: GroupStatsFile, key: ParamKey): Row[] {
     return [
       {
         order,
+        region,
         label: statsRegionLabel(region),
         kind: REGION_INFO[region].kind,
         href: compareRegionUrl(region),
@@ -171,8 +172,11 @@ export function taxaRows(tax: TaxonomyFile, values: RegionValuesFile, scope: Sco
     const lo = s.minAt >= 0 ? tax.species[g.species[s.minAt]!] : undefined;
     const hi = s.maxAt >= 0 ? tax.species[g.species[s.maxAt]!] : undefined;
     const hasPage = rank !== "genus" && pages.has(`${rank}:${slug}`);
+    const first = tax.species[g.species[0] ?? -1];
     return {
       name,
+      // Class of the taxon, for the chart's colours.
+      cls: rank === "class" ? name : first ? (tax.class.names[first[3]] ?? "") : "",
       sub: rank === "class" ? classLabel(name) : null,
       href: hasPage ? compareGroupUrl(rank as GroupRank, slug) : slug ? taxonUrl(rank as Rank, slug) : null,
       n: s.n,
