@@ -4,6 +4,25 @@ Newest first.
 
 ## Unreleased
 
+- **The build on Hugging Face** (D6). `bun run hf` packages the committed build into `out/hf/` (not in
+  git): `public/data/` as it is, `alignments/alignments.parquet` (every row of every aligned FASTA as one
+  table: gene, kind, slug, scientific name, accession, aligned sequence; 64,789 rows, 22 MB, read back and
+  compared after writing) and a dataset card made of the data README and the alignments README under a
+  header that says the licence is mixed, part non-commercial, and names the tables the dataset viewer
+  shows. Uploaded by hand to https://huggingface.co/datasets/longevity-genie/mitoage (public, 46 MB) on
+  2026-11-13. The site still builds from the files in git; nothing on the site reads Hugging Face.
+- **The alignment on each gene page** (RM10). The pages of the 13 proteins and the two rRNAs have a section
+  "Alignment": one row per species in the order of the site's tree, the residues coloured by side chain (the
+  bases by letter), a bar above each column for how conserved it is among the rows on show, and the maximum
+  lifespan beside each row. Filter by class and order, sort by lifespan, switch to an overview of small cells,
+  hide the columns where more than half of the rows have a gap (on at the start), find a species; a cell
+  tells its species, column and residue, with a link to the species page. The viewer fetches that gene's
+  protein (or rRNA) file and one list of species (`/genes/alignment-species.json`) when it scrolls into view;
+  the protein, codon and rRNA files are linked under it. The codon alignment is a download, not drawn. The
+  Data page lists the alignment files in a card of their own, each described as what it is (before, the
+  codon alignments carried the description of the codon-usage table). `src/lib/alignment.ts` is tested on
+  the committed files (its column counts equal the manifest's, which the pipeline counts another way) and
+  by breaking the gap rule and the conservation share.
 - **Alignments of the mitochondrial genes** (D5, RM10's first part). `bun run align` aligns each of the 13
   proteins (amino acids), derives the codon alignment each implies, and aligns the 12S and 16S rRNA genes,
   for the 2,316 live species of build 2, from the pinned RefSeq release, with MAFFT v7.526 (FFT-NS-2;

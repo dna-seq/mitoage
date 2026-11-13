@@ -14,6 +14,7 @@ d3 scales. All code is TypeScript. Runs on [Bun](https://bun.sh).
 | `bun install` | Install dependencies |
 | `bun run data` | Run the data pipeline (`pipeline/`), writing `src/data/generated/` and `public/data/` |
 | `bun run align` | Align the 13 proteins and two rRNAs of every live species with MAFFT (pinned version), writing `public/data/alignments/` |
+| `bun run hf` | Package the committed build for Hugging Face into `out/hf/`: the data files, the alignments as one parquet table, the dataset card. The dataset is [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) |
 | `bun run dev` | Dev server |
 | `bun run build` | Build the static site into `dist/` |
 | `bun run preview` | Serve `dist/` locally (set the same `BASE_PATH` as the build) |
@@ -55,7 +56,8 @@ src/
                    the rows it shows), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island), RangePlot (rows of ranges, bars and dots)
     genome/        circular genome map (GenomeExplorer adds the species switch of the genes
-                   pages), gene-page charts and correlation tables
+                   pages), gene-page charts and correlation tables, AlignmentViewer (the gene's
+                   alignment on a canvas: species by columns, conservation, lifespan beside the rows)
     tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table, taxon-page cards
     species/       the species list (genome and life-history views)
     compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
@@ -76,7 +78,7 @@ The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · 
 | --- | --- |
 | `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; the filtered rows download as CSV and their genomes as one FASTA file; one page per species |
 | `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages |
-| `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop |
+| `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop; each protein and rRNA page shows the gene aligned across species (`public/data/alignments/`) |
 | `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage. Each table has a chart of its rows (`?chart=`: distribution, variation, lifespan r with its 95% interval, or the map of r for every region and parameter); codon usage is also drawn by amino acid (`?bars=share`) |
 | `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family (with the same chart), and each species' values, with a scatter of the listed species on any two parameters or lifespan (`?x=&y=`) |
 | `/compare/species/?species=a,b` | Two to six species side by side, genome first |
@@ -94,7 +96,7 @@ functions in `pipeline/steps/` and `pipeline/lib/` (never `pipeline/lib/cache.ts
 `/data/explorer.json` and `/data/correlations.parquet` are build-time endpoints (`src/pages/data/`). Islands receive
 data as props or fetch static JSON emitted at build time (`/search-index.json`,
 `/species/gc-lifespan.json`, `/species/{slug}.json`, `/species/table.json`, `/tree/tree.json`,
-`/genes/{gene}/gc-lifespan.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
+`/genes/{gene}/gc-lifespan.json`, `/genes/alignment-species.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
 `/compare/plot/values/{chunk}.json`, `/compare/species-index.json`, `/compare/taxonomy.json`,
 `/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
 and `.csv`, `/data/*`). Large tables render their first view at build time and load the rest, and

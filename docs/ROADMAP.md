@@ -70,14 +70,6 @@ A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and
 `plans/DATA_BUILD2_DECISIONS.md`, section 7: each build is intended for a Zenodo DOI. The seat prepares
 the deposit's files and text; publishing is outside its grant.
 
-## RM10 — Alignments on the gene pages
-
-**State:** unattended · **Owner:** lead
-
-The alignments exist (`bun run align`, `public/data/alignments/`, D5). On each gene page: an alignment
-viewer (rows in the tree's order, a conservation track, lifespan beside each row, a filter by taxon) and
-the downloads; the Data page lists the files. The viewer loads one gene's file, not all.
-
 ## RM12 — Sites that go with lifespan
 
 **State:** unattended · **Owner:** lead

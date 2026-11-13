@@ -1,7 +1,10 @@
 ---
 import type { GetStaticPaths } from "astro";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { getAllSpecies, type Region } from "~/data";
 import Scatter from "~/components/charts/Scatter";
+import AlignmentViewer from "~/components/genome/AlignmentViewer";
 import ClassDistribution from "~/components/genome/ClassDistribution.astro";
 import CodonSummary from "~/components/genome/CodonSummary.astro";
 import CorrelationTable from "~/components/genome/CorrelationTable.astro";
@@ -16,7 +19,7 @@ import StatCard from "~/components/ui/StatCard.astro";
 import TabNav from "~/components/ui/TabNav.astro";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { CLASS_GROUPS } from "~/lib/classes";
-import { fmtBp, fmtInt, fmtPct } from "~/lib/format";
+import { fmtBp, fmtBytes, fmtInt, fmtPct } from "~/lib/format";
 import { GENE_PAGE_REGIONS, REGION_INFO } from "~/lib/genes";
 import { GENE_FACTS, groupOf } from "~/lib/genome/geneFacts";
 import {
@@ -72,6 +75,31 @@ const dataUrl = href(`/genes/${geneSlug(region)}/gc-lifespan.json`);
 const correlations = geneCorrelations(region);
 const codons = isProtein(region) ? codonSummary(region) : null;
 
+// ---- Alignment (public/data/alignments/, written by `bun run align`) ----
+interface AlignmentFile {
+  file: string;
+  gene: string;
+  kind: "protein" | "codon" | "rRNA";
+  sequences: number;
+  columns: number;
+  occupiedColumns: number;
+  invariantColumns: number;
+  conserved90Columns: number;
+  bytes: number;
+}
+const manifest = JSON.parse(readFileSync(join(process.cwd(), "public", "data", "alignments", "alignments.json"), "utf8")) as {
+  aligner: { program: string; version: string; method: string };
+  files: AlignmentFile[];
+};
+const alignmentFiles = manifest.files.filter((f) => f.gene === region);
+const viewed = alignmentFiles.find((f) => f.kind === "protein" || f.kind === "rRNA");
+const alignmentUrl = (f: AlignmentFile): string => href(`/data/alignments/${f.file}`);
+const ALIGNMENT_KIND_LABEL: Record<AlignmentFile["kind"], string> = {
+  protein: "Protein alignment, amino acids",
+  codon: "Codon alignment",
+  rRNA: "Nucleotide alignment",
+};
+
 // ---- Stats ----
 const annotated = summary.strand.plus + summary.strand.minus;
 const majorPlus = summary.strand.plus >= summary.strand.minus;
@@ -112,6 +140,7 @@ const tabs = [
   { id: "classes", label: "By class" },
   { id: "lifespan", label: "Lifespan" },
   { id: "correlations", label: "Correlations" },
+  ...(viewed ? [{ id: "alignment", label: "Alignment" }] : []),
   ...(codons ? [{ id: "codons", label: "Codon usage" }] : []),
 ];
 const scatterLegend = CLASS_GROUPS.filter((g) => points.some((p) => p.group === g.key));
@@ -293,6 +322,53 @@ const scatterLegend = CLASS_GROUPS.filter((g) => points.some((p) => p.group === 
         }
       </Card>
     </section>
+
+    {
+      viewed && (
+        <section id="alignment" class="gene-section" aria-labelledby="alignment-title">
+          <Card>
+            <div class="card__head">
+              <h2 id="alignment-title" class="card__title">{symbol} aligned across species</h2>
+              <span class="card__desc">
+                {fmtInt(viewed.sequences)} species, {fmtInt(viewed.columns)} columns; {fmtInt(viewed.occupiedColumns)} columns
+                have a residue in at least half of the species, and in {fmtInt(viewed.conserved90Columns)} of those one residue is
+                in 90% or more. {manifest.aligner.program} {manifest.aligner.version}, {manifest.aligner.method}
+              </span>
+            </div>
+            <AlignmentViewer
+              client:visible
+              symbol={symbol}
+              kind={viewed.kind === "protein" ? "protein" : "rRNA"}
+              fileUrl={alignmentUrl(viewed)}
+              speciesUrl={href("/genes/alignment-species.json")}
+              speciesBase={href("/species/")}
+              sequences={viewed.sequences}
+              columns={viewed.columns}
+            />
+            <ul role="list" class="aln-files">
+              {alignmentFiles.map((f) => (
+                <li>
+                  <a class="row-link" href={alignmentUrl(f)} download>
+                    <span class="row-link__main">
+                      {ALIGNMENT_KIND_LABEL[f.kind]}
+                      <span class="row-link__sub">
+                        {f.file} · {fmtInt(f.sequences)} rows · {fmtBytes(f.bytes)}
+                      </span>
+                    </span>
+                    <Icon name="download" class="row-link__chev" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+            <Fragment slot="footer">
+              <Button href={href("/data/")} variant="soft" size="sm" iconEnd="arrowRight">
+                All alignment files
+              </Button>
+            </Fragment>
+          </Card>
+        </section>
+      )
+    }
 
     {
       codons && (

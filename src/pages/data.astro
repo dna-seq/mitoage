@@ -33,6 +33,11 @@ const walk = (dir: string): string[] => {
 };
 
 const DESCRIPTIONS: [RegExp, string][] = [
+  [/^alignments\/.*\.aa\.fasta\.gz$/, "Protein alignment (amino acids), one row per species. Gzipped FASTA."],
+  [/^alignments\/.*\.codon\.fasta\.gz$/, "Codon alignment that the protein alignment implies, one row per species. Gzipped FASTA."],
+  [/^alignments\/.*\.nt\.fasta\.gz$/, "Nucleotide alignment of the rRNA gene, one row per species. Gzipped FASTA."],
+  [/^alignments\/alignments\.json$/, "What was aligned and how: the aligner, the source release, counts, checksums, the genes a record lacks."],
+  [/^alignments\/README\.md$/, "How the alignments were made and how to read the files."],
   [/genome.?features|annotation/i, "Coordinates and strand of every annotated gene, rRNA, tRNA and D-loop."],
   [/species/i, "One row per species: taxonomy, maximum lifespan, life-history traits, genome size and GC content."],
   [/region/i, "Base composition (A, C, G, T, GC%, skews, length) of every gene and region in every species."],
@@ -63,6 +68,15 @@ const files = walk(dataDir)
     return { rel, path: href(`/data/${rel}`), ext, size: statSync(abs).size, desc };
   })
   .sort((a, b) => a.rel.localeCompare(b.rel));
+const isAlignment = (rel: string): boolean => rel.startsWith("alignments/");
+const fileGroups = [
+  { title: `Files in ${info.build}`, description: `Generated ${fmtDate(info.generatedAt)}`, files: files.filter((f) => !isAlignment(f.rel)) },
+  {
+    title: "Alignments of the mitochondrial genes",
+    description: "The 13 proteins and the two rRNAs across the species of the build, aligned with MAFFT",
+    files: files.filter((f) => isAlignment(f.rel)),
+  },
+].filter((g, i) => i === 0 || g.files.length);
 
 const distribution: DistributionFile[] = files.map((f) => {
   const d: DistributionFile = { name: f.rel, path: f.path, format: FORMATS[f.ext] ?? "application/octet-stream" };
@@ -84,11 +98,12 @@ const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)
   </Hero>
 
   <div class="container section data">
-    <Card title={`Files in ${info.build}`} description={`Generated ${fmtDate(info.generatedAt)}`}>
+    {fileGroups.map((group) => (
+    <Card title={group.title} description={group.description}>
       {
-        files.length ? (
+        group.files.length ? (
           <ul role="list" class="data-files">
-            {files.map((f) => (
+            {group.files.map((f) => (
               <li>
                 <a class="row-link" href={f.path} download>
                   <span class="data-files__ext">{f.ext || "file"}</span>
@@ -107,6 +122,7 @@ const description = `Download MitoAge ${info.build}: ${fmtInt(info.speciesCount)
         )
       }
     </Card>
+    ))}
 
     <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-6); align-items: start">
       <Card title="One species at a time" level={2}>
