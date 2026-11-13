@@ -50,6 +50,11 @@ DuckDB, pandas/pyarrow, polars, R arrow or hyparquet.
 Feature keys: \`size:\` length in bp, \`gc:\` GC%, \`gcSkew:\`/\`atSkew:\` skews, \`noncoding:total_mtDNA\`,
 \`codon:REGION:XYZ\` percent of all codons in the region, \`aa:REGION:X\` percent of sense codons.
 
+### build1/ (frozen MitoAge build 1)
+The 2015 build 1 CSV export, converted verbatim to parquet (one file per CSV, same rows, columns and values;
+numbers only where the text round-trips exactly). It keeps the build 1 problems, among them the
+complement-labelled base columns; build1/README.md lists them and the SHA-256 of every source CSV.
+
 ### explorer.json
 Compact columnar copy of species names, taxonomy (class/order/family as indices into the listed names), traits and
 every feature value except per-gene codon and amino-acid features, for the in-browser scatter explorer.

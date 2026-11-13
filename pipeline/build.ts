@@ -17,7 +17,9 @@ import { type DatedTree, buildDatedTree } from "./sources/tree";
 import { computeCorrelations } from "./steps/correlations";
 import { buildFeatureDefs, buildFeatureValues } from "./steps/features";
 import { type SpeciesGenome, annotateGenome } from "./steps/genome";
-import { buildExplorer, writeGenerated, writePublic } from "./steps/output";
+import { join } from "node:path";
+import { PUBLIC_DATA_DIR, buildExplorer, writeGenerated, writePublic } from "./steps/output";
+import { writeBuild1Snapshot } from "./steps/build1";
 import { buildPublicReadme } from "./steps/readme";
 import { buildCodonUsage, buildRegionStats, computeNonCoding, fixCsvLabels } from "./steps/regions";
 import { buildTaxonomyTree, flattenTaxa, uniqueSpeciesSlugs } from "./steps/taxonomy";
@@ -350,6 +352,7 @@ const extra = new Map(
 );
 const explorer = buildExplorer(species, defs, values, buildInfo);
 const pubSizes = await writePublic(payload, { extra }, explorer, buildPublicReadme(buildInfo));
+for (const f of await writeBuild1Snapshot(join(PUBLIC_DATA_DIR, "build1"))) pubSizes[`build1/${f.parquet}`] = f.bytes;
 const fmt = (n: number) => (n > 1e6 ? `${(n / 1e6).toFixed(2)} MB` : `${(n / 1e3).toFixed(1)} kB`);
 for (const [k, v] of Object.entries(genSizes)) console.log(`  src/data/generated/${k}  ${fmt(v)}`);
 for (const [k, v] of Object.entries(pubSizes)) console.log(`  public/data/${k}  ${fmt(v)}`);

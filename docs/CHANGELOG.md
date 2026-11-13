@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Frozen build 1 snapshot: `bun run data` converts every 2015 CSV verbatim to `public/data/build1/*.parquet` (lossless typing, SHA-256 of each source CSV in `build1/README.md`); tested by a cell-by-cell round trip.
 - **Charts in the Compare section.** Every comparative table now has a chart of its rows above it,
   with a switch for what the chart shows (`?chart=`):
   - *Distribution*: range, mean ± SD, median and mean of the parameter, one row per region or taxon
