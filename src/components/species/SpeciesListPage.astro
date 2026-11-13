@@ -1,0 +1,97 @@
+---
+/** Shared page body of /species/ (genome view) and /species/life-history/. */
+import SpeciesList from "~/components/species/SpeciesList";
+import Hero from "~/components/ui/Hero.astro";
+import SectionTabs from "~/components/ui/SectionTabs.astro";
+import { getAllSpecies, getRegionStats } from "~/data";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtInt } from "~/lib/format";
+import { breadcrumbLd } from "~/lib/seo";
+import type { SpeciesView } from "~/lib/speciesTable";
+
+interface Props {
+  view: SpeciesView;
+}
+const { view } = Astro.props;
+const species = getAllSpecies();
+
+/** Same fields as /species/table.json, for the rows rendered at build time. */
+const raw = species.map((s) => {
+  const whole = getRegionStats(s.id).find((x) => x.region === "total_mtDNA");
+  const t = s.traits;
+  return [
+    s.slug, s.scientificName, s.commonName.trim(), s.taxonomy.class, s.taxonomy.order, s.taxonomy.family,
+    s.maxLongevityYears, s.mtdnaSizeBp, s.gcPercent, whole?.gcSkew ?? null, whole?.atSkew ?? null, s.nonCodingBp,
+    t.adultWeightG, t.birthWeightG, t.femaleMaturityDays, t.maleMaturityDays, t.gestationDays,
+    t.litterSize, t.littersPerYear, t.growthRatePerDay, t.metabolicRateW, t.bodyTemperatureK,
+  ];
+});
+const initialSort = view === "genome" ? ({ key: "name", dir: "asc" } as const) : ({ key: "lifespan", dir: "desc" } as const);
+const sorted = [...raw].sort((a, b) =>
+  view === "genome" ? String(a[1]).localeCompare(String(b[1])) : (Number(b[6]) || 0) - (Number(a[6]) || 0),
+);
+const trim = (v: string | number | null): string | number | null =>
+  typeof v === "number" && !Number.isInteger(v) ? Number(v.toPrecision(6)) : v;
+const firstRows = sorted.slice(0, 25).map((r) => r.map(trim));
+
+const withTraits = species.filter((s) => s.traits.adultWeightG !== null || s.traits.femaleMaturityDays !== null).length;
+const title = view === "genome" ? "All species" : "Life history of every species";
+const description =
+  view === "genome"
+    ? `All ${fmtInt(species.length)} species in MitoAge with their mitochondrial genome: length, GC content, GC and AT skew, non-coding length and maximum lifespan. Sort, filter, download and open any species.`
+    : `Maximum lifespan, body mass, maturity, gestation, litter size, growth and metabolic rate from AnAge for the ${fmtInt(species.length)} species in MitoAge. Sort, filter and download.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={breadcrumbLd(Astro.site, [
+    { name: "Species", path: "/species/" },
+    ...(view === "life" ? [{ name: "Life history", path: "/species/life-history/" }] : []),
+  ])}
+>
+  <Hero variant="strip" seed={11}>
+    <p class="hero__eyebrow">{view === "genome" ? "Species" : "Species · Life history"}</p>
+    <h1 class="hero__title">{view === "genome" ? `${fmtInt(species.length)} species` : "Life history"}</h1>
+    <p class="hero__lede">
+      {
+        view === "genome"
+          ? "Every animal with a complete RefSeq mitochondrial genome and a known maximum lifespan."
+          : `Maximum lifespan for all ${fmtInt(species.length)} species and further AnAge traits for ${fmtInt(withTraits)} of them: body mass, maturity, gestation, litters, growth and metabolism.`
+      }
+    </p>
+  </Hero>
+  <section class="container section--tight sp-index">
+    <SectionTabs
+      label="Species"
+      items={[
+        { label: "Genomes", href: "/species/", current: view === "genome" },
+        { label: "Life history", href: "/species/life-history/", current: view === "life" },
+      ]}
+    />
+    <div class="card">
+      <SpeciesList client:load view={view} raw={firstRows} total={species.length} initialSort={initialSort} />
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .sp-index {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+    padding-bottom: var(--section-gap);
+  }
+  .sp-index :global(.sp-list__status) {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  @media (max-width: 40rem) {
+    .sp-index > .card {
+      padding: 0;
+      background: none;
+      box-shadow: none;
+    }
+  }
+</style>

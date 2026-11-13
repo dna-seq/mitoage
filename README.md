@@ -17,7 +17,7 @@ d3 scales. All code is TypeScript. Runs on [Bun](https://bun.sh).
 | `bun run build` | Build the static site into `dist/` |
 | `bun run preview` | Serve `dist/` locally (set the same `BASE_PATH` as the build) |
 | `bun run check` | Type-check `.ts`/`.tsx` with TypeScript 7 (`.astro` files are not covered: `astro check` does not support TypeScript 7.0) |
-| `bun test` | Unit tests: pipeline, tree layout, explorer statistics |
+| `bun test` | Unit tests: pipeline, tree layout, explorer and comparative statistics |
 
 ### Deploy targets and the base path
 
@@ -48,26 +48,50 @@ src/
   layouts/         BaseLayout.astro: SEO, Open Graph, JSON-LD, theme, header and footer
   components/
     brand/         the mitochondrion, the round badge, the compact icon
-    ui/            Header, Footer, Hero, Card, StatCard, Button, Chip, Breadcrumb, TabNav,
-                   CompositionBar, DataTable, SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
+    ui/            Header, Footer, Hero, Card, StatCard, Button, Chip, Breadcrumb, TabNav (in-page),
+                   SectionTabs (between the pages of a section), CompositionBar, DataTable (sortable,
+                   filterable, CSV export), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island)
     genome/        circular genome map, gene-page charts and correlation tables
     tree/          radial taxonomy tree, clade scatter and species table, taxon-page cards
-    explore/       plot explorer: axis picker, strongest-correlations panel
-    compare/       species comparison: dot plots and markers
-  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders;
-                   genome/, tree/ and explore/ hold the logic behind those components
-  pages/           routes: species/, taxa/, tree/, genes/, explore/, compare/, data, about
+    species/       the species list (genome and life-history views)
+    compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
+                   child taxa, codon usage, every species of a region); Compare.tsx, DotPlot and
+                   Marker are the species side-by-side view
+    explore/       the plot explorer (shown at /compare/plot/): axis picker, strongest correlations
+  lib/             URL helpers, formatting, class colours, genetic codes, JSON-LD builders, CSV;
+                   genome/, tree/, explore/ and compare/ hold the logic behind those components
+                   (compare/legacy.ts maps the old site's taxon ids for redirects)
+  pages/           routes, below
 ```
+
+The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · About**.
+
+| Route | What it is |
+| --- | --- |
+| `/species/`, `/species/life-history/` | Species list: genome view and life-history (AnAge) view; one page per species |
+| `/tree/`, `/taxa/{rank}/{slug}/` | Taxonomy tree and taxon pages |
+| `/genes/`, `/genes/{gene}/` | The 13 protein-coding genes, rRNAs and D-loop |
+| `/compare/`, `/compare/{class,order,family}/{slug}/` | Comparative mtDNA statistics of all species or one taxon (3+ species): every region on one parameter (GC %, AT %, A/T/G/C %, GC and AT skew, length) with n, mean, SD, CV, min, median, max and r with log10 lifespan; the child taxa on one region; codon and amino-acid usage |
+| `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family, and each species' values |
+| `/compare/species/?species=a,b` | Two to six species side by side, genome first |
+| `/compare/plot/?x=&y=&scope=` | Plot explorer: any two mtDNA features, or one against a life-history trait |
+
+Old URLs get static redirects: `/explore/` (keeps the query), `/compare/?species=`,
+`/stats-for/...`, `/export-section/...`, `/browse/...`, `/statistics/` and `/view/{id}/species/`.
+They are left out of the sitemap (`astro.config.ts`).
 
 Pages read data only through `~/data` (`src/data/index.ts`), which is server-side. Islands receive
 data as props or fetch static JSON emitted at build time (`/search-index.json`,
-`/species/gc-lifespan.json`, `/species/{slug}.json`, `/tree/tree.json`,
-`/genes/{gene}/gc-lifespan.json`, `/explore/correlations/{trait}/{scope}.json`,
-`/explore/values/{chunk}.json`, `/compare/species-index.json`, `/data/*`).
+`/species/gc-lifespan.json`, `/species/{slug}.json`, `/species/table.json`, `/tree/tree.json`,
+`/genes/{gene}/gc-lifespan.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
+`/compare/plot/values/{chunk}.json`, `/compare/species-index.json`, `/compare/taxonomy.json`,
+`/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
+and `.csv`, `/data/*`). Large tables render their first view at build time and load the rest, and
+island props are packed (`packRows` in `src/lib/compare/rows.ts`), to keep pages under about 150 KB.
 
-Section stylesheets (`genome.css`, `tree.css`, `explorer.css`, `compare.css`) are imported by
-the pages, not the islands, and each starts with
+Section stylesheets (`genome.css`, `tree.css`, `explorer.css`, `compare.css`,
+`compare/stats/stats.css`) are imported by the pages, not the islands, and each starts with
 `@layer tokens, reset, base, components, utilities;`. Keep that line in any new stylesheet: a
 sheet bundled before `global.css` would otherwise reorder the cascade layers for the whole page.
 

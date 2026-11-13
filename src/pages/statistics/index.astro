@@ -1,0 +1,6 @@
+---
+/** Old site's "Statistics" menu item: /statistics/ -> /compare/. */
+import { compareGroupUrl } from "~/lib/compare/params";
+
+return Astro.redirect(compareGroupUrl(), 301);
+---

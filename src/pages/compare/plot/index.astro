@@ -1,0 +1,208 @@
+---
+/**
+ * /compare/plot/ - the plot explorer (formerly /explore/, which now redirects here). Static explanation and example links for readers and search
+ * engines; the interactive part is the Explorer island, which reads its view from the query string
+ * (?x=&y=&logx=&logy=&scope=&highlight=&fit=).
+ */
+import { getAllSpecies, getFeatureDefs, getSpeciesBySlug } from "~/data";
+import Explorer from "~/components/explore/Explorer";
+import "~/components/explore/explorer.css";
+import CompareNav from "~/components/compare/CompareNav.astro";
+import "~/components/compare/stats/stats.css";
+import Card from "~/components/ui/Card.astro";
+import Chip from "~/components/ui/Chip.astro";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { fmtInt } from "~/lib/format";
+import { assertCatalogMatchesData, corrIndex } from "~/lib/explore/build";
+import { TRAIT_KEYS } from "~/lib/explore/variables";
+import { breadcrumbLd, type JsonLd } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { absoluteUrl } from "~/lib/urls";
+
+assertCatalogMatchesData();
+const index = corrIndex();
+const speciesCount = getAllSpecies().length;
+const featureCount = getFeatureDefs().length;
+const orderScopes = index.scopes.filter((s) => s.startsWith("order:")).length;
+const classScopes = index.scopes.filter((s) => s.startsWith("class:")).length;
+
+/** Example views; each is only listed when its highlighted species exists in this build. */
+const view = (q: string) => href(`/compare/plot/?${q}`);
+const examples = [
+  {
+    q: "x=gc:total_mtDNA&y=gcSkew:total_mtDNA",
+    title: "GC content against GC skew of the whole genome",
+    text: "Classes separate on two composition axes: birds and mammals, fishes, reptiles and amphibians each form their own cloud.",
+  },
+  {
+    q: "x=gc:ND6&y=gc:total_pc&scope=class:Mammalia",
+    title: "ND6 against the other protein-coding genes in mammals",
+    text: "ND6 is the only protein-coding gene read from the L strand; its composition departs from the rest.",
+  },
+  {
+    q: "x=size:total_mtDNA&y=size:D_Loop",
+    title: "Genome length against D-loop length",
+    text: "Most of the variation in genome length sits in the control region.",
+  },
+  {
+    q: "x=maxLongevityYears&y=gc:ND6&scope=class:Mammalia",
+    title: "GC content of ND6 against lifespan in mammals",
+    text: "The classic MitoAge question: does the composition of a gene track how long a species lives?",
+  },
+  {
+    q: "x=maxLongevityYears&y=codon:total_pc:CUA&scope=class:Mammalia",
+    title: "CUA (leucine) codon usage against lifespan in mammals",
+    text: "Codon usage follows base composition; see which codons shift in long-lived species.",
+  },
+  {
+    q: "x=gc:total_mtDNA&y=gcSkew:total_mtDNA&scope=order:Primates&highlight=homo-sapiens",
+    title: "Where humans sit among primates",
+    text: "Whole-genome GC content and GC skew of every primate, with Homo sapiens highlighted.",
+    needs: "homo-sapiens",
+  },
+].filter((e) => !e.needs || getSpeciesBySlug(e.needs));
+
+const tryChips = [
+  { label: "ND6 in mammals", q: "x=gc:ND6&y=gc:total_pc&scope=class:Mammalia" },
+  { label: "D-loop length", q: "x=size:total_mtDNA&y=size:D_Loop" },
+  { label: "ND6 GC against lifespan", q: "x=maxLongevityYears&y=gc:ND6&scope=class:Mammalia" },
+];
+
+const title = "Plot mtDNA features";
+const description = `Plot any two of ${fmtInt(featureCount)} mitochondrial DNA features (length, GC content, skews, codon and amino-acid usage of every region) for ${fmtInt(
+  speciesCount,
+)} animal species, or set one against lifespan, with live correlations, multiple-testing correction and phylogenetic contrasts.`;
+const appLd: JsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "MitoAge plot explorer",
+  url: absoluteUrl("/compare/plot/", Astro.site),
+  description,
+  applicationCategory: "Science",
+  operatingSystem: "Any (web browser)",
+  isAccessibleForFree: true,
+  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+};
+---
+
+<BaseLayout title={title} description={description} jsonLd={[appLd, breadcrumbLd(Astro.site, [{ name: "Compare", path: "/compare/" }, { name: "Plot", path: "/compare/plot/" }])]}>
+  <Hero variant="strip" seed={23}>
+    <p class="hero__eyebrow">Compare · Plot</p>
+    <h1 class="hero__title">Plot mitochondrial DNA</h1>
+    <p class="hero__lede">
+      Any two of {fmtInt(featureCount)} genome features for {fmtInt(speciesCount)} species, or one against lifespan,
+      with statistics that update as you plot.
+    </p>
+    <div class="cluster" style="--cluster-gap: var(--space-2)">
+      <span class="xp-try">Try</span>
+      {tryChips.map((c) => <Chip href={view(c.q)} variant="outline-light">{c.label}</Chip>)}
+    </div>
+  </Hero>
+
+  <div class="container xp-page">
+    <CompareNav current="plot" />
+    <Explorer client:idle corrIndex={index} speciesCount={speciesCount} />
+
+    <section class="xp-explain" aria-labelledby="how-title">
+      <SectionHeader title="How to use the plot" eyebrow="Guide" id="how-title" />
+      <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-5)">
+        <Card title="Pick what to plot" level={3}>
+          <p>
+            Choose any of {fmtInt(featureCount)} mtDNA features for each axis: the length, GC content and strand skews
+            of every region, and the frequency of each codon and amino acid in each protein-coding gene. Type in the
+            picker to find one quickly, e.g. <q>ND6 GC</q> or <q>CUA</q>. Maximum lifespan and {TRAIT_KEYS.length - 1}{" "}
+            other life-history traits from AnAge are in the picker's last tab.
+          </p>
+          <p>
+            Lifespan, body mass and other skewed traits start on a log scale; switch either axis with its{" "}
+            <b>Log</b> toggle. Narrow the plot to one class or order, and highlight species to see where they sit.
+          </p>
+        </Card>
+        <Card title="Read the statistics" level={3}>
+          <p>
+            <b>Live statistics</b> describe exactly what is plotted: the number of species, Pearson r on the plotted
+            (log-transformed where the axis is log) values, Spearman ρ on ranks, a two-tailed p-value and an optional
+            least-squares fit line.
+          </p>
+          <p>
+            <b>Corrected statistics</b> appear when one axis is a life-history trait. They come from the data pipeline
+            for every trait and feature pair in all species,{" "}
+            {classScopes} classes and {orderScopes} orders with at least 20 species: the Benjamini–Hochberg q-value, the
+            phylogenetically independent contrasts (PIC) correlation on a dated tree and, for lifespan, the partial
+            correlation with body mass held constant.
+          </p>
+        </Card>
+        <Card title="Share and reuse" level={3}>
+          <p>
+            Every view is a link: the address bar keeps the axes, scales, group and highlights, so{" "}
+            <b>Copy link</b> shares exactly what you see. Species pages link here with their species highlighted.
+          </p>
+          <p>
+            For summary tables (n, mean, SD, min, median, max) of every region by class, order and family, see{" "}
+            <a href={href("/compare/")}>Statistics</a>. Download every table from the <a href={href("/data/")}>data page</a>,
+            and see <a href={href("/about/")}>methods and sources</a> for how each feature and statistic is computed.
+          </p>
+        </Card>
+      </div>
+    </section>
+
+    <section class="xp-examples" aria-labelledby="examples-title">
+      <SectionHeader title="Questions to start from" eyebrow="Examples" id="examples-title" />
+      <ul role="list" class="xp-examples__list">
+        {
+          examples.map((e) => (
+            <li>
+              <a class="row-link" href={view(e.q)}>
+                <Icon name="dna" size={22} class="xp-examples__icon" />
+                <span class="row-link__main">
+                  {e.title}
+                  <span class="row-link__sub">{e.text}</span>
+                </span>
+                <Icon name="chevronRight" class="row-link__chev" />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .xp-try {
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-black);
+    letter-spacing: var(--tracking-eyebrow);
+    text-transform: uppercase;
+    color: var(--color-on-brand-eyebrow);
+    margin-right: var(--space-1);
+  }
+  .xp-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    padding-block: var(--space-7) var(--section-gap);
+  }
+  .xp-explain :global(.card p) {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+  .xp-explain :global(.card p + p) {
+    margin-top: var(--space-1);
+  }
+  .xp-examples__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
+    gap: var(--space-3);
+  }
+  .xp-examples__list :global(.row-link) {
+    font-size: var(--fs-base);
+  }
+  .xp-examples__list :global(.xp-examples__icon) {
+    flex: none;
+    color: var(--tone-green-ink);
+  }
+</style>

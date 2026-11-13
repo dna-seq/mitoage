@@ -17,7 +17,20 @@
  */
 import { createEffect, createMemo, createSignal, For, onMount, Show } from "solid-js";
 import { basePercents } from "~/lib/composition";
-import { fmtBp, fmtFixed, fmtInt, fmtLifespan, fmtNum, fmtPct, fmtSigned } from "~/lib/format";
+import { downloadText, toCsv } from "~/lib/csv";
+import { fmtP, fmtR } from "~/lib/explore/format";
+import {
+  fmtBp,
+  fmtDays,
+  fmtFixed,
+  fmtInt,
+  fmtKelvinAsCelsius,
+  fmtLifespan,
+  fmtMass,
+  fmtNum,
+  fmtPct,
+  fmtSigned,
+} from "~/lib/format";
 import { ICONS } from "./icons";
 
 export type Cell = string | number | null | number[];
@@ -31,8 +44,14 @@ export type ColumnFormat =
   | "dec3"
   | "pct1"
   | "pct2"
+  | "signed2"
   | "signed3"
+  | "r"
+  | "p"
   | "lifespan"
+  | "mass"
+  | "days"
+  | "celsius"
   | "bp";
 
 export interface Column {
@@ -41,10 +60,18 @@ export interface Column {
   /** text (default), sci (italic name), number, composition ([a,c,g,t] array as a mini bar). */
   kind?: "text" | "sci" | "number" | "composition";
   format?: ColumnFormat;
+  /** Row key holding a ColumnFormat for this cell, overriding `format` (rows with different units). */
+  formatKey?: string;
   /** Row key holding a URL; the cell becomes a link. */
   hrefKey?: string;
   /** Row key shown as a second, smaller line. */
   subKey?: string;
+  /** Row key holding a URL for the second line (the sub line becomes the link). */
+  subHrefKey?: string;
+  /** Show the second line as a scientific name (italic). */
+  subSci?: boolean;
+  /** CSV header for the second line; when set, the CSV export gets an extra column for it. */
+  csvSub?: string;
   sortable?: boolean;
   /** Title cell of a stacked card on phones. */
   primary?: boolean;
@@ -52,6 +79,8 @@ export interface Column {
   hideOnMobile?: boolean;
   /** Abbreviation tooltip for the header. */
   title?: string;
+  /** Not shown in the table, only exported to CSV. */
+  csvOnly?: boolean;
 }
 
 export interface DataTableProps {
@@ -71,15 +100,20 @@ export interface DataTableProps {
   stackOnMobile?: boolean;
   /** Noun for the status line, e.g. ["species", "species"]. */
   noun?: [string, string];
+  /** Show a "Download CSV" button that exports the filtered, sorted rows (every page). */
+  csv?: { filename: string; label?: string };
 }
 
-const isNumCol = (c: Column) => c.kind === "number" || (c.format !== undefined && c.format !== "text");
+const isNumCol = (c: Column) =>
+  c.kind === "number" || c.formatKey !== undefined || (c.format !== undefined && c.format !== "text");
 
-const formatCell = (c: Column, v: Cell): string => {
+const formatCell = (c: Column, v: Cell, row?: Row): string => {
   if (v === null || v === undefined) return "–";
   if (Array.isArray(v)) return v.join(", ");
   if (typeof v === "string") return v;
-  switch (c.format) {
+  const rowFormat = c.formatKey && row ? row[c.formatKey] : null;
+  const format = typeof rowFormat === "string" ? (rowFormat as ColumnFormat) : c.format;
+  switch (format) {
     case "int":
       return fmtInt(v);
     case "dec1":
@@ -92,10 +126,22 @@ const formatCell = (c: Column, v: Cell): string => {
       return fmtPct(v, 1);
     case "pct2":
       return fmtPct(v, 2);
+    case "signed2":
+      return fmtSigned(v, 2);
     case "signed3":
       return fmtSigned(v, 3);
+    case "r":
+      return fmtR(v, 2);
+    case "p":
+      return fmtP(v);
     case "lifespan":
       return fmtLifespan(v);
+    case "mass":
+      return fmtMass(v);
+    case "days":
+      return fmtDays(v);
+    case "celsius":
+      return fmtKelvinAsCelsius(v);
     case "bp":
       return fmtBp(v);
     default:
@@ -130,6 +176,22 @@ const Comp = (p: { v: Cell }) => {
     </div>
   );
 };
+
+const CsvButton = (p: { label?: string | undefined; onClick: () => void }) => (
+  <button type="button" class="btn btn--soft btn--sm dtable__csv" onClick={() => p.onClick()}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.6"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+      innerHTML={ICONS.download}
+    />
+    {p.label ?? "Download CSV"}
+  </button>
+);
 
 export default function DataTable(props: DataTableProps) {
   const [sortKey, setSortKey] = createSignal(props.initialSort?.key ?? "");
@@ -219,6 +281,31 @@ export default function DataTable(props: DataTableProps) {
   };
 
   const sortable = (c: Column) => c.sortable !== false && c.kind !== "composition";
+  const shown = createMemo(() => props.columns.filter((c) => !c.csvOnly));
+
+  const exportCsv = () => {
+    const csv = props.csv;
+    if (!csv) return;
+    const cols = props.columns.filter((c) => c.kind !== "composition");
+    const header: string[] = [];
+    for (const c of cols) {
+      header.push(c.label);
+      if (c.subKey && c.csvSub) header.push(c.csvSub);
+    }
+    const body = sorted().map((r) => {
+      const out: (string | number | null)[] = [];
+      for (const c of cols) {
+        const v = r[c.key];
+        out.push(Array.isArray(v) ? v.join(" ") : (v ?? null));
+        if (c.subKey && c.csvSub) {
+          const sv = r[c.subKey];
+          out.push(Array.isArray(sv) ? sv.join(" ") : (sv ?? null));
+        }
+      }
+      return out;
+    });
+    downloadText(csv.filename, toCsv(header, body), "text/csv");
+  };
   const noun = (n: number) => (n === 1 ? (props.noun?.[0] ?? "row") : (props.noun?.[1] ?? "rows"));
   const gotoPage = (p: number) => {
     setPage(p);
@@ -274,6 +361,9 @@ export default function DataTable(props: DataTableProps) {
               </label>
             )}
           </For>
+          <Show when={props.csv}>
+            <CsvButton label={props.csv?.label} onClick={exportCsv} />
+          </Show>
           <label class="field dtable__mobile-sort">
             Sort by
             <select
@@ -285,7 +375,7 @@ export default function DataTable(props: DataTableProps) {
                 setSortDir(d === "desc" ? "desc" : "asc");
               }}
             >
-              <For each={props.columns.filter(sortable)}>
+              <For each={shown().filter(sortable)}>
                 {(c) => (
                   <>
                     <option
@@ -319,7 +409,7 @@ export default function DataTable(props: DataTableProps) {
           <caption class={props.showCaption ? "card__title" : "visually-hidden"}>{props.caption}</caption>
           <thead>
             <tr>
-              <For each={props.columns}>
+              <For each={shown()}>
                 {(c) => (
                   <th
                     scope="col"
@@ -363,7 +453,7 @@ export default function DataTable(props: DataTableProps) {
             <For each={visible()}>
               {(r) => (
                 <tr>
-                  <For each={props.columns}>
+                  <For each={shown()}>
                     {(c) => {
                       const v = r[c.key] ?? null;
                       const href = c.hrefKey ? r[c.hrefKey] : null;
@@ -380,15 +470,25 @@ export default function DataTable(props: DataTableProps) {
                         c.kind === "composition" ? (
                           <Comp v={v} />
                         ) : c.kind === "sci" ? (
-                          <i>{formatCell(c, v)}</i>
+                          <i>{formatCell(c, v, r)}</i>
                         ) : (
-                          formatCell(c, v)
+                          formatCell(c, v, r)
                         );
                       return (
                         <td class={cls || undefined} data-label={c.label}>
                           {typeof href === "string" && href ? <a href={href}>{content}</a> : content}
                           <Show when={typeof sub === "string" && sub}>
-                            <span class="dtable__sub">{sub as string}</span>
+                            {(() => {
+                              const subHref = c.subHrefKey ? r[c.subHrefKey] : null;
+                              const text = c.subSci ? <i>{sub as string}</i> : (sub as string);
+                              return typeof subHref === "string" && subHref ? (
+                                <a class="dtable__sub" href={subHref}>
+                                  {text}
+                                </a>
+                              ) : (
+                                <span class="dtable__sub">{text}</span>
+                              );
+                            })()}
                           </Show>
                         </td>
                       );
@@ -403,6 +503,11 @@ export default function DataTable(props: DataTableProps) {
           <p class="search__empty">No rows match these filters.</p>
         </Show>
       </div>
+      <Show when={props.csv && !(props.search || props.facets?.length)}>
+        <div class="dtable__foot">
+          <CsvButton label={props.csv?.label} onClick={exportCsv} />
+        </div>
+      </Show>
       <Show when={pages() > 1}>
         <nav class="dtable__pager" aria-label="Pages">
           <span class="dtable__status">

@@ -415,7 +415,7 @@ export const axisTitle = (v: Variable, log: boolean): string =>
   `${v.short}${v.unit ? `, ${v.unit}` : ""}${log ? " (log scale)" : ""}`;
 
 export const GROUP_LABEL: Record<VarGroup, string> = {
-  trait: "Life history",
+  trait: "Life history (AnAge)",
   composition: "Size and composition",
   codon: "Codon usage",
   aminoAcid: "Amino acids",

@@ -1,0 +1,22 @@
+---
+/**
+ * Tabs of the Compare section, shown at the top of each of its pages:
+ * Statistics (/compare/ and per taxon), Regions, Species side by side, Plot.
+ */
+import SectionTabs from "~/components/ui/SectionTabs.astro";
+
+export type CompareTab = "stats" | "regions" | "species" | "plot";
+
+interface Props {
+  current: CompareTab;
+}
+const { current } = Astro.props;
+const tabs: { key: CompareTab; label: string; href: string }[] = [
+  { key: "stats", label: "Statistics", href: "/compare/" },
+  { key: "regions", label: "Regions", href: "/compare/regions/" },
+  { key: "species", label: "Species side by side", href: "/compare/species/" },
+  { key: "plot", label: "Plot", href: "/compare/plot/" },
+];
+---
+
+<SectionTabs label="Compare" items={tabs.map((t) => ({ label: t.label, href: t.href, current: t.key === current }))} />

@@ -58,8 +58,14 @@ describe("URL state", () => {
   });
 
   test("default log flags are left out of the link", () => {
-    const q = serializeState({ ...DEFAULT_STATE, logX: true, logY: false }, defaultLog);
+    const q = serializeState(
+      { ...DEFAULT_STATE, x: "maxLongevityYears", y: "gc:total_mtDNA", logX: true, logY: false },
+      defaultLog,
+    );
     expect(q).toBe("?x=maxLongevityYears&y=gc:total_mtDNA");
+    expect(serializeState({ ...DEFAULT_STATE, logX: false, logY: false }, defaultLog)).toBe(
+      "?x=gc:total_mtDNA&y=gcSkew:total_mtDNA",
+    );
   });
 
   test("highlights are cleaned and capped", () => {

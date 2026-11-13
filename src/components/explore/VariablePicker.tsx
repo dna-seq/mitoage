@@ -32,7 +32,8 @@ interface Props {
   count?: ((key: string) => number | undefined) | undefined;
 }
 
-const TABS: VarGroup[] = ["trait", "composition", "codon", "aminoAcid"];
+/** mtDNA first; life-history traits last. */
+const TABS: VarGroup[] = ["composition", "codon", "aminoAcid", "trait"];
 const TAB_LABEL: Record<VarGroup, string> = {
   trait: "Life history",
   composition: "Size and GC",
@@ -102,7 +103,7 @@ export default function VariablePicker(props: Props) {
   const current = createMemo(() => getVariable(props.value));
   const [query, setQuery] = createSignal("");
   const [active, setActive] = createSignal(0);
-  const [tab, setTab] = createSignal<VarGroup>("trait");
+  const [tab, setTab] = createSignal<VarGroup>("composition");
   const [region, setRegion] = createSignal<Region>("total_pc");
 
   const results = createMemo(() => searchVars(query()));
@@ -112,7 +113,7 @@ export default function VariablePicker(props: Props) {
     const v = current();
     setQuery("");
     setActive(0);
-    setTab(v?.group ?? "trait");
+    setTab(v?.group ?? "composition");
     if (v?.kind === "feature" && (v.group === "codon" || v.group === "aminoAcid")) setRegion(v.region);
     else setRegion("total_pc");
     dialog?.showModal();
@@ -160,7 +161,7 @@ export default function VariablePicker(props: Props) {
     else if (e.key === "End") next = TABS.length - 1;
     if (next < 0) return;
     e.preventDefault();
-    const t = TABS[next] ?? "trait";
+    const t = TABS[next] ?? "composition";
     setTab(t);
     document.getElementById(`${tabsId}-${t}`)?.focus();
   };

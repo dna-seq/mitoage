@@ -1,0 +1,17 @@
+---
+/**
+ * Old site's stats pages:
+ *   /stats-for/{gene}/gene/         -> /compare/regions/{region}/
+ *   /stats-for/{id}/{class|order|family}/ -> /compare/{rank}/{slug}/ (taxon page below 3 species)
+ */
+import type { GetStaticPaths } from "astro";
+import { legacyRegions, legacyTaxa, taxonStatsUrl } from "~/lib/compare/legacyRoutes";
+import { compareRegionUrl } from "~/lib/compare/params";
+
+export const getStaticPaths = (() => [
+  ...legacyRegions().map(({ slug, region }) => ({ params: { key: slug, kind: "gene" }, props: { to: compareRegionUrl(region) } })),
+  ...legacyTaxa().map((t) => ({ params: { key: String(t.id), kind: t.rank }, props: { to: taxonStatsUrl(t) } })),
+]) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---

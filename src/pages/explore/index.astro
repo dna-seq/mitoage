@@ -1,198 +1,28 @@
 ---
 /**
- * /explore/ - the plot explorer. Static explanation and example links for readers and search
- * engines; the interactive part is the Explorer island, which reads its view from the query string
- * (?x=&y=&logx=&logy=&scope=&highlight=&fit=).
+ * /explore/ moved to /compare/plot/. A plain redirect would drop the view in the query string
+ * (?x=&y=&scope=...), so a script forwards it; the meta refresh covers readers without JavaScript.
  */
-import { getAllSpecies, getFeatureDefs, getSpeciesBySlug } from "~/data";
-import Explorer from "~/components/explore/Explorer";
-import "~/components/explore/explorer.css";
-import Card from "~/components/ui/Card.astro";
-import Chip from "~/components/ui/Chip.astro";
-import Hero from "~/components/ui/Hero.astro";
-import Icon from "~/components/ui/Icon.astro";
-import SectionHeader from "~/components/ui/SectionHeader.astro";
-import BaseLayout from "~/layouts/BaseLayout.astro";
-import { fmtInt } from "~/lib/format";
-import { assertCatalogMatchesData, corrIndex } from "~/lib/explore/build";
-import { TRAIT_KEYS } from "~/lib/explore/variables";
-import { breadcrumbLd, type JsonLd } from "~/lib/seo";
 import { href } from "~/lib/url";
 import { absoluteUrl } from "~/lib/urls";
 
-assertCatalogMatchesData();
-const index = corrIndex();
-const speciesCount = getAllSpecies().length;
-const featureCount = getFeatureDefs().length;
-const orderScopes = index.scopes.filter((s) => s.startsWith("order:")).length;
-const classScopes = index.scopes.filter((s) => s.startsWith("class:")).length;
-
-/** Example views; each is only listed when its highlighted species exists in this build. */
-const view = (q: string) => href(`/explore/?${q}`);
-const examples = [
-  {
-    q: "x=maxLongevityYears&y=gc:ND6&scope=class:Mammalia",
-    title: "GC content of ND6 against lifespan in mammals",
-    text: "ND6 is the only protein-coding gene on the light strand; its composition is a classic longevity marker.",
-  },
-  {
-    q: "x=maxLongevityYears&y=size:D_Loop&scope=class:Aves",
-    title: "Length of the D-loop against lifespan in birds",
-    text: "The control region regulates replication. Does its length change with lifespan?",
-  },
-  {
-    q: "x=adultWeightG&y=maxLongevityYears",
-    title: "Lifespan against adult body mass",
-    text: "The size effect that every lifespan comparison has to account for.",
-  },
-  {
-    q: "x=maxLongevityYears&y=codon:total_pc:CUA&scope=class:Mammalia",
-    title: "CUA (leucine) codon usage against lifespan in mammals",
-    text: "Codon usage follows base composition; see which codons shift in long-lived species.",
-  },
-  {
-    q: "x=maxLongevityYears&y=gc:total_mtDNA&scope=order:Primates&highlight=homo-sapiens",
-    title: "Where humans sit among primates",
-    text: "Whole-genome GC content against lifespan for every primate, with Homo sapiens highlighted.",
-    needs: "homo-sapiens",
-  },
-].filter((e) => !e.needs || getSpeciesBySlug(e.needs));
-
-const tryChips = [
-  { label: "ND6 GC in mammals", q: "x=maxLongevityYears&y=gc:ND6&scope=class:Mammalia" },
-  { label: "Body mass", q: "x=adultWeightG&y=maxLongevityYears" },
-  { label: "D-loop in birds", q: "x=maxLongevityYears&y=size:D_Loop&scope=class:Aves" },
-];
-
-const title = "Plot explorer";
-const description = `Plot any of ${fmtInt(featureCount)} mitochondrial DNA features or ${TRAIT_KEYS.length} life-history traits against each other for ${fmtInt(
-  speciesCount,
-)} animal species, with live correlations, multiple-testing correction and phylogenetic contrasts.`;
-const appLd: JsonLd = {
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "MitoAge plot explorer",
-  url: absoluteUrl("/explore/", Astro.site),
-  description,
-  applicationCategory: "Science",
-  operatingSystem: "Any (web browser)",
-  isAccessibleForFree: true,
-  offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
-};
+const to = href("/compare/plot/");
+const canonical = absoluteUrl("/compare/plot/", Astro.site);
 ---
 
-<BaseLayout title={title} description={description} jsonLd={[appLd, breadcrumbLd(Astro.site, [{ name: "Plot explorer", path: "/explore/" }])]}>
-  <Hero variant="strip" seed={23}>
-    <p class="hero__eyebrow">Plot explorer</p>
-    <h1 class="hero__title">Plot any mtDNA feature against any trait</h1>
-    <p class="hero__lede">
-      {fmtInt(featureCount)} genome features and {TRAIT_KEYS.length} life-history traits for {fmtInt(speciesCount)} species,
-      with statistics that update as you plot.
-    </p>
-    <div class="cluster" style="--cluster-gap: var(--space-2)">
-      <span class="xp-try">Try</span>
-      {tryChips.map((c) => <Chip href={view(c.q)} variant="outline-light">{c.label}</Chip>)}
-    </div>
-  </Hero>
-
-  <div class="container xp-page">
-    <Explorer client:idle corrIndex={index} speciesCount={speciesCount} />
-
-    <section class="xp-explain" aria-labelledby="how-title">
-      <SectionHeader title="How to use the explorer" eyebrow="Guide" id="how-title" />
-      <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-5)">
-        <Card title="Pick what to plot" level={3}>
-          <p>
-            Choose any variable for each axis: life-history traits from AnAge (maximum lifespan, body mass, maturity,
-            metabolic rate and more) or one of {fmtInt(featureCount)} mtDNA features. Features cover the length, GC
-            content and strand skews of every region, and the frequency of each codon and amino acid in each
-            protein-coding gene. Type in the picker to find one quickly, e.g. <q>ND6 GC</q> or <q>CUA</q>.
-          </p>
-          <p>
-            Lifespan, mass and other skewed traits start on a log scale; switch either axis with its <b>Log</b> toggle.
-            Narrow the plot to one class or order, and highlight species to see where they sit.
-          </p>
-        </Card>
-        <Card title="Read the statistics" level={3}>
-          <p>
-            <b>Live statistics</b> describe exactly what is plotted: the number of species, Pearson r on the plotted
-            (log-transformed where the axis is log) values, Spearman ρ on ranks, a two-tailed p-value and an optional
-            least-squares fit line.
-          </p>
-          <p>
-            <b>Corrected statistics</b> come from the data pipeline for every trait and feature pair in all species,{" "}
-            {classScopes} classes and {orderScopes} orders with at least 20 species: the Benjamini–Hochberg q-value, the
-            phylogenetically independent contrasts (PIC) correlation on a dated tree and, for lifespan, the partial
-            correlation with body mass held constant.
-          </p>
-        </Card>
-        <Card title="Share and reuse" level={3}>
-          <p>
-            Every view is a link: the address bar keeps the axes, scales, group and highlights, so{" "}
-            <b>Copy link</b> shares exactly what you see. Species pages link here with their species highlighted.
-          </p>
-          <p>
-            The numbers behind the plots are open: download every table from the <a href={href("/data/")}>data page</a>,
-            and see <a href={href("/about/")}>methods and sources</a> for how each feature and statistic is computed.
-          </p>
-        </Card>
-      </div>
-    </section>
-
-    <section class="xp-examples" aria-labelledby="examples-title">
-      <SectionHeader title="Questions to start from" eyebrow="Examples" id="examples-title" />
-      <ul role="list" class="xp-examples__list">
-        {
-          examples.map((e) => (
-            <li>
-              <a class="row-link" href={view(e.q)}>
-                <Icon name="dna" size={22} class="xp-examples__icon" />
-                <span class="row-link__main">
-                  {e.title}
-                  <span class="row-link__sub">{e.text}</span>
-                </span>
-                <Icon name="chevronRight" class="row-link__chev" />
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </section>
-  </div>
-</BaseLayout>
-
-<style>
-  .xp-try {
-    font-size: var(--fs-sm);
-    font-weight: var(--fw-black);
-    letter-spacing: var(--tracking-eyebrow);
-    text-transform: uppercase;
-    color: var(--color-on-brand-eyebrow);
-    margin-right: var(--space-1);
-  }
-  .xp-page {
-    display: flex;
-    flex-direction: column;
-    gap: var(--section-gap);
-    padding-block: var(--space-7) var(--section-gap);
-  }
-  .xp-explain :global(.card p) {
-    font-size: var(--fs-sm);
-    line-height: 1.6;
-  }
-  .xp-explain :global(.card p + p) {
-    margin-top: var(--space-1);
-  }
-  .xp-examples__list {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(min(100%, 26rem), 1fr));
-    gap: var(--space-3);
-  }
-  .xp-examples__list :global(.row-link) {
-    font-size: var(--fs-base);
-  }
-  .xp-examples__list :global(.xp-examples__icon) {
-    flex: none;
-    color: var(--tone-green-ink);
-  }
-</style>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Moved to {to}</title>
+    <meta name="robots" content="noindex" />
+    <link rel="canonical" href={canonical} />
+    <script is:inline define:vars={{ to }}>
+      location.replace(to + location.search + location.hash);
+    </script>
+    <meta http-equiv="refresh" content={`0;url=${to}`} />
+  </head>
+  <body>
+    <p>The plot explorer has moved to <a href={to}>{to}</a>.</p>
+  </body>
+</html>

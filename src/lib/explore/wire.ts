@@ -2,8 +2,8 @@
  * Wire formats of the static JSON the explorer reads, and their URLs. Safe for islands.
  *
  *   /data/explorer.json                               pipeline output: species, traits, 165 features
- *   /explore/values/{gene}-{codon|aa}.json            per-gene codon / amino-acid frequencies
- *   /explore/correlations/{trait}/{scope}.json        precomputed correlations for one trait and scope
+ *   /compare/plot/values/{gene}-{codon|aa}.json       per-gene codon / amino-acid frequencies
+ *   /compare/plot/correlations/{trait}/{scope}.json   precomputed correlations for one trait and scope
  */
 import type { FeatureDef, Region, TraitKey } from "~/data/schema";
 import { href } from "~/lib/url";
@@ -47,7 +47,7 @@ export interface ChunkFile {
 
 export const chunkName = (region: Region | string, kind: "codon" | "aa"): string => `${geneSlug(region)}-${kind}`;
 export const chunkUrl = (region: Region | string, kind: "codon" | "aa"): string =>
-  href(`/explore/values/${chunkName(region, kind)}.json`);
+  href(`/compare/plot/values/${chunkName(region, kind)}.json`);
 
 /**
  * Precomputed correlations for one (trait, scope), rows sorted by |Spearman rho| descending.
@@ -82,7 +82,7 @@ export interface CorrIndex {
 export const scopeSlug = (scope: string): string => scope.toLowerCase().replace(":", "-");
 
 export const corrUrl = (trait: TraitKey | string, scope: string): string =>
-  href(`/explore/correlations/${trait}/${scopeSlug(scope)}.json`);
+  href(`/compare/plot/correlations/${trait}/${scopeSlug(scope)}.json`);
 
 /** One precomputed row, unpacked. */
 export interface CorrRow {

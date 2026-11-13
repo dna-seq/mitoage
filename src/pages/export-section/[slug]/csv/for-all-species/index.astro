@@ -1,0 +1,11 @@
+---
+/** Old site: /export-section/{region}/csv/for-all-species/ -> /compare/values/{region}.csv. */
+import type { GetStaticPaths } from "astro";
+import { legacyRegions } from "~/lib/compare/legacyRoutes";
+import { regionValuesCsvUrl } from "~/lib/compare/params";
+
+export const getStaticPaths = (() =>
+  legacyRegions().map(({ slug, region }) => ({ params: { slug }, props: { to: regionValuesCsvUrl(region) } }))) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---

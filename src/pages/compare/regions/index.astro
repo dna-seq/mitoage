@@ -1,0 +1,90 @@
+---
+/** /compare/regions/ - the 20 regions with comparative statistics, each linking to its page. */
+import CompareNav from "~/components/compare/CompareNav.astro";
+import "~/components/compare/stats/stats.css";
+import Hero from "~/components/ui/Hero.astro";
+import Icon from "~/components/ui/Icon.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getStatsGroup, groupStats } from "~/lib/compare/build";
+import { compareRegionUrl, STATS_REGIONS, statsRegionLabel } from "~/lib/compare/params";
+import { PROTEIN_GENES } from "~/data";
+import { fmtFixed, fmtInt } from "~/lib/format";
+import { REGION_INFO } from "~/lib/genes";
+import { breadcrumbLd } from "~/lib/seo";
+
+const file = groupStats(getStatsGroup("all")!);
+const isGene = (r: string) => (PROTEIN_GENES as readonly string[]).includes(r);
+const item = (r: (typeof STATS_REGIONS)[number]) => {
+  const len = file.stats[r]?.length;
+  const gc = file.stats[r]?.gc;
+  return {
+    href: compareRegionUrl(r),
+    label: statsRegionLabel(r),
+    name: REGION_INFO[r].name,
+    meta: [
+      len && len[5] !== null ? `median ${fmtInt(len[5])} bp` : "",
+      gc && gc[1] !== null ? `GC ${fmtFixed(gc[1], 1)}%` : "",
+      gc ? `${fmtInt(gc[0])} species` : "",
+    ]
+      .filter(Boolean)
+      .join(" · "),
+  };
+};
+const groups = [
+  { id: "sets", title: "Whole genome, gene sets, rRNA and D-loop", items: STATS_REGIONS.filter((r) => !isGene(r)).map(item) },
+  { id: "genes", title: "Protein-coding genes", items: STATS_REGIONS.filter(isGene).map(item) },
+];
+---
+
+<BaseLayout
+  title="Regions compared"
+  description="Each region of the mitochondrial genome compared across animal species: length, base composition, GC and AT skew, by class, order and family, with every species' values."
+  jsonLd={breadcrumbLd(Astro.site, [
+    { name: "Compare", path: "/compare/" },
+    { name: "Regions", path: "/compare/regions/" },
+  ])}
+>
+  <Hero variant="strip" seed={61}>
+    <p class="hero__eyebrow">Compare · Regions</p>
+    <h1 class="hero__title">Region by region</h1>
+    <p class="hero__lede">
+      Pick a region of the mitochondrial genome to see it in every species: summary statistics, the same by class,
+      order or family, and each species' values.
+    </p>
+  </Hero>
+  <div class="container cs-page">
+    <CompareNav current="regions" />
+    {
+      groups.map((g) => (
+        <section aria-labelledby={`rg-${g.id}`}>
+          <SectionHeader id={`rg-${g.id}`} title={g.title} />
+          <ul role="list" class="cs-links">
+            {g.items.map((it) => (
+              <li>
+                <a class="row-link" href={it.href}>
+                  <Icon name="dna" size={22} class="cs-links__icon" />
+                  <span class="row-link__main">
+                    {it.label}
+                    <span class="row-link__sub">
+                      {it.name === it.label ? "" : `${it.name} · `}
+                      {it.meta}
+                    </span>
+                  </span>
+                  <Icon name="chevronRight" class="row-link__chev" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .cs-links :global(.cs-links__icon) {
+    flex: none;
+    color: var(--tone-green-ink);
+  }
+</style>

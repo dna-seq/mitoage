@@ -1,140 +1,18 @@
 ---
 /**
- * /compare/?species=a,b,c - 2 to 6 species side by side. The page is static; the Compare island
- * reads the query string and fetches /species/{slug}.json for each species.
+ * /compare/ - comparative mtDNA statistics of all species (see GroupPage). Old links to the
+ * species comparison, /compare/?species=a,b, are forwarded to /compare/species/?species=a,b.
  */
-import { getAllSpecies, getSpeciesBySlug } from "~/data";
-import Compare from "~/components/compare/Compare";
-import "~/components/explore/explorer.css";
-import "~/components/compare/compare.css";
-import Card from "~/components/ui/Card.astro";
-import Hero from "~/components/ui/Hero.astro";
-import SectionHeader from "~/components/ui/SectionHeader.astro";
-import BaseLayout from "~/layouts/BaseLayout.astro";
-import { classColor } from "~/lib/classes";
-import type { Suggestion } from "~/lib/explore/compareTypes";
-import { fmtInt, fmtLifespan } from "~/lib/format";
-import { breadcrumbLd } from "~/lib/seo";
+import GroupPage from "~/components/compare/stats/GroupPage.astro";
+import { getStatsGroup } from "~/lib/compare/build";
 import { href } from "~/lib/url";
-import { compareUrl } from "~/lib/urls";
 
-const speciesCount = getAllSpecies().length;
-
-/** Ready-made comparisons; a suggestion is dropped if one of its species is missing from this build. */
-const PAIRS: { title: string; why: string; slugs: string[] }[] = [
-  {
-    title: "Human and house mouse",
-    why: "The two best-studied mammals, thirty times apart in lifespan.",
-    slugs: ["homo-sapiens", "mus-musculus"],
-  },
-  {
-    title: "Bowhead whale and naked mole-rat",
-    why: "Two record holders for their size: a 100-tonne whale and a 35-gram rodent.",
-    slugs: ["balaena-mysticetus", "heterocephalus-glaber"],
-  },
-  {
-    title: "A short-lived and a long-lived fish",
-    why: "The turquoise killifish lives about a year; the beluga sturgeon more than a century.",
-    slugs: ["nothobranchius-furzeri", "huso-huso"],
-  },
-  {
-    title: "Norway rat and rock dove",
-    why: "A rodent and a bird of similar size with very different lifespans.",
-    slugs: ["rattus-norvegicus", "columba-livia"],
-  },
-  {
-    title: "Olm and a short-lived frog",
-    why: "A blind cave salamander that lives a century, next to a frog that lives five years.",
-    slugs: ["proteus-anguinus", "microhyla-ornata"],
-  },
-  {
-    title: "Three primates",
-    why: "Human, chimpanzee and rhesus monkey.",
-    slugs: ["homo-sapiens", "pan-troglodytes", "macaca-mulatta"],
-  },
-];
-
-const suggestions: Suggestion[] = PAIRS.flatMap((p) => {
-  const sp = p.slugs.map((s) => getSpeciesBySlug(s));
-  if (sp.some((s) => !s)) return [];
-  return [
-    {
-      title: p.title,
-      why: p.why,
-      href: compareUrl(p.slugs),
-      species: sp.map((s) => ({
-        slug: s!.slug,
-        name: s!.scientificName,
-        common: s!.commonName,
-        lifespan: fmtLifespan(s!.maxLongevityYears),
-        color: classColor(s!.taxonomy.class),
-      })),
-    },
-  ];
-});
-
-const description = `Compare up to six of ${fmtInt(speciesCount)} animal species side by side: lifespan and life history, mitochondrial genome size, base composition, gene-by-gene GC content and codon usage.`;
+const group = getStatsGroup("all")!;
+const speciesPage = href("/compare/species/");
 ---
 
-<BaseLayout
-  title="Compare species"
-  description={description}
-  jsonLd={breadcrumbLd(Astro.site, [{ name: "Compare species", path: "/compare/" }])}
->
-  <script is:inline slot="head">
-    // Hide the "pick species" state until the island has read ?species=, to avoid a flash.
-    if (/[?&]species=[^&]/.test(location.search)) document.documentElement.classList.add("cmp-has-query");
+<GroupPage group={group}>
+  <script is:inline slot="head" define:vars={{ speciesPage }}>
+    if (/[?&]species=/.test(location.search)) location.replace(speciesPage + location.search + location.hash);
   </script>
-  <Hero variant="strip" seed={31}>
-    <p class="hero__eyebrow">Compare</p>
-    <h1 class="hero__title">Species side by side</h1>
-    <p class="hero__lede">
-      Lifespan, life history and the mitochondrial genome of two to six species, gene by gene. Every comparison is a
-      link you can share.
-    </p>
-  </Hero>
-
-  <div class="container cmp-page">
-    <Compare client:idle suggestions={suggestions} speciesCount={speciesCount} />
-
-    <section aria-labelledby="cmp-about-title">
-      <SectionHeader title="What the comparison shows" eyebrow="Guide" id="cmp-about-title" />
-      <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-5)">
-        <Card title="Life history and genome" level={3}>
-          <p>
-            Maximum lifespan and the other AnAge traits (body mass, maturity, gestation, litter size, metabolic rate)
-            next to genome size, GC content, strand skews and the lengths of the non-coding region, the D-loop, the
-            rRNA and tRNA genes.
-          </p>
-        </Card>
-        <Card title="Composition and genes" level={3}>
-          <p>
-            A/T/G/C bars for each region of the mitochondrial genome, and a gene-by-gene view of GC content, length and
-            skews for the 13 protein-coding genes, both rRNAs and the D-loop. Every species keeps one colour and one
-            marker shape throughout.
-          </p>
-        </Card>
-        <Card title="Codon usage" level={3}>
-          <p>
-            The codons and amino acids whose usage differs most between the species you picked. For any feature
-            across all {fmtInt(speciesCount)} species, use the <a href={href("/explore/")}>plot explorer</a>; for one
-            species in depth, open its page from the <a href={href("/species/")}>species list</a>.
-          </p>
-        </Card>
-      </div>
-    </section>
-  </div>
-</BaseLayout>
-
-<style>
-  .cmp-page {
-    display: flex;
-    flex-direction: column;
-    gap: var(--section-gap);
-    padding-block: var(--space-7) var(--section-gap);
-  }
-  .cmp-page :global(.card p) {
-    font-size: var(--fs-sm);
-    line-height: 1.6;
-  }
-</style>
+</GroupPage>

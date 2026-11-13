@@ -16,16 +16,19 @@ export const geneSlug = (region: Region | string): string =>
 
 export const geneUrl = (region: Region | string): string => href(`/genes/${geneSlug(region)}/`);
 
+/** Species side by side (Compare section). */
 export const compareUrl = (slugs: readonly string[]): string =>
-  href(`/compare/?species=${slugs.map(encodeURIComponent).join(",")}`);
+  href(`/compare/species/?species=${slugs.map(encodeURIComponent).join(",")}`);
 
-export const exploreUrl = (params?: { x?: string; y?: string; highlight?: string }): string => {
+/** Plot explorer (Compare section). */
+export const exploreUrl = (params?: { x?: string; y?: string; highlight?: string; scope?: string }): string => {
   const q = new URLSearchParams();
   if (params?.x) q.set("x", params.x);
   if (params?.y) q.set("y", params.y);
+  if (params?.scope) q.set("scope", params.scope);
   if (params?.highlight) q.set("highlight", params.highlight);
-  const s = q.toString();
-  return href(s ? `/explore/?${s}` : "/explore/");
+  const s = q.toString().replace(/%3A/gi, ":").replace(/%2C/gi, ",");
+  return href(s ? `/compare/plot/?${s}` : "/compare/plot/");
 };
 
 /** AnAge record, e.g. https://genomics.senescence.info/species/entry.php?species=Homo_sapiens */

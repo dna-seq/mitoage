@@ -1,0 +1,236 @@
+---
+/**
+ * Comparative mtDNA statistics of one group: /compare/ (all species) and
+ * /compare/{class|order|family}/{slug}/. Regions table and child-taxa table (GroupStats island),
+ * codon usage (CodonStats island), a group picker and notes on the statistics.
+ */
+import type { Region } from "~/data";
+import CompareNav from "~/components/compare/CompareNav.astro";
+import Breadcrumb, { type BreadcrumbItem } from "~/components/ui/Breadcrumb.astro";
+import Button from "~/components/ui/Button.astro";
+import Card from "~/components/ui/Card.astro";
+import Chip from "~/components/ui/Chip.astro";
+import Hero from "~/components/ui/Hero.astro";
+import StatCard from "~/components/ui/StatCard.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { classLabel } from "~/lib/classes";
+import {
+  groupStats,
+  regionValues,
+  type StatsGroup,
+  statsGroupForTaxon,
+  statsGroups,
+  taxonomyFile,
+} from "~/lib/compare/build";
+import { compareGroupUrl, compareRegionUrl, DEFAULT_PARAM, STATS_REGIONS, statsRegionLabel } from "~/lib/compare/params";
+import { packRows, regionRows, type TaxonRank, taxaRows } from "~/lib/compare/rows";
+import { corrScopes } from "~/lib/explore/build";
+import { fmtFixed, fmtInt } from "~/lib/format";
+import { breadcrumbLd } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { taxonUrl } from "~/lib/urls";
+import CodonStats from "./CodonStats";
+import GroupStats, { DEFAULT_TAXA_REGION } from "./GroupStats";
+import "./stats.css";
+
+interface Props {
+  group: StatsGroup;
+}
+const { group } = Astro.props;
+const isAll = group.rank === "all";
+const tax = taxonomyFile();
+const file = groupStats(group);
+
+const CHILD_RANKS: Record<StatsGroup["rank"], TaxonRank[]> = {
+  all: ["class", "order", "family"],
+  class: ["order", "family"],
+  order: ["family", "genus"],
+  family: ["genus"],
+};
+const childRanks = CHILD_RANKS[group.rank];
+const scope = { rank: group.rank, name: isAll ? "" : group.name };
+const initialRegionRows = packRows(regionRows(file, DEFAULT_PARAM));
+const initialTaxaRows = packRows(taxaRows(tax, regionValues(DEFAULT_TAXA_REGION as Region), scope, childRanks[0]!, DEFAULT_PARAM));
+
+// ---- names and context
+const friendly = group.rank === "class" ? classLabel(group.name) : "";
+const groupName = isAll ? "all species" : group.name;
+const someSpecies = group.members.map((i) => tax.species[i]!);
+const cls = isAll ? "" : (tax.class.names[someSpecies[0]![3]] ?? "");
+const order = group.rank === "family" ? (tax.order.names[someSpecies[0]![4]] ?? "") : "";
+
+const crumbs: BreadcrumbItem[] = [{ label: "All species", href: compareGroupUrl() }];
+if (!isAll && group.rank !== "class" && cls) {
+  const g = statsGroupForTaxon("class", cls);
+  crumbs.push({ label: cls, rank: "class", href: g ? compareGroupUrl("class", g.slug) : undefined });
+}
+if (group.rank === "family" && order) {
+  const g = statsGroupForTaxon("order", order);
+  crumbs.push({ label: order, rank: "order", href: g ? compareGroupUrl("order", g.slug) : undefined });
+}
+if (!isAll) crumbs.push({ label: group.name, rank: group.rank });
+
+// ---- key numbers
+const whole = file.stats.total_mtDNA;
+const gc = whole?.gc;
+const len = whole?.length;
+const childCount = new Set(group.members.map((i) => tax.species[i]![childRanks[0] === "class" ? 3 : childRanks[0] === "order" ? 4 : childRanks[0] === "family" ? 5 : 6])).size;
+const childWord: Record<TaxonRank, [string, string]> = {
+  class: ["class", "classes"],
+  order: ["order", "orders"],
+  family: ["family", "families"],
+  genus: ["genus", "genera"],
+};
+const [one, many] = childWord[childRanks[0]!];
+
+// ---- picker: every group with a stats page
+const picker = (["all", "class", "order", "family"] as const).map((rank) => ({
+  label: rank === "all" ? "All species" : rank === "class" ? "Classes" : rank === "order" ? "Orders" : "Families",
+  options: statsGroups()
+    .filter((g) => g.rank === rank)
+    .map((g) => ({
+      value: g.rank === "all" ? "" : `${g.rank}/${g.slug}/`,
+      label: g.rank === "all" ? `All species (${fmtInt(g.members.length)})` : `${g.name} (${fmtInt(g.members.length)})`,
+      selected: g.key === group.key,
+    })),
+}));
+
+// ---- plot link when the explorer has this scope
+const plotScope = isAll ? "all" : `${group.rank}:${group.name}`;
+const canPlot = isAll || corrScopes().includes(plotScope);
+const plotHref = href(
+  `/compare/plot/?x=gc:total_mtDNA&y=gcSkew:total_mtDNA${isAll ? "" : `&scope=${plotScope}`}`,
+);
+
+const title = isAll ? "Compare mitochondrial DNA" : `${group.name}: mitochondrial DNA compared`;
+const description = isAll
+  ? `Comparative tables of the mitochondrial genomes of ${fmtInt(group.members.length)} animal species: base composition, GC and AT skew, length and codon usage of every region, with n, mean, SD, min, median and max, by class, order and family.`
+  : `Mitochondrial DNA of the ${fmtInt(group.members.length)} species of the ${group.rank} ${group.name}${friendly && friendly !== group.name ? ` (${friendly.toLowerCase()})` : ""}: base composition, skews, length and codon usage of every region, compared across its ${many}.`;
+const ld = breadcrumbLd(Astro.site, [
+  { name: "Compare", path: "/compare/" },
+  ...(isAll ? [] : [{ name: group.name, path: `/compare/${group.rank}/${group.slug}/` }]),
+]);
+---
+
+<BaseLayout title={title} description={description} jsonLd={ld}>
+  <slot name="head" slot="head" />
+  <Hero variant="strip" seed={isAll ? 41 : 41 + (group.members.length % 17)}>
+    {!isAll && <Breadcrumb items={crumbs} />}
+    <p class="hero__eyebrow">{isAll ? "Compare" : `${group.rank} · mtDNA statistics`}</p>
+    <h1 class="hero__title">{isAll ? "Mitochondrial DNA, compared" : group.name}</h1>
+    <p class="hero__lede">
+      {
+        isAll ? (
+          <>
+            Base composition, strand skew, length and codon usage of every region of the mitochondrial genome across{" "}
+            {fmtInt(group.members.length)} species, and how classes, orders and families differ.
+          </>
+        ) : (
+          <>
+            {friendly && friendly !== group.name ? `${friendly}: ` : ""}
+            {fmtInt(group.members.length)} species in {fmtInt(childCount)} {childCount === 1 ? one : many}. Every
+            region of their mitochondrial genomes, side by side.
+          </>
+        )
+      }
+    </p>
+  </Hero>
+
+  <div class="container cs-page">
+    <div class="cs-top">
+      <CompareNav current="stats" />
+      <label class="field cs-picker">
+        Group
+        <select class="select" data-cs-picker data-base={compareGroupUrl()} aria-label="Compare another group">
+          {
+            picker.map((g) => (
+              <optgroup label={g.label}>
+                {g.options.map((o) => (
+                  <option value={o.value} selected={o.selected}>
+                    {o.label}
+                  </option>
+                ))}
+              </optgroup>
+            ))
+          }
+        </select>
+      </label>
+    </div>
+
+    <section class="stat-grid" aria-label="Key numbers">
+      <StatCard value={fmtInt(group.members.length)} label="species" tone="green" />
+      <StatCard
+        value={gc && gc[1] !== null ? `${fmtFixed(gc[1], 1)}%` : "–"}
+        label="mean GC, whole genome"
+        note={gc && gc[2] !== null ? `SD ${fmtFixed(gc[2], 1)}, range ${fmtFixed(gc[3], 1)}–${fmtFixed(gc[6], 1)}%` : undefined}
+        tone="sky"
+      />
+      <StatCard
+        value={len && len[5] !== null ? fmtInt(len[5]) : "–"}
+        label="median genome length, bp"
+        note={len && len[3] !== null ? `Range ${fmtInt(len[3])}–${fmtInt(len[6])} bp` : undefined}
+        tone="orange"
+      />
+      <StatCard value={fmtInt(childCount)} label={childCount === 1 ? one : many} tone="violet" />
+    </section>
+
+    <GroupStats
+      client:idle
+      groupKey={group.key}
+      groupName={groupName}
+      scope={scope}
+      childRanks={childRanks}
+      regionRows={initialRegionRows}
+      taxaRows={initialTaxaRows}
+    />
+
+    <CodonStats client:visible groupKey={group.key} groupName={groupName} />
+
+    <Card as="section" title="Every species, region by region" level={2}>
+        <p class="muted">
+          Each region's page lists the value of every species, with the same statistics by class, order or family and a
+          CSV download.
+        </p>
+        <div class="cs-chips">
+          {STATS_REGIONS.map((r) => <Chip href={compareRegionUrl(r, isAll ? "" : `?q=${encodeURIComponent(group.name)}`)}>{statsRegionLabel(r)}</Chip>)}
+        </div>
+        <Fragment slot="footer">
+          <div class="cluster" style="--cluster-gap: var(--space-2)">
+            {!isAll && group.node && <Button href={taxonUrl(group.node.rank, group.node.slug)} variant="soft" size="sm" iconEnd="arrowRight">{group.name} taxon page</Button>}
+            {canPlot && <Button href={plotHref} variant="soft" size="sm" iconEnd="arrowRight">Plot GC content against GC skew</Button>}
+            <Button href={href("/data/")} variant="soft" size="sm" icon="download">All data downloads</Button>
+          </div>
+        </Fragment>
+    </Card>
+
+    <section class="cs-notes" aria-label="How to read the tables">
+      <Card title="What the numbers are" level={2} variant="flat">
+        <ul>
+          <li><b>Species</b>: species with the region annotated. <b>SD</b> is the sample standard deviation, <b>CV</b> = SD / mean.</li>
+          <li>Base percentages are over A + C + G + T, so GC % + AT % = 100. Skews are on the L strand as deposited in RefSeq: GC skew = (G − C) / (G + C), AT skew = (A − T) / (A + T).</li>
+          <li><b>Min</b> and <b>Max</b> name the species with the extreme value.</li>
+        </ul>
+      </Card>
+      <Card title="Lifespan columns" level={2} variant="flat">
+        <p>
+          <b>r</b> is the Pearson correlation of the parameter with log<sub>10</sub> maximum lifespan within the group (5 or
+          more species), and <b>p</b> its two-tailed p-value, as on the original MitoAge. They are not corrected for
+          multiple testing or for shared ancestry: the <a href={href("/compare/plot/")}>plot</a> shows Benjamini–Hochberg
+          q-values and phylogenetic contrasts.
+        </p>
+        <p>
+          The original site labelled the base columns with their complements, so its skews have the opposite sign. See
+          <a href={href("/about/")}>methods</a>.
+        </p>
+      </Card>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  document.querySelectorAll<HTMLSelectElement>("[data-cs-picker]").forEach((sel) => {
+    sel.addEventListener("change", () => {
+      window.location.assign((sel.dataset["base"] ?? "") + sel.value);
+    });
+  });
+</script>

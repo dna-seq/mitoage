@@ -1,0 +1,116 @@
+@layer tokens, reset, base, components, utilities;
+
+/* Compare section: section tabs, comparative stats tables and their controls. Imported by the
+   compare pages (not the islands). */
+@layer components {
+  /* ---------- page layout ---------- */
+  .cs-page {
+    display: flex;
+    flex-direction: column;
+    gap: var(--section-gap);
+    padding-block: var(--space-6) var(--section-gap);
+  }
+  .cs-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-4);
+  }
+  .cs-picker {
+    flex: 0 1 26rem;
+    min-width: min(100%, 18rem);
+  }
+  .cs-picker .select {
+    width: 100%;
+  }
+
+  /* ---------- table cards ---------- */
+  .cs-card {
+    gap: var(--space-4);
+  }
+  .cs-card__head .card__desc {
+    max-width: 48rem;
+  }
+  .cs-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-3) var(--space-4);
+  }
+  .cs-controls .field .select {
+    min-width: 13rem;
+  }
+  .cs-status {
+    min-height: 0;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    color: var(--color-text-muted);
+  }
+  .cs-status:empty {
+    display: none;
+  }
+  .cs-card .dtable table {
+    font-size: var(--fs-base);
+  }
+  .cs-card .dtable th,
+  .cs-card .dtable td {
+    padding-inline: 0.7em;
+  }
+  .cs-card .dtable__primary {
+    white-space: nowrap;
+  }
+
+
+  /* Parameter switch: pills where they fit, a select on phones. */
+  .cs-param__select {
+    display: none;
+  }
+  @media (max-width: 40rem) {
+    .cs-param__seg {
+      display: none;
+    }
+    .cs-param__select {
+      display: flex;
+    }
+    .cs-controls,
+    .cs-controls .field,
+    .cs-controls .field .select {
+      width: 100%;
+    }
+  }
+
+  /* ---------- notes ---------- */
+  .cs-notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+    gap: var(--space-5);
+  }
+  .cs-notes p,
+  .cs-notes li {
+    font-size: var(--fs-sm);
+    line-height: 1.6;
+  }
+  .cs-notes p + p {
+    margin-top: var(--space-2);
+  }
+  .cs-notes ul {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding-left: 1.2em;
+    list-style: disc;
+  }
+
+  /* ---------- link lists (regions, child taxa) ---------- */
+  .cs-links {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+    gap: var(--space-3);
+  }
+  .cs-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+}

@@ -325,6 +325,45 @@
     background: var(--grad-primary);
   }
 
+  /* ================= Section tabs (links between the pages of a section) ================= */
+  .section-tabs {
+    display: flex;
+    gap: var(--space-1);
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.375rem;
+    border-radius: var(--radius-pill);
+    background: var(--color-surface);
+    box-shadow: var(--shadow-sm);
+    overflow-x: auto;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+  .section-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  .section-tabs__link {
+    flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--tap);
+    padding: 0 1.15em;
+    border-radius: var(--radius-pill);
+    color: var(--color-text);
+    font-size: var(--fs-base);
+    font-weight: var(--fw-black);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .section-tabs__link:hover {
+    color: var(--color-link);
+    background: var(--color-surface-sunken);
+  }
+  .section-tabs__link[aria-current="page"] {
+    color: var(--white);
+    background: var(--grad-primary);
+  }
+
   /* ================= In-page tab bar ================= */
   .tabnav {
     position: sticky;
@@ -520,6 +559,30 @@
     text-align: left;
     vertical-align: middle;
   }
+  /* Cards allow breaks anywhere; table cells break between words only. */
+  .dtable td {
+    overflow-wrap: normal;
+  }
+  .dtable__sub {
+    white-space: nowrap;
+  }
+  /* Wide tables scroll sideways with the name column pinned. */
+  @media (min-width: 40.01rem) {
+    .dtable thead th:first-child {
+      left: 0;
+      z-index: 2;
+    }
+    .dtable tbody td.dtable__primary:first-child {
+      position: sticky;
+      left: 0;
+      z-index: 1;
+      background: var(--color-surface);
+      box-shadow: inset -2px 0 0 var(--color-border);
+    }
+    .dtable tbody tr:hover td.dtable__primary:first-child {
+      background: var(--color-surface-2);
+    }
+  }
   .dtable thead th {
     position: sticky;
     top: 0;
@@ -567,6 +630,7 @@
     flex-direction: row-reverse;
   }
   .dtable__sort svg {
+    flex: none;
     width: 0.9em;
     height: 0.9em;
     opacity: 0.35;
@@ -600,6 +664,29 @@
   }
   .dtable__mobile-sort {
     display: none;
+  }
+  .dtable__csv {
+    margin-left: auto;
+    gap: 0.45em;
+  }
+  .dtable__csv svg {
+    width: 1.1em;
+    height: 1.1em;
+  }
+  .dtable__foot {
+    display: flex;
+    justify-content: flex-end;
+  }
+  a.dtable__sub {
+    color: var(--color-link);
+    width: fit-content;
+  }
+  .dtable .is-num .dtable__sub {
+    margin-left: auto;
+    text-align: right;
+  }
+  a.dtable__sub:hover {
+    color: var(--color-link-hover);
   }
 
   @media (max-width: 40rem) {
@@ -664,6 +751,12 @@
     }
     .dtable--stack td.is-primary::before {
       display: none;
+    }
+    .dtable--stack .dtable__sub,
+    .dtable--stack .is-num .dtable__sub {
+      margin-left: 0;
+      text-align: left;
+      white-space: normal;
     }
     .dtable--stack td.is-wide {
       grid-column: 1 / -1;

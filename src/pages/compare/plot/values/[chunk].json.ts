@@ -1,6 +1,6 @@
 /**
  * Per-gene codon and amino-acid frequencies for the plot explorer:
- * /explore/values/{gene}-codon.json (64 features) and /explore/values/{gene}-aa.json (20 features)
+ * /compare/plot/values/{gene}-codon.json (64 features) and /compare/plot/values/{gene}-aa.json (20 features)
  * for the 13 protein-coding genes. Everything else the explorer plots is in /data/explorer.json.
  */
 import type { APIRoute, GetStaticPaths } from "astro";

@@ -1,6 +1,6 @@
 /**
  * Precomputed correlations for one trait and scope, sorted by |Spearman rho|:
- * /explore/correlations/{trait}/{scope}.json, e.g. /explore/correlations/maxLongevityYears/class-mammalia.json.
+ * /compare/plot/correlations/{trait}/{scope}.json, e.g. /compare/plot/correlations/maxLongevityYears/class-mammalia.json.
  * Each file is one (trait, scope) slice of the pipeline's correlation table (at most 1,257 rows),
  * so the browser never downloads the whole table.
  */

@@ -1,0 +1,25 @@
+---
+/**
+ * Page-level tabs of a site section (links between pages, unlike the in-page TabNav):
+ * <SectionTabs label="Compare" items={[{ label: "Statistics", href: "/compare/", current: true }, ...]} />
+ * Hrefs are root-relative and go through href().
+ */
+import { href } from "~/lib/url";
+
+interface Props {
+  label: string;
+  items: { label: string; href: string; current?: boolean }[];
+  class?: string;
+}
+const { label, items, class: className } = Astro.props;
+---
+
+<nav class:list={["section-tabs", className]} aria-label={label}>
+  {
+    items.map((t) => (
+      <a class="section-tabs__link" href={href(t.href)} aria-current={t.current ? "page" : undefined}>
+        {t.label}
+      </a>
+    ))
+  }
+</nav>

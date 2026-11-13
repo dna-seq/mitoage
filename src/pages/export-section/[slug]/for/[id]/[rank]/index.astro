@@ -1,0 +1,18 @@
+---
+/** Old site: /export-section/{region}/for/{classId}/class/ -> /compare/regions/{region}/?q={Class}#species. */
+import type { GetStaticPaths } from "astro";
+import { legacyRegions, legacyTaxa } from "~/lib/compare/legacyRoutes";
+import { compareRegionUrl } from "~/lib/compare/params";
+
+export const getStaticPaths = (() =>
+  legacyTaxa()
+    .filter((t) => t.rank === "class")
+    .flatMap((t) =>
+      legacyRegions().map(({ slug, region }) => ({
+        params: { slug, id: String(t.id), rank: "class" },
+        props: { to: compareRegionUrl(region, `?q=${encodeURIComponent(t.node.name)}#species`) },
+      })),
+    )) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---

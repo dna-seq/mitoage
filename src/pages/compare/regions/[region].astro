@@ -1,0 +1,137 @@
+---
+/**
+ * /compare/regions/{region}/ - one region of the mitochondrial genome across all species: every
+ * parameter summarised, the same by class, order or family, and every species' values (the old
+ * site's /stats-for/{gene}/gene/ and /export-section/ pages).
+ */
+import type { GetStaticPaths } from "astro";
+import type { Region } from "~/data";
+import CompareNav from "~/components/compare/CompareNav.astro";
+import RegionTaxa from "~/components/compare/stats/RegionTaxa";
+import SpeciesValues from "~/components/compare/stats/SpeciesValues";
+import "~/components/compare/stats/stats.css";
+import Button from "~/components/ui/Button.astro";
+import Card from "~/components/ui/Card.astro";
+import Chip from "~/components/ui/Chip.astro";
+import DataTable from "~/components/ui/DataTable";
+import Hero from "~/components/ui/Hero.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { getStatsGroup, groupStats, regionValues, taxonomyFile } from "~/lib/compare/build";
+import {
+  compareRegionUrl,
+  DEFAULT_PARAM,
+  regionSlug,
+  regionValuesCsvUrl,
+  STATS_REGIONS,
+  statsRegionLabel,
+} from "~/lib/compare/params";
+import { packRows, paramSummaryColumns, paramSummaryRows, taxaRows } from "~/lib/compare/rows";
+import { fmtInt } from "~/lib/format";
+import { GENE_PAGE_REGIONS, REGION_INFO } from "~/lib/genes";
+import { breadcrumbLd } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { geneUrl } from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  STATS_REGIONS.map((region) => ({ params: { region: regionSlug(region) }, props: { region } }))) satisfies GetStaticPaths;
+
+const { region } = Astro.props as { region: Region };
+const all = getStatsGroup("all")!;
+const file = groupStats(all);
+const summary = paramSummaryRows(file, region);
+const values = regionValues(region);
+const initialTaxa = packRows(taxaRows(taxonomyFile(), values, { rank: "all", name: "" }, "class", DEFAULT_PARAM));
+const label = statsRegionLabel(region);
+const info = REGION_INFO[region];
+const hasGenePage = (GENE_PAGE_REGIONS as readonly string[]).includes(region);
+const n = values.species.length;
+
+const title = `${label}: mitochondrial DNA compared`;
+const description = `${info.name} in ${fmtInt(n)} animal species: length, base composition, GC and AT skew summarised (n, mean, SD, min, median, max), by class, order and family, and every species' values with a CSV download.`;
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  jsonLd={breadcrumbLd(Astro.site, [
+    { name: "Compare", path: "/compare/" },
+    { name: "Regions", path: "/compare/regions/" },
+    { name: label, path: `/compare/regions/${regionSlug(region)}/` },
+  ])}
+>
+  <Hero variant="strip" seed={53 + STATS_REGIONS.indexOf(region)}>
+    <p class="hero__eyebrow">{info.kind} · mtDNA statistics</p>
+    <h1 class="hero__title">{label}</h1>
+    <p class="hero__lede">
+      {info.name === label ? "" : `${info.name}. `}Length, base composition and strand skews in {fmtInt(n)} species, by
+      taxon and species by species.
+    </p>
+  </Hero>
+
+  <div class="container cs-page">
+    <CompareNav current="regions" />
+
+    <nav aria-label="Regions" class="cs-chips">
+      {
+        STATS_REGIONS.map((r) =>
+          r === region ? (
+            <Chip variant="current">{statsRegionLabel(r)}</Chip>
+          ) : (
+            <Chip href={compareRegionUrl(r)}>{statsRegionLabel(r)}</Chip>
+          ),
+        )
+      }
+    </nav>
+
+    <section class="card cs-card" id="summary" aria-labelledby="summary-title">
+      <div class="card__head cs-card__head">
+        <h2 id="summary-title" class="card__title">{label} in all species</h2>
+        <span class="card__desc">Every parameter summarised over {fmtInt(n)} species</span>
+      </div>
+      <DataTable
+        client:visible
+        caption={`${label} in all species`}
+        columns={paramSummaryColumns()}
+        rows={summary}
+        csv={{ filename: `mitoage-all-${regionSlug(region)}-summary.csv` }}
+        noun={["parameter", "parameters"]}
+      />
+    </section>
+
+    <RegionTaxa client:visible region={region} rows={initialTaxa} />
+
+    <section class="card cs-card" id="species" aria-labelledby="species-title">
+      <div class="card__head cs-card__head">
+        <h2 id="species-title" class="card__title">Every species</h2>
+        <span class="card__desc">
+          Base counts on the L strand as deposited in RefSeq.{" "}
+          <a href={regionValuesCsvUrl(region)} download>Download all {fmtInt(n)} rows as CSV</a>
+        </span>
+      </div>
+      <SpeciesValues client:visible region={region} count={n} />
+    </section>
+
+    <Card as="section" title="More about this region" level={2} variant="flat">
+      <div class="cluster" style="--cluster-gap: var(--space-2)">
+        {
+          hasGenePage && (
+            <Button href={geneUrl(region)} variant="soft" size="sm" iconEnd="arrowRight">
+              {label} gene page
+            </Button>
+          )
+        }
+        <Button href={href(`/compare/?region=${regionSlug(region)}#taxa`)} variant="soft" size="sm" iconEnd="arrowRight">
+          {label} in the taxa table
+        </Button>
+        <Button
+          href={href(`/compare/plot/?x=maxLongevityYears&y=gc:${region}`)}
+          variant="soft"
+          size="sm"
+          iconEnd="arrowRight"
+        >
+          Plot its GC content against lifespan
+        </Button>
+      </div>
+    </Card>
+  </div>
+</BaseLayout>

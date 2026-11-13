@@ -1,0 +1,11 @@
+---
+/** Old site: /export-section/{region}/for-all-species/ -> /compare/regions/{region}/#species. */
+import type { GetStaticPaths } from "astro";
+import { legacyRegions } from "~/lib/compare/legacyRoutes";
+import { compareRegionUrl } from "~/lib/compare/params";
+
+export const getStaticPaths = (() =>
+  legacyRegions().map(({ slug, region }) => ({ params: { slug }, props: { to: `${compareRegionUrl(region)}#species` } }))) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---

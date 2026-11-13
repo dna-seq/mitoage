@@ -20,7 +20,8 @@ export default defineConfig({
     solid(),
     sitemap({
       // Legacy redirect stubs and the 404 page do not belong in the sitemap.
-      filter: (page) => !page.includes("/view/") && !page.endsWith("/404/"),
+      filter: (page) =>
+        !/\/(view|stats-for|export-section|browse|statistics|explore)\//.test(page) && !page.endsWith("/404/"),
     }),
   ],
   prefetch: { prefetchAll: false, defaultStrategy: "hover" },

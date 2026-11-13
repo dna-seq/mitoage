@@ -180,7 +180,7 @@ export default function Compare(props: Props) {
 
   createEffect(() => {
     if (!ready()) return;
-    const url = slugs().length ? compareUrl(slugs()) : href("/compare/");
+    const url = slugs().length ? compareUrl(slugs()) : href("/compare/species/");
     if (url !== `${window.location.pathname}${window.location.search}`) history.replaceState(history.state, "", url);
   });
 
@@ -376,7 +376,7 @@ export default function Compare(props: Props) {
             </span>
             <Show when={ok().length > 0}>
               <a class="btn btn--soft btn--sm" href={exploreUrl({ highlight: ok().map((x) => x.slug).join(",") })}>
-                Show in the plot explorer
+                Show in the plot
               </a>
             </Show>
             <button type="button" class="btn btn--soft btn--sm" onClick={() => setSlugs([])}>
@@ -438,16 +438,16 @@ export default function Compare(props: Props) {
                         </span>
                         <dl class="cmp-card__stats">
                           <div>
-                            <dt>Lifespan</dt>
-                            <dd>{fmtLifespan(d().species.maxLongevityYears)}</dd>
-                          </div>
-                          <div>
                             <dt>mtDNA</dt>
                             <dd>{fmtInt(d().species.mtdnaSizeBp)} bp</dd>
                           </div>
                           <div>
                             <dt>GC</dt>
                             <dd>{fmtFixed(d().species.gcPercent, 1)}%</dd>
+                          </div>
+                          <div>
+                            <dt>Lifespan</dt>
+                            <dd>{fmtLifespan(d().species.maxLongevityYears)}</dd>
                           </div>
                         </dl>
                       </>
@@ -566,13 +566,13 @@ export default function Compare(props: Props) {
         <section class="card cmp-section" aria-labelledby="cmp-table-title">
           <div class="card__head">
             <h2 id="cmp-table-title" class="card__title">
-              Life history and genome
+              Mitochondrial genome
             </h2>
             <span class="card__desc">Bars compare each row with its largest value</span>
           </div>
           <div class="cmp-scroll" tabIndex={0} role="region" aria-labelledby="cmp-table-title">
             <table class="cmp-table">
-              <caption class="visually-hidden">Life-history traits and genome statistics of the compared species</caption>
+              <caption class="visually-hidden">Taxonomy and mitochondrial genome statistics of the compared species</caption>
               <thead>
                 <tr>
                   <td />
@@ -611,7 +611,6 @@ export default function Compare(props: Props) {
                   <th scope="row">Family</th>
                   <For each={ok()}>{(x) => <td>{x.d.species.taxonomy.family}</td>}</For>
                 </tr>
-                <MetricRows title="Life history" metrics={LIFE_METRICS} />
                 <MetricRows title="Mitochondrial genome" metrics={GENOME_METRICS} />
               </tbody>
             </table>
@@ -741,6 +740,38 @@ export default function Compare(props: Props) {
             caption={codonMode() === "codon" ? "Codon usage, % of codons" : "Amino-acid usage, %"}
             includeZero
           />
+        </section>
+
+        <section class="card cmp-section" aria-labelledby="cmp-life-title">
+          <div class="card__head">
+            <h2 id="cmp-life-title" class="card__title">
+              Life history
+            </h2>
+            <span class="card__desc">From AnAge; bars compare each row with its largest value</span>
+          </div>
+          <div class="cmp-scroll" tabIndex={0} role="region" aria-labelledby="cmp-life-title">
+            <table class="cmp-table">
+              <caption class="visually-hidden">Life-history traits of the compared species</caption>
+              <thead>
+                <tr>
+                  <td />
+                  <For each={ok()}>
+                    {(x) => (
+                      <th scope="col">
+                        <span class="cmp-th">
+                          <Marker i={x.i} size={16} />
+                          <span>{display(x.d)}</span>
+                        </span>
+                      </th>
+                    )}
+                  </For>
+                </tr>
+              </thead>
+              <tbody>
+                <MetricRows title="Life history" metrics={LIFE_METRICS} />
+              </tbody>
+            </table>
+          </div>
         </section>
       </Show>
     </div>

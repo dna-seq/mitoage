@@ -1,0 +1,6 @@
+---
+/** Old site: /browse/taxonomy/ -> /tree/. */
+import { href } from "~/lib/url";
+
+return Astro.redirect(href("/tree/"), 301);
+---

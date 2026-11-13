@@ -136,7 +136,7 @@ const shownClasses = classes.slice(0, 6);
         note="Hover or tap a point to see the species; select it again to open its page. Legend buttons spotlight a class."
       />
       <Fragment slot="footer">
-        <Button href={href("/explore/")} variant="primary" iconEnd="arrowRight">Open the plot explorer</Button>
+        <Button href={href("/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA")} variant="primary" iconEnd="arrowRight">Plot any mtDNA feature</Button>
       </Fragment>
     </Card>
   </section>
@@ -155,8 +155,8 @@ const shownClasses = classes.slice(0, 6);
             <rect x="71" y="18" width="8" height="39" rx="3" fill="#e8503a" />
             <path d="M44 38h8" stroke="#17305c" stroke-width="3" stroke-linecap="round" />
           </svg>
-          <h3>Compare side by side</h3>
-          <p>Put any species or taxa next to each other and share the link.</p>
+          <h3>Compare mitochondrial DNA</h3>
+          <p>Composition, skews, length and codon usage of every region, by class, order and family.</p>
         </a>
         <a class="feature" href={href("/about/")}>
           <svg class="feature__art" viewBox="0 0 96 72" aria-hidden="true">

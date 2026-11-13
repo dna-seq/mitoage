@@ -1,6 +1,6 @@
 /**
  * Explorer view state <-> query string, so every view is a shareable link:
- *   /explore/?x=maxLongevityYears&y=gc:ND6&logx=1&scope=class:Mammalia&highlight=homo-sapiens,mus-musculus&fit=1
+ *   /compare/plot/?x=maxLongevityYears&y=gc:ND6&logx=1&scope=class:Mammalia&highlight=homo-sapiens,mus-musculus&fit=1
  * Absent params take defaults; log flags default per variable (null = "use the variable's default").
  */
 
@@ -15,8 +15,9 @@ export interface ExploreState {
   fit: boolean;
 }
 
-export const DEFAULT_X = "maxLongevityYears";
-export const DEFAULT_Y = "gc:total_mtDNA";
+/** mtDNA first: GC content against GC skew of the whole genome. Lifespan is one click away. */
+export const DEFAULT_X = "gc:total_mtDNA";
+export const DEFAULT_Y = "gcSkew:total_mtDNA";
 export const MAX_HIGHLIGHTS = 8;
 
 export const DEFAULT_STATE: ExploreState = {

@@ -28,6 +28,8 @@ import { treeUrl } from "~/lib/tree/data";
 import { childRank, RANK_LABEL, rankCount, rankPlural } from "~/lib/tree/names";
 import { cladeLd } from "~/lib/tree/seo";
 import { speciesUrl, taxonUrl } from "~/lib/urls";
+import { statsGroupForTaxon } from "~/lib/compare/build";
+import { compareGroupUrl, type GroupRank } from "~/lib/compare/params";
 
 export const getStaticPaths = (() =>
   getTaxa().map((taxon) => ({ params: { rank: taxon.rank, slug: taxon.slug }, props: { taxon } }))) satisfies GetStaticPaths;
@@ -46,6 +48,7 @@ const stats = cladeStats(species);
 const ancestors = ancestorsOf(taxon);
 const parent = ancestors[ancestors.length - 1];
 const isGenus = rank === "genus";
+const statsGroup = statsGroupForTaxon(rank, name);
 const children = taxon.children;
 const kidRank = childRank(rank);
 const ucFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -175,6 +178,11 @@ const wideChildren = !showTree;
     <Fragment slot="aside">
       <div class="hero__actions">
         <Button href={treeUrl(key)} variant="light" icon="tree">Show in the tree</Button>
+        {statsGroup && (
+          <Button href={compareGroupUrl(statsGroup.rank as GroupRank, statsGroup.slug)} variant="outline-light" icon="dna">
+            Compare mtDNA
+          </Button>
+        )}
       </div>
     </Fragment>
   </Hero>

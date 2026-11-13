@@ -1,0 +1,15 @@
+---
+/** /compare/{class|order|family}/{slug}/ - comparative mtDNA statistics of one taxon (see GroupPage). */
+import type { GetStaticPaths } from "astro";
+import GroupPage from "~/components/compare/stats/GroupPage.astro";
+import { type StatsGroup, statsGroups } from "~/lib/compare/build";
+
+export const getStaticPaths = (() =>
+  statsGroups()
+    .filter((g) => g.rank !== "all")
+    .map((group) => ({ params: { rank: group.rank, slug: group.slug }, props: { group } }))) satisfies GetStaticPaths;
+
+const { group } = Astro.props as { group: StatsGroup };
+---
+
+<GroupPage group={group} />

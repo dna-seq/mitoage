@@ -1,0 +1,19 @@
+---
+/** Old site: /stats-for/{classId}/class/for-gene/{GENE}/ -> /compare/class/{slug}/?region={region}#taxa. */
+import type { GetStaticPaths } from "astro";
+import { legacyRegions, legacyTaxa, taxonStatsUrl } from "~/lib/compare/legacyRoutes";
+import { regionSlug } from "~/lib/compare/params";
+
+export const getStaticPaths = (() =>
+  legacyTaxa()
+    .filter((t) => t.rank === "class")
+    .flatMap((t) =>
+      legacyRegions().map(({ slug, region }) => {
+        const base = taxonStatsUrl(t);
+        const to = base.includes("/compare/") ? `${base}?region=${regionSlug(region)}#taxa` : base;
+        return { params: { key: String(t.id), kind: "class", gene: slug }, props: { to } };
+      }),
+    )) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---

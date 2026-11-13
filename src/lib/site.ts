@@ -46,21 +46,23 @@ export interface NavItem {
  * desktop and in the mobile menu, and marks it current for any URL under `href`.
  */
 export const NAV_ITEMS: readonly NavItem[] = [
-  { label: "Species", href: "/species/", hint: "Every species with its genome stats" },
+  { label: "Species", href: "/species/", hint: "Every species: its genome and life history" },
   { label: "Tree", href: "/tree/", hint: "Browse the taxonomy" },
   { label: "Genes", href: "/genes/", hint: "The 13 protein-coding genes, rRNA and D-loop" },
-  { label: "Explore", href: "/explore/", hint: "Plot any feature against lifespan" },
-  { label: "Compare", href: "/compare/", hint: "Put species side by side" },
+  { label: "Compare", href: "/compare/", hint: "mtDNA statistics across species and taxa" },
   { label: "Data", href: "/data/", hint: "Download every table" },
   { label: "About", href: "/about/", hint: "Methods, sources and citation" },
 ];
 
 export const FOOTER_LINKS: readonly { label: string; href: string }[] = [
   { label: "Species", href: "/species/" },
+  { label: "Life history", href: "/species/life-history/" },
   { label: "Taxonomy tree", href: "/tree/" },
   { label: "Genes", href: "/genes/" },
-  { label: "Plot explorer", href: "/explore/" },
-  { label: "Compare", href: "/compare/" },
+  { label: "Compare mtDNA", href: "/compare/" },
+  { label: "Regions", href: "/compare/regions/" },
+  { label: "Species side by side", href: "/compare/species/" },
+  { label: "Plot", href: "/compare/plot/" },
   { label: "Download data", href: "/data/" },
   { label: "Methods and sources", href: "/about/" },
 ];

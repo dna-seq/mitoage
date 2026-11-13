@@ -1,0 +1,11 @@
+---
+/** Old site: /browse/{id}/{class|order|family}/ (species of a taxon) -> /taxa/{rank}/{slug}/. */
+import type { GetStaticPaths } from "astro";
+import { legacyTaxa } from "~/lib/compare/legacyRoutes";
+import { taxonUrl } from "~/lib/urls";
+
+export const getStaticPaths = (() =>
+  legacyTaxa().map((t) => ({ params: { id: String(t.id), rank: t.rank }, props: { to: taxonUrl(t.rank, t.node.slug) } }))) satisfies GetStaticPaths;
+
+return Astro.redirect((Astro.props as { to: string }).to, 301);
+---
