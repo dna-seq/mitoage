@@ -81,6 +81,22 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
   `#mitoalignments`; the order is a default, not a question on the desk.
 - Next: RM12 step 1 (the aligner comparison), then the positive controls; RM3, RM2, RM8 after.
 
+### Late evening of 2026-11-13
+
+- RM12 steps 1 and 2 are done and reported in `#mitoalignments`. Aligners: the pin stays; ND6, ATP8 and ND5
+  are soft, a site-level finding there is run on two alignments. Controls, mammals only: threonine up and
+  cysteine down with lifespan hold after body mass, family and order, and base composition at fourfold
+  sites; methionine shows nothing; outside mammals nothing holds. The control set for step 3 is those
+  three. No real tree yet: family and order groupings.
+- RM16 (peptides inside mtDNA) was asked by the maintainer and piloted: the human frames match the
+  published ones; across species only SHLP6 looks kept, and none is beyond the null of its host gene.
+  MTALTCO1 was not found by length; its coordinates are needed from the paper. Desk #36 asks whether the
+  peptides go before the main analysis; the default is after.
+- The research scripts and their outputs are in the cluster's run folder for this repository, under
+  `rm12/`, until desk #30 says where they live. A column named after one letter (`C`, `I`, `Q`) breaks a
+  statsmodels formula: the amino-acid columns are `aa_X`.
+- Next: RM12 step 3, site by site, with the control set above; then RM16 steps 2 and 4.
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).
