@@ -207,3 +207,6 @@ machine and this project that reading the code does not reveal.
   is parquet (`public/data/`), read by `src/data/index.ts` at build time; derived tables (feature
   values, correlations, explorer.json) are computed during the site build, never committed (D3).
 - 2026-11-13, the maintainer: "so drop this rule" (the 5 MB per-file limit). GitHub itself warns at 50 MB and rejects files over 100 MB; those are GitHub limits, not a project rule.
+- 2026-11-13, the maintainer, once headless screenshots of the built site worked on the cluster: "you can
+  also do visual work on cluster and post screenshots to zulip as proofs of changes". A change a visitor
+  sees is posted in the repository's channel with its screenshots, a phone's and a desktop's width.
