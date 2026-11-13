@@ -70,44 +70,32 @@ A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and
 `plans/DATA_BUILD2_DECISIONS.md`, section 7: each build is intended for a Zenodo DOI. The seat prepares
 the deposit's files and text; publishing is outside its grant.
 
-## RM10 — Multiple sequence alignments of the mitochondrial genes
+## RM10 — Alignments on the gene pages
 
-**State:** waits until 2026-11-14: the maintainer's go on the design, asked in `#mitoage>decisions` on 2026-11-13 while they were answering there; unanswered, it goes to the desk · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
-Asked by the maintainer (2026-11-13): "check if we can prepare multiple sequence alignments between
-mitochondria of different species to find some insights and also provide it through website".
+The alignments exist (`bun run align`, `public/data/alignments/`, D5). On each gene page: an alignment
+viewer (rows in the tree's order, a conservation track, lifespan beside each row, a filter by taxon) and
+the downloads; the Data page lists the files. The viewer loads one gene's file, not all.
 
-It can be done. A hand run on 2026-11-13, from the pinned RefSeq release 237 and the 2,316 non-retired
-species of build 2: the 13 proteins and the two rRNAs extracted with the pipeline's own GenBank parser
-(12 s), each aligned with MAFFT 7.526 (`--auto`, 8 threads): every protein in 1 to 5 s, 12S rRNA in 12 s,
-16S in 29 s. All 15 alignments are 5.4 MB gzipped. COX1 is the most conserved (415 of 515 well-occupied
-columns carry one residue in 90 % of species), ATP8 and ND6 the least. Six records have no sequence in
-the release file and need the fetch the pipeline already does for them. No insight was looked for yet:
-the run shows cost and size only.
+## RM12 — Sites that go with lifespan
 
-Prior art, asked by the maintainer before any pipeline work ("check if smb already done and published";
-a helper agent's search of 2026-11-13, unchecked except where said): no live resource offers per-gene
-alignments of mitochondrial genes for a species set like this one, and none attaches lifespan (the old
-alignment databases are offline; MitoFish, MIDORI2 and RefSeq give unaligned sequences). A site-level screen
-against lifespan was published once: Mariadassou & Pellay 2014, Exp Gerontol 56:53,
-doi:10.1016/j.exger.2014.03.009 (the record checked at PubMed; its methods and data release not read, the
-paper is paywalled). The rest is composition (cysteine, methionine, threonine against lifespan, and the
-rebuttal that these follow nucleotide bias: Jobson 2010, Aledo 2012) or rates of evolution. So the design
-gains two points: hits are compared with the 2014 paper's positions, and the screen controls for body mass
-and nucleotide bias, with the three amino-acid results as positive controls.
+**State:** unattended · **Owner:** lead
 
-The design proposed, each point the maintainer's to change:
+Per-site association of each alignment column with maximum lifespan on the dated tree, controlling for
+body mass and for nucleotide bias (Jobson 2010, Aledo 2012), corrected for the number of sites. Positive
+controls first: cysteine, methionine and threonine content against lifespan must come out as published.
+Hits are compared with the positions of Mariadassou & Pellay 2014 (doi:10.1016/j.exger.2014.03.009), whose
+full text is needed. Poorly aligned columns are left out by an occupancy rule set before looking at results.
+Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
 
-1. **What is aligned:** each of the 13 proteins as amino acids, the codon alignment derived from it, and
-   the two rRNAs. No whole-genome alignment: gene order differs between phyla, so it would not mean much.
-2. **The tool:** MAFFT, a program the pipeline calls, pinned by version. It is the first step of the
-   pipeline that is not TypeScript; the alignments are committed outputs, so the site build needs no
-   MAFFT. Rejected: an aligner written in TypeScript (far slower and worse on 2,300 sequences).
-3. **Insights, first set:** conservation per site; sites whose residue goes with maximum lifespan, tested
-   with the dated tree the pipeline already has (phylogenetic contrasts) and corrected for the number of
-   sites; nothing claimed from an uncorrected comparison.
-4. **The site:** on each gene page an alignment viewer (rows in the tree's order, a conservation track,
-   lifespan beside each row, a filter by taxon) and the aligned FASTA as a download.
+## RM13 — Structural alignments: a check
+
+**State:** after RM12 · **Owner:** lead
+
+The maintainer: "then we can check if we can do structural alignments". A check, not a build: for the
+respiratory complexes with solved structures, does aligning by structure (or predicted structure) change
+the columns of the well-conserved core, and at what cost for 2,300 species.
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 

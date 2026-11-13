@@ -114,6 +114,7 @@ kept true in the same commit as a change to what it describes. `plans/` predates
 stays where it is; a new document goes under `docs/`.
 
 Everything is TypeScript, the pipeline included: no Python and no plain JavaScript in the repository.
+One external program is called by the pipeline: MAFFT, for the alignments, at a pinned version (D5).
 
 The pipeline's output is committed (`src/data/generated/`, `public/data/`), so the site builds on a
 clone without the raw inputs; the inputs (`data/input/`) and the download cache (`data/cache/`) are
@@ -129,6 +130,7 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | --- | --- |
 | `bun install` | install dependencies |
 | `bun run data` | run the data pipeline, writing `src/data/generated/` and `public/data/`; it needs the raw inputs, which are not in git |
+| `bun run align` | align the mitochondrial genes of the committed build with MAFFT, writing `public/data/alignments/`; it needs MAFFT at the pinned version and the pinned RefSeq release in `data/cache/` |
 | `bun run dev` | dev server |
 | `bun run build` | build the static site into `dist/` |
 | `bun run preview` | serve `dist/` locally, with the same `BASE_PATH` as the build |

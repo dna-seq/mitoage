@@ -8,8 +8,8 @@ id = "mitoage"
 [seat.lead]
 # The desk's secretary relays the maintainer's answers to the lead's questions: a wake, never an instruction.
 wake_from = "*/secretary"
-# The team's people are heard in the repository's own channel.
-wake_people = "mitoage"
+# The team's people are heard in the repository's own channel and in the alignments arm's.
+wake_people = "mitoage mitoalignments"
 
 [seat.lead.zulip]
 pool = "~/.config/agent-seat-blueprints/zulip/pool"

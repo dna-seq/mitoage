@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Alignments of the mitochondrial genes** (D5, RM10's first part). `bun run align` aligns each of the 13
+  proteins (amino acids), derives the codon alignment each implies, and aligns the 12S and 16S rRNA genes,
+  for the 2,316 live species of build 2, from the pinned RefSeq release, with MAFFT v7.526 (FFT-NS-2;
+  another version stops the run). Output: `public/data/alignments/`, 28 gzipped FASTA files (11 MB), a
+  manifest (`alignments.json`: counts, columns, checksums, the 31 gene absences, the 48 genes annotated
+  twice, 2 codon rows left out for a frameshift in the record) and a README. Checked: every alignment is
+  its input with gaps; every codon row translates to its protein under the species' genetic code (no
+  mismatch in any of the 13 genes); two runs with 2 and 8 threads give identical files. Tests on the
+  committed files and on the library, one of them confirmed by breaking the codon threading. Not on the
+  site's pages yet: the files are served under `/data/alignments/`.
 - Roadmap: RM10 gains the prior-art check on alignments and site-level lifespan screens; RM11 records the mitoport idea and the bounded test proposed for it. Documents only.
 - **A species page says where its record comes from** (RM1). The lifespan card and the life-history card
   link to the source that holds the value (AnAge, FishBase, SeaLifeBase or the USGS longevity records);

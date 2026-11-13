@@ -73,3 +73,22 @@ rule only: "so drop this rule".
   chunks. D3 (parquet as the committed format, derived tables computed at site build) stands on its
   own and is kept.
 
+
+## D5 — Alignments of the mitochondrial genes, made with MAFFT (2026-11-13)
+
+The maintainer asked whether multiple sequence alignments between the mitochondria of different species
+could be prepared, used to find insights and offered on the site; then, before any pipeline work, "can you
+check if smb already done and published". The check found no live resource with such alignments and one
+site-level lifespan screen (Mariadassou & Pellay 2014). The maintainer: "That means we can start a research
+arm (and a subchannel) on mitoalignments. I think we can do regular MSA and then we can check if we can do
+structural alignments".
+
+- **Decided:** each of the 13 proteins is aligned as amino acids, with the codon alignment it implies, and
+  the two rRNAs as nucleotides, across the live species of the build; the files are committed under
+  `public/data/alignments/` (`bun run align`). Structural alignment is checked afterwards, as its own item.
+- **The aligner is MAFFT, an external program**, pinned by version, with the method named outright
+  (FFT-NS-2). It is the one step of the pipeline that is not TypeScript: the code that calls it is, and
+  the site build does not need it, since the alignments are committed. This was the lead's proposal, put
+  to the maintainer as point 2 of the design and not objected to; the go was given on the design as a whole.
+- **Rejected:** a whole-genome alignment (gene order differs between phyla, so its columns would not mean
+  much), and an aligner written in TypeScript (far slower and worse on 2,300 sequences).

@@ -1,0 +1,763 @@
+{
+ "aligner": {
+  "program": "MAFFT",
+  "version": "v7.526",
+  "arguments": "--retree 2 --maxiterate 0 --quiet",
+  "method": "FFT-NS-2 (progressive)"
+ },
+ "source": {
+  "name": "NCBI RefSeq mitochondrion release",
+  "version": "release 237 (mitochondrion.1.genomic.gbff.gz, file date 2026-09-03)",
+  "md5": "4491799651740f49c8f6a011cf9a96e5"
+ },
+ "species": 2316,
+ "files": [
+  {
+   "file": "ND1.aa.fasta.gz",
+   "gene": "ND1",
+   "kind": "protein",
+   "sequences": 2315,
+   "columns": 431,
+   "occupiedColumns": 324,
+   "invariantColumns": 4,
+   "conserved90Columns": 176,
+   "sha256": "853eafd1d17620592b3b618edce4b8ccb04a0d9992b59b7e7a51ed1779cbec92",
+   "bytes": 172907
+  },
+  {
+   "file": "ND1.codon.fasta.gz",
+   "gene": "ND1",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 1293,
+   "occupiedColumns": 972,
+   "invariantColumns": 32,
+   "conserved90Columns": 407,
+   "sha256": "bcc4725897602ae912086ad90a920bcc6bd1a7a80de3cb3265299e9b6767f0fb",
+   "bytes": 566708
+  },
+  {
+   "file": "ND2.aa.fasta.gz",
+   "gene": "ND2",
+   "kind": "protein",
+   "sequences": 2315,
+   "columns": 734,
+   "occupiedColumns": 348,
+   "invariantColumns": 1,
+   "conserved90Columns": 90,
+   "sha256": "6e2c7cc20c351c8559279279b3f016d2943ff91a89c5e507258016b79d2c0e8c",
+   "bytes": 302734
+  },
+  {
+   "file": "ND2.codon.fasta.gz",
+   "gene": "ND2",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 2202,
+   "occupiedColumns": 1044,
+   "invariantColumns": 3,
+   "conserved90Columns": 281,
+   "sha256": "628ae6fba8e39d1566e0ab65c1c2241b45ce58c8c25ddb292db2a9894d6ae8cb",
+   "bytes": 727209
+  },
+  {
+   "file": "COX1.aa.fasta.gz",
+   "gene": "COX1",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 679,
+   "occupiedColumns": 516,
+   "invariantColumns": 40,
+   "conserved90Columns": 415,
+   "sha256": "0265df45166d98399358c89609c72ba68b80d88d83f7890501d490026cc0a2dd",
+   "bytes": 144935
+  },
+  {
+   "file": "COX1.codon.fasta.gz",
+   "gene": "COX1",
+   "kind": "codon",
+   "sequences": 2316,
+   "columns": 2037,
+   "occupiedColumns": 1548,
+   "invariantColumns": 174,
+   "conserved90Columns": 878,
+   "sha256": "c1c85baae0bb294c9344433a7a8693c0ba225f6e0b52210cbd62a01928c5088c",
+   "bytes": 791357
+  },
+  {
+   "file": "COX2.aa.fasta.gz",
+   "gene": "COX2",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 988,
+   "occupiedColumns": 229,
+   "invariantColumns": 3,
+   "conserved90Columns": 119,
+   "sha256": "0aa7caca3cc6ece2d54a026d5814c68aa3e629dd1337c85a90d3cf448dc6831c",
+   "bytes": 147058
+  },
+  {
+   "file": "COX2.codon.fasta.gz",
+   "gene": "COX2",
+   "kind": "codon",
+   "sequences": 2316,
+   "columns": 2964,
+   "occupiedColumns": 687,
+   "invariantColumns": 23,
+   "conserved90Columns": 314,
+   "sha256": "3845334f608e384533d6455d09bb2a03e04620ccf162576186f894fa690fbe21",
+   "bytes": 469543
+  },
+  {
+   "file": "ATP8.aa.fasta.gz",
+   "gene": "ATP8",
+   "kind": "protein",
+   "sequences": 2296,
+   "columns": 266,
+   "occupiedColumns": 55,
+   "invariantColumns": 0,
+   "conserved90Columns": 8,
+   "sha256": "43289aff21b8c3ab2033da2f8061090f721b5b2e55515359b5fffc6208b6fbb8",
+   "bytes": 98230
+  },
+  {
+   "file": "ATP8.codon.fasta.gz",
+   "gene": "ATP8",
+   "kind": "codon",
+   "sequences": 2296,
+   "columns": 798,
+   "occupiedColumns": 165,
+   "invariantColumns": 1,
+   "conserved90Columns": 35,
+   "sha256": "c2b95f47856d5adf2199bf01d64c2c6143d7584466fd784fed4e0a06de8c5042",
+   "bytes": 166208
+  },
+  {
+   "file": "ATP6.aa.fasta.gz",
+   "gene": "ATP6",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 407,
+   "occupiedColumns": 227,
+   "invariantColumns": 1,
+   "conserved90Columns": 88,
+   "sha256": "5118bc02d1a879469a2be2606ba96e3af14d7251801c14f888e6e78157e67619",
+   "bytes": 155935
+  },
+  {
+   "file": "ATP6.codon.fasta.gz",
+   "gene": "ATP6",
+   "kind": "codon",
+   "sequences": 2316,
+   "columns": 1221,
+   "occupiedColumns": 681,
+   "invariantColumns": 11,
+   "conserved90Columns": 240,
+   "sha256": "28a0a9bbc760d59b5ce5016953f71e4187499101ff34decf244de00766c78f2e",
+   "bytes": 443425
+  },
+  {
+   "file": "COX3.aa.fasta.gz",
+   "gene": "COX3",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 468,
+   "occupiedColumns": 261,
+   "invariantColumns": 5,
+   "conserved90Columns": 167,
+   "sha256": "c56051977412d2e58fcc9270c2588e723d0ed060ae3c0b6218ea3543913e2ddc",
+   "bytes": 125695
+  },
+  {
+   "file": "COX3.codon.fasta.gz",
+   "gene": "COX3",
+   "kind": "codon",
+   "sequences": 2316,
+   "columns": 1404,
+   "occupiedColumns": 783,
+   "invariantColumns": 33,
+   "conserved90Columns": 387,
+   "sha256": "f68e47ad7ba281b230bae79e95402845e534023ddce63b457dc92d22e175a6b5",
+   "bytes": 430614
+  },
+  {
+   "file": "ND3.aa.fasta.gz",
+   "gene": "ND3",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 203,
+   "occupiedColumns": 116,
+   "invariantColumns": 1,
+   "conserved90Columns": 54,
+   "sha256": "196b4e523fe923efe2757aac959ab70e698f84fc2da1db6de4460d5ed204fd82",
+   "bytes": 100150
+  },
+  {
+   "file": "ND3.codon.fasta.gz",
+   "gene": "ND3",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 609,
+   "occupiedColumns": 348,
+   "invariantColumns": 7,
+   "conserved90Columns": 120,
+   "sha256": "73bfa9f484cf2183e6530ef36c6e42c41ff159dbbeeb3738210373563af35905",
+   "bytes": 235532
+  },
+  {
+   "file": "ND4L.aa.fasta.gz",
+   "gene": "ND4L",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 193,
+   "occupiedColumns": 98,
+   "invariantColumns": 0,
+   "conserved90Columns": 35,
+   "sha256": "6fcebea16dac313acc10de7e3b0abbd778521f885726f7aee3f2e4e03bf01a47",
+   "bytes": 90555
+  },
+  {
+   "file": "ND4L.codon.fasta.gz",
+   "gene": "ND4L",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 579,
+   "occupiedColumns": 294,
+   "invariantColumns": 4,
+   "conserved90Columns": 90,
+   "sha256": "c8c24086a645154114fe3bc36f3748f7931a1c66934d4e56475eea529abfbb8e",
+   "bytes": 209024
+  },
+  {
+   "file": "ND4.aa.fasta.gz",
+   "gene": "ND4",
+   "kind": "protein",
+   "sequences": 2316,
+   "columns": 671,
+   "occupiedColumns": 460,
+   "invariantColumns": 5,
+   "conserved90Columns": 187,
+   "sha256": "efb2c568579150d3b55200b60f1d2be503ff45af6d38c8b34a2fcd2a06c3d542",
+   "bytes": 295371
+  },
+  {
+   "file": "ND4.codon.fasta.gz",
+   "gene": "ND4",
+   "kind": "codon",
+   "sequences": 2316,
+   "columns": 2013,
+   "occupiedColumns": 1380,
+   "invariantColumns": 30,
+   "conserved90Columns": 477,
+   "sha256": "93aeee506d5665772517b38d53f9c11a815486e01f3fae04e986aa48a6964599",
+   "bytes": 853042
+  },
+  {
+   "file": "ND5.aa.fasta.gz",
+   "gene": "ND5",
+   "kind": "protein",
+   "sequences": 2315,
+   "columns": 1193,
+   "occupiedColumns": 604,
+   "invariantColumns": 10,
+   "conserved90Columns": 235,
+   "sha256": "bb9ac1de596095cd4c0fb79f6f0634bcc86e13c9715ca6f08630c423a1b848cd",
+   "bytes": 454690
+  },
+  {
+   "file": "ND5.codon.fasta.gz",
+   "gene": "ND5",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 3579,
+   "occupiedColumns": 1812,
+   "invariantColumns": 40,
+   "conserved90Columns": 629,
+   "sha256": "95750d80fe7167a2fdcad7ebf36cc45cdbdfa51ace9c052ee381f15440f94fad",
+   "bytes": 1195486
+  },
+  {
+   "file": "ND6.aa.fasta.gz",
+   "gene": "ND6",
+   "kind": "protein",
+   "sequences": 2314,
+   "columns": 484,
+   "occupiedColumns": 165,
+   "invariantColumns": 0,
+   "conserved90Columns": 29,
+   "sha256": "7cf442d430a0a61c89f94007a79d4e5d23400e48f0422332853f53ef7a5d440c",
+   "bytes": 182481
+  },
+  {
+   "file": "ND6.codon.fasta.gz",
+   "gene": "ND6",
+   "kind": "codon",
+   "sequences": 2314,
+   "columns": 1452,
+   "occupiedColumns": 495,
+   "invariantColumns": 0,
+   "conserved90Columns": 127,
+   "sha256": "2d84b0fe35e730485aaea34761efcd48444d69595818a0657bee6cb285d2b638",
+   "bytes": 412973
+  },
+  {
+   "file": "CYTB.aa.fasta.gz",
+   "gene": "CYTB",
+   "kind": "protein",
+   "sequences": 2315,
+   "columns": 548,
+   "occupiedColumns": 379,
+   "invariantColumns": 5,
+   "conserved90Columns": 220,
+   "sha256": "422557a6943c337f1f89896ecf0697146f13e24ebcc849c8f6906e02ad3068ae",
+   "bytes": 192377
+  },
+  {
+   "file": "CYTB.codon.fasta.gz",
+   "gene": "CYTB",
+   "kind": "codon",
+   "sequences": 2315,
+   "columns": 1644,
+   "occupiedColumns": 1137,
+   "invariantColumns": 43,
+   "conserved90Columns": 519,
+   "sha256": "1803fd2fd6f568a30e12dcba1d48eb286d86dc8d4e5098e176afbd068ad559b4",
+   "bytes": 626396
+  },
+  {
+   "file": "rRNA-12S.nt.fasta.gz",
+   "gene": "rRNA-12S",
+   "kind": "rRNA",
+   "sequences": 2314,
+   "columns": 3496,
+   "occupiedColumns": 939,
+   "invariantColumns": 4,
+   "conserved90Columns": 452,
+   "sha256": "a5f937766d0c20f7aa70a7238f7535eb097324d49d3af8bfbac8d79bed2704d0",
+   "bytes": 676347
+  },
+  {
+   "file": "rRNA-16S.nt.fasta.gz",
+   "gene": "rRNA-16S",
+   "kind": "rRNA",
+   "sequences": 2313,
+   "columns": 6888,
+   "occupiedColumns": 1549,
+   "invariantColumns": 14,
+   "conserved90Columns": 691,
+   "sha256": "d125c7cc004a6c5eaf2aeb9290fafe44ef81de8a42d732ca91523d36fc699606",
+   "bytes": 1286643
+  }
+ ],
+ "absent": [
+  {
+   "gene": "ATP8",
+   "slug": "anadara-kagoshimensis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "arctica-islandica",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "argopecten-irradians",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "bagrus-docmak",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "bagrus-docmak",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "caenorhabditis-elegans",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ND6",
+   "slug": "chionodraco-myersi",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "crocidura-russula",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "crocidura-russula",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "gari-elongata",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ND2",
+   "slug": "homarus-gammarus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "mactra-chinensis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "magallana-ariakensis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "magallana-bilineata",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "magallana-gigas",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "mya-arenaria",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "mytilus-californianus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "mytilus-galloprovincialis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "mytilus-trossulus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "ostrea-edulis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "perna-perna",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "pinna-rudis",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "placopecten-magellanicus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "CYTB",
+   "slug": "pluvialis-fulva",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ND1",
+   "slug": "podiceps-cristatus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "protonibea-diacanthus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ND6",
+   "slug": "psittacus-erithacus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "ruditapes-philippinarum",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ND5",
+   "slug": "sphenodon-punctatus",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "strongyloides-ratti",
+   "reason": "not annotated in the record"
+  },
+  {
+   "gene": "ATP8",
+   "slug": "tegillarca-granosa",
+   "reason": "not annotated in the record"
+  }
+ ],
+ "duplicates": [
+  {
+   "gene": "COX1",
+   "slug": "architeuthis-dux",
+   "copies": 2
+  },
+  {
+   "gene": "COX2",
+   "slug": "architeuthis-dux",
+   "copies": 2
+  },
+  {
+   "gene": "ATP8",
+   "slug": "architeuthis-dux",
+   "copies": 2
+  },
+  {
+   "gene": "ATP6",
+   "slug": "architeuthis-dux",
+   "copies": 2
+  },
+  {
+   "gene": "COX3",
+   "slug": "architeuthis-dux",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "botaurus-sinensis",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "botaurus-stellaris",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "cacatua-pastinator",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "champsocephalus-gunnari",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "coragyps-atratus",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "dryobates-minor",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "egretta-sacra",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "heteronotia-binoei",
+   "copies": 2
+  },
+  {
+   "gene": "CYTB",
+   "slug": "heteronotia-binoei",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "heteronotia-binoei",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "heteronotia-binoei",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "magallana-ariakensis",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "magallana-ariakensis",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "magallana-bilineata",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "magallana-bilineata",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "magallana-gigas",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "magallana-gigas",
+   "copies": 2
+  },
+  {
+   "gene": "COX1",
+   "slug": "ommastrephes-bartramii",
+   "copies": 2
+  },
+  {
+   "gene": "COX2",
+   "slug": "ommastrephes-bartramii",
+   "copies": 2
+  },
+  {
+   "gene": "ATP8",
+   "slug": "ommastrephes-bartramii",
+   "copies": 2
+  },
+  {
+   "gene": "ATP6",
+   "slug": "ommastrephes-bartramii",
+   "copies": 2
+  },
+  {
+   "gene": "COX3",
+   "slug": "ommastrephes-bartramii",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "ostrea-edulis",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "phalacrocorax-brasilianus",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "phalacrocorax-carbo",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "phoebastria-albatrus",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "phoebastria-immutabilis",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "phoebastria-nigripes",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "protonibea-diacanthus",
+   "copies": 2
+  },
+  {
+   "gene": "COX3",
+   "slug": "pyxicephalus-adspersus",
+   "copies": 2
+  },
+  {
+   "gene": "CYTB",
+   "slug": "pyxicephalus-adspersus",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-12S",
+   "slug": "pyxicephalus-adspersus",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "pyxicephalus-adspersus",
+   "copies": 2
+  },
+  {
+   "gene": "COX2",
+   "slug": "ruditapes-philippinarum",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "sarcoramphus-papa",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "thalassarche-melanophris",
+   "copies": 2
+  },
+  {
+   "gene": "COX1",
+   "slug": "thysanoteuthis-rhombus",
+   "copies": 2
+  },
+  {
+   "gene": "COX2",
+   "slug": "thysanoteuthis-rhombus",
+   "copies": 2
+  },
+  {
+   "gene": "ATP8",
+   "slug": "thysanoteuthis-rhombus",
+   "copies": 2
+  },
+  {
+   "gene": "ATP6",
+   "slug": "thysanoteuthis-rhombus",
+   "copies": 2
+  },
+  {
+   "gene": "COX3",
+   "slug": "thysanoteuthis-rhombus",
+   "copies": 2
+  },
+  {
+   "gene": "ND6",
+   "slug": "turdus-philomelos",
+   "copies": 2
+  },
+  {
+   "gene": "rRNA-16S",
+   "slug": "ylistrum-balloti",
+   "copies": 2
+  }
+ ],
+ "codonNotes": [
+  {
+   "gene": "ND3",
+   "slug": "pelomedusa-subrufa",
+   "reason": "left out of the codon alignment: coding sequence of 352 nt is too long for 116 residues"
+  },
+  {
+   "gene": "ND4L",
+   "slug": "pelomedusa-subrufa",
+   "reason": "left out of the codon alignment: coding sequence of 299 nt is too long for 98 residues"
+  }
+ ]
+}

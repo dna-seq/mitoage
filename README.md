@@ -13,6 +13,7 @@ d3 scales. All code is TypeScript. Runs on [Bun](https://bun.sh).
 | --- | --- |
 | `bun install` | Install dependencies |
 | `bun run data` | Run the data pipeline (`pipeline/`), writing `src/data/generated/` and `public/data/` |
+| `bun run align` | Align the 13 proteins and two rRNAs of every live species with MAFFT (pinned version), writing `public/data/alignments/` |
 | `bun run dev` | Dev server |
 | `bun run build` | Build the static site into `dist/` |
 | `bun run preview` | Serve `dist/` locally (set the same `BASE_PATH` as the build) |
