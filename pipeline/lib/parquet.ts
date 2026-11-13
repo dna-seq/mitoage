@@ -4,18 +4,24 @@
  * Reading uses hyparquet with Bun's built-in zstd for ZSTD pages (the FishBase/SeaLifeBase
  * snapshots are ZSTD-compressed); writing uses hyparquet-writer.
  */
+import { readFileSync } from "node:fs";
 import { parquetReadObjects } from "hyparquet";
 import { parquetWriteBuffer } from "hyparquet-writer";
 
-const compressors = {
-  ZSTD: (input: Uint8Array) => new Uint8Array(Bun.zstdDecompressSync(input)),
-};
+// ZSTD (FishBase/SeaLifeBase snapshots) is decoded with Bun's built-in zstd; files this pipeline
+// writes use hyparquet-writer's default codec, which hyparquet reads anywhere (the site build runs on Node).
+const compressors =
+  typeof Bun !== "undefined" ? { ZSTD: (input: Uint8Array) => new Uint8Array(Bun.zstdDecompressSync(input)) } : {};
 
 export type Row = Record<string, unknown>;
 
 /** Read a parquet file (or buffer) into row objects; `columns` limits what is decoded. */
 export async function readParquet(source: string | ArrayBuffer, columns?: string[]): Promise<Row[]> {
-  const file = typeof source === "string" ? await Bun.file(source).arrayBuffer() : source;
+  let file: ArrayBuffer;
+  if (typeof source === "string") {
+    const b = readFileSync(source);
+    file = b.buffer.slice(b.byteOffset, b.byteOffset + b.byteLength) as ArrayBuffer;
+  } else file = source;
   const rows = (await parquetReadObjects({ file, compressors, ...(columns ? { columns } : {}) })) as Row[];
   // hyparquet returns INT64 as BigInt; the data here never exceeds 2^53.
   for (const r of rows) for (const k in r) if (typeof r[k] === "bigint") r[k] = Number(r[k]);

@@ -1,12 +1,13 @@
 /** AnAge (Human Ageing Genomic Resources) life-history traits. */
 import { cachedDownload } from "../lib/cache";
+import { ANAGE_PINNED } from "./pinned";
+import { type SourceObservation, asQuality, collapse } from "./observation";
 import { parseRecords } from "../lib/csv";
 import { readZip } from "../lib/zip";
 import type { Traits } from "../../src/data/schema";
 
 export const ANAGE_URL = "https://genomics.senescence.info/species/dataset.zip";
-export const ANAGE_LICENSE =
-  "Free to use, subject to the Human Ageing Genomic Resources conditions of use (https://genomics.senescence.info/legal.html); cite Tacutu et al. 2013, Nucleic Acids Res 41:D1027-D1033";
+export const ANAGE_LICENSE = ANAGE_PINNED.license;
 
 export interface AnAgeEntry {
   hagrid: string;
@@ -16,11 +17,21 @@ export interface AnAgeEntry {
   maxLongevityYears: number | null;
   traits: Omit<Traits, "source">;
   dataQuality: string;
+  kingdom: string;
+  phylum: string;
+  order: string;
+  family: string;
+  genus: string;
+  sampleSize: string;
+  specimenOrigin: string;
+  sourceText: string;
+  references: string;
 }
 
 export interface AnAge {
   build: string;
   releaseDate: string;
+  md5: string;
   entries: AnAgeEntry[];
 }
 
@@ -31,7 +42,13 @@ const num = (s: string | undefined): number | null => {
 };
 
 export async function loadAnAge(): Promise<AnAge> {
-  const zip = readZip(await cachedDownload("anage/dataset.zip", ANAGE_URL));
+  const bytes = await cachedDownload(ANAGE_PINNED.path, ANAGE_URL);
+  const md5 = new Bun.CryptoHasher("md5").update(bytes).digest("hex");
+  // Build 2 is pinned to AnAge build 15: a different dataset.zip (a new AnAge build) must be a deliberate change.
+  if (md5 !== ANAGE_PINNED.md5) {
+    throw new Error(`data/cache/${ANAGE_PINNED.path} has md5 ${md5}, pinned ${ANAGE_PINNED.version} is ${ANAGE_PINNED.md5}`);
+  }
+  const zip = readZip(bytes);
   const data = zip.find((e) => e.name.endsWith("anage_data.txt"));
   const release = zip.find((e) => e.name.endsWith("release.html"));
   if (!data) throw new Error("anage_data.txt not found in AnAge zip");
@@ -42,11 +59,20 @@ export async function loadAnAge(): Promise<AnAge> {
   const { records } = parseRecords(new TextDecoder().decode(data.data), "\t");
   const entries = records.map((r) => ({
     hagrid: r["HAGRID"]!,
-    scientificName: `${r["Genus"]} ${r["Species"]}`.trim(),
+    scientificName: collapse(`${r["Genus"]} ${r["Species"]}`),
     commonName: r["Common name"] ?? "",
     class: r["Class"] ?? "",
     maxLongevityYears: num(r["Maximum longevity (yrs)"]),
     dataQuality: r["Data quality"] ?? "",
+    kingdom: r["Kingdom"] ?? "",
+    phylum: r["Phylum"] ?? "",
+    order: r["Order"] ?? "",
+    family: r["Family"] ?? "",
+    genus: r["Genus"] ?? "",
+    sampleSize: r["Sample size"] ?? "",
+    specimenOrigin: r["Specimen origin"] ?? "",
+    sourceText: r["Source"] ?? "",
+    references: r["References"] ?? "",
     traits: {
       adultWeightG: num(r["Adult weight (g)"]),
       birthWeightG: num(r["Birth weight (g)"]),
@@ -60,5 +86,28 @@ export async function loadAnAge(): Promise<AnAge> {
       growthRatePerDay: num(r["Growth rate (1/days)"]),
     },
   }));
-  return { build, releaseDate, entries };
+  return { build, releaseDate, md5, entries };
+}
+
+/** Every animal entry as a lifespan observation (entries without a value are kept for name matching). */
+export function anageObservations(a: AnAge): SourceObservation[] {
+  return a.entries
+    .filter((e) => e.kingdom === "Animalia")
+    .map((e) => ({
+      source: "AnAge" as const,
+      sourceVersion: ANAGE_PINNED.version,
+      sourceRecordId: e.hagrid,
+      sourceName: e.scientificName,
+      sourceCommonName: e.commonName || null,
+      valueYears: e.maxLongevityYears,
+      recordType: e.specimenOrigin === "wild" ? ("wild" as const) : e.specimenOrigin === "captivity" ? ("captive" as const) : ("observed" as const),
+      quality: asQuality(e.dataQuality),
+      sampleSizeText: e.sampleSize || null,
+      sex: null,
+      detail: `specimen origin=${e.specimenOrigin}; source=${e.sourceText}`,
+      reference: e.references || null,
+      license: ANAGE_PINNED.license,
+      speccode: null,
+      aquatic: null,
+    }));
 }
