@@ -5,23 +5,10 @@ owner. A done item leaves this file; `docs/CHANGELOG.md` says what landed.
 
 ## RM2 — Bring the explorer's payload under its page-weight target
 
-**State:** unattended · **Owner:** lead
+**State:** waits until 2026-11-17: after the first steps of RM12, which the maintainer asked for first · **Owner:** lead
 
 `/data/explorer.json` is 2.7 MB with build 2, against 1.5 MB (open questions, item 9). Split it on the
 site's side, as the per-gene codon tables are.
-
-## RM3 — Look at the build 2 site
-
-**State:** unattended · **Owner:** lead
-
-Build 2 landed on 2026-11-13 and the site was rebuilt on it: 2,335 species instead of 922, the species
-list past 1,000 rows, new classes in every chart and in the tree. The seat can view pages where it runs:
-a headless browser screenshots the built site at a phone's and a desktop's width, light and dark (tried
-on 2026-11-13 on the home page, the species list, a species page, the tree and Compare: all 20 loaded
-without a script error; three were read, the home page, the species list on a phone in dark, the tree).
-Left: every section read screenshot by screenshot; what looks wrong becomes its own item. The screenshot
-script lives outside the repository until the maintainer says whether its browser library may become a
-development dependency.
 
 ## RM4 — The build 2 defaults, put to the maintainer
 
@@ -58,7 +45,7 @@ builds the site from the committed parquet and cannot rebuild the data.
 
 ## RM8 — Detect possible duplicate species
 
-**State:** unattended · **Owner:** lead
+**State:** waits until 2026-11-17: after the first steps of RM12, which the maintainer asked for first · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
 A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and reports, never merges.
@@ -133,3 +120,24 @@ is in `#mitoage>mitoport`, unchecked), does a contact-residue mismatch score per
 the measurements do. The port
 project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
 are a new data source (the maintainer's), and where the code lives (a separate repository is the default).
+
+## RM14 — D-loops annotated as a point
+
+**State:** blocked: desk #35 (if nobody answers, nothing changes in the data) · **Owner:** lead
+
+Found reading the live site (RM3): of the 1,976 species with a D-loop annotation, 29 have one of exactly
+1 base, 2 of 2 to 9 and 10 of 10 to 99; the rest have a median of 1,051. Each counts as a region today, so
+the D-loop's GC content ranges from 0 to 100% in the statistics and these values enter the D-loop
+correlations. The rule proposed: under 100 bases counts as not annotated (unknown). A data rule, applied at
+the next data build, which runs where the pipeline's inputs are (RM7).
+
+## RM15 — Small things seen on the build 2 site
+
+**State:** unattended · **Owner:** lead
+
+From the reading of 2026-11-13 (20 pages, a desktop's width in light and a phone's in dark, no script error
+on any): the hero's decorative stars show through the translucent buttons and chips and cross their text
+(the taxon pages' "Compare mtDNA", the gene list's counts on a phone); on the plot, the sentence of the
+live statistics says "No clear relationship" where Pearson r is -0.20 with p = 8e-23 and Spearman is -0.015,
+so which statistic the sentence follows should be said. Not read: the old addresses kept for links from
+the 2015 site (`/browse/`, `/view/`, `/stats-for/`, `/export-section/`).

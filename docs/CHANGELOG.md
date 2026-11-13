@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **Gene pages no longer scroll sideways on a phone.** The button under the class chart ("Compare ND6 across
+  taxa: every parameter, every species") was wider than a phone's screen and widened the whole page by 135
+  pixels; its label is now "Compare ND6 across taxa". Found by reading the live build 2 site (RM3): 20 pages
+  at a desktop's and a phone's width, none with a script error, this one with a page wider than its screen.
+  What else was seen is RM14 (D-loops annotated as a point) and RM15.
 - Roadmap: RM12 is now the whole longevity analysis on the alignments as planned with the maintainer (aligner check, positive controls, site by site, selection pressure, convergence, structures); RM4, RM7 and RM11 wait on the desk. Documents only.
 
 - **The build on Hugging Face** (D6). `bun run hf` packages the committed build into `out/hf/` (not in
