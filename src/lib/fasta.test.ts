@@ -277,7 +277,8 @@ describe("describeFasta", () => {
     const named = ABSENT.filter((id) => note.text.includes(id));
     expect(named).toEqual(ABSENT.slice(0, named.length));
     expect(named.length).toBeGreaterThan(0);
-    expect(note.text).toContain(`and ${ABSENT.length - named.length} more`);
-    expect(note.text).toContain(`no record for ${ABSENT.length}`);
+    // Counts are written with a thousands separator (en-US), as describeFasta does.
+    expect(note.text).toContain(`and ${(ABSENT.length - named.length).toLocaleString("en-US")} more`);
+    expect(note.text).toContain(`no record for ${ABSENT.length.toLocaleString("en-US")}`);
   });
 });
