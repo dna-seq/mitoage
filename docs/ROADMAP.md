@@ -3,15 +3,6 @@
 Open work only, in order. Each item is a section `## RMn — name` with a line saying its state and its
 owner. A done item leaves this file; `docs/CHANGELOG.md` says what landed.
 
-## RM1 — Show a species' lifespan source, licence and record status on its pages
-
-**State:** unattended · **Owner:** lead
-
-Build 2 carries them in the contract (`Species.lifespan`, `provenance`), and 549 species show FishBase or
-SeaLifeBase values under CC BY-NC 4.0, said only in the downloads README (`docs/BUILD2_OPEN_QUESTIONS.md`,
-item 11; `plans/DATA_BUILD2_DECISIONS.md`, section 8). The species page names the source, its version and
-licence, the record type and quality, and marks a retired or renamed species with its reason and old names.
-
 ## RM2 — Bring the explorer's payload under its page-weight target
 
 **State:** unattended · **Owner:** lead

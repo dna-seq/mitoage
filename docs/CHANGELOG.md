@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **A species page says where its record comes from** (RM1). The lifespan card and the life-history card
+  link to the source that holds the value (AnAge, FishBase, SeaLifeBase or the USGS longevity records);
+  before, every species linked to AnAge, also the 575 whose value comes from another source. A new card,
+  "About this record", gives the source and its version, what the value is based on (captivity, the wild,
+  an estimate), its quality, its licence with a line where the value is non-commercial, the record's
+  status against build 1 with its dates, an earlier name, and the review flags as sentences. A retired
+  species carries a notice with its reason at the top of the page. Words and links are in
+  `src/lib/provenance.ts`, tested on every species of the build and by breaking the link rule. Viewed
+  as screenshots of the built page at a desktop's and a phone's width, light and dark, for a FishBase
+  species, a renamed one, a retired one and human.
 - Roadmap: RM10, multiple sequence alignments of the 13 proteins and two rRNAs, with the numbers of a hand run (MAFFT, all 2,316 live species, under a minute in total) and a proposed design waiting for the maintainer; RM3 is no longer blocked, since built pages can be viewed by headless screenshots where the seat runs. Documents only.
 - The roadmap is written (RM1 to RM9) from the build 2 report's "Not done", its open questions and the code as it is; the lead's notes record its first seating. Documents only. Checked on the pulled tree: type check, the site build as the workflow runs it (7,783 pages, link check passed); tests pass except `pipeline/tests/lifespan.test.ts`, which needs the pinned inputs this clone lacks (RM7). No page was viewed.
 - The build 2 report states the final test count (192, not 144).

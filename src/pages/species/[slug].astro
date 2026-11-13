@@ -38,7 +38,15 @@ import { speciesCrumbs } from "~/lib/taxa";
 import { href } from "~/lib/url";
 import { presentTraits } from "~/lib/traits";
 import {
-  anageUrl,
+  isNonCommercial,
+  licenceName,
+  lifespanSourceLink,
+  lifespanSourceName,
+  recordStatusLabel,
+  recordTypeLabel,
+  reviewFlagText,
+} from "~/lib/provenance";
+import {
   compareUrl,
   exploreUrl,
   geneUrl,
@@ -69,6 +77,15 @@ const name = s.scientificName;
 const common = s.commonName.trim();
 const display = common || name;
 const group = classGroup(s.taxonomy.class);
+
+// ---- Where the record comes from (build 2 provenance) ----
+const life = s.lifespan;
+const lifeLink = lifespanSourceLink(s);
+const prov = s.provenance;
+const retired = prov?.recordStatus === "retired";
+const previousNames = (s.previousScientificNames ?? []).filter((n) => n && n !== name);
+const flags = (s.reviewFlags ?? []).map(reviewFlagText);
+const isoDay = (iso: string | null | undefined): string | null => (iso ? iso.slice(0, 10) : null);
 
 // ---- Scatter: whole-genome GC% vs lifespan, this species highlighted ----
 const finite = all.filter((x) => x.maxLongevityYears > 0 && Number.isFinite(x.gcPercent));
@@ -187,6 +204,14 @@ const tabs = [
   </Hero>
 
   <div class="container sp-body">
+    {
+      retired && (
+        <p class="sp-notice" role="note">
+          <strong>Retired record.</strong> {s.retiredReason ?? "This species no longer qualifies for the database."} Its build 1
+          values are kept and it is left out of the correlations.
+        </p>
+      )
+    }
     <section class="stat-grid sp-stats" aria-label="Key numbers">
       <StatCard
         layout="label-first"
@@ -194,8 +219,9 @@ const tabs = [
         label="Maximum lifespan"
         value={fmtLifespan(s.maxLongevityYears)}
         tone="red"
-        href={anageUrl(name)}
-        hrefLabel="AnAge record"
+        href={lifeLink?.href}
+        hrefLabel={lifeLink?.label}
+        note={lifeLink ? undefined : life ? lifespanSourceName(life.source) : undefined}
         external
       />
       <StatCard
@@ -289,10 +315,83 @@ const tabs = [
             }
           </dl>
           <p class="card__desc">
-            Source: {s.traits.source ?? "AnAge"} ·{" "}
-            <a href={anageUrl(name)} target="_blank" rel="noopener">AnAge entry</a>
+            {life ? `Lifespan from ${lifespanSourceName(life.source)}` : "Lifespan from AnAge"}
+            {lifeLink && (
+              <>
+                {" · "}
+                <a href={lifeLink.href} target="_blank" rel="noopener">{lifeLink.label}</a>
+              </>
+            )}
+            {traits.length > 0 && <> · other traits from {s.traits.source ?? "AnAge"}</>}
           </p>
         </Card>
+
+        {
+          (life || prov) && (
+            <Card title="About this record" level={2} class="sp-record">
+              <dl class="kv">
+                {life && (
+                  <>
+                    <dt>Lifespan source</dt>
+                    <dd title={life.sourceVersion}>{licenceName(life.sourceVersion)}</dd>
+                    <dt>Based on</dt>
+                    <dd>{recordTypeLabel(life.recordType)}</dd>
+                    {life.quality && (
+                      <>
+                        <dt>Data quality</dt>
+                        <dd>
+                          {life.quality}
+                          {life.sampleSize ? `, ${life.sampleSize} sample` : ""}
+                        </dd>
+                      </>
+                    )}
+                    <dt>Licence</dt>
+                    <dd title={life.license}>{licenceName(life.license)}</dd>
+                  </>
+                )}
+                {prov && (
+                  <>
+                    <dt>Status</dt>
+                    <dd>{recordStatusLabel(prov.recordStatus)}</dd>
+                    <dt>In the database since</dt>
+                    <dd>
+                      build {prov.addedInBuild} <span class="sp-nowrap">({isoDay(prov.addedAt)})</span>
+                    </dd>
+                    {prov.lastModifiedAt && (
+                      <>
+                        <dt>Last changed</dt>
+                        <dd>
+                          build {prov.lastModifiedBuild} <span class="sp-nowrap">({isoDay(prov.lastModifiedAt)})</span>
+                        </dd>
+                      </>
+                    )}
+                  </>
+                )}
+                {previousNames.length > 0 && (
+                  <>
+                    <dt>Earlier name</dt>
+                    <dd>
+                      <i>{previousNames.join(", ")}</i>
+                    </dd>
+                  </>
+                )}
+              </dl>
+              {isNonCommercial(life) && (
+                <p class="card__desc">The lifespan value is for non-commercial use only; the genome data is not restricted by it.</p>
+              )}
+              {flags.length > 0 && (
+                <ul class="sp-flags">
+                  {flags.map((f) => (
+                    <li>{f}</li>
+                  ))}
+                </ul>
+              )}
+              <p class="card__desc">
+                Every change against the 2015 build is in the <a href={href("/data/")}>changelog download</a>.
+              </p>
+            </Card>
+          )
+        }
       </div>
     </section>
 
@@ -424,6 +523,34 @@ const tabs = [
   .sp-overview :global(.sp-plot) {
     flex: 3 1 32rem;
   }
+  .sp-notice {
+    margin: 0;
+    padding: var(--space-4) var(--space-5);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+    border-inline-start: 6px solid var(--color-header-accent);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Long values: the label keeps its width and the value wraps (the shared .kv gives the value the room). */
+  :global(.sp-record .kv) {
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--space-4);
+  }
+
+  .sp-nowrap {
+    white-space: nowrap;
+  }
+
+  .sp-flags {
+    margin: var(--space-3) 0 0;
+    padding-inline-start: var(--space-5);
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+  }
+
   .sp-side {
     flex: 2 1 20rem;
     min-width: 0;
