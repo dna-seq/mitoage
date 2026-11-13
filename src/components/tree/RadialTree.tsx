@@ -1,13 +1,18 @@
 /**
- * Radial taxonomy tree island.
+ * Zoomable radial taxonomy tree island.
  *
- * A radial dendrogram of the MitoAge species with branches coloured by class, an outer ring of
- * per-species values (maximum lifespan on a log scale, whole-genome GC%, mtDNA size), arcs and
- * labels for the classes (or the rank below the focused clade), a rank layout or a time-scaled
- * layout from the dated tree, and animated re-rooting on any clade. Hover or tap shows a node;
- * select a clade to focus it, a species to open its page. Keyboard: arrow keys walk the tree,
- * Enter selects, Escape goes up. On narrow screens the tree is collapsed to the deepest rank
- * whose clades can be labelled, and the reader drills down.
+ * A radial dendrogram of the MitoAge species drawn on a canvas, with branches coloured by class, an
+ * outer ring of per-species values (maximum lifespan on a log scale, whole-genome GC%, mtDNA size),
+ * arcs and names for the classes, and a rank or time-scaled layout from the dated tree.
+ *
+ * Zoom with the wheel, a pinch or the + and − buttons; drag to pan. Selecting a clade flies to it and
+ * turns it to 3 or 9 o'clock so its names read across; selecting a species opens its page once its
+ * name shows (before that it flies to the species). Zoom is semantic: the ring, arcs and text keep
+ * their size while the tree grows, clade names appear on their stems as they get room, and species
+ * names (common and scientific, with the ring value) appear at deep zoom.
+ *
+ * Keyboard: arrow keys walk the tree, Enter selects, Escape goes up, + and − zoom, 0 shows the
+ * whole tree. On the /tree/ page the clade in view is mirrored in ?focus=rank:slug.
  *
  * Data: fetches /tree/tree.json on mount (shared with the other clade islands on the page).
  * Styles: import "~/components/tree/tree.css" in the page that renders it.
@@ -15,138 +20,96 @@
  * <RadialTree client:visible label="Taxonomy tree of 922 species" syncUrl panel />
  * <RadialTree client:visible label="Taxonomy tree of Mammalia" rootKey="class:mammalia" />
  */
-import { Delaunay } from "d3-delaunay";
 import { easeCubicInOut } from "d3-ease";
-import { batch, createEffect, createMemo, createSignal, createUniqueId, For, Index, on, onCleanup, onMount, Show, untrack } from "solid-js";
+import { interpolateZoom } from "d3-interpolate";
+import { select } from "d3-selection";
+import { zoom, zoomIdentity, type D3ZoomEvent, type ZoomBehavior, type ZoomTransform } from "d3-zoom";
+import { batch, createEffect, createMemo, createSignal, For, on, onCleanup, onMount, Show, untrack } from "solid-js";
 import { ICONS } from "~/components/ui/icons";
 import { CLASS_GROUPS, classColor, classLabel, COLOURED_CLASSES } from "~/lib/classes";
-import { fmtBp, fmtInt, fmtLifespan, fmtNum, fmtPct } from "~/lib/format";
-import { loadTree, TREE_DATA_URL, treeUrl } from "~/lib/tree/data";
+import { fmtBp, fmtInt, fmtLifespan, fmtPct } from "~/lib/format";
 import {
-  ageTicks,
+  angleDiff,
+  cameraAt,
+  cladeAt,
+  clamp,
+  constrain,
+  fitClade,
+  fitLeaf,
+  geometryFor,
+  leafAt,
+  maxZoom,
+  minZoom,
+  nodeSpan,
+  polar,
+  projFor,
+  radius,
+  radiusInv,
+  snapZoom,
+  span,
+  toPolar,
+  viewCentre,
+  viewClade,
+  visibleArc,
+  zoomAbout,
+  zones,
+  type Camera,
+  type FitContext,
+  type Proj,
+  type Viewport,
+} from "~/lib/tree/camera";
+import { loadTree, TREE_DATA_URL, treeUrl } from "~/lib/tree/data";
+import { pointInLabel, type PlacedLabel } from "~/lib/tree/labels";
+import {
   canTime,
   computeLayout,
   defaultBandDepth,
   frameToPose,
   interpolate,
   isAncestorOf,
-  readableDepth,
-  type Band,
   type Frame,
   type Layout,
   type LayoutMode,
   type Pose,
 } from "~/lib/tree/layout";
-import { abbrevName, childRank, isItalicRank, RANK_LABEL, rankCount, rankPlural } from "~/lib/tree/names";
-import { metricInfo, RAMP_MID, rampFill, RING_METRICS, ringScale, type Metric } from "~/lib/tree/ring";
-import { CLASS_DEPTH, nodeKey, parseKey, RANKS, SPECIES_DEPTH, type TNode, type TreeModel } from "~/lib/tree/types";
+import { childRank, isItalicRank, RANK_LABEL, rankCount, rankPlural } from "~/lib/tree/names";
+import { metricInfo, RAMP_MID, RING_METRICS, ringScale, type Metric } from "~/lib/tree/ring";
+import { CLASS_DEPTH, nodeKey, parseKey, SPECIES_DEPTH, type TNode, type TreeModel } from "~/lib/tree/types";
+import { uiScale } from "~/lib/uiScale";
 import { speciesUrl, taxonUrl } from "~/lib/urls";
 import TreeSearch from "./TreeSearch";
-import { uiScale } from "~/lib/uiScale";
+import { createMeasurer, drawScene, drawSkeleton, readPalette, type Measurer, type Palette, type Zone } from "./treeDraw";
 
 export interface RadialTreeProps {
   /** Accessible name of the chart. */
   label: string;
   /** Clade shown first and the highest one reachable, "rank:slug"; default the whole tree. */
   rootKey?: string;
-  /** Mirror the focus in ?focus=rank:slug and the browser history (the /tree/ page). */
+  /** Mirror the clade in view in ?focus=rank:slug and the browser history (the /tree/ page). */
   syncUrl?: boolean;
-  /** Side panel with the focused clade's numbers and children (the /tree/ page). */
+  /** Side panel with the clade in view: its numbers and children (the /tree/ page). */
   panel?: boolean;
   /** Show the find-in-tree box (default true). */
   search?: boolean;
   metric?: Metric;
-  /** Largest drawing size in px. */
+  /** Largest width of the drawing in px (at the default text size). */
   maxSize?: number;
   dataUrl?: string;
 }
 
-// ---------------------------------------------------------------- geometry helpers
-
 const GAP = 0.2;
 const DUR = 760;
 const METRIC_DUR = 420;
-const COMPACT_BELOW = 520;
-const NEUTRAL = "var(--rt-neutral)";
 
-const at = (arr: Float64Array, i: number): number => arr[i] ?? 0;
-const f1 = (v: number): number => Math.round(v * 10) / 10;
-const lerp = (x: number, y: number, t: number): number => x + (y - x) * t;
-const pt = (c: number, a: number, r: number): string => `${f1(c + r * Math.sin(a))} ${f1(c - r * Math.cos(a))}`;
-const xy = (c: number, a: number, r: number): [number, number] => [c + r * Math.sin(a), c - r * Math.cos(a)];
-
-const linkPath = (c: number, ac: number, rc: number, ap: number, rp: number): string => {
-  let d = `M${pt(c, ac, rc)}L${pt(c, ac, rp)}`;
-  if (rp > 0.5 && Math.abs(ap - ac) > 1e-4) {
-    d += `A${f1(rp)} ${f1(rp)} 0 ${Math.abs(ap - ac) > Math.PI ? 1 : 0} ${ap > ac ? 1 : 0} ${pt(c, ap, rp)}`;
-  }
-  return d;
-};
-
-const sector = (c: number, a0: number, a1: number, r0: number, r1: number): string => {
-  const large = a1 - a0 > Math.PI ? 1 : 0;
-  return `M${pt(c, a0, r0)}L${pt(c, a0, r1)}A${f1(r1)} ${f1(r1)} 0 ${large} 1 ${pt(c, a1, r1)}L${pt(c, a1, r0)}A${f1(r0)} ${f1(r0)} 0 ${large} 0 ${pt(c, a0, r0)}Z`;
-};
-
-const circleArc = (c: number, a0: number, a1: number, r: number): string =>
-  `M${pt(c, a0, r)}A${f1(r)} ${f1(r)} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${pt(c, a1, r)}`;
-
-const colorOf = (n: TNode): string => (n.depth >= CLASS_DEPTH && n.data.cls ? classColor(n.data.cls) : NEUTRAL);
-
-interface Geo {
-  S: number;
-  c: number;
-  R: number;
-  ringIn: number;
-  ringOut: number;
-  arcIn: number;
-  arcOut: number;
-  labIn: number;
-  labOut: number;
-  fs: number;
-}
-
-/** Radii from the outside in: band labels, band arcs, leaf labels (optional), value ring, tree. */
-const geometry = (S: number, labW: number, compact: boolean): Geo => {
-  const c = S / 2;
-  const fs = compact ? 11.5 : 12.5;
-  const arcOut = c - 4 - (compact ? 17 : 19);
-  const arcIn = arcOut - (compact ? 6 : 7);
-  const labOut = arcIn - 5;
-  const labIn = labOut - labW;
-  const ringOut = labW > 0 ? labIn - 4 : arcIn - 5;
-  const ringH = Math.max(18, Math.min(54, S * 0.07));
-  const ringIn = ringOut - ringH;
-  return { S, c, R: Math.max(12, ringIn - 6), ringIn, ringOut, arcIn, arcOut, labIn, labOut, fs };
-};
-
-const LABEL_CHAR = 6.1;
-
-/** Width reserved for radial species labels, 0 when they do not fit. */
-const leafLabelWidth = (L: Layout, S: number, compact: boolean): number => {
-  if (compact || L.displayDepth < SPECIES_DEPTH) return 0;
-  let maxChars = 0;
-  for (const t of L.terminals) maxChars = Math.max(maxChars, abbrevName(t.data.name).length);
-  const W = Math.min(130, maxChars * LABEL_CHAR + 8);
-  const g = geometry(S, W, compact);
-  return L.unit * g.labIn >= 12.5 && g.R >= S * 0.17 ? W : 0;
-};
-
-/** Label candidates for a band, longest first. */
-const bandTexts = (n: TNode): string[] => {
-  if (!n.children) return [abbrevName(n.data.name)];
-  if (n.data.rank === "class") {
-    const friendly = classLabel(n.data.name);
-    return friendly !== n.data.name ? [friendly, n.data.name] : [n.data.name];
-  }
-  return [n.data.name];
-};
-
-type Zone = "tree" | "ring" | "band";
 interface Hover {
   node: TNode;
   zone: Zone;
+  /** Pointer position, for wedges (the clade region under the pointer). */
+  x?: number;
+  y?: number;
 }
+
+const lerp = (x: number, y: number, t: number): number => x + (y - x) * t;
 
 /**
  * Run `step(k)` with k from 0 to 1 over `ms` on animation frames. Frames stop in hidden tabs,
@@ -184,13 +147,28 @@ const tween = (ms: number, step: (k: number) => void): (() => void) => {
 const prefersReducedMotion = (): boolean =>
   typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches === true;
 
+const Icon = (p: { d: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d={p.d} />
+  </svg>
+);
+
+const IC = {
+  up: "M12 19V5M6 11l6-6 6 6",
+  minus: "M5 12h14",
+  plus: "M12 5v14M5 12h14",
+  home: "M4 11.5 12 4l8 7.5M6.5 9.5V20h11V9.5",
+  expand: "M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5",
+  collapse: "M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5",
+};
+
 // ---------------------------------------------------------------- component
 
 export default function RadialTree(props: RadialTreeProps) {
-  const uid = createUniqueId();
   const [model, setModel] = createSignal<TreeModel | null>(null);
   const [failed, setFailed] = createSignal(false);
-  const [S, setS] = createSignal(props.maxSize ?? 720);
+  const [vp, setVp] = createSignal<Viewport>({ w: 0, h: 0 });
+  const [u, setU] = createSignal(1);
   const [focus, setFocus] = createSignal<TNode | null>(null);
   const [mode, setMode] = createSignal<LayoutMode>("rank");
   const [metric, setMetric] = createSignal<Metric>(props.metric ?? "life");
@@ -198,23 +176,41 @@ export default function RadialTree(props: RadialTreeProps) {
   const [pinned, setPinned] = createSignal(false);
   const [selected, setSelected] = createSignal<TNode | null>(null);
   const [touchHint, setTouchHint] = createSignal(false);
+  const [cam, setCam] = createSignal<Camera | null>(null);
+  const [expanded, setExpanded] = createSignal(false);
+  const [hint, setHint] = createSignal(true);
+  const [coarse, setCoarse] = createSignal(false);
+  const [palVer, setPalVer] = createSignal(0);
 
-  // Transition state
+  // Layout transition (rank <-> time) and metric transition.
   const [target, setTarget] = createSignal<Layout | null>(null);
-  const [fromPose, setFromPose] = createSignal<Pose | null>(null);
   const [fromLayout, setFromLayout] = createSignal<Layout | null>(null);
-  const [labFrom, setLabFrom] = createSignal(0);
+  const [fromPose, setFromPose] = createSignal<Pose | null>(null);
   const [t, setT] = createSignal(1);
   const [valsFrom, setValsFrom] = createSignal<Float64Array | null>(null);
   const [mt, setMt] = createSignal(1);
 
-  let sizer: HTMLDivElement | undefined;
+  let rootEl: HTMLDivElement | undefined;
   let frameEl: HTMLDivElement | undefined;
-  let svgEl: SVGSVGElement | undefined;
+  let canvasEl: HTMLCanvasElement | undefined;
+  let zb: ZoomBehavior<HTMLCanvasElement, unknown> | null = null;
+  /** Rotation of the camera; d3-zoom keeps k, x and y. */
+  let thNow = 0;
   let stopTween: () => void = () => {};
   let stopMetricTween: () => void = () => {};
+  let stopFly: () => void = () => {};
+  let gestureFrom: ZoomTransform | null = null;
+  /** Pointer (or pinch centre) before and after the current zoom step, for zooming about it. */
+  let anchorFrom: [number, number] | null = null;
+  let anchorTo: [number, number] | null = null;
+  let lastPinch: [number, number] | null = null;
+  let lastStems: PlacedLabel[] = [];
+  let measurer: Measurer | null = null;
+  let pal: Palette | null = null;
+  let palDirty = true;
+  let raf = 0;
+  let syncTimer: ReturnType<typeof setTimeout> | undefined;
 
-  const compact = () => S() < COMPACT_BELOW;
   const limitIn = (m: TreeModel): TNode => {
     const k = parseKey(props.rootKey);
     return (k && m.byKey.get(`${k[0]}:${k[1]}`)) || m.root;
@@ -233,7 +229,120 @@ export default function RadialTree(props: RadialTreeProps) {
   };
   const urlFocus = (): string | null => new URLSearchParams(window.location.search).get("focus");
 
-  // ---------------------------------------------------------------- loading, size, URL
+  // ---------------------------------------------------------------- geometry and layout
+
+  const G = createMemo(() => {
+    const v = vp();
+    return v.w > 0 && v.h > 0 ? geometryFor(v, u()) : null;
+  });
+
+  const kRange = createMemo<[number, number]>(() => {
+    const g = G();
+    const L = target();
+    if (!g || !L) return [1, 4];
+    const lo = minZoom(g, L.unit);
+    return [lo, Math.max(lo * 1.5, maxZoom(g, L.unit))];
+  });
+
+  const fitCtx = (): FitContext | null => {
+    const m = model();
+    const L = target();
+    const g = G();
+    if (!m || !L || !g) return null;
+    const [kMin, kMax] = kRange();
+    return { model: m, L, G: g, vp: vp(), kMin, kMax };
+  };
+
+  /** Radius mapping of the layout at rest. */
+  const proj = createMemo<Proj | null>(() => {
+    const g = G();
+    const L = target();
+    return g && L ? projFor(g, L, kRange()[0]) : null;
+  });
+
+  /** Distance from the tips to the centre at zoom k, blended while the layout changes. */
+  const depthNow = (k: number): number => {
+    const g = G();
+    const L = target();
+    if (!g || !L) return 1;
+    const kMin = kRange()[0];
+    const to = span(projFor(g, L, kMin), k);
+    const from = fromLayout();
+    if (!from || t() >= 1) return to;
+    return lerp(span(projFor(g, from, kMin), k), to, ease());
+  };
+
+  const layoutFor = (m: TreeModel, lim: TNode, md: LayoutMode): Layout =>
+    computeLayout(m, lim, {
+      mode: md,
+      displayDepth: SPECIES_DEPTH,
+      bandDepth: lim.depth >= SPECIES_DEPTH - 1 ? 0 : defaultBandDepth(lim),
+      gap: GAP,
+    });
+
+  const ease = () => easeCubicInOut(t());
+
+  const frame = createMemo<Frame | null>(() => {
+    const m = model();
+    const to = target();
+    if (!m || !to) return null;
+    return interpolate(m, fromPose(), to, ease());
+  });
+
+  const animateLayout = () => {
+    stopTween();
+    if (prefersReducedMotion()) {
+      setT(1);
+      return;
+    }
+    stopTween = tween(DUR, setT);
+  };
+
+  // ---------------------------------------------------------------- camera
+
+  const applyCamera = (c: Camera) => {
+    thNow = c.th;
+    if (zb && canvasEl) zb.transform(select(canvasEl), zoomIdentity.translate(c.x, c.y).scale(c.k));
+    else setCam(c);
+  };
+
+  /** Animated flight to a camera along a smooth zoom path, turning on the way. */
+  const flyTo = (to: Camera, done?: () => void) => {
+    stopFly();
+    clearTimeout(syncTimer);
+    const from = untrack(cam);
+    const v = untrack(vp);
+    if (!from || prefersReducedMotion() || v.w <= 0) {
+      applyCamera(to);
+      done?.();
+      return;
+    }
+    const c0 = viewCentre(from, v);
+    const c1 = viewCentre(to, v);
+    const zi = interpolateZoom([c0[0], c0[1], v.w / from.k], [c1[0], c1[1], v.w / to.k]);
+    const dth = angleDiff(from.th, to.th);
+    const ms = clamp(Number.isFinite(zi.duration) ? zi.duration * 0.85 : 600, 450, 1400);
+    stopFly = tween(ms, (q) => {
+      if (q >= 1) {
+        applyCamera(to);
+        done?.();
+        return;
+      }
+      const e = easeCubicInOut(q);
+      const [px, py, w] = zi(e);
+      applyCamera(cameraAt([px, py], v.w / w, from.th + dth * e, v));
+    });
+  };
+
+  const resetCamera = () => {
+    const ctx = fitCtx();
+    const f = focus();
+    if (!ctx || !f) return;
+    stopFly();
+    applyCamera(fitClade(ctx, f));
+  };
+
+  // ---------------------------------------------------------------- loading, size, URL, theme
 
   onMount(() => {
     loadTree(props.dataUrl ?? TREE_DATA_URL)
@@ -250,25 +359,159 @@ export default function RadialTree(props: RadialTreeProps) {
       })
       .catch(() => setFailed(true));
 
-    if (sizer && "ResizeObserver" in window) {
+    setCoarse(window.matchMedia?.("(hover: none)").matches === true);
+
+    if (frameEl && "ResizeObserver" in window) {
       const ro = new ResizeObserver((entries) => {
-        const w = entries[0]?.contentRect.width ?? 0;
-        if (w > 0) setS(Math.round(Math.min(props.maxSize ?? 860, Math.max(260, w / uiScale()))));
+        const r = entries[0]?.contentRect;
+        if (!r) return;
+        const w = Math.round(r.width);
+        const h = Math.round(r.height);
+        if (w > 0 && h > 0) {
+          batch(() => {
+            setU(uiScale());
+            setVp((v) => (v.w === w && v.h === h ? v : { w, h }));
+          });
+        }
       });
-      ro.observe(sizer);
+      ro.observe(frameEl);
       onCleanup(() => ro.disconnect());
     }
+
+    if (frameEl) {
+      // Capture phase on the frame runs before d3-zoom's own listeners on the canvas.
+      const at = (x: number, y: number): [number, number] => {
+        const r = (canvasEl as HTMLCanvasElement).getBoundingClientRect();
+        return [x - r.left, y - r.top];
+      };
+      const centre = (ts: TouchList): [number, number] | null => {
+        if (!ts.length) return null;
+        let x = 0;
+        let y = 0;
+        for (let i = 0; i < ts.length; i++) {
+          x += ts[i]?.clientX ?? 0;
+          y += ts[i]?.clientY ?? 0;
+        }
+        return at(x / ts.length, y / ts.length);
+      };
+      const onWheel = (e: WheelEvent) => {
+        anchorFrom = anchorTo = at(e.clientX, e.clientY);
+      };
+      const onTouch = (e: TouchEvent) => {
+        const c = centre(e.touches);
+        if (e.type === "touchmove") {
+          anchorFrom = lastPinch ?? c;
+          anchorTo = c;
+        } else anchorFrom = anchorTo = c;
+        lastPinch = c;
+      };
+      const opts = { capture: true, passive: true };
+      frameEl.addEventListener("wheel", onWheel, opts);
+      for (const ev of ["touchstart", "touchmove", "touchend"] as const) frameEl.addEventListener(ev, onTouch, opts);
+      onCleanup(() => {
+        frameEl?.removeEventListener("wheel", onWheel, opts);
+        for (const ev of ["touchstart", "touchmove", "touchend"] as const) frameEl?.removeEventListener(ev, onTouch, opts);
+      });
+    }
+
+    if (canvasEl) {
+      const ctx = canvasEl.getContext("2d");
+      if (ctx) measurer = createMeasurer(ctx, () => pal?.family ?? "sans-serif");
+      zb = zoom<HTMLCanvasElement, unknown>()
+        .scaleExtent(kRange())
+        .clickDistance(5)
+        .tapDistance(12)
+        .filter((e: Event) => {
+          if (e.type === "wheel") return true;
+          if (e.type === "touchstart") {
+            // At the whole-tree view one finger scrolls the page; pinch to zoom.
+            const n = (e as TouchEvent).touches.length;
+            return n > 1 || (untrack(cam)?.k ?? 1) > untrack(kRange)[0] * 1.02;
+          }
+          const me = e as MouseEvent;
+          return !me.ctrlKey && !me.button;
+        })
+        .constrain((tr) => {
+          const g = G();
+          const L = target();
+          const P = proj();
+          if (!g || !L || !P) return tr;
+          let c: Camera = { k: tr.k, x: tr.x, y: tr.y, th: thNow };
+          // d3-zoom scales the drawing as if it were flat; ours keeps the rings and labels at a
+          // fixed size, so keep whatever is under the pointer under it ourselves.
+          const prev = untrack(cam);
+          if (prev && anchorFrom && anchorTo && Math.abs(prev.k - tr.k) > 1e-9) c = zoomAbout(P, prev, tr.k, anchorFrom, anchorTo);
+          c = constrain(g, L.unit, vp(), c);
+          return c.x === tr.x && c.y === tr.y ? tr : zoomIdentity.translate(c.x, c.y).scale(c.k);
+        })
+        .on("start", (e: D3ZoomEvent<HTMLCanvasElement, unknown>) => {
+          if (!e.sourceEvent) return;
+          stopFly();
+          clearTimeout(syncTimer);
+          gestureFrom = e.transform;
+        })
+        .on("zoom", (e: D3ZoomEvent<HTMLCanvasElement, unknown>) => {
+          const tr = e.transform;
+          setCam({ k: tr.k, x: tr.x, y: tr.y, th: thNow });
+          if (e.sourceEvent && gestureFrom && (tr.k !== gestureFrom.k || Math.hypot(tr.x - gestureFrom.x, tr.y - gestureFrom.y) > 2)) {
+            setHint(false);
+            if (!pinned()) setHover(null);
+          }
+        })
+        .on("end", (e: D3ZoomEvent<HTMLCanvasElement, unknown>) => {
+          if (!e.sourceEvent || !gestureFrom) return;
+          const tr = e.transform;
+          const moved = tr.k !== gestureFrom.k || Math.hypot(tr.x - gestureFrom.x, tr.y - gestureFrom.y) > 2;
+          const zoomed = tr.k !== gestureFrom.k;
+          gestureFrom = null;
+          if (!moved) return;
+          // Do not rest where the species names are half faded in: settle on the nearer clean zoom.
+          const c = untrack(cam);
+          const g = G();
+          const L = target();
+          const P = proj();
+          if (zoomed && c && g && L && P) {
+            const [lo, hi] = kRange();
+            const k2 = clamp(snapZoom(g, L.unit, c.k), lo, hi);
+            if (Math.abs(k2 - c.k) > 1e-4) {
+              const v = vp();
+              const at = anchorTo ?? ([v.w / 2, v.h / 2] as [number, number]);
+              flyTo(constrain(g, L.unit, v, zoomAbout(P, c, k2, at, at)), scheduleViewSync);
+              return;
+            }
+          }
+          scheduleViewSync();
+        });
+      select(canvasEl).call(zb).on("dblclick.zoom", null);
+    }
+
+    // Theme: the header toggle sets data-theme on <html>; the OS setting can change too.
+    const mo = new MutationObserver(() => setPalVer((v) => v + 1));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const mq = window.matchMedia?.("(prefers-color-scheme: dark)");
+    const onScheme = () => setPalVer((v) => v + 1);
+    mq?.addEventListener?.("change", onScheme);
+    document.fonts?.ready.then(() => {
+      measurer?.clear();
+      scheduleDraw();
+    });
+    onCleanup(() => {
+      mo.disconnect();
+      mq?.removeEventListener?.("change", onScheme);
+    });
 
     if (props.syncUrl) {
       const onPop = () => {
         const m = model();
-        if (!m) return;
+        const ctx = fitCtx();
+        if (!m || !ctx) return;
         const n = resolveKey(m, urlFocus()) ?? limitIn(m);
-        if (n && n !== focus()) {
+        batch(() => {
           setPinned(false);
           setHover(null);
           setFocus(() => n);
-        }
+        });
+        flyTo(fitClade(ctx, n));
       };
       window.addEventListener("popstate", onPop);
       onCleanup(() => window.removeEventListener("popstate", onPop));
@@ -276,7 +519,51 @@ export default function RadialTree(props: RadialTreeProps) {
     onCleanup(() => {
       stopTween();
       stopMetricTween();
+      stopFly();
+      clearTimeout(syncTimer);
+      cancelAnimationFrame(raf);
+      document.documentElement.classList.remove("rtree-lock");
+      if (canvasEl) select(canvasEl).on(".zoom", null);
     });
+  });
+
+  // Layout: computed for the root of the island; animated when the mode changes.
+  createEffect(
+    on([model, rootLimit, mode], () => {
+      const m = model();
+      const lim = rootLimit();
+      if (!m || !lim) return;
+      const next = layoutFor(m, lim, mode());
+      const prev = untrack(target);
+      if (prev && prev.focus === next.focus && prev.mode === next.mode) return;
+      const cur = untrack(frame);
+      batch(() => {
+        setFromPose(prev && cur ? frameToPose(cur) : null);
+        setFromLayout(prev);
+        setTarget(next);
+        setT(prev ? 0 : 1);
+      });
+      if (!prev) {
+        resetCamera();
+        return;
+      }
+      animateLayout();
+      const ctx = fitCtx();
+      const f = untrack(focus);
+      if (ctx && f) flyTo(fitClade(ctx, f));
+    }),
+  );
+
+  // New canvas size: fit the clade in view again.
+  createEffect(
+    on(G, (g) => {
+      if (g) resetCamera();
+    }),
+  );
+
+  createEffect(() => {
+    const ext = kRange();
+    zb?.scaleExtent(ext);
   });
 
   /**
@@ -297,15 +584,37 @@ export default function RadialTree(props: RadialTreeProps) {
     else window.history.replaceState(state, "", href);
   };
 
-  const goTo = (n: TNode, how: "push" | "replace" = "push") => {
+  /** Fly to a clade and make it the focus. */
+  const navigate = (n: TNode, how: "push" | "replace" = "push", to?: Camera, done?: () => void) => {
+    const ctx = fitCtx();
+    if (!ctx || !n.children) return;
     const prev = focus();
-    if (!n.children || n === prev) return;
     batch(() => {
       setPinned(false);
       setHover(null);
       setFocus(() => n);
     });
-    writeUrl(n, prev, how);
+    setHint(false);
+    flyTo(to ?? fitClade(ctx, n), done);
+    if (n !== prev) writeUrl(n, prev, how);
+  };
+
+  /** After the reader pans or zooms, the focus follows the clade in view. */
+  const scheduleViewSync = () => {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      const m = model();
+      const L = target();
+      const g = G();
+      const c = cam();
+      if (!m || !L || !g || !c) return;
+      const prev = focus();
+      const n = viewClade(m, L, g, c, vp(), kRange()[0], prev);
+      if (n !== prev) {
+        setFocus(() => n);
+        writeUrl(n, prev, "replace");
+      }
+    }, 380);
   };
 
   const canGoUp = () => {
@@ -323,86 +632,33 @@ export default function RadialTree(props: RadialTreeProps) {
       return;
     }
     // Not where we came from (e.g. after a search): replace, so Back still leaves the tree.
-    goTo(parent, "replace");
+    navigate(parent, "replace");
   };
 
-  // ---------------------------------------------------------------- layout and transitions
-
-  const maxTerminals = () => {
-    const g = geometry(S(), 0, true);
-    return Math.max(6, Math.floor((g.arcOut * (Math.PI * 2 - GAP)) / 26));
-  };
-
-  const layoutFor = (m: TreeModel, f: TNode): Layout => {
-    if (compact()) {
-      const d = readableDepth(f, maxTerminals());
-      return computeLayout(m, f, { mode: mode(), displayDepth: d, bandDepth: d, gap: GAP });
-    }
-    const band = f.depth >= SPECIES_DEPTH - 1 ? 0 : defaultBandDepth(f);
-    return computeLayout(m, f, { mode: mode(), displayDepth: SPECIES_DEPTH, bandDepth: band, gap: GAP });
-  };
-
-  const labTo = createMemo(() => {
+  const zoomBy = (f: number) => {
+    const c = cam();
+    const g = G();
     const L = target();
-    return L ? leafLabelWidth(L, S(), compact()) : 0;
-  });
-
-  const ease = () => easeCubicInOut(t());
-
-  const frame = createMemo<Frame | null>(() => {
-    const m = model();
-    const to = target();
-    if (!m || !to) return null;
-    return interpolate(m, fromPose(), to, ease());
-  });
-
-  const geo = createMemo(() => geometry(S(), lerp(labFrom(), labTo(), ease()), compact()));
-  const atRest = () => t() >= 1;
-
-  const animate = () => {
-    stopTween();
-    if (prefersReducedMotion()) {
-      setT(1);
-      return;
-    }
-    stopTween = tween(DUR, setT);
+    if (!c || !g || !L) return;
+    const P = proj();
+    if (!P) return;
+    const [lo, hi] = kRange();
+    const k = clamp(snapZoom(g, L.unit, clamp(c.k * f, lo, hi), f > 1 ? "near" : "down"), lo, hi);
+    const v = vp();
+    const mid: [number, number] = [v.w / 2, v.h / 2];
+    setHint(false);
+    flyTo(constrain(g, L.unit, v, zoomAbout(P, c, k, mid, mid)), scheduleViewSync);
   };
 
-  createEffect(
-    on([model, focus, mode, compact, maxTerminals], () => {
-      const m = model();
-      const f = focus();
-      if (!m || !f) return;
-      const next = layoutFor(m, f);
-      const prev = untrack(target);
-      const same =
-        prev &&
-        prev.focus === next.focus &&
-        prev.mode === next.mode &&
-        prev.displayDepth === next.displayDepth &&
-        prev.bandDepth === next.bandDepth;
-      const cur = untrack(frame);
-      const curLab = untrack(() => lerp(labFrom(), labTo(), ease()));
-      batch(() => {
-        if (!prev || same) {
-          setFromPose(null);
-          setFromLayout(null);
-          setTarget(next);
-          setLabFrom(untrack(labTo));
-          setT(1);
-        } else {
-          setFromPose(cur ? frameToPose(cur) : null);
-          setFromLayout(prev);
-          setLabFrom(curLab);
-          setTarget(next);
-          setT(0);
-        }
-      });
-      if (prev && !same) animate();
-    }),
-  );
+  const toggleExpanded = () => {
+    const next = !expanded();
+    setExpanded(next);
+    document.documentElement.classList.toggle("rtree-lock", next);
+    if (next) requestAnimationFrame(() => canvasEl?.focus({ preventScroll: true }));
+  };
 
-  // Ring values per leaf for the current metric (and the previous one, for the height transition).
+  // ---------------------------------------------------------------- ring values
+
   const ringData = createMemo(() => {
     const m = model();
     if (!m) return null;
@@ -410,8 +666,8 @@ export default function RadialTree(props: RadialTreeProps) {
     const raw = m.leaves.map((l) => (key === "life" ? l.data.sp?.life : key === "gc" ? l.data.sp?.gc : l.data.sp?.size) ?? Number.NaN);
     const scale = ringScale(key, raw);
     const vals = new Float64Array(raw.length);
-    raw.forEach((v, k) => (vals[k] = Number.isFinite(v) ? scale.norm(v) : 0));
-    return { scale, vals, fills: Array.from(vals, (v) => rampFill(v, RAMP_MID[key])) };
+    raw.forEach((v, k) => (vals[k] = Number.isFinite(v) ? scale.norm(v) : Number.NaN));
+    return { scale, vals };
   });
 
   createEffect(
@@ -431,377 +687,220 @@ export default function RadialTree(props: RadialTreeProps) {
     ),
   );
 
-  // ---------------------------------------------------------------- drawing data
-
-  const linkWidth = createMemo(() => {
-    const n = target()?.leafCount ?? 922;
-    return n > 500 ? 0.85 : n > 200 ? 1.1 : n > 60 ? 1.5 : 2;
-  });
-
-  const linkGroups = createMemo(() => {
-    const f = frame();
-    const m = model();
-    if (!f || !m) return [] as { color: string; op: number; d: string }[];
-    const g = geo();
-    const drawn = new Uint8Array(m.nodes.length);
-    for (const i of f.draw) drawn[i] = 1;
-    const groups = new Map<string, { color: string; op: number; parts: string[] }>();
-    for (const i of f.draw) {
-      const n = m.nodes[i];
-      const p = n?.parent;
-      if (!n || !p || !drawn[p.data.i]) continue;
-      const op = at(f.op, i);
-      if (op < 0.02) continue;
-      const q = Math.round(op * 10) / 10;
-      const color = colorOf(n);
-      const key = `${color}|${q}`;
-      let grp = groups.get(key);
-      if (!grp) groups.set(key, (grp = { color, op: q, parts: [] }));
-      grp.parts.push(linkPath(g.c, at(f.a, i), at(f.r, i) * g.R, at(f.a, p.data.i), at(f.r, p.data.i) * g.R));
-    }
-    return [...groups.values()].map((x) => ({ color: x.color, op: x.op, d: x.parts.join("") }));
-  });
-
-  /** Collapsed clades (small screens) drawn as fans from the node to the tips. */
-  const wedges = createMemo(() => {
-    const f = frame();
-    const m = model();
-    const to = target();
-    if (!f || !m || !to) return [] as { d: string; color: string; op: number }[];
-    const g = geo();
-    const e = ease();
-    const fromL = fromLayout();
-    const toSet = new Set(to.terminals.filter((n) => n.children));
-    const fromSet = new Set(fromL && t() < 1 ? fromL.terminals.filter((n) => n.children) : []);
-    const out: { d: string; color: string; op: number }[] = [];
-    const add = (n: TNode, op: number) => {
-      if (op < 0.02) return;
-      const i = n.data.i;
-      const l0 = m.leafRange[2 * i] ?? 0;
-      const l1 = m.leafRange[2 * i + 1] ?? 0;
-      const a0 = at(f.la, l0) - at(f.lw, l0) * 0.86;
-      const a1 = at(f.la, l1) + at(f.lw, l1) * 0.86;
-      if (a1 - a0 < 1e-4) return;
-      const rn = at(f.r, i) * g.R;
-      const d = `M${pt(g.c, at(f.a, i), rn)}L${pt(g.c, a0, g.R)}A${f1(g.R)} ${f1(g.R)} 0 ${a1 - a0 > Math.PI ? 1 : 0} 1 ${pt(g.c, a1, g.R)}Z`;
-      out.push({ d, color: colorOf(n), op });
-    };
-    for (const n of toSet) add(n, fromSet.has(n) || t() >= 1 ? 1 : e);
-    for (const n of fromSet) if (!toSet.has(n)) add(n, 1 - e);
-    return out;
-  });
-
-  const ringH = () => geo().ringOut - geo().ringIn;
-
-  const barPaths = createMemo(() => {
-    const f = frame();
+  const ringVals = createMemo<Float64Array | null>(() => {
     const rd = ringData();
-    const to = target();
-    if (!f || !rd || !to) return [] as string[];
-    const g = geo();
-    const h = ringH();
+    if (!rd) return null;
     const vf = valsFrom();
+    if (!vf) return rd.vals;
     const k = easeCubicInOut(mt());
-    const gapK = to.unit * g.ringIn > 3 ? 0.8 : 1;
-    // In small clades a slot can be wide; keep bars slim (about 14 px at the ring).
-    const maxW = 7 / Math.max(1, g.ringIn);
-    const out = new Array<string>(rd.vals.length);
-    for (let i = 0; i < rd.vals.length; i++) {
-      const w = Math.min(at(f.lw, i) * gapK, maxW);
-      if (w < 1e-5) {
-        out[i] = "";
-        continue;
-      }
-      const v = vf ? lerp(at(vf, i), at(rd.vals, i), k) : at(rd.vals, i);
-      const a = at(f.la, i);
-      out[i] = sector(g.c, a - w, a + w, g.ringIn, g.ringIn + h * (0.1 + 0.9 * v));
+    const out = new Float64Array(rd.vals.length);
+    for (let i = 0; i < out.length; i++) {
+      const a = vf[i] ?? Number.NaN;
+      const b = rd.vals[i] ?? Number.NaN;
+      out[i] = lerp(Number.isFinite(a) ? a : 0, Number.isFinite(b) ? b : 0, k);
     }
     return out;
   });
 
-  const bandArcs = createMemo(() => {
+  const valueText = (leaf: TNode): string => {
+    const sp = leaf.data.sp;
+    if (!sp) return "";
+    const key = untrack(metric);
+    return key === "life" ? fmtLifespan(sp.life) : key === "gc" ? fmtPct(sp.gc, 1) : fmtBp(sp.size);
+  };
+
+  // ---------------------------------------------------------------- drawing
+
+  const draw = () => {
+    raf = 0;
+    const c = canvasEl;
+    const g = G();
+    const v = vp();
+    if (!c || !g || !rootEl || !measurer) return;
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
+    const W = Math.round(v.w * dpr);
+    const H = Math.round(v.h * dpr);
+    if (c.width !== W) c.width = W;
+    if (c.height !== H) c.height = H;
+    const ctx = c.getContext("2d");
+    if (!ctx) return;
+    const m = model();
+    if (palDirty || !pal) {
+      pal = readPalette(rootEl, m, metric());
+      palDirty = false;
+      measurer.clear();
+    }
+    const L = target();
+    const cm = cam();
     const f = frame();
-    const m = model();
-    const to = target();
-    if (!f || !m || !to) return [] as { d: string; color: string; op: number; alt: boolean }[];
-    const g = geo();
-    const e = ease();
-    const fromL = t() < 1 ? fromLayout() : null;
-    const out: { d: string; color: string; op: number; alt: boolean }[] = [];
-    const add = (b: Band, idx: number, op: number) => {
-      if (op < 0.02) return;
-      const i = b.node.data.i;
-      const l0 = m.leafRange[2 * i] ?? 0;
-      const l1 = m.leafRange[2 * i + 1] ?? 0;
-      const a0 = at(f.la, l0) - at(f.lw, l0);
-      const a1 = at(f.la, l1) + at(f.lw, l1);
-      if (a1 - a0 < 1e-4) return;
-      out.push({ d: sector(g.c, a0, a1, g.arcIn, g.arcOut), color: colorOf(b.node), op, alt: idx % 2 === 1 });
-    };
-    const toNodes = new Set(to.bands.map((b) => b.node));
-    const fromNodes = new Set(fromL ? fromL.bands.map((b) => b.node) : []);
-    to.bands.forEach((b, idx) => add(b, idx, fromNodes.has(b.node) || !fromL ? 1 : e));
-    fromL?.bands.forEach((b, idx) => {
-      if (!toNodes.has(b.node)) add(b, idx, 1 - e);
-    });
-    return out;
-  });
-
-  const bandLabels = createMemo(() => {
-    const to = target();
-    if (!to || !atRest()) return [] as { id: string; d: string; text: string; italic: boolean }[];
-    const g = geo();
-    const fs = g.fs;
-    return to.bands.flatMap((b, idx) => {
-      const span = b.a1 - b.a0;
-      const mid = (b.a0 + b.a1) / 2;
-      const bottom = mid > Math.PI / 2 && mid < (3 * Math.PI) / 2;
-      const r = bottom ? g.arcOut + 4 + fs * 0.74 : g.arcOut + 4;
-      const room = span * r * 0.94;
-      const text = bandTexts(b.node).find((s) => s.length * fs * 0.6 <= room);
-      if (!text) return [];
-      const h = Math.min(span / 2, 1.45);
-      const d = bottom
-        ? `M${pt(g.c, mid + h, r)}A${f1(r)} ${f1(r)} 0 0 0 ${pt(g.c, mid - h, r)}`
-        : `M${pt(g.c, mid - h, r)}A${f1(r)} ${f1(r)} 0 0 1 ${pt(g.c, mid + h, r)}`;
-      return [{ id: `rt${uid}-b${idx}`, d, text, italic: isItalicRank(b.node.data.rank) }];
-    });
-  });
-
-  const leafLabels = createMemo(() => {
-    const to = target();
-    const lw = labTo();
-    if (!to || !atRest() || lw <= 0) return [] as { x: number; y: number; rot: number; anchor: "start" | "end"; text: string; node: TNode }[];
-    const g = geo();
-    return to.terminals.map((n) => {
-      const a = at(to.a, n.data.i);
-      const [x, y] = xy(g.c, a, g.labIn + 2);
-      const deg = (a * 180) / Math.PI;
-      const left = a > Math.PI;
-      return { x, y, rot: left ? deg + 90 : deg - 90, anchor: left ? ("end" as const) : ("start" as const), text: abbrevName(n.data.name), node: n };
-    });
-  });
-
-  const guides = createMemo(() => {
-    const to = target();
-    if (!to) return [] as { r: number; label: string }[];
-    const g = geo();
-    const fd = to.focus.depth;
-    if (to.mode === "time") {
-      return ageTicks(to.focusAge).map((age) => ({
-        r: (1 - age / to.focusAge) * g.R,
-        label: `${fmtNum(age, 1)} Mya`,
-      }));
+    const vals = ringVals();
+    if (!m || !L || !cm || !f || !vals) {
+      drawSkeleton(ctx, v, dpr, g, pal, failed() ? "The tree could not be loaded." : "Growing the tree…");
+      lastStems = [];
+      return;
     }
-    const denom = (to.displayDepth >= SPECIES_DEPTH ? SPECIES_DEPTH : to.displayDepth + 1) - fd;
-    const out: { r: number; label: string }[] = [];
-    for (let d = fd + 1; d <= Math.min(to.displayDepth, SPECIES_DEPTH - 1); d++) {
-      const rank = RANKS[d];
-      if (rank) out.push({ r: ((d - fd) / denom) * g.R, label: rankPlural(rank) });
-    }
-    return out;
-  });
-
-  /** Small dots on internal nodes, grouped by colour (drawn at rest). */
-  const nodeDots = createMemo(() => {
-    const to = target();
-    if (!to || !atRest()) return [] as { color: string; d: string }[];
-    const g = geo();
-    const internal = to.visible.filter((n) => n.children && n !== to.focus && n.depth < to.displayDepth);
-    const dense = internal.length > 260;
-    const groups = new Map<string, string[]>();
-    for (const n of internal) {
-      if (dense && n.depth > Math.max(to.bandDepth, CLASS_DEPTH)) continue;
-      const [x, y] = xy(g.c, at(to.a, n.data.i), at(to.r, n.data.i) * g.R);
-      const r = n.depth <= Math.max(to.bandDepth, CLASS_DEPTH) ? 3.2 : 2.4;
-      const color = colorOf(n);
-      const list = groups.get(color) ?? [];
-      list.push(`M${f1(x - r)} ${f1(y)}a${r} ${r} 0 1 0 ${2 * r} 0a${r} ${r} 0 1 0 ${-2 * r} 0`);
-      groups.set(color, list);
-    }
-    return [...groups.entries()].map(([color, parts]) => ({ color, d: parts.join("") }));
-  });
-
-  // ---------------------------------------------------------------- hover, hit testing, overlay
-
-  const visibleByDepth = createMemo(() => {
-    const to = target();
-    const map = new Map<number, TNode[]>();
-    if (!to) return map;
-    for (const n of to.visible) {
-      if (n === to.focus) continue;
-      const list = map.get(n.depth) ?? [];
-      list.push(n);
-      map.set(n.depth, list);
-    }
-    return map;
-  });
-
-  const delaunay = createMemo(() => {
-    const to = target();
-    if (!to || !atRest()) return null;
-    const g = geo();
-    const pts = to.visible.filter((n) => n !== to.focus);
-    const coords = new Float64Array(pts.length * 2);
-    pts.forEach((n, k) => {
-      const [x, y] = xy(g.c, at(to.a, n.data.i), at(to.r, n.data.i) * g.R);
-      coords[2 * k] = x;
-      coords[2 * k + 1] = y;
-    });
-    return { pts, coords, d: new Delaunay(coords) };
-  });
-
-  const toSvg = (clientX: number, clientY: number): [number, number] | null => {
-    if (!svgEl) return null;
-    const r = svgEl.getBoundingClientRect();
-    const k = S() / r.width;
-    return [(clientX - r.left) * k, (clientY - r.top) * k];
+    const out = drawScene(
+      ctx,
+      {
+        model: m,
+        L,
+        pose: frameToPose(f),
+        rest: t() >= 1,
+        G: g,
+        cam: cm,
+        vp: v,
+        dpr,
+        D: depthNow(cm.k),
+        kMin: kRange()[0],
+        vals,
+        ticks: ringData()?.scale.ticks ?? [],
+        valueText,
+        hover: hover(),
+        selected: selected(),
+      },
+      pal,
+      measurer,
+    );
+    lastStems = out.stems;
   };
 
-  const leafAtAngle = (to: Layout, m: TreeModel, a: number): TNode | null => {
-    const fi = to.focus.data.i;
-    let lo = m.leafRange[2 * fi] ?? 0;
-    let hi = m.leafRange[2 * fi + 1] ?? 0;
-    const first = lo;
-    const last = hi;
-    while (lo < hi) {
-      const mid = (lo + hi) >> 1;
-      if (at(to.la, mid) < a) lo = mid + 1;
-      else hi = mid;
-    }
-    let best: number = lo;
-    if (lo > first && Math.abs(at(to.la, lo - 1) - a) < Math.abs(at(to.la, lo) - a)) best = lo - 1;
-    if (best < first || best > last) return null;
-    return Math.abs(at(to.la, best) - a) <= Math.max(to.unit * 0.9, 0.012) ? (m.leaves[best] ?? null) : null;
+  const scheduleDraw = () => {
+    if (!raf && typeof window !== "undefined") raf = requestAnimationFrame(draw);
   };
 
-  const hitTest = (x: number, y: number, touch: boolean): Hover | null => {
+  createEffect(() => {
+    cam();
+    frame();
+    ringVals();
+    hover();
+    selected();
+    G();
+    model();
+    failed();
+    t();
+    scheduleDraw();
+  });
+
+  createEffect(
+    on([palVer, metric, model], () => {
+      palDirty = true;
+      scheduleDraw();
+    }),
+  );
+
+  // ---------------------------------------------------------------- hit testing
+
+  const hitTest = (px: number, py: number, touch: boolean): Hover | null => {
     const m = model();
-    const to = target();
-    if (!m || !to || !atRest()) return null;
-    const g = geo();
-    const dx = x - g.c;
-    const dy = y - g.c;
-    const rr = Math.hypot(dx, dy);
-    let a = Math.atan2(dx, -dy);
-    if (a < 0) a += Math.PI * 2;
-    if (rr > g.c) return null;
-    if (rr >= g.arcIn - 2) {
-      const b = to.bands.find((bb) => a >= bb.a0 && a <= bb.a1);
+    const L = target();
+    const g = G();
+    const c = cam();
+    if (!m || !L || !g || !c || t() < 1) return null;
+    const z = zones(g, L.unit, c.k);
+    const { a, s } = toPolar(c, px, py);
+    if (s > z.labOut + 4 * g.u) return null;
+    const band = (): Hover | null => {
+      const b = L.bands.find((bb) => a >= bb.a0 && a <= bb.a1);
       return b ? { node: b.node, zone: "band" } : null;
+    };
+    if (s >= z.T - Math.min(6 * g.u, 0.5 * L.unit * z.T + 2 * g.u)) {
+      if (s >= z.arcIn - 2 * g.u && z.leafA < 0.5) return band();
+      const leaf = leafAt(m, L, L.focus, a, ((touch ? 8 : 2) * g.u) / Math.max(1, s));
+      if (leaf) return { node: leaf, zone: "ring" };
+      return s >= z.arcIn - 2 * g.u ? band() : null;
     }
-    if (rr >= g.ringIn - 3) {
-      const leaf = leafAtAngle(to, m, a);
-      return leaf ? { node: leaf, zone: "ring" } : null;
-    }
-    const dl = delaunay();
-    if (dl && dl.pts.length) {
-      const k = dl.d.find(x, y);
-      const n = dl.pts[k];
-      if (n) {
-        const dist = Math.hypot(at(dl.coords, 2 * k) - x, at(dl.coords, 2 * k + 1) - y);
-        if (dist <= (touch ? 24 : 15)) return { node: n, zone: "tree" };
+    for (const lab of lastStems) if (pointInLabel(lab, px, py, 3 * g.u)) return { node: lab.node, zone: "tree" };
+    const P = proj();
+    if (!P) return null;
+    let best: TNode | null = null;
+    let bd = (touch ? 20 : 11) * g.u;
+    L.focus.each((n) => {
+      if (!n.children || n === L.focus) return;
+      const [x, y] = polar(c, L.a[n.data.i] ?? 0, radius(P, c.k, L.r[n.data.i] ?? 0));
+      const d = Math.hypot(x - px, y - py);
+      if (d < bd) {
+        bd = d;
+        best = n;
       }
-    }
-    // Inside a collapsed fan?
-    if (to.displayDepth < SPECIES_DEPTH && rr <= g.R + 2) {
-      for (const n of to.terminals) {
-        if (!n.children) continue;
-        const i = n.data.i;
-        const l0 = m.leafRange[2 * i] ?? 0;
-        const l1 = m.leafRange[2 * i + 1] ?? 0;
-        if (a >= at(to.la, l0) - at(to.lw, l0) && a <= at(to.la, l1) + at(to.lw, l1) && rr >= at(to.r, i) * g.R - 4) {
-          return { node: n, zone: "tree" };
-        }
+    });
+    // A clade too small to see at this zoom stands for its visible ancestor, so selecting zooms
+    // in a level or two at a time rather than straight to a genus.
+    const minPx = 34 * g.u;
+    const visible = (n: TNode): TNode => {
+      let v = n;
+      while (v !== L.focus && v.parent) {
+        const [a0, a1] = nodeSpan(m, L, v);
+        if ((a1 - a0) * g.R * c.k >= minPx) break;
+        v = v.parent;
       }
+      return v;
+    };
+    if (best) {
+      const v = visible(best);
+      return v === L.focus ? null : { node: v, zone: v === best ? "tree" : "wedge", x: px, y: py };
     }
-    return null;
+    const n = visible(cladeAt(m, L, L.focus, a, radiusInv(P, c.k, s)));
+    return n === L.focus ? null : { node: n, zone: "wedge", x: px, y: py };
   };
 
-  /** Links of the hovered node's lineage (focus -> node) and subtree, drawn on top. */
-  const overlay = createMemo(() => {
-    const h = hover() ?? (selected() ? { node: selected() as TNode, zone: "tree" as Zone } : null);
-    const to = target();
-    const m = model();
-    if (!h || !to || !m || !atRest() || !isAncestorOf(to.focus, h.node)) return null;
-    const g = geo();
-    const pos = (n: TNode): [number, number] => [at(to.a, n.data.i), at(to.r, n.data.i) * g.R];
-    const lineage: string[] = [];
-    let n: TNode | null = h.node;
-    while (n && n !== to.focus && n.parent) {
-      const [ac, rc] = pos(n);
-      const [ap, rp] = pos(n.parent);
-      lineage.push(linkPath(g.c, ac, rc, ap, rp));
-      n = n.parent;
-    }
-    const sub: string[] = [];
-    if (h.node.children) {
-      h.node.each((d) => {
-        if (d === h.node || !d.parent || to.vis[d.data.i] !== 1) return;
-        const [ac, rc] = pos(d);
-        const [ap, rp] = pos(d.parent);
-        sub.push(linkPath(g.c, ac, rc, ap, rp));
-      });
-    }
-    const [x, y] = xy(g.c, ...pos(h.node));
-    return { lineage: lineage.join(""), sub: sub.join(""), color: colorOf(h.node), x, y, node: h.node };
-  });
+  const local = (e: MouseEvent): [number, number] => {
+    const r = (canvasEl as HTMLCanvasElement).getBoundingClientRect();
+    return [e.clientX - r.left, e.clientY - r.top];
+  };
 
-  /** Outline of the hovered leaf's bar or of the hovered band. */
-  const outline = createMemo(() => {
-    const h = hover();
-    const to = target();
-    const m = model();
-    const rd = ringData();
-    if (!h || !to || !m || !rd || !atRest()) return null;
-    const g = geo();
-    if (h.zone === "band") {
-      const b = to.bands.find((bb) => bb.node === h.node);
-      return b ? sector(g.c, b.a0, b.a1, g.arcIn - 1, g.arcOut + 1) : null;
-    }
-    if (!h.node.children) {
-      const k = h.node.data.leafIndex;
-      const w = Math.min(Math.max(at(to.lw, k), 0.004), 8 / Math.max(1, g.ringIn));
-      const a = at(to.la, k);
-      return sector(g.c, a - w, a + w, g.ringIn - 1, g.ringIn + ringH() * (0.1 + 0.9 * at(rd.vals, k)) + 1);
-    }
-    return null;
-  });
-
-  const selectedMark = createMemo(() => {
-    const s = selected();
-    const to = target();
-    if (!s || !to || !atRest() || to.vis[s.data.i] !== 1) return null;
-    const g = geo();
-    const [x, y] = xy(g.c, at(to.a, s.data.i), at(to.r, s.data.i) * g.R);
-    const k = s.data.leafIndex;
-    const w = Math.min(Math.max(at(to.lw, k), 0.006), 9 / Math.max(1, g.ringIn));
-    const a = at(to.la, k);
-    return { x, y, bar: k >= 0 ? sector(g.c, a - w, a + w, g.ringIn - 2, g.ringOut + 2) : "" };
-  });
+  /** Species names are on screen, so selecting a species opens it. */
+  const leavesReadable = (): boolean => {
+    const L = target();
+    const g = G();
+    const c = cam();
+    return !!L && !!g && !!c && zones(g, L.unit, c.k).leafA > 0.5;
+  };
 
   // ---------------------------------------------------------------- interaction
 
-  const activate = (n: TNode) => {
-    if (!n.children) {
-      window.location.assign(speciesUrl(n.data.slug));
-      return;
-    }
+  const openSpecies = (leaf: TNode, newTab = false) => {
+    const url = speciesUrl(leaf.data.slug);
+    if (newTab) window.open(url, "_blank", "noopener");
+    else window.location.assign(url);
+  };
+
+  /** Fly to a species among its relatives, highlighted with its card open. */
+  const showSpecies = (leaf: TNode) => {
+    const ctx = fitCtx();
+    const lim = rootLimit();
+    if (!ctx || !lim) return;
+    const genus = leaf.parent;
+    const family = genus?.parent ?? null;
+    let f: TNode = genus && (genus.value ?? 0) >= 2 ? genus : (family ?? genus ?? lim);
+    if (!isAncestorOf(lim, f)) f = lim;
+    setSelected(() => leaf);
+    navigate(f, "push", fitLeaf(ctx, leaf), () => {
+      setTouchHint(false);
+      setHover({ node: leaf, zone: "ring" });
+      setPinned(true);
+    });
+  };
+
+  const activateClade = (n: TNode) => {
     if ((n.value ?? 0) < 2) {
-      window.location.assign(taxonUrl(n.data.rank, n.data.slug));
+      const leaf = n.leaves()[0];
+      if (leaf) showSpecies(leaf);
       return;
     }
-    if (n === focus()) return;
     setSelected(null);
-    goTo(n);
+    navigate(n);
   };
 
   const onPointerMove = (e: PointerEvent) => {
-    if (e.pointerType !== "mouse" || pinned()) return;
-    const p = toSvg(e.clientX, e.clientY);
-    const h = p ? hitTest(p[0], p[1], false) : null;
+    if (e.pointerType !== "mouse" || pinned() || e.buttons) return;
+    const [x, y] = local(e);
+    const h = hitTest(x, y, false);
     const cur = hover();
-    if (h?.node !== cur?.node || h?.zone !== cur?.zone) setHover(h);
+    if (!h) {
+      if (cur) setHover(null);
+      return;
+    }
+    if (h.node !== cur?.node || h.zone !== cur?.zone || h.zone === "wedge") setHover(h);
   };
 
   const onPointerLeave = (e: PointerEvent) => {
@@ -811,21 +910,70 @@ export default function RadialTree(props: RadialTreeProps) {
   const onClick = (e: MouseEvent) => {
     const pe = e as PointerEvent;
     const touch = pe.pointerType === "touch" || pe.pointerType === "pen";
-    const p = toSvg(e.clientX, e.clientY);
-    const h = p ? hitTest(p[0], p[1], touch) : null;
+    const [x, y] = local(e);
+    const h = hitTest(x, y, touch);
+    setHint(false);
     if (!h) {
-      setPinned(false);
-      setHover(null);
+      batch(() => {
+        setPinned(false);
+        setHover(null);
+        setSelected(null);
+      });
       return;
     }
-    if (touch && (hover()?.node !== h.node || !pinned())) {
-      // First tap inspects, a second tap on the same node acts.
-      setTouchHint(true);
-      setHover(h);
-      setPinned(true);
+    const n = h.node;
+    if (!n.children) {
+      if (!leavesReadable() && n !== selected()) {
+        showSpecies(n);
+        return;
+      }
+      if (touch && (hover()?.node !== n || !pinned())) {
+        // First tap shows the species, a second tap opens it.
+        setTouchHint(true);
+        setHover(h);
+        setPinned(true);
+        return;
+      }
+      openSpecies(n, e.ctrlKey || e.metaKey || e.shiftKey);
       return;
     }
-    activate(h.node);
+    activateClade(n);
+  };
+
+  const onAuxClick = (e: MouseEvent) => {
+    if (e.button !== 1) return;
+    const [x, y] = local(e);
+    const h = hitTest(x, y, false);
+    if (h && !h.node.children && leavesReadable()) {
+      e.preventDefault();
+      openSpecies(h.node, true);
+    }
+  };
+
+  /** Screen point of a node: its dot, or the middle of its ring slot for a species. */
+  const pointOf = (n: TNode): [number, number] | null => {
+    const L = target();
+    const g = G();
+    const c = cam();
+    if (!L || !g || !c) return null;
+    if (!n.children) {
+      const z = zones(g, L.unit, c.k);
+      return polar(c, L.la[n.data.leafIndex] ?? 0, (z.ringIn + z.ringOut) / 2);
+    }
+    const P = proj();
+    return P ? polar(c, L.a[n.data.i] ?? 0, radius(P, c.k, L.r[n.data.i] ?? 0)) : null;
+  };
+
+  const ensureVisible = (n: TNode) => {
+    const p = pointOf(n);
+    const c = cam();
+    const g = G();
+    const L = target();
+    if (!p || !c || !g || !L) return;
+    const v = vp();
+    const m = 48 * g.u;
+    if (p[0] >= m && p[0] <= v.w - m && p[1] >= m && p[1] <= v.h - m) return;
+    flyTo(constrain(g, L.unit, v, { ...c, x: c.x + v.w / 2 - p[0], y: c.y + v.h / 2 - p[1] }), scheduleViewSync);
   };
 
   const moveActive = (next: TNode | undefined) => {
@@ -833,44 +981,79 @@ export default function RadialTree(props: RadialTreeProps) {
     setTouchHint(false);
     setHover({ node: next, zone: next.children ? "tree" : "ring" });
     setPinned(true);
+    ensureVisible(next);
   };
 
+  const visibleByDepth = createMemo(() => {
+    const L = target();
+    const map = new Map<number, TNode[]>();
+    if (!L) return map;
+    L.focus.each((n) => {
+      if (n === L.focus) return;
+      const list = map.get(n.depth) ?? [];
+      list.push(n);
+      map.set(n.depth, list);
+    });
+    return map;
+  });
+
   const onKeyDown = (e: KeyboardEvent) => {
-    const to = target();
-    if (!to) return;
+    const L = target();
+    if (!L) return;
     const cur = hover()?.node;
-    const byDepth = visibleByDepth();
     if (e.key === "Escape") {
       e.preventDefault();
       if (cur || selected()) {
-        setHover(null);
-        setPinned(false);
-        setSelected(null);
-      } else goUp();
+        batch(() => {
+          setHover(null);
+          setPinned(false);
+          setSelected(null);
+        });
+      } else if (canGoUp()) goUp();
+      else if (expanded()) toggleExpanded();
       return;
     }
     if (e.key === "Enter" || e.key === " ") {
       if (cur) {
         e.preventDefault();
-        activate(cur);
+        if (cur.children) activateClade(cur);
+        else if (leavesReadable()) openSpecies(cur, e.ctrlKey || e.metaKey);
+        else showSpecies(cur);
       }
       return;
     }
-    const firstChild = (n: TNode) => n.children?.find((c) => to.vis[c.data.i] === 1);
+    if (e.key === "+" || e.key === "=") {
+      e.preventDefault();
+      zoomBy(1.6);
+      return;
+    }
+    if (e.key === "-" || e.key === "_") {
+      e.preventDefault();
+      zoomBy(1 / 1.6);
+      return;
+    }
+    if (e.key === "0") {
+      e.preventDefault();
+      const lim = rootLimit();
+      if (lim) navigate(lim);
+      return;
+    }
+    const f = focus() ?? L.focus;
+    const firstChild = (n: TNode) => n.children?.[0];
     let next: TNode | undefined;
     if (!cur) {
-      if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home"].includes(e.key)) next = firstChild(to.focus);
+      if (["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown", "Home"].includes(e.key)) next = firstChild(f);
     } else if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
-      const list = byDepth.get(cur.depth) ?? [];
+      const list = visibleByDepth().get(cur.depth) ?? [];
       const i = list.indexOf(cur);
       const step = e.key === "ArrowRight" ? 1 : -1;
       next = list[(i + step + list.length) % list.length];
     } else if (e.key === "ArrowUp") {
-      next = cur.parent && cur.parent !== to.focus ? cur.parent : undefined;
+      next = cur.parent && cur.parent !== L.focus ? cur.parent : undefined;
     } else if (e.key === "ArrowDown") {
       next = firstChild(cur);
     } else if (e.key === "Home") {
-      next = firstChild(to.focus);
+      next = firstChild(f);
     } else return;
     e.preventDefault();
     moveActive(next);
@@ -879,31 +1062,19 @@ export default function RadialTree(props: RadialTreeProps) {
   const onRootKeyDown = (e: KeyboardEvent) => {
     if (e.key !== "Escape" || e.defaultPrevented) return;
     const tgt = e.target as HTMLElement | null;
-    if (tgt && (tgt.tagName === "INPUT" || (tgt as Element) === svgEl)) return;
+    if (tgt && (tgt.tagName === "INPUT" || (tgt as Element) === canvasEl)) return;
     e.preventDefault();
-    goUp();
+    if (canGoUp()) goUp();
+    else if (expanded()) toggleExpanded();
   };
 
   const onPick = (n: TNode) => {
-    const lim = rootLimit();
-    if (!lim) return;
     if (n.children && (n.value ?? 0) >= 2) {
-      setSelected(null);
-      goTo(n);
+      activateClade(n);
       return;
     }
-    // A species (or a clade with a single species): show it among its relatives.
     const leaf = n.children ? n.leaves()[0] : n;
-    if (!leaf) return;
-    const family = leaf.ancestors().find((x) => x.data.rank === "family");
-    const genus = leaf.ancestors().find((x) => x.data.rank === "genus");
-    let f: TNode | undefined = family && (family.value ?? 0) >= 2 ? family : leaf.parent?.parent ?? undefined;
-    if (compact() && genus && (genus.value ?? 0) >= 2 && f && readableDepth(f, maxTerminals()) < SPECIES_DEPTH) f = genus;
-    if (!f || !isAncestorOf(lim, f)) f = lim;
-    setSelected(() => leaf);
-    if (f !== focus()) goTo(f);
-    setHover({ node: leaf, zone: "ring" });
-    setPinned(true);
+    if (leaf) showSpecies(leaf);
   };
 
   // ---------------------------------------------------------------- derived text
@@ -948,33 +1119,38 @@ export default function RadialTree(props: RadialTreeProps) {
 
   const tip = createMemo(() => {
     const h = hover();
-    const to = target();
-    const rd = ringData();
-    if (!h || !to || !rd || !atRest()) return null;
-    const g = geo();
-    let a: number;
-    let r: number;
-    if (h.zone === "band") {
-      const b = to.bands.find((bb) => bb.node === h.node);
-      a = b ? (b.a0 + b.a1) / 2 : 0;
-      r = g.arcIn;
-    } else if (h.zone === "ring" && !h.node.children) {
+    const L = target();
+    const g = G();
+    const c = cam();
+    const m = model();
+    const vals = ringVals();
+    if (!h || !L || !g || !c || !m || !vals || t() < 1) return null;
+    const v = vp();
+    const z = zones(g, L.unit, c.k);
+    let x: number;
+    let y: number;
+    if (h.zone === "wedge" && h.x !== undefined && h.y !== undefined) {
+      x = h.x;
+      y = h.y;
+    } else if (h.zone === "band") {
+      const [a0, a1] = nodeSpan(m, L, h.node);
+      const run = visibleArc(c, v, z.arcIn, a0 + c.th, a1 + c.th, 0);
+      const p = run ? (run[0] + run[1]) / 2 : (a0 + a1) / 2 + c.th;
+      x = c.x + z.arcIn * Math.sin(p);
+      y = c.y - z.arcIn * Math.cos(p);
+    } else if (!h.node.children) {
       const k = h.node.data.leafIndex;
-      a = at(to.la, k);
-      r = g.ringIn + ringH() * (0.1 + 0.9 * at(rd.vals, k));
+      const val = vals[k] ?? Number.NaN;
+      [x, y] = polar(c, L.la[k] ?? 0, z.ringIn + (z.ringOut - z.ringIn) * (0.1 + 0.9 * (Number.isFinite(val) ? val : 0)));
     } else {
-      a = at(to.a, h.node.data.i);
-      r = at(to.r, h.node.data.i) * g.R;
+      const P = proj();
+      if (!P) return null;
+      [x, y] = polar(c, L.a[h.node.data.i] ?? 0, radius(P, c.k, L.r[h.node.data.i] ?? 0));
     }
-    const [x, y] = xy(g.c, a, r);
-    const half = Math.min(132, g.S * 0.4);
-    return { h, left: Math.min(Math.max(x, half), g.S - half), top: y, below: y < g.S * 0.32 };
+    if (x < -20 || x > v.w + 20 || y < -20 || y > v.h + 20) return null;
+    const half = Math.min(140 * g.u, v.w * 0.42);
+    return { h, left: clamp(x, half, v.w - half), top: clamp(y, 0, v.h), below: y < v.h * 0.34 };
   });
-
-  const focusColor = () => {
-    const f = focus();
-    return f ? colorOf(f) : NEUTRAL;
-  };
 
   const legendClasses = createMemo(() => {
     const f = focus();
@@ -989,18 +1165,28 @@ export default function RadialTree(props: RadialTreeProps) {
 
   const timeAvailable = () => {
     const m = model();
-    const f = focus();
-    return !!m && !!f && canTime(m, f);
+    const lim = rootLimit();
+    return !!m && !!lim && canTime(m, lim);
   };
 
+  const atMin = () => (cam()?.k ?? 1) <= kRange()[0] * 1.001;
+  const atMax = () => (cam()?.k ?? 1) >= kRange()[1] * 0.999;
   const metricTitle = () => metricInfo(metric()).title;
+  const nodeColorVar = (n: TNode): string => (n.depth >= CLASS_DEPTH && n.data.cls ? classColor(n.data.cls) : "var(--rt-neutral)");
+
+  const tipHint = (n: TNode): string => {
+    if (!n.children) return leavesReadable() || n === selected() ? (touchHint() ? "Tap again to open" : "Select to open") : "Select to zoom to it";
+    if ((n.value ?? 0) < 2) return "Select to zoom to its species";
+    return n === focus() ? "In view" : coarse() ? "Tap to zoom in" : "Select to zoom in";
+  };
 
   // ---------------------------------------------------------------- render
 
   return (
     <div
+      ref={rootEl}
       class="rtree"
-      classList={{ "rtree--panel": !!props.panel, "is-moving": !atRest(), "is-hovering": !!overlay() }}
+      classList={{ "rtree--panel": !!props.panel, "is-expanded": expanded() }}
       data-metric={metric()}
       onKeyDown={onRootKeyDown}
     >
@@ -1042,180 +1228,121 @@ export default function RadialTree(props: RadialTreeProps) {
         </div>
       </div>
 
-      <nav class="rtree__trail" aria-label="Focused clade">
-        <ol role="list">
-          <For each={trail()}>
-            {(n, i) => (
-              <li>
-                <Show
-                  when={i() < trail().length - 1}
-                  fallback={
-                    <span class="chip chip--current" aria-current="true">
+      <div class="rtree__bar">
+        <nav class="rtree__trail" aria-label="Clade in view">
+          <ol role="list">
+            <For each={trail()}>
+              {(n, i) => (
+                <li classList={{ "is-mid": i() > 0 && i() < trail().length - 2 }}>
+                  <Show when={i() === 1 && trail().length > 3}>
+                    <span class="rtree__more" aria-hidden="true">
+                      …
+                    </span>
+                  </Show>
+                  <Show
+                    when={i() < trail().length - 1}
+                    fallback={
+                      <span class="chip chip--current" aria-current="true">
+                        <span class="chip__rank">{n.data.rank}</span>
+                        <span class={isItalicRank(n.data.rank) ? "sci" : undefined}>{n.data.name}</span>
+                      </span>
+                    }
+                  >
+                    <button type="button" class="chip chip--soft" onClick={() => navigate(n)}>
                       <span class="chip__rank">{n.data.rank}</span>
                       <span class={isItalicRank(n.data.rank) ? "sci" : undefined}>{n.data.name}</span>
-                    </span>
-                  }
-                >
-                  <button type="button" class="chip chip--soft" onClick={() => goTo(n)}>
-                    <span class="chip__rank">{n.data.rank}</span>
-                    <span class={isItalicRank(n.data.rank) ? "sci" : undefined}>{n.data.name}</span>
-                  </button>
-                  <svg class="rtree__sep" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="M9 6l6 6-6 6" />
-                  </svg>
-                </Show>
-              </li>
-            )}
-          </For>
-        </ol>
-        <Show when={!props.panel && focus() && focus() !== rootLimit()}>
-          <a class="rtree__trail-link" href={taxonUrl((focus() as TNode).data.rank, (focus() as TNode).data.slug)}>
-            Open the {(focus() as TNode).data.name} page
-          </a>
-        </Show>
-        <Show when={!props.syncUrl && focus()}>
-          <a class="rtree__trail-link" href={treeUrl(nodeKey(focus() as TNode))}>
-            Full tree
-          </a>
-        </Show>
-      </nav>
+                    </button>
+                    <svg class="rtree__sep" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
+                  </Show>
+                </li>
+              )}
+            </For>
+          </ol>
+          <Show when={!props.panel && focus() && focus() !== rootLimit()}>
+            <a class="rtree__trail-link" href={taxonUrl((focus() as TNode).data.rank, (focus() as TNode).data.slug)}>
+              Open the {(focus() as TNode).data.name} page
+            </a>
+          </Show>
+          <Show when={!props.syncUrl && focus()}>
+            <a class="rtree__trail-link" href={treeUrl(nodeKey(focus() as TNode))}>
+              Full tree
+            </a>
+          </Show>
+        </nav>
+        <div class="rtree__view" role="group" aria-label="Zoom">
+          <button
+            type="button"
+            class="rtree__btn"
+            disabled={!canGoUp()}
+            onClick={goUp}
+            aria-label={canGoUp() ? `Up to ${focus()?.parent?.data.name ?? "parent"}` : "Up a level"}
+            title={canGoUp() ? `Up to ${focus()?.parent?.data.name ?? "parent"} (Esc)` : "Up a level"}
+          >
+            <Icon d={IC.up} />
+          </button>
+          <button type="button" class="rtree__btn" disabled={atMin()} onClick={() => zoomBy(1 / 1.6)} aria-label="Zoom out" title="Zoom out (−)">
+            <Icon d={IC.minus} />
+          </button>
+          <button type="button" class="rtree__btn" disabled={atMax()} onClick={() => zoomBy(1.6)} aria-label="Zoom in" title="Zoom in (+)">
+            <Icon d={IC.plus} />
+          </button>
+          <button
+            type="button"
+            class="rtree__btn"
+            disabled={focus() === rootLimit() && atMin()}
+            onClick={() => {
+              const lim = rootLimit();
+              if (lim) navigate(lim);
+            }}
+            aria-label="Whole tree"
+            title="Whole tree (0)"
+          >
+            <Icon d={IC.home} />
+          </button>
+          <button
+            type="button"
+            class="rtree__btn"
+            aria-pressed={expanded()}
+            onClick={toggleExpanded}
+            aria-label={expanded() ? "Leave full screen" : "Full screen"}
+            title={expanded() ? "Leave full screen" : "Full screen"}
+          >
+            <Icon d={expanded() ? IC.collapse : IC.expand} />
+          </button>
+        </div>
+      </div>
 
       <div class="rtree__body">
-        <div class="rtree__sizer" ref={sizer} style={{ "--rt-max": `${(props.maxSize ?? 860) / 16}rem` }}>
+        <div class="rtree__sizer" style={{ "--rt-max": `${(props.maxSize ?? 860) / 16}rem` }}>
           <div class="rtree__frame" ref={frameEl}>
-            <svg
-              ref={svgEl}
-              class="chart__svg rtree__svg"
-              viewBox={`0 0 ${S()} ${S()}`}
+            <canvas
+              ref={canvasEl}
+              class="rtree__canvas"
+              classList={{ "is-pointer": !!hover(), "is-zoomed": !atMin() }}
+              style={{ "touch-action": atMin() ? "pan-y" : "none" }}
               role="application"
-              aria-roledescription="radial tree"
-              aria-label={`${props.label}. Arrow keys move between clades, Enter opens, Escape goes up a level.`}
+              aria-roledescription="zoomable tree"
+              aria-label={`${props.label}. Arrow keys move between clades, Enter opens, Escape goes up, plus and minus zoom.`}
               tabIndex={0}
-              style={{ "--rt-link": `${linkWidth()}px` }}
               onPointerMove={onPointerMove}
               onPointerLeave={onPointerLeave}
               onClick={onClick}
+              onAuxClick={onAuxClick}
               onKeyDown={onKeyDown}
               onBlur={() => {
-                setPinned(false);
-                setHover(null);
+                if (!expanded()) {
+                  setPinned(false);
+                  setHover(null);
+                }
               }}
-            >
-              <defs>
-                <For each={bandLabels()}>{(l) => <path id={l.id} d={l.d} />}</For>
-              </defs>
-              <g class="rtree__guides">
-                <For each={guides()}>
-                  {(gd) => <path class="rtree__guide" d={circleArc(geo().c, target()?.start ?? 0, target()?.end ?? 0, gd.r)} />}
-                </For>
-              </g>
-              <path
-                class="rtree__track"
-                d={sector(geo().c, (target()?.start ?? GAP / 2) - 0.004, (target()?.end ?? Math.PI * 2 - GAP / 2) + 0.004, geo().ringIn, geo().ringOut)}
-              />
-              <g class="rtree__bars">
-                <Index each={barPaths()}>
-                  {(d, k) => <path d={d()} style={{ fill: ringData()?.fills[k] ?? "transparent" }} />}
-                </Index>
-              </g>
-              <g class="rtree__wedges">
-                <Index each={wedges()}>
-                  {(w) => <path d={w().d} style={{ "--c": w().color, opacity: w().op }} />}
-                </Index>
-              </g>
-              <g class="rtree__links">
-                <Index each={linkGroups()}>
-                  {(lg) => <path d={lg().d} style={{ stroke: lg().color, opacity: lg().op }} />}
-                </Index>
-              </g>
-              <g class="rtree__dots">
-                <For each={nodeDots()}>{(nd) => <path d={nd.d} style={{ stroke: nd.color }} />}</For>
-              </g>
-              <Show when={overlay()}>
-                {(o) => (
-                  <g class="rtree__overlay" style={{ "--c": o().color }}>
-                    <path class="rtree__overlay-sub" d={o().sub} />
-                    <path class="rtree__overlay-line" d={o().lineage} />
-                    <circle class="rtree__overlay-node" cx={o().x} cy={o().y} r={o().node.children ? 5.5 : 4} />
-                  </g>
-                )}
-              </Show>
-              <g class="rtree__bands">
-                <Index each={bandArcs()}>
-                  {(b) => <path classList={{ "is-alt": b().alt }} d={b().d} style={{ fill: b().color, opacity: b().op }} />}
-                </Index>
-              </g>
-              <g class="rtree__labels">
-                <For each={bandLabels()}>
-                  {(l) => (
-                    <text class="rtree__band-label" classList={{ sci: l.italic }}>
-                      <textPath href={`#${l.id}`} startOffset="50%" text-anchor="middle">
-                        {l.text}
-                      </textPath>
-                    </text>
-                  )}
-                </For>
-                <For each={leafLabels()}>
-                  {(l) => (
-                    <text
-                      class="rtree__leaf-label"
-                      classList={{ "is-on": hover()?.node === l.node || selected() === l.node }}
-                      x={f1(l.x)}
-                      y={f1(l.y)}
-                      dy="0.34em"
-                      text-anchor={l.anchor}
-                      transform={`rotate(${f1(l.rot)} ${f1(l.x)} ${f1(l.y)})`}
-                    >
-                      {l.text}
-                    </text>
-                  )}
-                </For>
-              </g>
-              <g class="rtree__axis">
-                <For each={guides()}>
-                  {(gd) => (
-                    <text x={geo().c} y={geo().c - gd.r} dy="0.34em" text-anchor="middle">
-                      {gd.label}
-                    </text>
-                  )}
-                </For>
-              </g>
-              <Show when={outline()}>{(d) => <path class="rtree__outline" d={d()} />}</Show>
-              <Show when={selectedMark()}>
-                {(s) => (
-                  <g class="rtree__selected">
-                    <path d={s().bar} />
-                    <circle cx={s().x} cy={s().y} r={9} />
-                  </g>
-                )}
-              </Show>
-              <circle class="rtree__center" cx={geo().c} cy={geo().c} r={focus() ? 6 : 0} style={{ fill: focusColor() }} />
-              <Show when={!model()}>
-                <g class="rtree__skeleton">
-                  <circle cx={geo().c} cy={geo().c} r={geo().R * 0.62} />
-                  <circle cx={geo().c} cy={geo().c} r={(geo().ringIn + geo().ringOut) / 2} />
-                  <text x={geo().c} y={geo().c} dy="0.34em" text-anchor="middle" style={{ "font-size": `${Math.round(S() * 0.034)}px` }}>
-                    {failed() ? "The tree could not be loaded." : "Growing the tree…"}
-                  </text>
-                </g>
-              </Show>
-            </svg>
-
-            <Show when={canGoUp() && focus()?.parent}>
-              <button
-                type="button"
-                class="rtree__up"
-                style={{ left: `${(geo().c / S()) * 100}%`, top: `${(geo().c / S()) * 100}%` }}
-                onClick={goUp}
-                aria-label={`Up to ${focus()?.parent?.data.name ?? "parent"}`}
-                title={`Up to ${focus()?.parent?.data.name ?? "parent"}`}
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <path d="M12 19V5M6 11l6-6 6 6" />
-                </svg>
-              </button>
+            />
+            <Show when={hint() && model() && atMin() && !coarse()}>
+              <p class="rtree__hint" aria-hidden="true">
+                Scroll to zoom · drag to move
+              </p>
             </Show>
-
             <Show when={tip()}>
               {(tp) => {
                 const n = () => tp().h.node;
@@ -1224,29 +1351,32 @@ export default function RadialTree(props: RadialTreeProps) {
                   <div
                     class="rtree__tip chart__tooltip"
                     classList={{ "is-below": tp().below }}
-                    style={{ left: `${(tp().left / S()) * 100}%`, top: `${(tp().top / S()) * 100}%` }}
+                    style={{ left: `${tp().left}px`, top: `${tp().top}px` }}
                     aria-hidden="true"
                   >
-                    <div class="rtree__tip-rank" style={{ "--c": colorOf(n()) }}>
+                    <div class="rtree__tip-rank" style={{ "--c": nodeColorVar(n()) }}>
                       {n().children ? RANK_LABEL[n().data.rank] : "Species"}
                       <Show when={n().data.cls && n().depth > CLASS_DEPTH}> · {classLabel(n().data.cls ?? "")}</Show>
                     </div>
                     <div class="chart__tooltip-title">
                       <span class={isItalicRank(n().data.rank) ? "sci" : undefined}>{n().data.name}</span>
                     </div>
-                    <Show when={sp()} fallback={
-                      <>
-                        <Show when={n().data.rank === "class"}>
-                          <div class="chart__tooltip-sub">{classLabel(n().data.name)}</div>
-                        </Show>
-                        <div class="chart__tooltip-vals">
-                          <span>{rankCount(n().value ?? 0, "species")}</span>
-                          <Show when={n().children && n().children!.length > 1 && n().data.rank !== "genus"}>
-                            <span>{rankCount(n().children?.length ?? 0, childRank(n().data.rank))}</span>
+                    <Show
+                      when={sp()}
+                      fallback={
+                        <>
+                          <Show when={n().data.rank === "class"}>
+                            <div class="chart__tooltip-sub">{classLabel(n().data.name)}</div>
                           </Show>
-                        </div>
-                      </>
-                    }>
+                          <div class="chart__tooltip-vals">
+                            <span>{rankCount(n().value ?? 0, "species")}</span>
+                            <Show when={n().children && n().children!.length > 1 && n().data.rank !== "genus"}>
+                              <span>{rankCount(n().children?.length ?? 0, childRank(n().data.rank))}</span>
+                            </Show>
+                          </div>
+                        </>
+                      }
+                    >
                       {(s) => (
                         <>
                           <Show when={s().common}>
@@ -1260,26 +1390,23 @@ export default function RadialTree(props: RadialTreeProps) {
                         </>
                       )}
                     </Show>
-                    <div class="chart__tooltip-hint">
-                      {n().children
-                        ? (n().value ?? 0) >= 2
-                          ? n() === focus()
-                            ? "Focused"
-                            : touchHint() ? "Tap again to focus" : "Select to focus"
-                          : touchHint() ? "Tap again to open" : "Select to open"
-                        : touchHint() ? "Tap again to open" : "Select to open"}
-                    </div>
+                    <div class="chart__tooltip-hint">{tipHint(n())}</div>
                   </div>
                 );
               }}
             </Show>
             <div class="visually-hidden" aria-live="polite">{announce()}</div>
           </div>
+          <Show when={coarse() && model()}>
+            <p class="rtree__caption" aria-hidden="true">
+              Pinch to zoom, drag to move, tap a group to zoom in
+            </p>
+          </Show>
         </div>
 
         <Show when={props.panel && focusInfo()}>
           {(fi) => (
-            <aside class="rtree__panel" aria-label="Focused clade">
+            <aside class="rtree__panel" aria-label="Clade in view">
               <p class="eyebrow">{RANK_LABEL[fi().f.data.rank]}</p>
               <h2 class="rtree__panel-title" classList={{ sci: isItalicRank(fi().f.data.rank) }}>
                 {fi().f.data.name}
@@ -1330,11 +1457,8 @@ export default function RadialTree(props: RadialTreeProps) {
                       <Show
                         when={c.children && (c.value ?? 0) >= 2}
                         fallback={
-                          <a
-                            class="chip chip--soft"
-                            href={c.children ? taxonUrl(c.data.rank, c.data.slug) : speciesUrl(c.data.slug)}
-                          >
-                            <span class="chip__dot" style={{ "--dot": colorOf(c) }} />
+                          <a class="chip chip--soft" href={c.children ? taxonUrl(c.data.rank, c.data.slug) : speciesUrl(c.data.slug)}>
+                            <span class="chip__dot" style={{ "--dot": nodeColorVar(c) }} />
                             <span class={isItalicRank(c.data.rank) ? "sci" : undefined}>{c.data.name}</span>
                             <Show when={c.children}>
                               <span class="chip__count">1</span>
@@ -1342,8 +1466,8 @@ export default function RadialTree(props: RadialTreeProps) {
                           </a>
                         }
                       >
-                        <button type="button" class="chip chip--soft" onClick={() => goTo(c)}>
-                          <span class="chip__dot" style={{ "--dot": colorOf(c) }} />
+                        <button type="button" class="chip chip--soft" onClick={() => activateClade(c)}>
+                          <span class="chip__dot" style={{ "--dot": nodeColorVar(c) }} />
                           <span class={isItalicRank(c.data.rank) ? "sci" : undefined}>
                             {c.data.rank === "class" ? classLabel(c.data.name) : c.data.name}
                           </span>
@@ -1393,10 +1517,11 @@ export default function RadialTree(props: RadialTreeProps) {
         </Show>
         <p class="chart__note">
           {target()?.mode === "time"
-            ? "Distance from the centre is time: rings mark millions of years ago, tips are the present (TimeTree dates on the Open Tree of Life topology)."
-            : compact()
-              ? "Each ring is one rank. Fans are clades: tap one to look inside, tap again to focus."
-              : "Each ring is one rank. Hover to see a clade or species; select a clade to focus it, a species to open it."}
+            ? "Distance from the centre is time: rings mark millions of years ago, tips are the present (TimeTree dates on the Open Tree of Life topology). "
+            : "Each ring is one rank. "}
+          {coarse()
+            ? "Tap a species to see it, and tap again to open its page."
+            : "Scroll or use + and − to zoom, drag to move; select a group to zoom into it, a species to open it."}
         </p>
       </div>
     </div>

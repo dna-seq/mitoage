@@ -53,7 +53,7 @@ src/
                    filterable, CSV export), SearchBox, CodonHeatmap, LinearGenomeTrack (unused)
     charts/        Scatter (reusable scatter-plot island)
     genome/        circular genome map, gene-page charts and correlation tables
-    tree/          radial taxonomy tree, clade scatter and species table, taxon-page cards
+    tree/          zoomable radial taxonomy tree (canvas), clade scatter and species table, taxon-page cards
     species/       the species list (genome and life-history views)
     compare/       Compare section: CompareNav; stats/ holds the comparative tables (regions,
                    child taxa, codon usage, every species of a region); Compare.tsx, DotPlot and
@@ -89,6 +89,14 @@ data as props or fetch static JSON emitted at build time (`/search-index.json`,
 `/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
 and `.csv`, `/data/*`). Large tables render their first view at build time and load the rest, and
 island props are packed (`packRows` in `src/lib/compare/rows.ts`), to keep pages under about 150 KB.
+
+The taxonomy tree (`src/components/tree/RadialTree.tsx`) draws on a canvas and zooms with d3-zoom
+(part of `d3`). Its maths is pure and tested in `src/lib/tree/`: `layout.ts` places the tree,
+`camera.ts` maps it to the screen (semantic zoom: the ring, arcs and text keep their size; in the rank
+layout ranks never sit more than one step apart, so a genus and its family fit with readable names),
+fits a clade into view and hit-tests, and `labels.ts` places clade names on their stems.
+`treeDraw.ts` does the drawing. OneZoom was considered and not used: its licence is non-commercial
+and share-alike, and it is built around its own data pipeline.
 
 Section stylesheets (`genome.css`, `tree.css`, `explorer.css`, `compare.css`,
 `compare/stats/stats.css`) are imported by the pages, not the islands, and each starts with

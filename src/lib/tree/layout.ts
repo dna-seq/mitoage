@@ -1,6 +1,7 @@
 /**
- * Radial layout of a (sub)tree focused on one clade, and interpolation between two layouts
- * for animated re-rooting. Pure functions over the decoded model; safe for islands.
+ * Radial layout of a (sub)tree rooted on one clade, and interpolation between two layouts
+ * (the animated switch between the rank and time layouts). camera.ts puts a layout on screen.
+ * Pure functions over the decoded model; safe for islands.
  *
  * Angles are radians clockwise from 12 o'clock. Radii are normalised: 0 is the focus at the
  * centre, 1 is the tips. Every node of the whole tree gets a position in every layout, so a
@@ -57,29 +58,6 @@ export const isAncestorOf = (a: TNode, b: TNode): boolean => {
     p = p.parent;
   }
   return false;
-};
-
-/** Count of nodes at an absolute depth below (or at) `focus`. */
-export const countAtDepth = (focus: TNode, depth: number): number => {
-  if (depth <= focus.depth) return 1;
-  let n = 0;
-  focus.each((d) => {
-    if (d.depth === depth) n++;
-  });
-  return n;
-};
-
-/**
- * Deepest depth whose node count under the focus is at most `max` (at least one rank below
- * the focus). Used on small screens to collapse the tree to a readable level.
- */
-export const readableDepth = (focus: TNode, max: number): number => {
-  let best = Math.min(SPECIES_DEPTH, focus.depth + 1);
-  for (let d = focus.depth + 1; d <= SPECIES_DEPTH; d++) {
-    if (countAtDepth(focus, d) <= max) best = d;
-    else break;
-  }
-  return best;
 };
 
 /** Default depth of the outer arcs: classes at the top of the tree, else one rank below the focus. */

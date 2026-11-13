@@ -19,7 +19,7 @@ const families = taxaOfRank("family");
 const dating = datingReport();
 
 const title = "Taxonomy tree";
-const description = `A radial tree of all ${fmtInt(species.length)} MitoAge species: ${root.children.length} phyla, ${classes.length} classes, ${orders.length} orders and ${families.length} families, with maximum lifespan, GC content and mtDNA size for every species. Focus any clade and open its page.`;
+const description = `A zoomable radial tree of all ${fmtInt(species.length)} MitoAge species: ${root.children.length} phyla, ${classes.length} classes, ${orders.length} orders and ${families.length} families, with maximum lifespan, GC content and mtDNA size for every species. Zoom into any clade down to the species and open its page.`;
 ---
 
 <BaseLayout title={title} description={description} jsonLd={breadcrumbLd(Astro.site, [{ name: "Taxonomy tree", path: "/tree/" }])}>
@@ -27,16 +27,17 @@ const description = `A radial tree of all ${fmtInt(species.length)} MitoAge spec
     <p class="hero__eyebrow">Taxonomy</p>
     <h1 class="hero__title">The tree of {fmtInt(species.length)} species</h1>
     <p class="hero__lede">
-      {root.children.length} phyla, {classes.length} classes and {orders.length} orders, from fruit flies to bowhead whales. The outer
-      ring shows each species’ lifespan, GC content or genome size, so you can see where long lives cluster.
+      {root.children.length} phyla, {classes.length} classes and {orders.length} orders, from fruit flies to bowhead whales. Zoom into
+      any branch to read every species. The outer ring shows each species’ lifespan, GC content or genome size, so you can see where long
+      lives cluster.
     </p>
   </Hero>
 
-  <section class="container tree-main" aria-label="Radial taxonomy tree">
+  <section class="container tree-main" aria-label="Zoomable taxonomy tree">
     <div class="card tree-card">
       <RadialTree
         client:visible
-        label={`Radial taxonomy tree of ${fmtInt(species.length)} species, coloured by class`}
+        label={`Zoomable radial taxonomy tree of ${fmtInt(species.length)} species, coloured by class`}
         syncUrl
         panel
         maxSize={860}
