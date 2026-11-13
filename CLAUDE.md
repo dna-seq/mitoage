@@ -193,3 +193,7 @@ preference, it goes into §8 in their words, with the reason.
 
 Append-only, one line each: the maintainer's preferences in their own words, and the facts of this
 machine and this project that reading the code does not reveal.
+
+- 2026-11-13, the maintainer, on the adoption's pull request: "so far no need of pr-s as I am th main
+  developer". Work lands on `main` directly, as a fast-forward push where a seat's grant covers it; a
+  pull request is opened only when the maintainer asks for one.
