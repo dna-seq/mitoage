@@ -104,6 +104,11 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - mitoport is going (the maintainer's go, relayed to desk #31): its files are in the run folder under
   `mitoport/`. IQ-TREE with a fixed tree needs `--keep-ident`, or it re-places identical sequences and the
   trees of two proteins no longer share branches. Two Coevol chains run until about 2026-11-15 midday.
+- **A mistake to not repeat**: the roadmap's fixed rules for RM12 (the dated species tree, lifespan records
+  of high or acceptable quality) were not read again before step 3, and the test ran on a gene-built tree
+  and all records. The kron seat's note on its own run exposed it. On the right tree cytochrome b 43 fails
+  (q = 0.29); corrected in the channel. Read an item's fixed rules again before each of its steps.
+  `src/data/generated/phylogeny.json` is the dated tree (leaf = species id).
 - Next: lifespan as a continuous trait on all branches (Coevol or the like), one gene first for the time;
   then step 5 (convergence), then RM16 steps 2 and 4.
 

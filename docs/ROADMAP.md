@@ -93,10 +93,12 @@ gene-level results are not independent tests.
    genes).
 6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11 and RM13).
 
-Done so far (2026-11-13, reported in `#mitoalignments`): steps 1 and 2, and step 3 for mammals with a tree
-built from the 13 proteins. Two sites pass, one of them a clade marker (ND5 200, the marsupials); the one
-to follow is cytochrome b 43, methionine in at least eight separate long-lived lines. Next: the same for
-birds, then steps 4 to 6 on that short list.
+Done so far (2026-11-13 and 14, reported in `#mitoalignments`): steps 1 and 2; step 3 for mammals and
+birds. Step 3 was first run on a tree built from the 13 proteins and on every lifespan record, against the
+rules above, and gave cytochrome b 43 as its one site; rerun on the dated tree with the quality filter, that
+site does not pass (q = 0.29), COX1 419 sits at the threshold in its place, and the summary is that no
+single residue is robustly associated with lifespan. Step 4 (RELAX) gave two genes in one draw of species
+and none in a second. Running: lifespan as a continuous trait (Coevol) on the dated tree. Next: step 5.
 
 Each tool's current version and limits are checked before use: the method names above are from memory of the
 literature. Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
