@@ -1,0 +1,96 @@
+review_type,ncbi_taxid,scientific_name,refseq,source,source_name,detail
+build1_taxid_conflict,2201931,Carduelis pinus,NC_025619.1,MitoAge_build1,Carduelis pinus,"Build 1 record taxid 160760 (species 160760) is shared with another build 1 row; the AnAge name match gives species taxid 2201931, used as this row's species."
+possible_duplicate_species,,Euthynnus affinis (583); Euthynnus alletteratus (10008228),NC_025934.1; NC_004530.1,,,"same genus, same maximum longevity (10 y) and the same AnAge common name; both kept and flagged (owner default h)"
+possible_duplicate_species,,Gadus ogac (257); Gadus macrocephalus (10080720),NC_012323.1; NC_036931.1,,,FishBase treats these NCBI species as one (Gadus macrocephalus); each has its own RefSeq mitogenome; both kept and flagged (owner default h)
+possible_duplicate_species,,Panopea generosa (11049056); Panopea abrupta (10134997),NC_025635.1; NC_033538.1,,,both 168 y (AnAge vs SeaLifeBase); P. abrupta is widely treated as a synonym of P. generosa; both kept and flagged (owner default h)
+refseq_species_excluded_via_build1_link,89462,Bubalus bubalis,NC_049568.1,,,"RefSeq species linked to build 1 row 2364 (Bubalus bubalis, NC_006295.1) through its AnAge entry, while that row's cited record resolves to NCBI species 3119969; not added as a new species."
+refseq_species_excluded_via_build1_link,7957,Carassius auratus,NC_015142.1,,,"RefSeq species linked to build 1 row 133 (Carassius auratus, NC_002079.1) through its AnAge entry, while that row's cited record resolves to NCBI species 138676; not added as a new species."
+source_name_conflict_secondary,9612,Canis lupus,,AnAge,Canis familiaris,match_method=ncbi_synonym; candidate taxids=9612; not used
+source_name_conflict_secondary,8951,Caracara plancus,,AnAge,Caracara cheriway,match_method=ncbi_synonym; candidate taxids=8951; not used
+source_name_conflict_secondary,132908,Pteropus vampyrus,,AnAge,Pteropus giganteus,match_method=ncbi_synonym; candidate taxids=132908; not used
+source_name_conflict_secondary,13575,Istiophorus platypterus,,FishBase,Istiophorus albicans,match_method=ncbi_synonym; candidate taxids=13575; not used
+source_name_conflict_secondary,8022,Oncorhynchus mykiss,,FishBase,Oncorhynchus aguabonita,match_method=ncbi_synonym; candidate taxids=8022; not used
+source_name_conflict_secondary,8020,Oncorhynchus masou,,FishBase,Oncorhynchus formosanus,match_method=ncbi_synonym; candidate taxids=8020; not used
+source_name_conflict_secondary,8014,Osmerus mordax,,FishBase,Osmerus dentex,match_method=ncbi_synonym; candidate taxids=8014; not used
+source_name_conflict_secondary,1577861,Pristis pristis,,FishBase,Pristis microdon,match_method=ncbi_synonym; candidate taxids=1577861; not used
+source_name_conflict_secondary,48668,Rutilus rutilus,,FishBase,Rutilus caspicus,match_method=ncbi_synonym; candidate taxids=48668; not used
+source_name_conflict_secondary,13733,Trichiurus lepturus,,FishBase,Trichiurus nanhaiensis,match_method=ncbi_synonym; candidate taxids=13733; not used
+source_name_unmatched,,,,AnAge,Alosa pontica,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Alosa
+source_name_unmatched,,,,AnAge,Aratinga acuticaudata,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Aratinga
+source_name_unmatched,,,,AnAge,Axis calamianensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Axis
+source_name_unmatched,,,,AnAge,Chaetophractus nationi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Chaetophractus
+source_name_unmatched,,,,AnAge,Dipturus nasutus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Dipturus
+source_name_unmatched,,,,AnAge,Distichodus niloticus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Distichodus
+source_name_unmatched,,,,AnAge,Emydura krefftii,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Emydura
+source_name_unmatched,,,,AnAge,Etheostoma rufilineatum,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Etheostoma
+source_name_unmatched,,,,AnAge,Herichthys cyanoguttatum,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Herichthys
+source_name_unmatched,,,,AnAge,Hystrix pumila,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Hystrix
+source_name_unmatched,,,,AnAge,Hystrix sumatrae,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Hystrix
+source_name_unmatched,,,,AnAge,Lagothrix lagothricha,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Lagothrix
+source_name_unmatched,,,,AnAge,Lenothrix canus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Lenothrix
+source_name_unmatched,,,,AnAge,Leopardus colocolo,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Leopardus
+source_name_unmatched,,,,AnAge,Leucoraja erinacea,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Leucoraja
+source_name_unmatched,,,,AnAge,Macropus parryi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Macropus
+source_name_unmatched,,,,AnAge,Macrovipera lebetina,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Macrovipera
+source_name_unmatched,,,,AnAge,Mazama gouazoubira,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Mazama
+source_name_unmatched,,,,AnAge,Mustela eversmanii,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Mustela
+source_name_unmatched,,,,AnAge,Notropis albizonatus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Notropis
+source_name_unmatched,,,,AnAge,Notropis buccatus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Notropis
+source_name_unmatched,,,,AnAge,Phylloscopus sibillatrix,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Phylloscopus
+source_name_unmatched,,,,AnAge,Psittacula calthropae,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Psittacula
+source_name_unmatched,,,,AnAge,Rana esculenta,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Rana
+source_name_unmatched,,,,AnAge,Rattus lutreolus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Rattus
+source_name_unmatched,,,,AnAge,Rexea brevilineata,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Rexea
+source_name_unmatched,,,,AnAge,Serranochromis carlottae,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Serranochromis
+source_name_unmatched,,,,AnAge,Trimeresurus gramineus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Trimeresurus
+source_name_unmatched,,,,AnAge,Tropidophis caymanensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Tropidophis
+source_name_unmatched,,,,AnAge,Viverra civettina,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Viverra
+source_name_unmatched,,,,AnAge,Wiedomys pyrrhorhinos,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Wiedomys
+source_name_unmatched,,,,AnAge,Zyzomys palatilis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Zyzomys
+source_name_unmatched,,,,FishBase,Acanthobrama thisbeae,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Acanthobrama
+source_name_unmatched,,,,FishBase,Acanthobrama urmianus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Acanthobrama
+source_name_unmatched,,,,FishBase,Artediellus camchaticus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Artediellus
+source_name_unmatched,,,,FishBase,Capoeta gracilis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Capoeta
+source_name_unmatched,,,,FishBase,Clupeonella caspia,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Clupeonella
+source_name_unmatched,,,,FishBase,Clupeonella tscharchalensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Clupeonella
+source_name_unmatched,,,,FishBase,Coregonus austriacus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Coregonus danneri,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Coregonus kiletz,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Coregonus lutokka,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Coregonus vandesius,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Coregonus vessicus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Coregonus
+source_name_unmatched,,,,FishBase,Cyprinella leptocheilus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Cyprinella
+source_name_unmatched,,,,FishBase,Dentex congoensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Dentex
+source_name_unmatched,,,,FishBase,Epigonus elegans,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Epigonus
+source_name_unmatched,,,,FishBase,Etheostoma sellare,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Etheostoma
+source_name_unmatched,,,,FishBase,Etrumeus golanii,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Etrumeus
+source_name_unmatched,,,,FishBase,Evynnis ehrenbergii,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Evynnis
+source_name_unmatched,,,,FishBase,Icelus perminovi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Icelus
+source_name_unmatched,,,,FishBase,Lycodes albolineatus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Lycodes
+source_name_unmatched,,,,FishBase,Merluccius peruanus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Merluccius
+source_name_unmatched,,,,FishBase,Miniellus albizonatus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Miniellus
+source_name_unmatched,,,,FishBase,Oreochromis saka,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Oreochromis
+source_name_unmatched,,,,FishBase,Polymixia yuri,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Polymixia
+source_name_unmatched,,,,FishBase,Rexea brevilineata,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Rexea
+source_name_unmatched,,,,FishBase,Salmo ferox,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salmo
+source_name_unmatched,,,,FishBase,Salvelinus anaktuvukensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Salvelinus gracillimus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Salvelinus murta,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Salvelinus salvelinoinsularis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Salvelinus struanensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Salvelinus thingvallensis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Salvelinus
+source_name_unmatched,,,,FishBase,Spratelloides lewisi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Spratelloides
+source_name_unmatched,,,,SeaLifeBase,Arcuatula arcuatula,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Arcuatula
+source_name_unmatched,,,,SeaLifeBase,Donax serra,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Donax
+source_name_unmatched,,,,SeaLifeBase,Dosinia elegans,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Dosinia
+source_name_unmatched,,,,SeaLifeBase,Gammarus inaequicauda,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Gammarus
+source_name_unmatched,,,,SeaLifeBase,Littorina irrorata,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Littorina
+source_name_unmatched,,,,SeaLifeBase,Littorina ziczac,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Littorina
+source_name_unmatched,,,,SeaLifeBase,Macoma litoralis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Macoma
+source_name_unmatched,,,,SeaLifeBase,Mimachlamys funebris,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Mimachlamys
+source_name_unmatched,,,,SeaLifeBase,Oxymeris gouldi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Oxymeris
+source_name_unmatched,,,,SeaLifeBase,Semele lenticularis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Semele
+source_name_unmatched,,,,SeaLifeBase,Solen corneus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Solen
+source_name_unmatched,,,,USGS_BBL,Lanius borealis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Lanius
+source_name_unmatched,,,,USGS_BBL,Myadestes palmeri,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Myadestes
+source_name_unmatched,,,,USGS_BBL,Synthliboramphus scrippsi,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Synthliboramphus

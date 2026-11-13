@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Regenerated build 2 data (`bun run data`, 2026-11-13): 2,335 species; `public/data/` holds species, region_stats, codon_usage, genome_features, lifespan_observations and changelog parquet, species.csv, review_list.csv, README and the frozen build1/; `src/data/generated/` holds build-info, taxonomy and phylogeny JSON. The JSON copies of the large tables (species, region stats, codon usage, genome features, feature defs and values, correlations) and the committed explorer.json/correlations.parquet are removed (D2).
 - Build 2 documents: `docs/BUILD2_REPORT.md` (counts, change tables, lifespan source x class, AnAge-only vs extended correlations, pinned versions, cross-check agreement, file sizes, what was not done; tables from `bun run pipeline/report.ts`), `docs/BUILD2_CROSSCHECK.md` (from `bun run pipeline/crosscheck.ts`) and `docs/BUILD2_OPEN_QUESTIONS.md` (each default with its alternative and cost).
 - Decision D4: the 5 MB per-file rule is dropped from CLAUDE.md (the maintainer: "so drop this rule"); `validate.ts` now checks committed outputs against GitHub's own limits (fails at 100 MB, warns at 50 MB). D3 is unchanged: correlations and explorer.json are still computed at site build.
 - New lampreys are labelled `Cephalaspidomorphi` and new lungfish/coelacanths `Sarcopterygii`, as in build 1, so class scopes stay comparable with the 2016 paper (they had been given NCBI-style `Hyperoartia`/`Dipnoi`/`Coelacanthi`).
