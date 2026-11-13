@@ -95,7 +95,14 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - The research scripts and their outputs are in the cluster's run folder for this repository, under
   `rm12/`, until desk #30 says where they live. A column named after one letter (`C`, `I`, `Q`) breaks a
   statsmodels formula: the amino-acid columns are `aa_X`.
-- Next: RM12 step 3, site by site, with the control set above; then RM16 steps 2 and 4.
+- Step 3 with a tree (IQ-TREE on the 13 proteins, phylogenetic regression): mammals keep one site,
+  cytochrome b 43 methionine; ND5 200 is a marsupial marker; birds give nothing. Without a tree the same
+  test gave 226 hits: family grouping is not enough, a tree is.
+- Step 4 (HyPhy RELAX, long-lived against short-lived tips balanced within orders): ND3 and CYTB relaxed
+  in the first draw, neither in a second disjoint draw. Withdrawn. Each gene takes 5 to 40 minutes on 4
+  cores for about 110 species. `watchdog.py send` must be run from inside the repository.
+- Next: lifespan as a continuous trait on all branches (Coevol or the like), one gene first for the time;
+  then step 5 (convergence), then RM16 steps 2 and 4.
 
 ### For the maintainer, by hand
 
