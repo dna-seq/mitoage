@@ -59,7 +59,7 @@ The priming's weekly look for a release newer than each pin; the dates and findi
 
 ## RM7 — The pipeline's inputs on every machine that runs the seat
 
-**State:** blocked: on the maintainer saying where the inputs come from · **Owner:** lead
+**State:** waits until 2026-11-14: the maintainer's answer in `#mitoage>decisions` (asked 2026-11-13, default: data rebuilds stay on the laptop); unanswered, it goes to the desk · **Owner:** lead
 
 `bun run data` and one test file (`pipeline/tests/lifespan.test.ts`) need the build 1 CSVs (`data/input/`)
 and the pinned downloads (`data/cache/build2/sources/`), which are in no repository. A clone without them
@@ -74,14 +74,14 @@ A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and
 
 ## RM9 — A DOI for each build
 
-**State:** blocked: the maintainer's to publish · **Owner:** lead
+**State:** after RM4 · **Owner:** lead
 
 `plans/DATA_BUILD2_DECISIONS.md`, section 7: each build is intended for a Zenodo DOI. The seat prepares
 the deposit's files and text; publishing is outside its grant.
 
 ## RM10 — Multiple sequence alignments of the mitochondrial genes
 
-**State:** blocked: the maintainer's go on the design, asked in `#mitoage>decisions` on 2026-11-13 · **Owner:** lead
+**State:** waits until 2026-11-14: the maintainer's go on the design, asked in `#mitoage>decisions` on 2026-11-13 while they were answering there; unanswered, it goes to the desk · **Owner:** lead
 
 Asked by the maintainer (2026-11-13): "check if we can prepare multiple sequence alignments between
 mitochondria of different species to find some insights and also provide it through website".
