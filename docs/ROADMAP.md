@@ -157,6 +157,22 @@ the measurements do. The port
 project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
 are a new data source (the maintainer's), and where the code lives (a separate repository is the default).
 
+## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
+
+**State:** blocked: the maintainer's go on a design, asked in the chat on 2026-11-13 (to the desk when he is away) · **Owner:** lead
+
+The maintainer: "can we extend mitoage website with page on interactions with complexes and provide
+complexes for all those species in comparative way?" Proposed to him: a page per complex (I, III, IV, V)
+with its mitochondrial and nuclear subunits, which species have which, each subunit's alignment in the
+viewer; the solved structure in a 3D viewer, coloured by conservation or by one species' differences,
+contacts between mitochondrial and nuclear subunits marked; per species, contact residues that differ,
+next to lifespan. Limits said to him: nuclear subunits exist for about 180 of the mammals, not for all
+species; one solved structure for every species, no predicted structure per species; nuclear orthologs
+and structures are new sources for the pipeline, his decision as with build 2. Source of orthologs,
+measured the same day for COX4I1: NCBI covers 183 of our 627 mammals, Ensembl release 116 covers 65 and
+says which pairs are one-to-one; proposed: NCBI for breadth, Ensembl as the referee. It depends on RM11's
+data.
+
 ## RM14 — D-loops annotated as a point
 
 **State:** blocked: desk #35 (if nobody answers, nothing changes in the data) · **Owner:** lead
