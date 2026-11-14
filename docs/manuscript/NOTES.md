@@ -51,6 +51,36 @@ Definitions used for Table 3: "FDR" is `q_value < 0.05`; "PIC" is `pic_p_value <
 "a number shown on the site is one the pipeline computed" does not cover these counts. If the paper
 keeps Table 3, the pipeline's report should emit it, so the manuscript can cite the report instead.
 
+
+### Repeats, motifs and the rate of evolution (added 2026-11-14)
+
+Every number in this subsection comes from mitoage-pipelines at 6149fa1, run on build 2's species table,
+the dated tree and the quality filter, with the motif features from the site pipeline's `mtdna-features`
+branch at 5f526c9.
+
+| Number in the draft | Where it comes from |
+| --- | --- |
+| Inverted repeats, mammals, r = −0.40 (p = 4 × 10⁻¹⁶), n = 383 | `motif_pgls.tsv`, class Mammalia, feature `inverted_repeats_total`, `spearman_rho`/`spearman_p` |
+| the same over the major arc, −0.37, n = 334 | same table, `inverted_repeats_major_arc` |
+| p = 0.21 and p = 0.93 after the controls | same rows, column `p` (phylogenetic GLS with body mass and fourfold composition, Pagel's λ) |
+| 131 tests in four classes, one passes | `motif_pgls.tsv` row count and `q < 0.05` |
+| G-quadruplex motifs in 73 reptiles, q = 0.03 | same table, class Reptilia, `g4_forward_total`, q = 0.0266 |
+| contact-zone inverted pairs, mammals, r = −0.17 (p = 9 × 10⁻⁴), p = 0.41 after controls | same table, `contact_zone_inverted_pairs` |
+| 339 sister pairs | `rate_contrasts.tsv`, rows with `gene == CONCAT` |
+| mammals p = 0.02, q = 0.15 | `rates.tsv`, class Mammalia, gene CONCAT, normalisation `dS_mass_adj`, `includes_saturated` false |
+| four of 655 single-gene tests pass and disagree in sign | `rates.tsv`: 655 rows, 4 with q < 0.05 (ND6 all species −0.219; Mammalia ND5 +0.220; Aves CYTB −0.021; Mammalia ND2 dN −0.017) |
+| one record states a sequencing technology; 1,773 name a source INSDC accession | `assembly_provenance.tsv` from the haumea run of 2026-11-14 (`/data/uq2347/runs/mitoage/gaps/motifs/`), columns `sequencing_technology` and `source_insdc` |
+
+**A result that was withdrawn.** An exploratory Python run of the same screen, over 2,311 species and with
+tandem-repeat counts that did not reject units built from a shorter period, gave mammalian G-quadruplexes at
+q = 0.048 over 601 species. On the database's own features and the default dataset that result is gone
+(q = 0.66, 383 species) and the surviving test is in another class. The draft reports the second run; the
+first is recorded here so the change is visible.
+
+**Coverage.** The motif features reach 922 of the build's 2,335 species, because `mtdna-features` branched
+before build 2. Classes are tested at 62–383 species. Merging and rebuilding that branch would widen them,
+and would change the numbers in the table above; they should be refreshed if it happens before submission.
+
 ## Questions for the authors
 
 **Q1. Strand convention: a bug or a convention?** The repository's documents call it the "base-label bug"
@@ -95,6 +125,14 @@ no amino acid passes a 5% false discovery rate in mammals; the threonine claim i
 origin/main at the time of writing (head b113c0b). Once it lands, the Methods sentence on the independent
 rebuild should say what it reports (how many values match), and both repositories should be cited by a
 tagged release with a Zenodo DOI.
+
+
+**Q11. Does the paper carry the repeats, motifs and rate subsection?** It reports three negative results and
+one withdrawn positive. It argues the paper's own case - that correlations of this kind do not outlast a
+control for ancestry - on features the 2016 release did not have, and it answers reference 18 directly. It
+also lengthens the Results and rests on a feature set that currently covers 922 of 2,335 species. Keeping
+it, cutting it to a paragraph in "What the controls change", or leaving it to the analysis repository are
+all defensible. Related to Q6, which asks the same of the amino-acid example.
 
 ## Figures
 
@@ -148,5 +186,5 @@ Recomputing Table 3 from the same file for Figure 1 reproduced every count in it
 scopes was wrong in draft 0.1: the table holds 33 scopes (32 named and the empty `order:`), not 34.
 
 ## Not yet done
-- No reference-check pass; references 19, 21 and 24–32 are new.
+- No reference-check pass; references 19, 21, 24–32 and 35–36 are new.
 - No journal formatting (NAR word limits, the required sections and the data-availability statement).
