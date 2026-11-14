@@ -88,8 +88,39 @@ origin/main at the time of writing (head b113c0b). Once it lands, the Methods se
 rebuild should say what it reports (how many values match), and both repositories should be cited by a
 tagged release with a Zenodo DOI.
 
+## Figures
+
+Figures 1, 2 and 5 are screenshots of the site, in `figures/` as JPEG. The site was built with
+`bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the
+commit every number comes from), served with `bun run preview`, and captured in headless Google Chrome 157
+over the DevTools protocol: light theme, 1,440 × 1,400 CSS pixels at a device scale of 2, each panel cut to
+its card. ImageMagick put the panels together and wrote the JPEGs (quality 85). The capture script was a
+one-off and is not in the repository. The pages, with what was done on each before the capture:
+
+| Panel | Page | State |
+|---|---|---|
+| 1A | `/species/` | sorted by maximum lifespan, longest first |
+| 1B | `/tree/` | as it opens (by rank, lifespan ring) |
+| 1C | `/compare/class/mammalia/?chart=r` | the Regions card: chart and the top of its table |
+| 1D | `/species/balaena-mysticetus/` | the Genome map card |
+| 2A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | the plot card and the corrected statistics |
+| 2B | the same page | Strongest correlations, as it opens (maximum lifespan, all species), first 10 rows |
+| 5 | `/genes/cox1/` | Alignment card, class Mammalia, longest-lived first |
+
+Every number in the figure legends was read off the screenshots. Two differ from the text on purpose: the
+scatter of Figure 2A and its live statistics use all 627 mammals the site lists, where the text's r = 0.47
+uses the 615 of the default dataset; and the explorer's count of features that "hold up" on contrasts (424
+for all species) does not require the same sign, where Table 3's "Both" (250) does.
+
+Headless Chrome 157 returned a stale computed colour when an element's inline style changed within one
+task, so the tree (1B) and the alignment (5) drew every mark in one colour. The capture read each colour
+from a fresh element instead, which matches what the app's own Chromium 156 draws on the same pages. A
+headed Chrome 157 resolves the same colours correctly on the live site (checked on 2026-11-14), so this is
+a quirk of headless capture, not of the site.
+
 ## Not yet done
 
-- Figures 1–4 are described, not made.
+- Figures 3 and 4 (charts of the correlation table) are described, not drawn. Figures 1, 2 and 5 are
+  screenshots (above).
 - No reference-check pass; references 19, 21 and 24–32 are new.
 - No journal formatting (NAR word limits, the required sections and the data-availability statement).

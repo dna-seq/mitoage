@@ -7,6 +7,36 @@ composition to codon usage, against their maximum lifespan.
 Built with [Astro](https://astro.build) (static output), [SolidJS](https://www.solidjs.com) islands and
 d3 scales. All code is TypeScript. Runs on [Bun](https://bun.sh).
 
+Live at <https://just-dna.life/mitoage/>. A draft of the MitoAge 2 paper is in
+[`docs/manuscript/`](docs/manuscript/) (see [Manuscript](#manuscript)).
+
+![The MitoAge home page](docs/screenshots/HOME.jpg)
+
+## Screenshots
+
+Build 2 (2026-11-13), captured on 2026-11-14.
+
+| | |
+| --- | --- |
+| ![A species page: the bowhead whale, its key numbers and where it sits among all species](docs/screenshots/SPECIES_PAGE.jpg) | ![The zoomable radial tree of all species, coloured by class, with lifespan in the outer ring](docs/screenshots/TREE.jpg) |
+| **Species page**: key numbers, the species among all others, composition, genes, codon usage and the genome map | **Tree**: every species by rank or by time, lifespan, GC or genome size in the outer ring |
+| ![The plot explorer: GC content against maximum lifespan in mammals, with the corrected statistics](docs/screenshots/PLOT_EXPLORER.jpg) | ![The COX1 alignment of the mammals, longest-lived first, lifespan beside each row](docs/screenshots/ALIGNMENT.jpg) |
+| **Plot explorer**: any two features, or one against a life-history trait, with q, contrast r and partial r | **Alignments**: each protein and rRNA aligned across species, lifespan beside the rows |
+
+![Compare: r of each region's GC content with lifespan across mammals, with its 95% interval](docs/screenshots/COMPARE.jpg)
+
+**Compare**: the comparative statistics of every region or child taxon, each table with a chart of its rows.
+
+## Manuscript
+
+[`docs/manuscript/mitoage2.md`](docs/manuscript/mitoage2.md) is draft 0.1 of the MitoAge 2 paper, an update
+article for the Nucleic Acids Research Database issue: what changed since the 2016 release, the controls
+for body mass and shared ancestry, and the website. Its figures are in
+[`docs/manuscript/figures/`](docs/manuscript/figures/) (Figures 1, 2 and 5 are screenshots of this site;
+Figures 3 and 4 are not drawn yet). [`docs/manuscript/NOTES.md`](docs/manuscript/NOTES.md) gives the
+source of every number in it, how the screenshots were taken, and the questions only the authors can
+answer.
+
 ## Commands
 
 | Command | What it does |

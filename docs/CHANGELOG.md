@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Figures for the manuscript draft, and screenshots in the README.** `docs/manuscript/figures/` holds
+  Figure 1 (species list, tree, a Compare chart, a genome map), Figure 2 (the plot explorer and its
+  ranking of every feature) and a new Figure 5 (the COX1 alignment of the mammals), all screenshots of the
+  build 2 site; the draft shows them with legends whose numbers were read off the screenshots. Figures 3
+  and 4 (charts of the correlation table) are still to be drawn. `docs/screenshots/` holds six screenshots
+  the README now shows, and the README points to the draft. `NOTES.md` says how the screenshots were
+  taken. Found on the way: headless Chrome 157 returns a stale computed colour when an element's inline
+  style changes, so the tree and the alignment viewer, which resolve their colours through one probe
+  element, drew in one colour there; the capture worked around it. A headed Chrome 157 draws both
+  correctly on the live site, so the site is unchanged.
 - `docs/manuscript/`: draft 0.1 of the MitoAge 2 paper (NAR Database issue update), modelled on the 2016 paper, with every number traced to build 2 in `NOTES.md` and the questions for the authors (strand convention, contrasts in poorly resolved clades, licence, taxonomy counts).
 - **A FASTA download names the retired records it holds.** Build 2 retired 19 species (18 because
   RefSeq removed their record, one without a curated lifespan), and the site still lists them. NCBI
