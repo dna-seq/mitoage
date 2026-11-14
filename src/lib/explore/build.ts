@@ -6,14 +6,30 @@ import { getAllSpecies, getCorrelations, getFeatureDefs, getFeatureValues, PROTE
 import { type ChunkFile, type CorrFile, type CorrIndex, chunkName } from "./wire";
 import { FEATURE_KEYS, getVariable, TRAIT_KEYS } from "./variables";
 
+/* Features the plot explorer does not offer yet. The extended mtDNA features (fourfold-site
+ * composition, heavy-strand notation, hydropathy, repeats, non-B motifs, the major arc and the
+ * deletion contact zones) are in the data, in the correlations and in the downloads, but the picker
+ * has no entries for them: they need labels, units, log defaults and a place in its grouping, and
+ * `major_arc` and `major12` are not regions the picker knows. That is RM19.
+ *
+ * This is an exclusion, not a loosening: every key outside it must still be in the catalogue, and a
+ * key that is in neither fails the build exactly as before. The predicate lives with the features
+ * themselves, in pipeline/steps/extended.ts, so the payload and this check cannot drift apart.
+ */
+export { isExtendedFeature as EXPLORER_EXCLUDED } from "../../../pipeline/steps/extended";
+import { isExtendedFeature } from "../../../pipeline/steps/extended";
+
+
 /** Fail the build if the island's feature catalogue drifts from the pipeline's feature list. */
 export function assertCatalogMatchesData(): void {
   const ours = new Set(FEATURE_KEYS());
-  const theirs = getFeatureDefs().map((d) => d.key);
+  const theirs = getFeatureDefs().map((d) => d.key).filter((k) => !isExtendedFeature(k));
   const missing = theirs.filter((k) => !ours.has(k));
-  if (missing.length || theirs.length !== ours.size) {
+  const extra = [...ours].filter((k) => !theirs.includes(k));
+  if (missing.length || extra.length) {
     throw new Error(
-      `Explorer feature catalogue out of sync with the data (${ours.size} vs ${theirs.length}); missing e.g. ${missing.slice(0, 5).join(", ")}`,
+      `Explorer feature catalogue out of sync with the data (${ours.size} offered vs ${theirs.length} expected); ` +
+        `missing e.g. ${missing.slice(0, 5).join(", ")}; unexpected e.g. ${extra.slice(0, 5).join(", ")}`,
     );
   }
 }

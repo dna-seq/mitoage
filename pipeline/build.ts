@@ -29,6 +29,7 @@ import { BUILD, assembleBuild2, fallbackTable } from "./steps/build2";
 import { datasetMembers } from "./steps/correlations";
 import { type SpeciesGenome, annotateGenome } from "./steps/genome";
 import { matchSourceNames, wantedNameKeys } from "./steps/lifespan";
+import { buildExtended, type StructureRow } from "./steps/extended";
 import { PUBLIC_DATA_DIR, writeGenerated, writePublic } from "./steps/output";
 import { buildPublicReadme } from "./steps/readme";
 import { classifyRelease } from "./steps/refseq";
@@ -257,8 +258,28 @@ const buildInfo: BuildInfo = {
 // ================================================================== write
 step("Writing outputs");
 const genSizes = await writeGenerated({ buildInfo, taxonomy, phylogeny: dated ? { version: dated.otlSynthVersion, root: dated.root } : null });
+step("Extended mtDNA features (fourfold sites, hydropathy, major arc, repeats, non-B motifs, contact zones)");
+const extended = buildExtended(
+  b2.species.map((s) => ({ id: s.id, phylum: s.taxonomy.phylum })),
+  b2.genomes,
+  b2.usage,
+);
+{
+  const byOrientation = new Map<string, number>();
+  for (const r of extended.structure as StructureRow[]) byOrientation.set(r.orientation, (byOrientation.get(r.orientation) ?? 0) + 1);
+  const orient = [...byOrientation].sort((a, b) => a[0].localeCompare(b[0])).map(([k, v]) => `${k} ${v}`).join(", ");
+  const arcs = extended.structure.filter((r: StructureRow) => r.majorArc).length;
+  const zones = extended.structure.filter((r: StructureRow) => r.contactZones).length;
+  notes.push(
+    `Orientation of the RefSeq records (${orient}). Heavy-strand (ffH) values are given only for canonical records; for the others the heavy strand is not identified from the record and the values are null.`,
+    `Major arc defined for ${arcs} of ${b2.species.length} species; the two deletion contact zones (ATP8-COX3 and ND5-CYTB) for ${zones}. Null otherwise, never guessed.`,
+    `Repeat, motif and contact-zone counts are read from the deposited sequence as linear, and depend on how the genome was assembled: short-read records can miss repeats and duplicated control regions.`,
+  );
+  console.log(`  ${extended.structure.length} structure rows, ${extended.genes.length} gene rows; major arc ${arcs}, contact zones ${zones}`);
+}
+
 const pubSizes = await writePublic(
-  { species: b2.species, stats: b2.stats, usage: b2.usage, features: b2.features, observations: b2.observations, changelog: b2.changelog, review: b2.review, extra: b2.extra },
+  { species: b2.species, stats: b2.stats, usage: b2.usage, features: b2.features, observations: b2.observations, changelog: b2.changelog, review: b2.review, extra: b2.extra, extended },
   buildPublicReadme(buildInfo),
 );
 for (const f of await writeBuild1Snapshot(join(PUBLIC_DATA_DIR, "build1"))) pubSizes[`build1/${f.parquet}`] = f.bytes;

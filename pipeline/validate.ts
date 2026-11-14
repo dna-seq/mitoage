@@ -346,7 +346,7 @@ export async function validateGenerated(): Promise<string[]> {
   }
 
   // Files: present, and every committed file under the size limit
-  for (const f of ["species.parquet", "region_stats.parquet", "codon_usage.parquet", "genome_features.parquet", "lifespan_observations.parquet", "changelog.parquet", "species.csv", "review_list.csv", "README.md", "build1/README.md"]) {
+  for (const f of ["species.parquet", "region_stats.parquet", "codon_usage.parquet", "genome_features.parquet", "lifespan_observations.parquet", "changelog.parquet", "mtdna_structure.parquet", "protein_gene_features.parquet", "species.csv", "review_list.csv", "README.md", "build1/README.md"]) {
     check(existsSync(join(PUBLIC_DATA_DIR, f)), `public/data/${f} missing`);
   }
   for (const f of ["build-info.json", "taxonomy.json", "phylogeny.json"]) check(existsSync(join(GENERATED_DIR, f)), `src/data/generated/${f} missing`);

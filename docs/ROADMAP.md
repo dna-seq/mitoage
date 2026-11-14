@@ -126,6 +126,25 @@ A kept frame is not a translated peptide: the data has no ribosome profiling and
 nuclear copies (humanin has them) are out of its sight. The code lives in `dna-seq/mitoage-pipelines`.
 Reported in `#mitoage`; nothing goes on the site before the maintainer has seen it.
 
+## RM19 — The extended mtDNA features in the plot explorer
+
+**State:** unattended (opened 2026-11-14, when the features landed in the catalogue) · **Owner:** lead
+
+The 157 extended features (fourfold-site composition, heavy-strand notation, hydropathy, direct, inverted and
+mirror repeats, non-B motifs, the major arc, the control-region count and the deletion contact zones) are in
+`getFeatureDefs()`, in the correlations and in the two committed tables. The plot explorer does not offer them:
+its variable catalogue (`src/lib/explore/variables.ts`) is hand-built, with a label, a short axis name, a unit,
+a default log scale, a formatter and a picker group per feature, and `major_arc` and `major12` are not regions
+it knows.
+
+Until that is written they are excluded by `isExtendedFeature` (`pipeline/steps/extended.ts`), in one place that
+both the payload and the build-time catalogue check read, so `explorer.json` stays the size it was and nothing
+drifts silently. The build still fails if any feature outside that exclusion is missing from the picker.
+
+What it needs: the measures and groups in the picker's taxonomy, units (counts, bp, percent, a dimensionless
+GRAVY), which default to a log scale, where `major_arc` and `major12` sit in the region order, and whether the
+picker's groups get a new heading or the features join the existing ones.
+
 ## RM13 — Structural alignments: a check
 
 **State:** after RM12 · **Owner:** lead

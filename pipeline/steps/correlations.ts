@@ -73,7 +73,16 @@ export function buildScopes(species: Species[], include: (s: Species) => boolean
   return scopes;
 }
 
-const isPerGeneCodon = (key: string) => /^(codon|aa):/.test(key) && !key.includes(":total_pc:");
+/**
+ * Features of a single protein gene. They are correlated in the "all" and class scopes only, as the
+ * per-gene codon and amino-acid features always were: one gene of thirteen on one linked molecule is
+ * not an independent test, and the per-order scopes would multiply them past any useful correction.
+ * The extended fourfold, heavy-strand and hydropathy features follow the same rule; their aggregates
+ * (total_pc, major12) and the whole-genome features (repeats, motifs, contact zones) do not.
+ */
+const isPerGeneCodon = (key: string) =>
+  (/^(codon|aa):/.test(key) && !key.includes(":total_pc:")) ||
+  (/^(ff|ffH|gravy):/.test(key) && !key.includes(":total_pc") && !key.includes(":major12"));
 
 export function computeCorrelations(
   species: Species[],

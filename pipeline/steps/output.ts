@@ -23,8 +23,10 @@ import { ROOT } from "../lib/cache";
 import { toCsv } from "../lib/csv";
 import { AMINO_ACIDS, CODONS } from "../lib/genetic-code";
 import { type Column, writeParquet } from "../lib/parquet";
-import type { PhyloNode } from "../lib/stats";
+import { type PhyloNode, round } from "../lib/stats";
 import { featureKeys } from "./diff";
+import { type GeneFeatureRow, REPEAT_MIN_LENGTH, type StructureRow } from "./extended";
+import type { MotifCounts } from "../lib/motifs";
 
 export const GENERATED_DIR = join(ROOT, "src", "data", "generated");
 export const PUBLIC_DATA_DIR = join(ROOT, "public", "data");
@@ -82,8 +84,25 @@ export interface ReviewRow {
   detail: string;
 }
 
+
+/** Motif columns of mtdna_structure.parquet, each written for the whole record and for the major arc. */
+const MOTIF_COLUMNS: [string, (m: MotifCounts) => number | null][] = [
+  ["g4_forward", (m) => m.g4Forward],
+  ["g4_reverse", (m) => m.g4Reverse],
+  ["purine_tracts", (m) => m.purineTracts],
+  ["pyrimidine_tracts", (m) => m.pyrimidineTracts],
+  ["homopolymer_runs", (m) => m.homopolymerRuns],
+  ["longest_homopolymer", (m) => m.longestHomopolymer],
+  ["str_dinucleotide", (m) => m.strDinucleotide],
+  ["str_trinucleotide", (m) => m.strTrinucleotide],
+  ["str_tetranucleotide", (m) => m.strTetranucleotide],
+  ["str_bases", (m) => m.strBases],
+];
+
 export interface PublicPayload {
   species: Species[];
+  /** Extended mtDNA features, written as two per-species tables the site derives its features from. */
+  extended: { structure: StructureRow[]; genes: GeneFeatureRow[] };
   stats: RegionStats[];
   usage: Usage[];
   features: Map<number, GenomeFeature[]>;
@@ -263,6 +282,56 @@ export async function writePublic(p: PublicPayload, readme: string): Promise<Rec
     { name: "upstream_source", type: "STRING", data: cl.map((c) => c.upstreamSource) },
     { name: "upstream_version", type: "STRING", data: cl.map((c) => c.upstreamVersion) },
     { name: "scope", type: "STRING", data: cl.map((c) => c.scope) },
+  ]);
+
+  const mtst = p.extended.structure;
+  await out("mtdna_structure.parquet", [
+    { name: "species_id", type: "INT32", data: mtst.map((r) => r.speciesId) },
+    { name: "slug", type: "STRING", data: mtst.map((r) => slugOf.get(r.speciesId) ?? null) },
+    { name: "orientation", type: "STRING", data: mtst.map((r) => r.orientation) },
+    { name: "major_arc_start", type: "INT32", data: mtst.map((r) => r.majorArc?.start ?? null) },
+    { name: "major_arc_end", type: "INT32", data: mtst.map((r) => r.majorArc?.end ?? null) },
+    { name: "major_arc_bp", type: "INT32", data: mtst.map((r) => r.majorArc?.length ?? null) },
+    { name: "control_regions", type: "INT32", data: mtst.map((r) => r.controlRegions) },
+    { name: "repeat_min_length", type: "INT32", data: mtst.map(() => REPEAT_MIN_LENGTH) },
+    { name: "direct_repeats_total", type: "INT32", data: mtst.map((r) => r.total?.direct ?? null) },
+    { name: "inverted_repeats_total", type: "INT32", data: mtst.map((r) => r.total?.inverted ?? null) },
+    { name: "mirror_repeats_total", type: "INT32", data: mtst.map((r) => r.total?.mirror ?? null) },
+    { name: "longest_direct_repeat_total", type: "INT32", data: mtst.map((r) => r.total?.longestDirect ?? null) },
+    { name: "direct_repeats_major_arc", type: "INT32", data: mtst.map((r) => r.major?.direct ?? null) },
+    { name: "inverted_repeats_major_arc", type: "INT32", data: mtst.map((r) => r.major?.inverted ?? null) },
+    { name: "mirror_repeats_major_arc", type: "INT32", data: mtst.map((r) => r.major?.mirror ?? null) },
+    { name: "longest_direct_repeat_major_arc", type: "INT32", data: mtst.map((r) => r.major?.longestDirect ?? null) },
+    { name: "contact_zone1_start", type: "INT32", data: mtst.map((r) => r.contactZones?.zone1.start ?? null) },
+    { name: "contact_zone1_end", type: "INT32", data: mtst.map((r) => r.contactZones?.zone1.end ?? null) },
+    { name: "contact_zone2_start", type: "INT32", data: mtst.map((r) => r.contactZones?.zone2.start ?? null) },
+    { name: "contact_zone2_end", type: "INT32", data: mtst.map((r) => r.contactZones?.zone2.end ?? null) },
+    { name: "contact_zone_direct_pairs", type: "INT32", data: mtst.map((r) => r.bridging?.direct ?? null) },
+    { name: "contact_zone_inverted_pairs", type: "INT32", data: mtst.map((r) => r.bridging?.inverted ?? null) },
+    { name: "contact_zone_mirror_pairs", type: "INT32", data: mtst.map((r) => r.bridging?.mirror ?? null) },
+    ...MOTIF_COLUMNS.flatMap(([suffix, pick]): Column[] => [
+      { name: `${suffix}_total`, type: "INT32", data: mtst.map((r) => (r.motifsTotal ? pick(r.motifsTotal) : null)) },
+      { name: `${suffix}_major_arc`, type: "INT32", data: mtst.map((r) => (r.motifsMajorArc ? pick(r.motifsMajorArc) : null)) },
+    ]),
+  ]);
+
+  const pgf = p.extended.genes;
+  await out("protein_gene_features.parquet", [
+    { name: "species_id", type: "INT32", data: pgf.map((r) => r.speciesId) },
+    { name: "slug", type: "STRING", data: pgf.map((r) => slugOf.get(r.speciesId) ?? null) },
+    { name: "region", type: "STRING", data: pgf.map((r) => r.region) },
+    { name: "transl_table", type: "INT32", data: pgf.map((r) => r.translTable) },
+    { name: "strand", type: "INT32", data: pgf.map((r) => r.strand) },
+    { name: "ff_sites", type: "INT32", data: pgf.map((r) => r.fourfold.a + r.fourfold.c + r.fourfold.g + r.fourfold.u) },
+    { name: "ff_a", type: "INT32", data: pgf.map((r) => r.fourfold.a) },
+    { name: "ff_c", type: "INT32", data: pgf.map((r) => r.fourfold.c) },
+    { name: "ff_g", type: "INT32", data: pgf.map((r) => r.fourfold.g) },
+    { name: "ff_u", type: "INT32", data: pgf.map((r) => r.fourfold.u) },
+    { name: "ffh_a", type: "INT32", data: pgf.map((r) => r.heavy?.a ?? null) },
+    { name: "ffh_c", type: "INT32", data: pgf.map((r) => r.heavy?.c ?? null) },
+    { name: "ffh_g", type: "INT32", data: pgf.map((r) => r.heavy?.g ?? null) },
+    { name: "ffh_t", type: "INT32", data: pgf.map((r) => r.heavy?.t ?? null) },
+    { name: "gravy", type: "DOUBLE", data: pgf.map((r) => (r.gravy === null ? null : round(r.gravy, 6))) },
   ]);
 
   const rv = p.review;

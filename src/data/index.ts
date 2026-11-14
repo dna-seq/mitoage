@@ -17,6 +17,14 @@ import { type Row, readParquet } from "../../pipeline/lib/parquet";
 import { type PhyloNode, compileTree } from "../../pipeline/lib/stats";
 import { computeCorrelations } from "../../pipeline/steps/correlations";
 import { buildFeatureDefs, buildFeatureValues } from "../../pipeline/steps/features";
+import {
+  buildExtendedDefs,
+  buildExtendedValues,
+  type GeneFeatureRow,
+  type GeneRowRegion,
+  type Orientation,
+  type StructureRow,
+} from "../../pipeline/steps/extended";
 import { AMINO_ACIDS, CODONS } from "../../pipeline/lib/genetic-code";
 import {
   CORRELATION_DATASETS,
@@ -79,9 +87,11 @@ function memo<T>(fn: () => T): () => T {
 
 // ---------------------------------------------------------------- parquet tables (loaded once)
 
-const [speciesRows, statsRows, codonRows, featureRows] = await Promise.all(
-  ["species", "region_stats", "codon_usage", "genome_features"].map((t) => readParquet(join(PUBLIC_DIR, `${t}.parquet`))),
-) as [Row[], Row[], Row[], Row[]];
+const [speciesRows, statsRows, codonRows, featureRows, structureRows, geneFeatureRows] = await Promise.all(
+  ["species", "region_stats", "codon_usage", "genome_features", "mtdna_structure", "protein_gene_features"].map((t) =>
+    readParquet(join(PUBLIC_DIR, `${t}.parquet`)),
+  ),
+) as [Row[], Row[], Row[], Row[], Row[], Row[]];
 
 const str = (v: unknown): string => (v === null || v === undefined ? "" : String(v));
 const strOrNull = (v: unknown): string | null => (v === null || v === undefined ? null : String(v));
@@ -317,7 +327,76 @@ export function getGenomeFeatures(speciesId: number): GenomeFeature[] {
 
 // ---------------------------------------------------------------- derived: features & correlations
 
-export const getFeatureDefs = memo((): FeatureDef[] => buildFeatureDefs());
+/**
+ * The extended mtDNA features as the pipeline wrote them, read back from the two committed tables.
+ * The site rebuilds the feature values from them, so the extended features behave like every other
+ * feature: they are in the catalogue, in the correlations and in the explorer.
+ */
+const extendedRows = memo(() => {
+  const motifs = (r: Row, suffix: string) => ({
+    g4Forward: num(r[`g4_forward_${suffix}`]),
+    g4Reverse: num(r[`g4_reverse_${suffix}`]),
+    purineTracts: num(r[`purine_tracts_${suffix}`]),
+    pyrimidineTracts: num(r[`pyrimidine_tracts_${suffix}`]),
+    homopolymerRuns: num(r[`homopolymer_runs_${suffix}`]),
+    longestHomopolymer: numOrNull(r[`longest_homopolymer_${suffix}`]),
+    strDinucleotide: num(r[`str_dinucleotide_${suffix}`]),
+    strTrinucleotide: num(r[`str_trinucleotide_${suffix}`]),
+    strTetranucleotide: num(r[`str_tetranucleotide_${suffix}`]),
+    strBases: num(r[`str_bases_${suffix}`]),
+  });
+  const repeats = (r: Row, suffix: string) =>
+    r[`direct_repeats_${suffix}`] === null || r[`direct_repeats_${suffix}`] === undefined
+      ? null
+      : {
+          direct: num(r[`direct_repeats_${suffix}`]),
+          inverted: num(r[`inverted_repeats_${suffix}`]),
+          mirror: num(r[`mirror_repeats_${suffix}`]),
+          longestDirect: numOrNull(r[`longest_direct_repeat_${suffix}`]),
+        };
+  const structure: StructureRow[] = structureRows.map((r) => {
+    const zoned = r["contact_zone1_start"] !== null && r["contact_zone1_start"] !== undefined;
+    const arc = numOrNull(r["major_arc_bp"]);
+    return {
+      speciesId: num(r["species_id"]),
+      orientation: str(r["orientation"]) as Orientation,
+      majorArc: arc === null ? null : { start: num(r["major_arc_start"]), end: num(r["major_arc_end"]), length: arc },
+      controlRegions: numOrNull(r["control_regions"]),
+      total: repeats(r, "total"),
+      major: repeats(r, "major_arc"),
+      motifsTotal: r["g4_forward_total"] === null ? null : motifs(r, "total"),
+      motifsMajorArc: arc === null ? null : motifs(r, "major_arc"),
+      contactZones: zoned
+        ? {
+            zone1: { start: num(r["contact_zone1_start"]), end: num(r["contact_zone1_end"]) },
+            zone2: { start: num(r["contact_zone2_start"]), end: num(r["contact_zone2_end"]) },
+          }
+        : null,
+      bridging: zoned
+        ? {
+            direct: num(r["contact_zone_direct_pairs"]),
+            inverted: num(r["contact_zone_inverted_pairs"]),
+            mirror: num(r["contact_zone_mirror_pairs"]),
+          }
+        : null,
+    };
+  });
+  const genes: GeneFeatureRow[] = geneFeatureRows.map((r) => ({
+    speciesId: num(r["species_id"]),
+    region: str(r["region"]) as GeneRowRegion,
+    translTable: num(r["transl_table"]),
+    strand: (numOrNull(r["strand"]) as 1 | -1 | null) ?? null,
+    fourfold: { a: num(r["ff_a"]), c: num(r["ff_c"]), g: num(r["ff_g"]), u: num(r["ff_u"]) },
+    heavy:
+      r["ffh_a"] === null || r["ffh_a"] === undefined
+        ? null
+        : { a: num(r["ffh_a"]), c: num(r["ffh_c"]), g: num(r["ffh_g"]), t: num(r["ffh_t"]) },
+    gravy: numOrNull(r["gravy"]),
+  }));
+  return { structure, genes };
+});
+
+export const getFeatureDefs = memo((): FeatureDef[] => [...buildFeatureDefs(), ...buildExtendedDefs()]);
 
 /**
  * Feature values aligned with getAllSpecies(). A retired row of a species that is not retired (a
@@ -336,6 +415,7 @@ export const getFeatureValueArrays = memo(() => {
     codonUsage().rows.filter(current),
     new Map(species.map((s) => [s.id, s.nonCodingBp])),
   );
+  for (const [k, v] of buildExtendedValues(buildExtendedDefs(), ids, extendedRows())) values.set(k, v);
   return { speciesIds: ids, values };
 });
 

@@ -113,3 +113,22 @@ join to). The site reading its data from Hugging Face at build time or in the br
 build would need the network and the pages a pinned revision, and at 23 MB of data nothing presses for it;
 that it works from the browser was not tested. A matrix store such as Zarr for the alignments: nothing to
 gain at 2,316 rows. `alignments.parquet` in git: 22 MB more for a file made from files already there.
+
+## D7 — The extended mtDNA features join the site's feature catalogue
+
+**Decided (maintainer, 2026-11-14):** the extended mtDNA features are ordinary features of the catalogue, not
+a parallel set with their own tables. `features_extended.parquet` and `correlations_extended.parquet`, which
+the `mtdna-features` branch wrote, do not exist: the features are in `getFeatureDefs()`, so they flow into
+`correlations.parquet` and the explorer payload like every other feature, and the pipeline commits only the two
+per-species tables they are computed from (`mtdna_structure.parquet`, `protein_gene_features.parquet`).
+
+**Rejected:** a second endpoint carrying the extended correlations, which would have been consistent with D3
+but would have left two kinds of feature in one repository. Also rejected: keeping the branch's committed
+`correlations_extended.parquet`, which contradicts D3 outright.
+
+**What it costs, and was accepted:** the false discovery rate now runs over the combined set, so published
+q values move; the picker needs entries for the new features before they are plottable (RM19); and the
+explorer payload would have grown by about 2 MB had the features not been excluded from it until then.
+
+**Why:** one feature set is simpler to explain than two, and the new features answer the same questions about
+lifespan that the old ones do.

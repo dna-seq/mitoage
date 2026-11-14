@@ -4,6 +4,22 @@ Newest first.
 
 ## Unreleased
 
+- **Extended mtDNA features, in the site's feature catalogue** (D7): fourfold-degenerate site composition in
+  gene sense and heavy-strand notation, Kyte-Doolittle hydropathy, the major arc between the replication
+  origins, annotated control regions, perfect direct, inverted and mirror repeats, non-B DNA motifs
+  (G-quadruplexes, homopurine and homopyrimidine tracts, homopolymers, di/tri/tetranucleotide tandem repeats)
+  and the repeat pairs bridging the ATP8-COX3 and ND5-CYTB spans that flank most human mitochondrial deletions.
+  `pipeline/lib/motifs.ts`, `pipeline/lib/repeats.ts` and `pipeline/steps/extended.ts` compute them from the
+  cached RefSeq records; the build commits `mtdna_structure.parquet` (2,335 rows) and
+  `protein_gene_features.parquet` (34,860 rows), and the site derives 157 features from those tables, taking
+  the catalogue from 1,257 to 1,414. They are correlated like any other feature, so the false discovery rate
+  now runs over the combined set. The plot explorer does not offer them yet (RM19): `isExtendedFeature` excludes
+  them from its payload and from the build-time catalogue check, in one place both read, so `explorer.json` is
+  unchanged at 2,675,901 bytes. Every previously committed output - species, region stats, codon usage, genome
+  features, lifespan observations, changelog and `src/data/generated/` - is byte-identical.
+  Checked against an independent Python implementation on the 884 species whose RefSeq record is byte-identical
+  in both runs: the quadruplex, tract and homopolymer counts agree exactly, and the tandem-repeat counts differ
+  only as the shorter-period rule predicts.
 - The manuscript draft's worked example reports the H1 rerun on the dated tree (mitoage-pipelines da0c112): in 604 mammals of the default dataset no amino acid passes a 5% false discovery rate once base composition is in the model (threonine q = 0.12, cysteine q = 0.15), against seven with order and family as random intercepts; references 33 (Kitazoe et al. 2008) and 34 (Aledo, Valverde & de Magalhães 2012) added; NOTES.md gives the tables. Documents only.
 - **Manuscript draft reviewed and corrected against the build and the code.** Body-mass control is claimed only for lifespan, where the pipeline computes it; "All three" is said to admit a reversed sign (418 of the 472 keep it); the GC result is stated within classes; the survivors are said to include, not to lie mostly in, the skews and codons; there are 106 invertebrates, not 104; the record choice, the alignment command, the codon-usage measure, the quality scale, zero-length contrasts, the tree's location and the cross-check counts are described as the code does them; and the reproduction sentence reports what `docs/BUILD2_REPRODUCTION.md` (mitoage-pipelines 3550281) found. `NOTES.md` gains a source for each new number. Ten decisions stay with the authors (strand rerun, the definition of "All three", contrast diagnostics and chance correction, length and supplement, the worked example, licence, maintenance and AI-use statements, timing, invertebrates in the Abstract). Documents only.
 - `docs/ANALYSIS_FINDINGS.md` follows `docs/HYPOTHESES.md` of mitoage-pipelines at da0c112: H1 (amino-acid content against lifespan) rerun as a phylogenetic regression on the dated tree with the manuscript's default dataset and all 20 amino acids with q; with base composition in the model no amino acid passes q < 0.05 in mammals (threonine q = 0.12, cysteine q = 0.15), and the earlier family/order mixed model's hits are set against the published record both ways (Kitazoe et al. 2008; Aledo et al. 2012). H2's two columns hold on three other aligners; its detectable effect sizes are stated. Documents only.

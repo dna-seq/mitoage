@@ -114,6 +114,8 @@ export interface Build2 {
   /** Per species: genome used (for the phylogeny's NCBI taxid). */
   taxidOf: Map<number, number | null>;
   extra: Map<number, { anageHagrid: string | null; anageMatch: string; anageMaxLongevityYears: number | null; ncbiTaxid: number | null; translTable: number }>;
+  /** The annotated RefSeq record each live species ends up with; the extended features read it. */
+  genomes: Map<number, SpeciesGenome>;
   report: Record<string, unknown>;
 }
 
@@ -363,6 +365,8 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
   }
 
   const anageByHagrid = new Map(inp.anage.entries.map((e) => [e.hagrid, e]));
+  /** The annotated record each live species ends up with, for the extended mtDNA features. */
+  const genomes = new Map<number, SpeciesGenome>();
   const species: Species[] = [];
   const stats: RegionStats[] = [];
   const usage: Usage[] = [];
@@ -394,6 +398,7 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
       gText = texts.get(p.version!)!;
       g = annotateGenome(gText, fallbackTable(s.phylum), s.phylum === "Chordata");
       if (g.record.accessionVersion !== p.version) throw new Error(`release record ${g.record.accessionVersion} != ${p.version}`);
+      genomes.set(id, g);
       rows = genomeRows(id, g);
     } else {
       // Retired: the build 1 rows exactly (no gap fill from a record that left RefSeq).
@@ -587,6 +592,7 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
     if (!lin) throw new Error(`no NCBI lineage for species ${c.t}`);
     const text = texts.get(c.rec.header.version)!;
     const g = annotateGenome(text, fallbackTable(lin.phylum), lin.phylum === "Chordata");
+    genomes.set(id, g);
     const rows = genomeRows(id, g);
     const entry = c.hagrid ? (anageByHagrid.get(c.hagrid) ?? null) : null;
     const name = lin.name;
@@ -725,7 +731,7 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
   review.sort((a, b) => cmp(a.reviewType, b.reviewType) || cmp(a.source ?? "", b.source ?? "") || cmp(a.sourceName ?? a.scientificName ?? "", b.sourceName ?? b.scientificName ?? ""));
 
   return {
-    species, stats, usage, features: sortedFeatures, observations: obsOut, changelog, review, taxidOf, extra,
+    species, stats, usage, features: sortedFeatures, observations: obsOut, changelog, review, taxidOf, extra, genomes,
     report: { primaryRecordsUsed: primaryUsed, candidates: cands.length, retiredChildRows: retiredRows.length, contigOnlyFetched: contigOnly },
   };
 }

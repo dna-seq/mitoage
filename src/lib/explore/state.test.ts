@@ -1,18 +1,29 @@
 import { describe, expect, test } from "bun:test";
 import { getFeatureDefs } from "~/data";
 import { DEFAULT_STATE, parseState, serializeState } from "./state";
+import { EXPLORER_EXCLUDED } from "./build";
 import { axisTitle, FEATURE_KEYS, getVariable, TRAIT_KEYS } from "./variables";
 
 const isVar = (k: string) => getVariable(k) !== undefined;
 const defaultLog = (k: string) => getVariable(k)?.defaultLog ?? false;
 
 describe("variable catalogue", () => {
-  test("feature keys match the pipeline's feature list exactly", () => {
+  test("feature keys match the pipeline's feature list exactly, outside the documented exclusion", () => {
     const ours = FEATURE_KEYS();
-    const theirs = getFeatureDefs().map((d) => d.key);
+    const offered = getFeatureDefs().map((d) => d.key).filter((k) => !EXPLORER_EXCLUDED(k));
     expect(ours.length).toBe(1257);
     expect(new Set(ours).size).toBe(ours.length);
-    expect([...ours].sort()).toEqual([...theirs].sort());
+    expect([...ours].sort()).toEqual([...offered].sort());
+  });
+
+  test("the excluded features are in the data and only the extended ones are excluded", () => {
+    const all = getFeatureDefs().map((d) => d.key);
+    const excluded = all.filter((k) => EXPLORER_EXCLUDED(k));
+    // the exclusion is not empty and not everything: it is exactly the extended features
+    expect(excluded.length).toBe(all.length - FEATURE_KEYS().length);
+    expect(excluded.every((k) => /^(ff|ffH|gravy|repeats|motifs|contactZone):/.test(k) || k.startsWith("size:major_arc") || k.startsWith("controlRegions:"))).toBe(true);
+    // and nothing the picker offers is excluded
+    expect(FEATURE_KEYS().some((k) => EXPLORER_EXCLUDED(k))).toBe(false);
   });
 
   test("labels", () => {

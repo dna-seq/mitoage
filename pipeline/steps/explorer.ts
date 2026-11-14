@@ -2,6 +2,7 @@
 import type { BuildInfo, FeatureDef, Species } from "../../src/data/schema";
 import { roundSig } from "../lib/stats";
 import { TRAIT_KEYS, traitValue } from "./correlations";
+import { isExtendedFeature } from "./extended";
 
 /** Columnar payload for the in-browser scatter explorer (built during the site build). */
 export function buildExplorer(
@@ -13,7 +14,7 @@ export function buildExplorer(
   const classes = [...new Set(species.map((s) => s.taxonomy.class))].sort();
   const orders = [...new Set(species.map((s) => s.taxonomy.order))].sort();
   const families = [...new Set(species.map((s) => s.taxonomy.family))].sort();
-  const keep = defs.filter((d) => !/^(codon|aa):/.test(d.key) || d.key.includes(":total_pc:"));
+  const keep = defs.filter((d) => (!/^(codon|aa):/.test(d.key) || d.key.includes(":total_pc:")) && !isExtendedFeature(d.key));
   const sig = (v: number | null) => (v === null ? null : Math.abs(v) >= 1000 ? Math.round(v) : roundSig(v, 4));
   return {
     build: buildInfo.build,

@@ -22,6 +22,13 @@ export type AggregateRegion = (typeof AGGREGATE_REGIONS)[number];
 
 export type Region = ProteinGene | AggregateRegion;
 
+/**
+ * Regions that exist only for the extended mtDNA features and carry no region statistics: the major
+ * arc between the replication origins, and the 12 protein genes on the + strand taken together.
+ * They widen the feature catalogue without widening `Region`, which drives region_stats.parquet.
+ */
+export type ExtendedRegion = "major_arc" | "major12";
+
 export interface Taxonomy {
   kingdom: string;
   phylum: string;
@@ -192,8 +199,20 @@ export interface FeatureDef {
   /** Stable key, e.g. "gc:total_mtDNA", "gcSkew:ND6", "codon:total_pc:CUA", "size:total_mtDNA". */
   key: string;
   label: string;
-  region: Region;
-  group: "composition" | "skew" | "size" | "codon" | "aminoAcid";
+  region: Region | ExtendedRegion;
+  group:
+    | "composition"
+    | "skew"
+    | "size"
+    | "codon"
+    | "aminoAcid"
+    | "fourfold"
+    | "fourfoldHeavy"
+    | "hydropathy"
+    | "repeats"
+    | "structure"
+    | "motifs"
+    | "contactZone";
 }
 
 export interface Correlation {

@@ -57,6 +57,43 @@ lifespans taken from USGS BBL are provisional (review flag `lifespan_provisional
   `name` (ND1..CYTB, rRNA-12S, rRNA-16S, D_Loop, tRNA-Phe, tRNA-Leu(UUR) ...), `type`, `start`, `end` (1-based inclusive;
   start > end wraps the origin), `strand`.
 
+### mtdna_structure.parquet (one row per species)
+- `orientation`: `canonical` (a chordate record with all 13 protein genes, every ND6 on the - strand and every
+  other protein gene on the + strand, so the RefSeq + strand is the light strand), `noncanonical`,
+  `not_chordate` (heavy/light notation not defined), `unknown` (no RefSeq record).
+- `major_arc_start`, `major_arc_end` (1-based inclusive; start > end wraps the origin), `major_arc_bp`: the arc
+  between the replication origins, from the base after tRNA-Asn to the base before the first control region
+  downstream of CYTB, measured along the circle. Null unless the orientation is canonical and the landmarks are
+  single, do not span the origin and follow that circular order.
+- `control_regions`: annotated control regions. A count of 1 is a lower bound: short-read assemblies can miss
+  duplicated control regions.
+- `direct_repeats_*`, `inverted_repeats_*`, `mirror_repeats_*`, `longest_direct_repeat_*`: perfect repeat pairs of
+  at least `repeat_min_length` bases in the whole record (`_total`, read as linear) and in the major arc. Each pair
+  is maximal and counted once and its copies do not overlap. An inverted repeat's second copy is the reverse
+  complement of the first; a mirror repeat's is the first read backwards without complementing, which is a
+  non-B DNA class in its own right and not a superset of the inverted repeats.
+- `contact_zone1_*`, `contact_zone2_*`: the ATP8-COX3 and ND5-CYTB spans that flank most human mitochondrial
+  deletions. Human work gives these as roughly 6-9 kb and 13-16 kb, but kilobase coordinates do not transfer
+  between species, so the zones are anchored on the genes. Null unless all four are annotated once, none spans
+  the origin and they appear in that order. `contact_zone_{direct,inverted,mirror}_pairs`: repeat pairs with one
+  arm in each zone, the configuration a deletion between them would use.
+- Non-B motifs and simple repeats, for the whole record (`_total`) and the major arc (`_major_arc`):
+  `g4_forward`, `g4_reverse` (four runs of at least 3 G, loops of 1 to 7 bases, counted per strand),
+  `purine_tracts`, `pyrimidine_tracts` (homopurine and homopyrimidine runs of at least 15 bases, triplex
+  candidates), `homopolymer_runs`, `longest_homopolymer` (runs of one base, at least 5), and
+  `str_dinucleotide`, `str_trinucleotide`, `str_tetranucleotide`, `str_bases` (perfect tandem repeats of at least
+  3 whole units; a unit built from a shorter period is counted at that shorter unit length, so the three counts
+  do not double-count the same bases). These are sequence patterns, not thermodynamic predictions, and they
+  depend on how the genome was assembled.
+
+### protein_gene_features.parquet (one row per species and region)
+- `region`: one of the 13 protein genes, `total_pc` (all 13), or `major12` (the 12 genes on the + strand;
+  canonical orientation only). `transl_table`; `strand` (null for the aggregates).
+- `ff_sites`, `ff_a`, `ff_c`, `ff_g`, `ff_u`: third-position bases of codons in fourfold-degenerate families,
+  gene sense. `ffh_a`, `ffh_c`, `ffh_g`, `ffh_t`: the same in heavy-strand notation (the complement for + strand
+  genes, the gene sense for ND6); null unless the orientation is canonical, and always null for `total_pc`.
+- `gravy`: mean Kyte-Doolittle hydropathy over the encoded amino acids.
+
 ### lifespan_observations.parquet (one row per lifespan value per source)
 - `species_id`, `slug`, `ncbi_species_taxid`, `source`, `source_record_id`, `source_name` (name as written in the source),
   `value_years`, `record_type`, `quality`, `sample_size_text`, `sex`, `detail`, `reference`, `license`, `match_method`
@@ -105,3 +142,6 @@ next to them. Correlation datasets: `default` (2202 species; lifespan sources An
 - Base-label bug of build 1: in every MitoAge CSV file the base columns are complement-labelled ("G" holds C on the RefSeq strand, "C" holds G, "A" holds T, "T" holds A). All a/c/g/t here are on the RefSeq strand as deposited; GC% is unaffected, GC and AT skews change sign relative to the old site.
 - Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds EURING (not retrieved) then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).
 - Class labels follow the build 1 scheme (AnAge build 12-era: Actinopterygii, Reptilia, ...) for every species, so correlation scopes stay comparable with the 2016 paper; AnAge build 15's fish reclassification (Teleostei, ...) is not adopted.
+- Orientation of the RefSeq records (canonical 2196, noncanonical 16, not_chordate 104, unknown 19). Heavy-strand (ffH) values are given only for canonical records; for the others the heavy strand is not identified from the record and the values are null.
+- Major arc defined for 1906 of 2335 species; the two deletion contact zones (ATP8-COX3 and ND5-CYTB) for 2217. Null otherwise, never guessed.
+- Repeat, motif and contact-zone counts are read from the deposited sequence as linear, and depend on how the genome was assembled: short-read records can miss repeats and duplicated control regions.

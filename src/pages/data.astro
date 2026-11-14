@@ -33,6 +33,8 @@ const walk = (dir: string): string[] => {
 };
 
 const DESCRIPTIONS: [RegExp, string][] = [
+  [/mtdna.?structure/i, "One row per species: strand orientation, major-arc coordinates, control-region copies, perfect direct, inverted and mirror repeats, non-B DNA motifs and tandem repeats, and the repeat pairs bridging the two deletion contact zones."],
+  [/protein.?gene.?features/i, "Fourfold-degenerate site composition (gene sense and heavy strand) and Kyte-Doolittle hydropathy of every protein-coding gene."],
   [/^alignments\/.*\.aa\.fasta\.gz$/, "Protein alignment (amino acids), one row per species. Gzipped FASTA."],
   [/^alignments\/.*\.codon\.fasta\.gz$/, "Codon alignment that the protein alignment implies, one row per species. Gzipped FASTA."],
   [/^alignments\/.*\.nt\.fasta\.gz$/, "Nucleotide alignment of the rRNA gene, one row per species. Gzipped FASTA."],
