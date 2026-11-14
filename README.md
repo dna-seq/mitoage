@@ -37,6 +37,17 @@ Figures 1 and 2 charts of the correlation table the site build writes. [`docs/ma
 source of every number in it, how the screenshots were taken, and the questions only the authors can
 answer.
 
+## Related repositories
+
+- [dna-seq/mitoage-pipelines](https://github.com/dna-seq/mitoage-pipelines) (Python): the reviewer-facing
+  reproduction project. It downloads every input with pinned versions, rebuilds build 2 from build 1
+  independently of the TypeScript pipeline here and compares the result with the published build
+  ([docs/BUILD2_REPRODUCTION.md](https://github.com/dna-seq/mitoage-pipelines/blob/main/docs/BUILD2_REPRODUCTION.md)),
+  and holds the research analyses that read the build (longevity in the alignments, mtDNA-encoded peptides,
+  mito-nuclear pairing).
+- [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) on Hugging Face: the
+  published build (tables, gene alignments and the frozen build 1), packaged by `bun run hf`.
+
 ## Commands
 
 | Command | What it does |
@@ -205,7 +216,10 @@ heavy rounded type (Nunito, self-hosted).
 Mitochondrial genomes from NCBI RefSeq (build 2: release 237); lifespan and life-history traits from AnAge
 (build 15); where AnAge has no maximum lifespan, FishBase (fish), SeaLifeBase (aquatic invertebrates) and the USGS
 Bird Banding Laboratory (birds). FishBase and SeaLifeBase values are CC BY-NC 4.0. Build 1 is frozen in
-`public/data/build1/`; every change since is in `public/data/changelog.parquet`.
+`public/data/build1/`; every change since is in `public/data/changelog.parquet`. How build 2 was made is in
+`docs/BUILD2_REPORT.md` and `plans/DATA_BUILD2_DECISIONS.md`; an independent rebuild from build 1, with a
+downloader for every source, is in
+[dna-seq/mitoage-pipelines](https://github.com/dna-seq/mitoage-pipelines/blob/main/docs/BUILD2_REPRODUCTION.md).
 
 Toren D, Barzilay T, Tacutu R, Lehmann G, Muradian KK, Fraifeld VE. MitoAge: a database for
 comparative analysis of mitochondrial DNA, with a special focus on animal longevity.

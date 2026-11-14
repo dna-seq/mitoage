@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- README and the build 2 report point to `dna-seq/mitoage-pipelines`, where build 2 is rebuilt from build 1 independently, with a downloader for every source (`docs/BUILD2_REPRODUCTION.md` there), and to the Hugging Face dataset. Documents only.
 - The manuscript draft's figures are numbered in order of first citation: the controls chart is now
   Figure 1, the codons Figure 2, the interface Figure 3, the alignment Figure 4 and the plot explorer
   Figure 5 (the entries below use the old numbers). The image files are renamed to match, and `NOTES.md`
