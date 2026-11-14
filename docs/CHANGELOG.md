@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **Figures 3 and 4 of the manuscript draft.** Figure 3 shows, scope by scope, what the false discovery
+  rate, the contrasts and the body-mass control leave of the lifespan correlations; Figure 4 places the 64
+  codons of the total protein-coding sequence by their r across species and on contrasts, one panel per
+  third base. Both are drawn from the correlation table the site build writes, cited in the Results and
+  described in `NOTES.md`; the README no longer says they are missing. Recomputing Table 3 for Figure 3
+  reproduced every count; its total row now says 33 scopes, not 34.
 - **Figures for the manuscript draft, and screenshots in the README.** `docs/manuscript/figures/` holds
   Figure 1 (species list, tree, a Compare chart, a genome map), Figure 2 (the plot explorer and its
   ranking of every feature) and a new Figure 5 (the COX1 alignment of the mammals), all screenshots of the

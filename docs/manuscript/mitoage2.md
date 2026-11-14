@@ -262,8 +262,8 @@ computed from the sequence.
 In the default dataset, 13,947 correlations of mtDNA features with maximum lifespan were tested across all
 scopes. Of these, 4,851 have p < 0.05 before any correction, and 3,854 pass a false discovery rate of 5%.
 Of those 3,854, 770 are also significant on phylogenetic contrasts with the same sign, and 472 pass the
-partial correlation on body mass as well (Table 3). Most correlations of the kind the 2016 release
-counted do not survive a control for shared ancestry. The AnAge-only dataset gives the same picture
+partial correlation on body mass as well (Table 3, Figure 3). Most correlations of the kind the 2016
+release counted do not survive a control for shared ancestry. The AnAge-only dataset gives the same picture
 (3,568 pass the false discovery rate, 559 also on contrasts), and over all features in all species the
 correlations of the two datasets agree at r = 0.975.
 
@@ -277,9 +277,9 @@ The correlations that survive all three controls lie mostly in the strand skews 
 that follows them. Across all species, the AT skew of the whole genome correlates with lifespan at
 r = 0.31 (0.22 with body mass controlled, 0.11 on contrasts, p < 10⁻⁶). In the total protein-coding
 sequence, every codon ending in U among those that pass all three controls (8 codons) is used less in
-longer-lived species, and every codon ending in C (8 codons) more. On the deposited strand this is a
-shift from T to C at the third codon position, the direction expected from an excess of A>G mutations on
-the heavy strand (21). In mammals, the GC content of ND4, ND1 and the rRNAs, and isoleucine usage, keep
+longer-lived species, and every codon ending in C (8 codons) more (Figure 4). On the deposited strand
+this is a shift from T to C at the third codon position, the direction expected from an excess of A>G
+mutations on the heavy strand (21). In mammals, the GC content of ND4, ND1 and the rRNAs, and isoleucine usage, keep
 their sign under all three controls.
 
 **Table 3.** Correlations of mtDNA features with log10 maximum lifespan in the default dataset, by scope.
@@ -299,7 +299,7 @@ p < 0.05.
 | Artiodactyla | 134 | 164 | 79 | 65 | 22 | 9 | 4 |
 | Rodentia | 87 | 164 | 66 | 47 | 19 | 9 | 7 |
 | Passeriformes | 140 | 164 | 61 | 39 | 24 | 8 | 0 |
-| **All scopes (34)** | | **13,947** | **4,851** | **3,854** | **2,577** | **770** | **472** |
+| **All scopes (33)** | | **13,947** | **4,851** | **3,854** | **2,577** | **770** | **472** |
 
 > AUTHOR: two checks before this table is final (NOTES.md, Q5). (1) In some poorly resolved clades the
 > contrast tests reject far more often than chance with no raw signal at all: Chondrichthyes 494 of 1,212
@@ -396,11 +396,12 @@ to the Human Ageing Genomic Resources conditions of use; NCBI data carry no use 
 ## Figures
 
 > AUTHOR: Figures 1, 2 and 5 are screenshots of the build 2 site, taken on 2026-11-14 at a desktop width
-> of 1,440 pixels (NOTES.md, "Figures", says how). Figure 2 was planned as a scatter across species beside
-> one on contrasts; the site does not plot the contrasts themselves, so panel A gives the contrast r beside
-> the scatter, and panel B shows the explorer's ranking of every feature. Figures 3 and 4 are charts of the
-> correlation table and are not drawn yet. Figure 5 is new with the screenshots: keep it or drop it, and
-> renumber the figures in order of citation before submission.
+> of 1,440 pixels; Figures 3 and 4 are charts drawn from the correlation table the same build writes
+> (NOTES.md, "Figures", says how). Figure 2 was planned as a scatter across species beside one on
+> contrasts; the site does not plot the contrasts themselves, so panel A gives the contrast r beside the
+> scatter, and panel B shows the explorer's ranking of every feature. Figure 5 is new with the screenshots:
+> keep it or drop it. Renumber the figures in order of citation before submission (3 and 4 are cited
+> first, in the Results).
 
 ![Figure 1. The MitoAge 2 interface](figures/FIGURE_1_INTERFACE.jpg)
 
@@ -420,20 +421,33 @@ of the whole genome.
 
 **Figure 2.** The plot explorer. (**A**) Whole-genome GC content against maximum lifespan (log scale) in
 all 627 mammals the site lists (the two retired ones included), with four species highlighted and the
-least-squares line. The live statistics
-below the plot are computed in the browser for the points shown (Pearson r = 0.48 with log10 lifespan,
-n = 627). The panel on the right gives the statistics the pipeline computed on the default dataset, which
+least-squares line. The live statistics below the plot are computed in the browser for the points shown
+(Pearson r = 0.48 with log10 lifespan, n = 627). The panel on the right gives the statistics the pipeline computed on the default dataset, which
 leaves out estimated and low-quality lifespans: q = 2.8 × 10⁻³³, r on phylogenetically independent
 contrasts 0.17 (p = 4.4 × 10⁻⁵) and partial r on body mass 0.40 (n = 612). (**B**) The mtDNA features
 ranked by the strength of their correlation with maximum lifespan across all species, each with its q, its
 r on contrasts and its partial r on body mass. Of the 1,257 features, 1,037 have q < 0.05 and 424 of
 those have a contrast p < 0.05 (of either sign; Table 3 counts the 250 with the same sign).
 
-**Figure 3.** Lifespan correlations retained at each control (p < 0.05, false discovery rate, contrasts
-with the same sign, body mass), by scope (data of Table 3). *(Not drawn yet.)*
+![Figure 3. What the controls leave of the lifespan correlations](figures/FIGURE_3_CONTROLS.jpg)
 
-**Figure 4.** Third-position codon usage against lifespan across all species: the r of each codon of the
-total protein-coding sequence, raw and on contrasts, coloured by third base. *(Not drawn yet.)*
+**Figure 3.** What the three controls leave of the correlations of mtDNA features with maximum lifespan,
+by scope (default dataset; the data of Table 3). Each bar is the share of a scope's tests, one per mtDNA
+feature, with p < 0.05, split by how far each gets through the controls in turn: the false discovery rate
+(Benjamini–Hochberg q < 0.05 within the scope), phylogenetically independent contrasts (p < 0.05, with the
+sign of the correlation across species) and the partial correlation on body mass (p < 0.05). The column on
+the right gives how many of the correlations that pass the false discovery rate pass all three; across all
+33 scopes, 472 of 3,854 do.
+
+![Figure 4. Codon usage against lifespan, raw and on contrasts](figures/FIGURE_4_CODONS.jpg)
+
+**Figure 4.** Codon usage in the total protein-coding sequence against maximum lifespan across all species
+(n = 2,202), one panel per third base. Each codon is placed by its Pearson r with log10 maximum lifespan
+across species (x) and its r on phylogenetically independent contrasts (y). Filled points pass all three
+controls (false discovery rate, contrasts with the same sign, partial correlation on body mass), open
+points do not, and grey points are the other 48 codons. Twenty codons pass all three: the 8 ending in U
+are all used less in longer-lived species and the 8 ending in C all more, while of those ending in A or G
+only UUA, CUA, UGG and GGG pass.
 
 ![Figure 5. The alignment of COX1](figures/FIGURE_5_ALIGNMENT.jpg)
 

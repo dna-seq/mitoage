@@ -32,8 +32,8 @@ Build 2 (2026-11-13), captured on 2026-11-14.
 [`docs/manuscript/mitoage2.md`](docs/manuscript/mitoage2.md) is draft 0.1 of the MitoAge 2 paper, an update
 article for the Nucleic Acids Research Database issue: what changed since the 2016 release, the controls
 for body mass and shared ancestry, and the website. Its figures are in
-[`docs/manuscript/figures/`](docs/manuscript/figures/) (Figures 1, 2 and 5 are screenshots of this site;
-Figures 3 and 4 are not drawn yet). [`docs/manuscript/NOTES.md`](docs/manuscript/NOTES.md) gives the
+[`docs/manuscript/figures/`](docs/manuscript/figures/): Figures 1, 2 and 5 are screenshots of this site,
+Figures 3 and 4 charts of the correlation table the site build writes. [`docs/manuscript/NOTES.md`](docs/manuscript/NOTES.md) gives the
 source of every number in it, how the screenshots were taken, and the questions only the authors can
 answer.
 

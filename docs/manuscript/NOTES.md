@@ -118,9 +118,26 @@ from a fresh element instead, which matches what the app's own Chromium 156 draw
 headed Chrome 157 resolves the same colours correctly on the live site (checked on 2026-11-14), so this is
 a quirk of headless capture, not of the site.
 
-## Not yet done
+Figures 3 and 4 are charts of `dist/data/correlations.parquet` as `bun run build` wrote it on 2026-11-14
+(site code and data as at 84ba6f7), rows of dataset `default` and trait `maxLongevityYears`, with the
+definitions of Table 3 above. A one-off TypeScript script read the file with hyparquet, drew each chart as
+SVG and had headless Chrome render it at three times its size; ImageMagick wrote the JPEGs (quality 92).
+The script is not in the repository.
 
-- Figures 3 and 4 (charts of the correlation table) are described, not drawn. Figures 1, 2 and 5 are
-  screenshots (above).
+- **Figure 3** stacks, for each scope of Table 3, the tests with p < 0.05 by the furthest control they pass
+  in turn (FDR, then contrasts with the same sign, then body mass), as a share of the scope's tests. Each
+  stage is a subset of the one before, so the segments are exact differences of Table 3's columns. The
+  four greens are one ordinal ramp (#86c27c, #4fa65a, #1f8a3b, #0b3a1c), checked for monotone lightness,
+  step gaps and contrast with the white page.
+- **Figure 4** places the 64 codons of `codon:total_pc:*` in scope `all` by Pearson r and contrast r, one
+  panel per third base, filled where the codon passes all three controls. The bases wear the site's
+  nucleotide colours (`--nt-t`, `--nt-c`, `--nt-a`; G one step darker than `--nt-g`, #e09a10, to show on
+  white). As four colours in one scatter they fail a colour-blindness check (A against U), so each panel
+  shows one base and greys the rest.
+
+Recomputing Table 3 from the same file for Figure 3 reproduced every count in it. The total row's count of
+scopes was wrong in draft 0.1: the table holds 33 scopes (32 named and the empty `order:`), not 34.
+
+## Not yet done
 - No reference-check pass; references 19, 21 and 24–32 are new.
 - No journal formatting (NAR word limits, the required sections and the data-availability statement).
