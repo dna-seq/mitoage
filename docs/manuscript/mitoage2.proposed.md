@@ -332,20 +332,23 @@ only UUA, CUA, UGG and GGG pass.
 
 ### An example: amino-acid content and the alignments
 
-The analyses in `mitoage-pipelines` show how the controls change a result at the level of the encoded
-proteins. Long-lived animals are reported to have fewer cysteines in their mitochondrially encoded
-proteins (30), and methionine has been debated (31). On build 2, with relatedness controlled by comparison
-within families and by random effects of order and family, and with base composition at fourfold
-degenerate sites in the model, mammals (622 species with body mass) show threonine rising (+0.30
-percentage points per tenfold lifespan, p = 0.0005) and cysteine falling (−0.05, p = 0.00008), and nothing
-for methionine (p = 0.4). Without any control for relatedness, threonine across all species has
-p ≈ 10⁻⁶⁰; within families, p = 0.9. A screen of single alignment columns in a phylogenetic regression on
-the dated tree finds no residue robustly associated with lifespan in 604 mammals or 379 birds: the one or
-two columns near the threshold change with the tree, as chance would have them.
+Long-lived animals are reported to have fewer cysteines (30) and less methionine (31) in their
+mitochondrially encoded proteins, and higher primates more threonine in their transmembrane regions (33); in
+173 mammals, however, cysteine showed no effect of longevity and threonine followed nucleotide composition
+(34). With `mitoage longevity aa-pgls`, the content of each amino acid over the 13 proteins was regressed on
+log10 maximum lifespan, log10 body mass and base composition at fourfold-degenerate sites, with Pagel's λ on
+the dated tree, in the 604 mammals of the default dataset with body mass that the tree places. No amino acid
+passed a 5% false discovery rate among the 20: threonine rose by 0.15 percentage points per tenfold lifespan
+(p = 0.03, q = 0.12), cysteine fell by 0.021 (p = 0.05, q = 0.15) and methionine did not change (p = 0.94).
+Random intercepts of order and family in place of the tree, on the same species, gave seven amino acids at
+q < 0.05, cysteine and threonine among them. Birds (379), ray-finned fishes (235) and reptiles (97) showed
+nothing at q < 0.05. A screen of single alignment columns on the dated tree finds no residue robustly
+associated with lifespan.
 
-> AUTHOR: these results are from `docs/HYPOTHESES.md` of mitoage-pipelines (runs of 2026-11-13; the
-> repository says "Nothing here is peer reviewed"). Decide whether a database update should carry them,
-> or only point to the repository; the threonine reference is missing (NOTES.md, Q6).
+> AUTHOR: rerun of 2026-11-14 in mitoage-pipelines at da0c112 (`mitoage longevity aa-pgls`, tables
+> `aa_pgls.<Class>.tsv`; dataset longevity-genie/mitoage at 6efa0959, dated tree at 18a13ec), replacing the
+> earlier mixed-model numbers (622 mammals, 10 of them with questionable lifespans). Whether a database
+> update should carry a worked example at all, or only point to the repository, is still yours (NOTES.md, Q6).
 
 ## Website and interface
 
@@ -516,7 +519,12 @@ to the Human Ageing Genomic Resources conditions of use; NCBI data carry no use 
     is inversely related to longevity in mammals. Aging Cell. 2011;10:198–207.
 32. Katoh K, Standley DM. MAFFT multiple sequence alignment software version 7: improvements in
     performance and usability. Mol Biol Evol. 2013;30:772–780.
+33. Kitazoe Y, Kishino H, Hasegawa M, Nakajima N, Thorne JL, Tanaka M. Adaptive threonine increase in
+    transmembrane regions of mitochondrial proteins in higher primates. PLoS One. 2008;3:e3343.
+34. Aledo JC, Valverde H, de Magalhães JP. Mutational bias plays an important role in shaping
+    longevity-related amino acid content in mammalian mtDNA-encoded proteins. J Mol Evol.
+    2012;74:332–341.
 
-> AUTHOR: references 19, 21 and 24–32 are new and need checking (a reference-check pass is suggested).
+> AUTHOR: references 19, 21 and 24–34 are new and need checking (a reference-check pass is suggested).
 > Data citations are needed for the USGS BBL longevity records (v2025.1), the Hugging Face dataset and
 > both repositories.

@@ -37,7 +37,7 @@ Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-1
 | 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
 | Table 3, the funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472), AnAge-only (3,568 / 559), every r and p in "What the controls change" | `dist/data/correlations.parquet` written by `bun run build` in a worktree at 84ba6f7 (2026-11-14), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline |
 | Codon third-position pattern (8 U-ending down, 8 C-ending up) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
-| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines`, `docs/HYPOTHESES.md` at b113c0b, H1 and H2 |
+| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` at da0c112: `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
 | Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
 | 418 of the 472 "All three" keep the sign of the correlation across species in the partial correlation (54 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,384 of 2,202 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.048 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
@@ -87,8 +87,9 @@ until open question (e) of `docs/BUILD2_OPEN_QUESTIONS.md` is decided.
 
 **Q6. The example from mitoage-pipelines.** Its own README says "Nothing here is peer reviewed". A database
 update paper can carry a short worked example; whether to carry these results, or only point to the
-repository, is the authors' choice. The claim that long-lived mammals have more threonine has no reference
-in the draft; `docs/HYPOTHESES.md` calls it "published".
+repository, is the authors' choice. The example now reports the rerun on the dated tree (2026-11-14), in which
+no amino acid passes a 5% false discovery rate in mammals; the threonine claim is cited to Kitazoe et al. 2008
+(ref. 33, higher primates) and set against Aledo, Valverde & de Magalhães 2012 (ref. 34, 173 mammals).
 
 **Q7. The reproduction document.** `docs/BUILD2_REPRODUCTION.md` of mitoage-pipelines was not on its
 origin/main at the time of writing (head b113c0b). Once it lands, the Methods sentence on the independent
