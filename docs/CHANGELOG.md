@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- `docs/manuscript/`: draft 0.1 of the MitoAge 2 paper (NAR Database issue update), modelled on the 2016 paper, with every number traced to build 2 in `NOTES.md` and the questions for the authors (strand convention, contrasts in poorly resolved clades, licence, taxonomy counts).
 - **A FASTA download names the retired records it holds.** Build 2 retired 19 species (18 because
   RefSeq removed their record, one without a curated lifespan), and the site still lists them. NCBI
   still serves the removed records, so the species list, a taxon page and the side-by-side view
