@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- The manuscript draft's figures sit at the end of the section that first cites them, as its tables do,
+  instead of in a Figures section at the end: Figures 3 and 4 after Table 3, Figures 1, 2 and 5 at the end
+  of "Website and interface". An author note says they move after the references for submission, as NAR
+  asks.
 - **Figures 3 and 4 of the manuscript draft.** Figure 3 shows, scope by scope, what the false discovery
   rate, the contrasts and the body-mass control leave of the lifespan correlations; Figure 4 places the 64
   codons of the total protein-coding sequence by their r across species and on contrasts, one panel per
