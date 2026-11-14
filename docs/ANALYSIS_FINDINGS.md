@@ -16,7 +16,9 @@ subunits side by side (RM17); anything about lifespan in the mito-nuclear pairin
 
 Each entry: the hypothesis as we held it, the test, the control that keeps the test honest, the result, and
 its limits. Results that did not hold are kept next to those that did: a reader should see what was tried.
-Numbers are from the runs of 2026-11-13 on build 2 of MitoAge (about 2,300 species with a mitochondrial
+Numbers are from the runs of 2026-11-13 on build 2 of MitoAge (H1 and H2's power and second-alignment
+checks: 2026-11-14, dataset revision 6efa0959282e, on which `controls` and `composition` give the numbers of
+2026-11-13 again) (about 2,300 species with a mitochondrial
 genome and a maximum lifespan); the command that produces each table is named. "Lifespan" is maximum
 recorded lifespan, log10 years. Nothing here is peer reviewed.
 
@@ -38,23 +40,55 @@ pairs the shipped alignment puts in one column that another tool also puts in on
 **Consequence.** A site-level finding in a soft gene is kept only if it holds on a second alignment.
 **Limit.** Agreement between tools is not correctness: there is no reference alignment.
 
-## H1. Amino-acid content of mitochondrial proteins follows lifespan (positive controls)
+## H1. Amino-acid content of mitochondrial proteins follows lifespan
 
-**Hypothesis.** Published: long-lived animals have fewer cysteines and more threonine in mitochondrially
-encoded proteins; methionine is debated. If our data and method are sound, these come back.
-**Test.** Content of each amino acid over the 13 proteins against lifespan. `mitoage longevity controls`.
-**Controls.** Body mass; relatedness as comparison within families and as random effects of order and
-family; base composition at fourfold-degenerate sites (`mitoage longevity fourfold`,
-`mitoage longevity composition`), because amino acids with C-rich codons rise and those with T-rich codons
-fall with lifespan, which is what a shift in mutation pressure alone would do.
-**Result, mammals (622 with body mass).** Threonine up (+0.30 percentage points per tenfold lifespan after
-composition, p = 0.0005), cysteine down (−0.05, p = 0.00008). Methionine: nothing (p = 0.4). Isoleucine and
-phenylalanine fall, leucine rises; about 40 % of the isoleucine and phenylalanine effects and all of
-proline's are base composition.
-**Result, other classes.** Nothing for cysteine or methionine in birds, ray-finned fishes or reptiles;
-threonine goes the other way in fishes with body mass (235 species only).
-**Lesson.** Without any control for relatedness threonine has p = 1e-60 across all species; within families
-it is 0.9. The raw figure is the difference between classes.
+**Hypothesis.** Published, and contested. Long-lived animals have fewer cysteines in their mitochondrially
+encoded proteins (Moosmann & Behl 2008, Aging Cell 7:32) and less methionine (Aledo et al. 2011, Aging Cell
+10:198); higher primates gained threonine in the transmembrane regions of these proteins (Kitazoe et al. 2008,
+PLoS ONE 3:e3343, doi:10.1371/journal.pone.0003343). Against this, Aledo, Valverde & de Magalhães (2012, J Mol
+Evol 74:332, doi:10.1007/s00239-012-9510-7), on 173 mammals, found no effect of longevity on cysteine content
+and threonine usage fully accounted for by nucleotide composition. We test all 20 amino acids and read
+cysteine, threonine and methionine against this record; none of them is a positive control.
+**Test.** Content of each amino acid over the 13 proteins (percent) against log10 lifespan, with log10 adult
+body mass, and then also with base composition at fourfold-degenerate sites (shares of A, C and T), as a
+phylogenetic regression on the build's dated species tree, with Pagel's lambda estimated for each amino acid
+and model. Slopes are percentage points per tenfold lifespan; q is Benjamini–Hochberg over the 20 amino
+acids, within class and model. `mitoage longevity aa-pgls --class <Class>` (after `controls`, `fourfold` and
+`dated-tree`), into `aa_pgls.<Class>.tsv`, which also holds the earlier mixed model (random intercepts of
+order and family) refitted on the same species (method `mixed`).
+**Species.** The manuscript's default dataset: not retired, lifespan record of high or acceptable quality and
+not estimated; with body mass; a tip of the dated tree. Mammals: 625 with all 13 proteins and a lifespan,
+615 in the default dataset (10 questionable lifespans out), 612 with body mass, 604 in the tree (8 species
+are not in it). Birds 379, ray-finned fishes 235, reptiles 97.
+**Result, mammals (604).** Lambda is 0.96 to 1 for every amino acid: content follows the tree almost as
+Brownian motion would. With body mass and composition **no amino acid passes q < 0.05**; the smallest q is
+0.11 (alanine −0.13, p = 0.009; aspartate −0.045, p = 0.011; isoleucine −0.16, p = 0.016). Threonine +0.15
+(p = 0.03, q = 0.12), cysteine −0.021 (p = 0.05, q = 0.15), methionine +0.004 (p = 0.94); histidine +0.05 and
+glycine +0.035 (q = 0.12 and 0.13); the other twelve have p > 0.1. With body mass only five pass: isoleucine
+−0.26 (q = 0.004), histidine +0.07, glycine +0.05, phenylalanine −0.09 and threonine +0.18 (q 0.03 to 0.045);
+cysteine does not (−0.017, p = 0.10). Composition takes about a sixth of threonine's slope and two fifths of
+isoleucine's.
+**What changed the result: the tree, not the species set.** The earlier mixed model on the same 604 species
+still gives seven amino acids at q < 0.05 with composition: isoleucine −0.35, cysteine −0.052 (q = 0.0006),
+leucine +0.24, phenylalanine −0.15, aspartate −0.062, threonine +0.30 (q = 0.002) and alanine −0.17. Random
+intercepts of order and family leave most of the shared ancestry in the residual; the dated tree, with lambda
+near 1, takes it out: threonine's slope halves and cysteine's falls by more than half.
+**Result, other classes, with composition.** Nothing at q < 0.05 in birds (smallest p 0.019), ray-finned
+fishes (0.005) or reptiles (0.004); cysteine and methionine have p ≥ 0.15 in all three. Threonine goes the
+other way in fishes (−0.076, p = 0.02, q = 0.17; with body mass only −0.094, q = 0.03). Whatever is seen in
+mammals is not shared across vertebrates.
+**Reading.** On the dated tree the published directions are there in mammals (threonine up, cysteine down)
+at about half the size the mixed model gave, and neither is beyond chance among 20 amino acids once
+composition is in the model; methionine shows nothing. This agrees with Aledo et al. 2012 on cysteine, and
+on threonine as far as composition and relatedness together go. It does not test Kitazoe et al.'s claim,
+which is about transmembrane regions in higher primates, not whole proteins across mammals.
+**Limits.** Composition is three shares of fourfold sites over the 12 heavy-strand genes, a coarse measure of
+mutation pressure; the tree's polytomies are kept as they are; one lifespan per species.
+**Earlier version (runs of 2026-11-13), kept as a lesson.** 622 mammals with body mass, including the 10 with
+questionable lifespans; mixed model of order and family (`mitoage longevity controls`, `composition`):
+threonine +0.30 (p = 0.0005) and cysteine −0.05 (p = 0.00008) were reported as positive controls; alanine
+(−0.175, p = 0.0005) and aspartate (−0.06, p = 0.0006), as significant, were not reported. Without any control
+for relatedness threonine has p = 1e-60 across all species; within families it is 0.9.
 
 ## H2. Single residues are associated with lifespan
 
@@ -78,9 +112,20 @@ lifespan record, against the rule above. That run gave cytochrome b position 43 
   (p = 2e-5, q = 0.049): great apes, elephants, bears, African mole-rats and single species in eight other
   families. On the gene-built tree it had q = 0.27.
 **Result as fixed, birds (379).** Nothing (smallest p 0.001).
+**Second alignment (H0's rule for the soft gene ND5).** Rerun on the FAMSA, Muscle 5 and iterative MAFFT
+alignments of the same sequences (`mitoage download prepared --topic aligners`, then `mitoage longevity
+pgls --alignments-dir data/interim/aligners --tool <tool> --out ...`): in each, both columns hold the same
+residues in the same species (573 glutamine and 28 histidine at ND5 200, 24 isoleucine at COX1 419) and
+come first and second, with q = 0.005 and 0.049. They stand on the alignment; what is said of them above
+does not change.
+**Power** (`mitoage longevity pgls-power`). With the standard errors the tests themselves have, a lone column
+passes 5 % false discovery (p ≤ 0.05/5,259 = 9.5 × 10⁻⁶) with 80 % power only if its residue changes lifespan,
+given mass and composition, by 0.17 log10 years (1.49-fold) with 20 to 29 carriers, 0.13 (1.35-fold) with 50
+to 99, and 0.10 (1.27-fold) with 200 to 399. Half the tests have 85 carriers or fewer. COX1 419 (0.146 with
+24 carriers) is below what the screen finds reliably.
 **Conclusion.** No single residue is robustly associated with lifespan in mammals or birds: the one or two
 columns near the threshold change place with the tree, and among about 1,650 columns that is what chance
-gives. The gene-built tree remains available (`mitoage longevity concat`, `mitoage longevity tree`) only to
+gives. The screen can see only large effects, of about 1.3- to 1.5-fold lifespan. The gene-built tree remains available (`mitoage longevity concat`, `mitoage longevity tree`) only to
 show this sensitivity.
 
 ## H3. Selection on mitochondrial genes differs between long-lived and short-lived lineages

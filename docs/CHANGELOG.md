@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- `docs/ANALYSIS_FINDINGS.md` follows `docs/HYPOTHESES.md` of mitoage-pipelines at da0c112: H1 (amino-acid content against lifespan) rerun as a phylogenetic regression on the dated tree with the manuscript's default dataset and all 20 amino acids with q; with base composition in the model no amino acid passes q < 0.05 in mammals (threonine q = 0.12, cysteine q = 0.15), and the earlier family/order mixed model's hits are set against the published record both ways (Kitazoe et al. 2008; Aledo et al. 2012). H2's two columns hold on three other aligners; its detectable effect sizes are stated. Documents only.
 - **`docs/ANALYSIS_FINDINGS.md`: what the analyses on build 2 found**, in the repository itself: amino-acid content against lifespan (threonine and cysteine hold in mammals), the single-residue screen (nothing robust; one result withdrawn after it was rerun on the dated tree), selection strength (nothing that repeats), the peptides encoded inside mtDNA (only SHLP6 looks kept, none beyond the null), and nuclear partners following the mitochondrial genome in rates and in embeddings. The code is in `dna-seq/mitoage-pipelines`, the tables on Hugging Face. Documents only.
 - README and the build 2 report point to `dna-seq/mitoage-pipelines`, where build 2 is rebuilt from build 1 independently, with a downloader for every source (`docs/BUILD2_REPRODUCTION.md` there), and to the Hugging Face dataset. Documents only.
 - The manuscript draft's figures are numbered in order of first citation: the controls chart is now
