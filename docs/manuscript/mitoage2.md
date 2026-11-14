@@ -383,8 +383,8 @@ therefore not assessed here, rather than assessed and found negative.
 
 > AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 22cb140 (`mitoage longevity rates` and
 > `mitoage longevity motif-pgls`, tables `rates.tsv`, `rate_contrasts.tsv` and `motif_pgls.tsv`; H7 and H8 in
-> `docs/ANALYSIS_FINDINGS.md`), on the motif features of the site pipeline at 2808823, which computes them for
-> all 2,335 species. Whether the paper should carry this subsection at all, or leave it to the analysis
+> `docs/ANALYSIS_FINDINGS.md`, mitoage-pipelines main at 22cb140), on the motif features this repository's
+> pipeline computes for all 2,335 species (main at e3d99b2). Whether the paper should carry this subsection at all, or leave it to the analysis
 > repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
 
 ## Website and interface

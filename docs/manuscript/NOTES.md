@@ -54,9 +54,9 @@ keeps Table 3, the pipeline's report should emit it, so the manuscript can cite 
 
 ### Repeats, motifs and the rate of evolution (added 2026-11-14)
 
-Every number in this subsection comes from mitoage-pipelines at 6149fa1, run on build 2's species table,
-the dated tree and the quality filter, with the motif features from the site pipeline's `mtdna-features`
-branch at 5f526c9.
+Every number in this subsection comes from mitoage-pipelines main at 22cb140, run on build 2's species table,
+the dated tree and the quality filter, with the motif features from this repository's pipeline, merged into
+main at e3d99b2.
 
 | Number in the draft | Where it comes from |
 | --- | --- |
@@ -77,8 +77,8 @@ counts that did not reject units built from a shorter period, gave mammalian G-q
 reptile one is gone too (q = 0.38) and nothing passes at all. Three runs, three different survivors, none
 reproducing: the draft reports the third and says the screen is null, and the trail is kept here.
 
-**Coverage.** The motif features now cover all 2,335 species: the work was ported onto build 2 (site pipeline
-2808823, decision D7) and the features are ordinary members of the feature catalogue, so the false discovery
+**Coverage.** The motif features now cover all 2,335 species: the work was ported onto build 2 (decision D7,
+merged into main at e3d99b2) and the features are ordinary members of the feature catalogue, so the false discovery
 rate runs over the combined set. Classes are tested at 97 (reptiles) to 604 (mammals) species. The plot
 explorer does not offer the new features yet (RM19), which does not affect any number here.
 
