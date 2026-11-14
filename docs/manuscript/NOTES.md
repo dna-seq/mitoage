@@ -33,15 +33,15 @@ Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-1
 | Human rCRS base counts, release 1 vs deposited | `public/data/README.md`, data notes |
 | 16,008 complete metazoan mitogenomes from 15,876 species, 14,970 species not in release 1 | `data/cache/build2/candidates/build2_candidates_summary.md` |
 | Tree: 2,305 of 2,335 placed, 2,045 of 2,229 nodes dated, 184 interpolated, 61 raised | `public/data/README.md`, data notes |
-| Datasets 2,202 / 1,710; agreement r = 0.975 | `docs/BUILD2_REPORT.md`, "Correlation datasets" and "Agreement between the datasets" |
+| Datasets 2,202 / 1,710; agreement r = 0.977 | `docs/BUILD2_REPORT.md`, "Correlation datasets" and "Agreement between the datasets" |
 | 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
-| Table 3, the funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472), AnAge-only (3,568 / 559), every r and p in "What the controls change" | `dist/data/correlations.parquet` written by `bun run build` in a worktree at 84ba6f7 (2026-11-14), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline |
+| Table 3, the funnel (15,904 / 5,439 / 4,299 / 3,008 / 896 / 547), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
 | Codon third-position pattern (8 U-ending down, 8 C-ending up) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
 | Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` at da0c112: `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
 | Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
-| 418 of the 472 "All three" keep the sign of the correlation across species in the partial correlation (54 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
+| 481 of the 547 "All three" keep the sign of the correlation across species in the partial correlation (66 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,384 of 2,202 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.048 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
-| Survivors by feature: codons are 62% of the tests and 63% of the 472; in all species 27 of 40 skew, 11 of 16 GC-content and 138 of 744 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |
+| Survivors by feature: codons are 54% of the tests and 54% of the 547; in all species 27 of 40 skew, 11 of 16 GC-content and 138 of 744 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |
 | Exclusions behind 2,202: 49 estimated and 65 questionable lifespans | computed from `public/data/species.parquet` (live species, lifespan quality and method) |
 | 106 invertebrates: 104 non-chordates, a lancelet and an ascidian | computed from `public/data/species.parquet` (live species by phylum and subphylum) |
 | Cross-check: 8,733 changelog rows compared for the original species, 3,325 in both, 5,394 of the other 5,408 `refseq_successor` | `docs/BUILD2_CROSSCHECK.md`, the comparison table and the successor counts |
@@ -105,16 +105,39 @@ and the new ones (NCBI); 41 new species have no order. The 2016 paper gave 304 f
 13 classes; the release-1 export as processed has 103 orders. The draft leaves order and family counts out
 until open question (e) of `docs/BUILD2_OPEN_QUESTIONS.md` is decided.
 
-**Q5. Contrasts in poorly resolved clades.** Before Table 3 is final:
-- Chondrichthyes: 494 of 1,212 tests at PIC p < 0.05, 2 at q < 0.05. Clupeiformes 61 of 161, Rajiformes
-  57 of 152, Acipenseriformes 62 of 158. Under the null about 5% would be expected. This suggests
-  contrasts standardised over near-zero branch lengths (polytomies resolved as zero-length branches, or
-  interpolated node ages), not biology. A check: compare the PIC result with one on a tree where the
-  polytomies are resolved randomly with small positive branch lengths, or with a diagnostic of absolute
-  standardised contrasts against node height.
-- The correlation table contains a scope `order:` (41 species with no order) that should not exist.
-- Across all scopes, 18.5% of the lifespan tests have PIC p < 0.05; the PIC column total (2,577) is
-  reported in the table but not in the text for this reason.
+**Q5. Contrasts: the clades that over-reject, and why it is not the tree.** Updated 2026-11-15 against
+the rebuilt correlation table (32 scopes) and `src/data/generated/phylogeny.json`.
+
+- The anomaly is real. Chondrichthyes rejects 42.8% of its 1,368 lifespan tests at contrast p < 0.05
+  while 0.1% pass the FDR; Rajiformes 38.7% of 191 and Clupeiformes 35.0% of 200, with none passing the
+  FDR; Acipenseriformes 39.6% of 197. Under the null about 5% would be expected.
+- **The explanation this note previously gave is wrong.** Measured on the dated tree: of 2,229 internal
+  nodes only 54 are polytomies, and resolving them costs 75 degrees of freedom in total; 556 of 4,534
+  branches have length exactly 0, but after the contrast variance recursion only 12 of the 2,229
+  contrasts are standardised by a daughter-variance sum below 1 Myr, and none below 0.01. Contrasts are
+  not being divided by near-zero numbers, so near-zero branch lengths cannot explain a tenfold excess of
+  rejections.
+- Nor is it a positivisation error: the rejecting contrasts are 54% positive in Chondrichthyes and 49%
+  in Clupeiformes.
+- Inverting the t test from the published `pic_r` and `pic_p_value` gives an implied df of about n − 3 in
+  every scope (2,172 for the 2,202 species of the all-species scope, 79 for the 82 Chondrichthyes), so
+  the test spends essentially the full n − 1 contrasts. The Purvis & Garland (1993) polytomy correction
+  is missing but is worth about 1% of df here, not a tenfold inflation.
+- What the numbers do show is heavy tails: among the rejecting tests |contrast r| averages 0.43 in
+  Chondrichthyes and 0.61 in Rajiformes (21 species), where |r| across species averages 0.09 and 0.19.
+  A through-origin correlation of a few dozen outlier-dominated contrasts is not described by a
+  Student-t p value.
+- What to run: (a) a permutation null — shuffle log10 lifespan across the tips within each scope,
+  recompute the contrasts and correlate against the fixed feature contrast matrix, which gives both a
+  calibrated p value and the empirical chance rejection rate PR-3 asks for (the analytic "about 96 of
+  770" assumes independent tests, which these are not); (b) the Garland, Harvey & Ives (1992)
+  branch-length diagnostic per scope; (c) record `pic_n` and `pic_df` in the correlation table — they
+  are absent today, which is why this could not be diagnosed from the published table at all; (d) a
+  second ancestry control, PGLS with Pagel's lambda, over the same tests.
+- The empty `order:` scope is fixed: `buildScopes` in `pipeline/steps/correlations.ts` no longer groups
+  species that have no name at a rank, so the table has 32 scopes and 15,904 lifespan tests (IC-8).
+- Across all scopes, 18.9% of the lifespan tests have PIC p < 0.05; the PIC column total (3,008) is
+  reported in Table 3 but not in the text for the reasons above.
 
 **Q6. The example from mitoage-pipelines.** Its own README says "Nothing here is peer reviewed". A database
 update paper can carry a short worked example; whether to carry these results, or only point to the
@@ -184,7 +207,8 @@ The script is not in the repository.
   shows one base and greys the rest.
 
 Recomputing Table 3 from the same file for Figure 1 reproduced every count in it. The total row's count of
-scopes was wrong in draft 0.1: the table holds 33 scopes (32 named and the empty `order:`), not 34.
+scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty `order:`), not 34; since the
+IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
 - No reference-check pass; references 19, 21, 24–32 and 35–36 are new.

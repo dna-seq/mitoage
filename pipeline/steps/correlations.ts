@@ -64,6 +64,9 @@ export function buildScopes(species: Species[], include: (s: Species) => boolean
     all.forEach((i) => {
       const s = species[i]!;
       const k = s.taxonomy[rank];
+      // A species with no name at this rank belongs to no taxon, so it forms no scope: without this
+      // the species whose order is unknown are grouped under one empty key and tested as an order.
+      if (!k) return;
       groups.set(k, [...(groups.get(k) ?? []), i]);
     });
     for (const [name, members] of [...groups].sort((a, b) => a[0].localeCompare(b[0]))) {
