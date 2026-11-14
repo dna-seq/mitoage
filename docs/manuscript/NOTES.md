@@ -38,6 +38,13 @@ Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-1
 | Table 3, the funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472), AnAge-only (3,568 / 559), every r and p in "What the controls change" | `dist/data/correlations.parquet` written by `bun run build` in a worktree at 84ba6f7 (2026-11-14), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline |
 | Codon third-position pattern (8 U-ending down, 8 C-ending up) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
 | Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines`, `docs/HYPOTHESES.md` at b113c0b, H1 and H2 |
+| Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
+| 418 of the 472 "All three" keep the sign of the correlation across species in the partial correlation (54 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
+| Partial-correlation sample 1,384 of 2,202 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.048 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
+| Survivors by feature: codons are 62% of the tests and 63% of the 472; in all species 27 of 40 skew, 11 of 16 GC-content and 138 of 744 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |
+| Exclusions behind 2,202: 49 estimated and 65 questionable lifespans | computed from `public/data/species.parquet` (live species, lifespan quality and method) |
+| 106 invertebrates: 104 non-chordates, a lancelet and an ascidian | computed from `public/data/species.parquet` (live species by phylum and subphylum) |
+| Cross-check: 8,733 changelog rows compared for the original species, 3,325 in both, 5,394 of the other 5,408 `refseq_successor` | `docs/BUILD2_CROSSCHECK.md`, the comparison table and the successor counts |
 
 Definitions used for Table 3: "FDR" is `q_value < 0.05`; "PIC" is `pic_p_value < 0.05`; "Both" adds
 `sign(pearson_r) == sign(pic_r)` to both; "All three" adds `partial_p_value < 0.05`. The repository rule

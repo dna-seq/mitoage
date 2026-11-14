@@ -17,13 +17,10 @@ animal species, and MitoAge (2016) made such analyses possible for 922 species. 
 sources have changed: RefSeq holds about three times as many complete animal mitogenomes, records have
 been suppressed and re-annotated, and lifespans have been revised. MitoAge 2 re-derives every value from
 pinned upstream releases and records each change to the original species with its cause. It holds 2,335
-species, 1,413 of them new, including 104 invertebrates against 6 before; lifespans come from AnAge and,
-where AnAge has none, from FishBase, SeaLifeBase and bird-ringing records. Base composition is reported
-on the strand deposited in RefSeq, which reverses the sign of the strand skews relative to the first
-release. Every mtDNA–trait correlation is given with its false discovery rate, a partial correlation on
-body mass and a test on phylogenetically independent contrasts along a dated tree. Of 3,854 lifespan
-correlations that pass the false discovery rate, 770 keep their sign and significance on contrasts. The
-build also provides alignments of the 13 protein-coding and 2 rRNA genes, an independent reproduction of
+species, 1,413 of them new, including 106 invertebrates against 6 before; lifespans come from AnAge and,
+where AnAge has none, from FishBase, SeaLifeBase and bird-ringing records. Base composition is now reported on the strand deposited in RefSeq, where the first release
+reported its complement, so the strand skews change sign. Every mtDNA–trait correlation is given with its false discovery rate and a test on phylogenetically independent contrasts along a dated tree, and every correlation with lifespan also with a partial correlation on body mass. Of 3,854 lifespan
+correlations that pass the false discovery rate, 770 keep their sign and significance on contrasts. MitoAge 2 also provides alignments of the 13 protein-coding and 2 rRNA genes, an independent reproduction of
 the build, and open Parquet downloads at https://www.mitoage.info.
 
 > AUTHOR: about 200 words, the NAR limit.
@@ -31,15 +28,12 @@ the build, and open Parquet downloads at https://www.mitoage.info.
 ## Introduction
 
 Mitochondria are the only animal organelles with their own genome, and the mtDNA that encodes
-13 respiratory-chain subunits, 22 tRNAs and 2 rRNAs has long been studied as a factor in ageing and
+13 subunits of the respiratory chain and ATP synthase, 22 tRNAs and 2 rRNAs has long been studied as a factor in ageing and
 in the evolution of lifespan (1–6). Maximum lifespan varies by orders of magnitude across species,
 and so does the composition of the mitochondrial genome. Correlations between the two have been
 reported repeatedly in mammals and birds: with base composition, with the skews between the two
 strands, with direct and inverted repeats, with the amino-acid content of the encoded proteins, and
-with the rate at which those proteins evolve (4, 13–18, 30, 31). The asymmetry between the heavy and
-light strands is set by replication and by the mutations it favours (7, 8, 20), and it has recently been
-tied to ageing directly: an A>G mutational signature on the heavy strand rises with age and with longer
-generation times (21).
+with the rate at which those proteins evolve (4, 13–18, 30, 31). The asymmetry between the heavy and light strands is set by replication and by the mutations it favours (7, 8, 20). It has recently been tied to ageing directly: an A>G mutational signature on the heavy strand rises with age and, across mammals, with longer generation times (21).
 
 MitoAge was published in 2016 to make such analyses routine (22). It combined complete mitogenomes
 from NCBI RefSeq (19) with maximum lifespans from AnAge (9) and offered, for 922 species, the base
@@ -57,9 +51,10 @@ revises lifespans as new records appear, and taxonomy renames species. A databas
 re-derived from its sources drifts away from them without notice.
 
 MitoAge 2 addresses both. It re-derives every value from pinned releases of its sources and records
-each change to the original species with its cause; it places the species on a dated phylogeny and
-reports every correlation with three controls (false discovery rate, body mass and shared ancestry);
-and it is built so that a reader can rebuild it, twice over: from its own pipeline, and from an
+each change to the original species with its cause. It places the species on a dated phylogeny and
+reports every correlation with its false discovery rate and a control for shared ancestry, and every
+correlation with lifespan also with a control for body mass. And it is built so that a reader can rebuild
+it, twice over: from its own pipeline, and from an
 independent implementation that starts from the first release.
 
 ## Materials and methods
@@ -94,16 +89,19 @@ The inclusion rule of the first release is unchanged: an animal species enters M
 complete mitochondrial genome in RefSeq and a maximum lifespan from a curated, regularly maintained
 source. A RefSeq record counts as complete if it is an NC_ accession whose definition names a complete
 genome or a complete single-molecule sequence; contigs, multipartite and partial records are excluded.
-When a species has several complete records, the most recently updated full-length one is kept and the
-choice is logged.
+When a species has several complete records, the most recently updated one is kept (between records of the
+same date, a full-length one, then the higher version), and the choice is logged.
 
 AnAge is always the first lifespan source. Where AnAge has no value, fishes take their lifespan from
 FishBase, aquatic invertebrates from SeaLifeBase, and birds from the EURING longevity list and then the
-USGS records. Static one-off compilations were not used, because they are not maintained. Source records
+USGS records (EURING could not be retrieved for build 2, so its 26 secondary bird lifespans all come from
+the USGS records). Static one-off compilations were not used, because they are not maintained. Source records
 are matched to NCBI species by taxon identifier, then by accepted name with synonym resolution; a record
 that cannot be matched to one species without guessing goes to a review list and is left out of the
 build. Every value from every source is kept in a long-format table, with its record type (captive, wild,
-observed or estimated) and its quality on a scale shared across sources. Ringing records are the oldest
+observed or estimated) and its quality on a scale shared across sources (high, acceptable, questionable or low). AnAge values
+are typed by the origin of the specimen, so its ages of wild animals count as wild whatever the method of
+ageing; "estimated" marks a FishBase value from a growth study. Ringing records are the oldest
 recaptured wild individual and usually underestimate the maximum.
 
 > AUTHOR: the EURING list could not be retrieved (euring.org was in maintenance on 2026-11-13), so the
@@ -113,14 +111,12 @@ recaptured wild individual and usually underestimate the maximum.
 
 For the whole mitogenome, each of the 13 protein-coding genes, the two rRNAs, the D-loop, and the
 aggregates of all protein-coding, rRNA and tRNA genes, MitoAge 2 reports the length, the count of each
-base, the GC content, the GC skew (G−C)/(G+C) and the AT skew (A−T)/(A+T). It also reports the non-coding
-length of the genome, codon usage for each protein-coding gene and their total (gene sense, complete
-codons only), and amino-acid usage translated with the genetic code each RefSeq record specifies. The
+base, the GC content, the GC skew (G−C)/(G+C) and the AT skew (A−T)/(A+T). It also reports the non-coding length of the genome, codon usage for each protein-coding gene and their total, and amino-acid usage translated with the genetic code each RefSeq record specifies. Codon usage counts complete codons only, in gene sense, each codon as a percentage of all codons. The
 annotated features themselves are given with start, end and strand, with names made consistent across
 records (COI, CO1 and COX1, for example) and the two leucine and two serine tRNAs told apart by codon
 family.
 
-**Strand convention.** The 2016 release reported base composition for the heavy strand, the main target
+**Strand convention.** The 2016 release reported base composition mostly for the heavy strand, the main target
 of directional mutation pressure (20, 22). Its counts are the complement of the strand deposited in
 RefSeq, for every region of every species, genes encoded on either strand included. For the human
 reference (NC_012920.1), release 1 lists A = 4,094, C = 2,169, G = 5,181 and T = 5,124, whereas the
@@ -142,9 +138,7 @@ where it was suppressed) and compared with release 1. Each difference becomes a 
 records the table, row and field, the old and new values, the kind of change (added, value update,
 correction, renamed, retired), the cause and the upstream version. Systematic corrections, such as the
 strand convention above and the counting of features joined from several segments over their full span,
-are logged once as rules. No row is deleted: a species whose record was suppressed without a successor, or
-whose lifespan no longer comes from a curated source, is marked retired, keeps its release-1 values, and is
-left out of the analyses. The pipeline's validation step checks that the per-row status and the changelog
+are logged once as rules. No row is deleted. A species whose record was suppressed without a successor, or whose lifespan no longer comes from a curated source, is marked retired and left out of the analyses. Its release-1 values stay in the table, re-expressed on the deposited strand under the same logged strand rule as every other row. The pipeline's validation step checks that the per-row status and the changelog
 agree.
 
 ### Alignments
@@ -160,38 +154,32 @@ animals: columns in poorly conserved stretches are not reliable statements of ho
 The topology is the subtree of the Open Tree of Life synthetic tree induced by the species, with its
 polytomies kept: 2,305 of the 2,335 species are placed. Node ages come from TimeTree 5 for 2,045 of the
 2,229 internal nodes. The other 184 were placed midway between their parent and their oldest child, and
-61 ages were raised so that every parent is older than its children. The 30 species not in the tree are
-left out of the phylogenetic tests, not given values.
+61 ages were raised so that every parent is older than its children. The 30 species not in the tree are left out of the phylogenetic tests, not given values. The dated tree is `src/data/generated/phylogeny.json` of the site repository.
 
 ### Statistics
 
-Correlations are computed for two datasets, both excluding retired species and lifespans that are
-estimated or of low or questionable quality: a default dataset with every curated source (2,202 species)
-and an AnAge-only dataset (1,710 species) for comparison with the first release. For each mtDNA feature
-and each life-history trait, MitoAge 2 computes Pearson's r and Spearman's ρ against the log10-transformed
-trait, with a two-tailed p value from the t distribution, and controls the Benjamini–Hochberg false
-discovery rate (29) within each trait and scope. The scopes are all species and each class and order with
+Correlations are computed for two datasets, both excluding retired species and lifespans that are estimated or of low or questionable quality. The default dataset has every curated source (2,202 species: the 2,316 live species less 49 estimated and 65 questionable lifespans). An AnAge-only dataset (1,710 species) allows comparison with the first release. For each mtDNA feature and each life-history trait, MitoAge 2 computes Pearson's r and Spearman's ρ against the log10-transformed trait, and controls the Benjamini–Hochberg false discovery rate (29) within each trait and scope. The p value is two-tailed, for Pearson's r from the t distribution, and the false discovery rate and all counts use it. The scopes are all species and each class and order with
 at least 20 species; per-gene codon and amino-acid features are tested in all species and in classes only,
-and a correlation needs at least 10 species with both values. For maximum lifespan, a partial correlation
-on log10 adult weight separates lifespan from body size. Each correlation is also computed on
-phylogenetically independent contrasts (23) along the dated tree, with polytomies resolved into
-zero-length branches. The contrast p values are not corrected for multiple testing.
+and a correlation needs at least 10 species with both values. For maximum lifespan, a partial correlation on log10 adult weight separates lifespan from body size, in the
+species with a recorded adult weight (1,384 of the 2,202 in all species; 235 of the 827 ray-finned fishes). Each correlation is also computed on
+phylogenetically independent contrasts (23) along the dated tree, as the correlation of the standardised contrasts through the origin, with polytomies resolved into
+zero-length branches. Where two branches both have zero length, their values are averaged and give no contrast. The three
+controls are applied one at a time: the contrasts are not adjusted for body mass, and the partial
+correlation is not adjusted for shared ancestry. The contrast and partial-correlation p values are not corrected for multiple testing.
 
 ### Reproducibility
 
 The build is made by one command of the site repository, `bun run data`, a TypeScript pipeline that reads
-the pinned downloads, stops if one is missing, and validates its output; derived tables (correlations and
-the explorer's data) are computed by the site build, `bun run build`. The pipeline's tests (192 at build 2)
-include, for every rule a test guards, a check that the test fails when the rule is removed. The build was
-cross-checked against an audit made separately in Python from the same downloads: the two agree on the set
-of new species (1,413), on their lifespans, sources, quality, RefSeq records and names (1,413 of 1,413 for
-each field), and on 99.0% of the 3,325 changed values of the original species, every remaining difference
-traced to a named design choice (`docs/BUILD2_CROSSCHECK.md`).
+the pinned downloads, stops if one is missing, and validates its output. The alignments are made by a
+second command, `bun run align`, and the derived tables (correlations and the explorer's data) by the site
+build, `bun run build`. The pipeline's tests (192 at build 2)
+include, for every rule a test guards, a check that the test fails when the rule is removed. The build was cross-checked against an audit made separately in Python from the same downloads (`docs/BUILD2_CROSSCHECK.md`). The two agree on the new species and their lifespans, sources, quality, RefSeq records and names (1,413 of 1,413 for each field), and on 99.0% of the 3,325 changed values of the original species that both record; every remaining difference is traced to a named design choice. The cross-check compares 8,733 changelog rows for those species, counted by table, row and field; almost all of the other 5,408 belong to species that the build moved to a successor record and the audit retired.
 
 A second repository, `dna-seq/mitoage-pipelines` (Python), is written for readers who want to rebuild
 without our machines. It downloads every input with a pinned version, rebuilds build 2 from the release-1
-export independently of the TypeScript pipeline, and compares the result with the published build
-(`docs/BUILD2_REPRODUCTION.md` there). It also holds the analyses that read the build (the example below
+export independently of the TypeScript pipeline, and compares the result with the published build:
+from the pinned inputs, all 5,302,404 values of its seven tables, its 28 alignment files and its dated
+tree come out identical (`docs/BUILD2_REPRODUCTION.md` there, at commit 3550281). It also holds the analyses that read the build (the example below
 among them), each one command, with a record of which results reproduce byte for byte on a rerun and
 which do not. The published build itself is mirrored, with its alignments and the frozen release 1, as the
 Hugging Face dataset `longevity-genie/mitoage`.
@@ -245,8 +233,7 @@ version, typically around incomplete stop codons and frameshifted ND3 genes. AnA
 different maximum lifespan for 59 species, many of them crocodilians and primates with longer captive
 records, and none for one (*Andrias davidianus*, now retired). The changelog has 14,392 rows: 5,653
 additions of the new species, 6,994 value updates, 1,639 corrections, 87 renames and 19 retirements.
-Release 1 lacked 320 regions that the current records annotate, 263 of them D-loops, and these are now
-computed from the sequence.
+Release 1 lacked 320 regions (263 of them D-loops) that the records it cited annotate; build 2 computes them from the sequence.
 
 **Table 2.** The 922 species of release 1 in MitoAge 2, by record status.
 
@@ -271,21 +258,26 @@ The orders show it most clearly. In primates, 101 lifespan correlations pass the
 8 also pass on contrasts. In mammals as a whole, whole-genome GC content correlates with lifespan at
 r = 0.47 (n = 615) and at 0.40 with body mass controlled, but on contrasts it falls to 0.17 (p < 0.001).
 Across all species, whole-genome GC content barely correlates with lifespan (r = 0.07), yet its partial
-correlation on body mass is 0.24: a relationship within classes masked by the differences between them.
+correlation on body mass, over the 1,384 species with a recorded body mass, is 0.24. Within classes, only the mammals show it with body mass controlled (0.40). The partial correlation is −0.14 in ray-finned fishes (235 species, p = 0.04), 0.05 in birds and −0.01 in reptiles, so the all-species value does not describe a relationship within classes.
 
-The correlations that survive all three controls lie mostly in the strand skews and in the codon usage
-that follows them. Across all species, the AT skew of the whole genome correlates with lifespan at
-r = 0.31 (0.22 with body mass controlled, 0.11 on contrasts, p < 10⁻⁶). In the total protein-coding
+The correlations that survive all three controls include the strand skews and the codon usage that
+follows them. Codon usage makes up most of the survivors because it makes up most of the tests (63% of the
+472, 62% of the tests); in all species, 27 of the 40 skew correlations and 11 of the 16 GC-content
+correlations that pass the false discovery rate survive, against 138 of 744 for codons. Across all species, the AT skew of the whole genome correlates with lifespan at
+r = 0.31 (0.22 with body mass controlled, 0.11 on contrasts, p < 10⁻⁶); this scope includes the 104
+non-chordates, whose deposited strand need not correspond to the vertebrates' (see Strand convention). In the total protein-coding
 sequence, every codon ending in U among those that pass all three controls (8 codons) is used less in
-longer-lived species, and every codon ending in C (8 codons) more (Figure 2). On the deposited strand
+longer-lived species, and every codon ending in C (8 codons) more (Figure 2). Seven of the eight pairs code the same amino acid
+(threonine, isoleucine, aspartate, tyrosine, serine, cysteine and phenylalanine), so the shift is
+synonymous; on contrasts these correlations are small (|r| between 0.06 and 0.13). On the deposited strand
 this is a shift from T to C at the third codon position, the direction expected from an excess of A>G
 mutations on the heavy strand (21). In mammals, the GC content of ND4, ND1 and the rRNAs, and isoleucine usage, keep
 their sign under all three controls.
 
 **Table 3.** Correlations of mtDNA features with log10 maximum lifespan in the default dataset, by scope.
-FDR: Benjamini–Hochberg q < 0.05 within scope. PIC: p < 0.05 on phylogenetically independent contrasts,
+FDR: Benjamini–Hochberg q < 0.05 within scope. The scopes overlap (a species counts in all species, its class and its order), so the total row adds tests, not distinct relationships. PIC: p < 0.05 on phylogenetically independent contrasts,
 uncorrected. Both: FDR and PIC with the same sign. All three: Both, and partial correlation on body mass
-p < 0.05.
+p < 0.05, whatever its sign (it keeps the sign of the correlation across species in 418 of the 472).
 
 | Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three |
 |---|--:|--:|--:|--:|--:|--:|--:|
@@ -323,7 +315,7 @@ p < 0.05.
 by scope (default dataset; the data of Table 3). Each bar is the share of a scope's tests, one per mtDNA
 feature, with p < 0.05, split by how far each gets through the controls in turn: the false discovery rate
 (Benjamini–Hochberg q < 0.05 within the scope), phylogenetically independent contrasts (p < 0.05, with the
-sign of the correlation across species) and the partial correlation on body mass (p < 0.05). The column on
+sign of the correlation across species) and the partial correlation on body mass (p < 0.05, of either sign). The column on
 the right gives how many of the correlations that pass the false discovery rate pass all three; across all
 33 scopes, 472 of 3,854 do.
 
@@ -332,7 +324,8 @@ the right gives how many of the correlations that pass the false discovery rate 
 **Figure 2.** Codon usage in the total protein-coding sequence against maximum lifespan across all species
 (n = 2,202), one panel per third base. Each codon is placed by its Pearson r with log10 maximum lifespan
 across species (x) and its r on phylogenetically independent contrasts (y). Filled points pass all three
-controls (false discovery rate, contrasts with the same sign, partial correlation on body mass), open
+controls (false discovery rate, contrasts with the same sign, partial correlation on body mass of either
+sign; it is positive for UGG and GGG), open
 points do not, and grey points are the other 48 codons. Twenty codons pass all three: the 8 ending in U
 are all used less in longer-lived species and the 8 ending in C all more, while of those ending in A or G
 only UUA, CUA, UGG and GGG pass.
@@ -391,8 +384,9 @@ the ocean quahog (*Arctica islandica*, 507 years) and the Greenland shark (*Somn
 as one FASTA file. (**B**) The radial tree of all species by taxonomic rank, coloured by class, with each
 species' maximum lifespan on a log scale in the outer ring; any clade zooms into view. (**C**) Compare,
 class Mammalia: Pearson's r of the GC content of each region with log10 maximum lifespan and its 95%
-confidence interval, not corrected for multiple testing or shared ancestry, above the table of the same
-rows (n, mean, standard deviation, coefficient of variation, minimum, median, maximum, r, p). (**D**) The
+confidence interval, not corrected for multiple testing or shared ancestry (the page sets it above a table of the same
+rows: n, mean, standard deviation, coefficient of variation, minimum, median, maximum, r, p; the table is
+not shown). (**D**) The
 circular genome map of the bowhead whale (*Balaena mysticetus*, NC_005268.1, 16,390 bp): genes on the
 two strands in the outer and inner rings, and in the middle ring the GC content of each gene against that
 of the whole genome.
@@ -436,8 +430,9 @@ MitoAge 2 keeps what the first release offered, the composition of every animal 
 lifespan and its statistics by taxon, and adds what a comparative analysis now needs: values traceable to
 pinned sources, a stated strand convention, alignments of the genes, and controls for body size and
 shared ancestry next to every correlation. The re-analysis is a caution as much as a resource. Most
-correlations between mtDNA features and lifespan reflect differences between lineages, and those that
-hold within lineages are fewer and weaker. They are concentrated in the strand asymmetry and the codon
+correlations between mtDNA features and lifespan do not hold up on phylogenetic contrasts, which points to
+differences between lineages. Those that hold within lineages are fewer and weaker, although contrasts on a
+partly interpolated tree also lose power. They include the strand asymmetry and the codon
 usage it shapes, where the mutational processes of the mitogenome leave their mark, and that is where the
 next analyses should look. A hundred invertebrates, against six in the first release, are a first chance
 to ask whether these relationships extend beyond the vertebrates.
