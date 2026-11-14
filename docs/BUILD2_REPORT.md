@@ -22,9 +22,10 @@ for every source and a comparison with the published build, is in
   USGS BBL and the build 1 value. **Review list**: 95 items. **Build 1** is frozen verbatim in
   `public/data/build1/` (34 parquet files and a README with the SHA-256 of every CSV).
 - **Correlations** (computed at site build, decision D3): `default` 2,202 species (any curated source,
-  no estimated, low- or questionable-quality lifespans), `anage_only` 1,710. Across all 1,257 features, r
-  with log10 maximum lifespan in the two datasets correlates at 0.975 (scope all); 906 vs 1,037 features
-  have q < 0.05. Example, whole-genome AT skew vs log10 lifespan (scope all): r = 0.336 in build 1 on 922
+  no estimated, low- or questionable-quality lifespans), `anage_only` 1,710. Across all 1,414 features, r
+  with log10 maximum lifespan in the two datasets correlates at 0.977 (scope all); 1,041 vs 1,168 features
+  have q < 0.05. The scopes are 32: since 2026-11-15 a species with no name at a rank forms no scope at it,
+  so the 41 species of unknown order are no longer tested together as if they were one (IC-8). Example, whole-genome AT skew vs log10 lifespan (scope all): r = 0.336 in build 1 on 922
   species, 0.300 AnAge-only on 1,710, 0.311 extended on 2,202; the PIC r is about 0.1.
 
 ## Cross-check with the audit (summary of `docs/BUILD2_CROSSCHECK.md`)
@@ -453,10 +454,10 @@ build and not committed (D3).
 
 | scope | features in both | r between the two r vectors | same sign | q < 0.05 (AnAge-only) | q < 0.05 (extended) |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| all | 1257 | 0.975 | 1185/1257 | 906 | 1037 |
-| class:Mammalia | 1241 | 1.000 | 1241/1241 | 798 | 798 |
-| class:Aves | 1233 | 0.983 | 1159/1233 | 535 | 524 |
-| class:Actinopterygii | 1240 | 0.973 | 1158/1240 | 635 | 656 |
+| all | 1414 | 0.977 | 1335/1414 | 1041 | 1168 |
+| class:Mammalia | 1398 | 1.000 | 1398/1398 | 918 | 918 |
+| class:Aves | 1390 | 0.981 | 1305/1390 | 596 | 590 |
+| class:Actinopterygii | 1397 | 0.975 | 1311/1397 | 746 | 769 |
 
 ## Pinned upstream versions
 
@@ -478,7 +479,37 @@ build and not committed (D3).
 
 | file | bytes |
 | --- | ---: |
-| public/data/README.md | 12616 |
+| public/data/README.md | 16573 |
+| public/data/alignments/ATP6.aa.fasta.gz | 155935 |
+| public/data/alignments/ATP6.codon.fasta.gz | 443425 |
+| public/data/alignments/ATP8.aa.fasta.gz | 98230 |
+| public/data/alignments/ATP8.codon.fasta.gz | 166208 |
+| public/data/alignments/COX1.aa.fasta.gz | 144935 |
+| public/data/alignments/COX1.codon.fasta.gz | 791357 |
+| public/data/alignments/COX2.aa.fasta.gz | 147058 |
+| public/data/alignments/COX2.codon.fasta.gz | 469543 |
+| public/data/alignments/COX3.aa.fasta.gz | 125695 |
+| public/data/alignments/COX3.codon.fasta.gz | 430614 |
+| public/data/alignments/CYTB.aa.fasta.gz | 192377 |
+| public/data/alignments/CYTB.codon.fasta.gz | 626396 |
+| public/data/alignments/ND1.aa.fasta.gz | 172907 |
+| public/data/alignments/ND1.codon.fasta.gz | 566708 |
+| public/data/alignments/ND2.aa.fasta.gz | 302734 |
+| public/data/alignments/ND2.codon.fasta.gz | 727209 |
+| public/data/alignments/ND3.aa.fasta.gz | 100150 |
+| public/data/alignments/ND3.codon.fasta.gz | 235532 |
+| public/data/alignments/ND4.aa.fasta.gz | 295371 |
+| public/data/alignments/ND4.codon.fasta.gz | 853042 |
+| public/data/alignments/ND4L.aa.fasta.gz | 90555 |
+| public/data/alignments/ND4L.codon.fasta.gz | 209024 |
+| public/data/alignments/ND5.aa.fasta.gz | 454690 |
+| public/data/alignments/ND5.codon.fasta.gz | 1195486 |
+| public/data/alignments/ND6.aa.fasta.gz | 182481 |
+| public/data/alignments/ND6.codon.fasta.gz | 412973 |
+| public/data/alignments/README.md | 3105 |
+| public/data/alignments/alignments.json | 16296 |
+| public/data/alignments/rRNA-12S.nt.fasta.gz | 676347 |
+| public/data/alignments/rRNA-16S.nt.fasta.gz | 1286643 |
 | public/data/build1/ATP6_base_composition.parquet | 75332 |
 | public/data/build1/ATP6_codon_usage.parquet | 164454 |
 | public/data/build1/ATP8_base_composition.parquet | 72911 |
@@ -518,6 +549,8 @@ build and not committed (D3).
 | public/data/codon_usage.parquet | 2395133 |
 | public/data/genome_features.parquet | 725638 |
 | public/data/lifespan_observations.parquet | 296518 |
+| public/data/mtdna_structure.parquet | 172498 |
+| public/data/protein_gene_features.parquet | 747264 |
 | public/data/region_stats.parquet | 1295167 |
 | public/data/review_list.csv | 14430 |
 | public/data/species.csv | 1383624 |
@@ -526,5 +559,4 @@ build and not committed (D3).
 | src/data/generated/phylogeny.json | 189740 |
 | src/data/generated/taxonomy.json | 604776 |
 
-Largest committed file: 2395133 bytes; total 12902258 bytes in 47 files.
-
+Largest committed file: 2395133 bytes; total 25399003 bytes in 79 files.

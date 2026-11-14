@@ -4,6 +4,28 @@ Newest first.
 
 ## Unreleased
 
+- **Species with no name at a rank form no scope** (IC-8). `buildScopes` grouped species on a blank rank
+  key, so the 41 species whose order is unknown were tested together as if they were an order: a scope of
+  204 lifespan tests that is not a taxon. They now join no scope at that rank, which leaves 32 scopes and
+  15,904 lifespan tests in the default dataset. `docs/BUILD2_REPORT.md` is regenerated on the new table.
+- **The manuscript's numbers are rebuilt on the committed feature catalogue.** Its funnel was computed
+  before the repeat, motif, fourfold and hydropathy features joined the catalogue at `e3d99b2` and so
+  shared the Benjamini-Hochberg pool, and no longer matched the build it cites. Table 3, the Abstract, the
+  Results text and the legends of Figures 1, 2 and 5 now read 15,904 / 5,439 / 4,299 / 3,008 / 896 / 547,
+  with 481 of the 547 keeping the sign of the correlation across species. Every per-feature result is
+  unchanged.
+- **The Table 3 note no longer blames near-zero branch lengths** for the clades that over-reject on
+  contrasts. Measured on the dated tree: 54 polytomies costing 75 degrees of freedom in all, and only 12 of
+  2,229 contrasts standardised by a daughter-variance sum below 1 Myr. The rejecting contrasts are not
+  sign-biased; they are heavy-tailed (|contrast r| averaging 0.43 in Chondrichthyes against 0.09 across
+  species). The fix to run is a permutation null and PGLS with Pagel's lambda, not a change of tree
+  (IC-9, PR-3). `docs/manuscript/NOTES.md` Q5 is rewritten with the measurements.
+- **A result for the invertebrates** (ST-3): the bivalves are the only non-chordate scope large enough to
+  test, none of their 1,331 correlations passes the false discovery rate (smallest q = 0.13), and no
+  non-chordate has a recorded adult weight. **Supplementary Table S1** lists all 32 scopes (PR-12).
+  AnAge build 15 cites de Magalhaes 2024 beside the 2018 paper (RF-5), and the data and software sources
+  have citations 38-42, their DOIs to be minted at revision (RF-4).
+
 - **Extended mtDNA features, in the site's feature catalogue** (D7): fourfold-degenerate site composition in
   gene sense and heavy-strand notation, Kyte-Doolittle hydropathy, the major arc between the replication
   origins, annotated control regions, perfect direct, inverted and mirror repeats, non-B DNA motifs
