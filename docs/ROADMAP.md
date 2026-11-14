@@ -94,7 +94,9 @@ gene-level results are not independent tests.
 6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11 and RM13).
 
 Done so far (2026-11-13 and 14, reported in `#mitoalignments`): steps 1 and 2; step 3 for mammals and
-birds. Step 3 was first run on a tree built from the 13 proteins and on every lifespan record, against the
+birds. Substitution rates, which the survey of the literature after the MitoAge paper raised as its own
+question, are answered separately in H7 (`mitoage longevity rates`): on 339 sister pairs of the dated tree
+lifespan does not predict the rate under any of four normalisations. Step 3 was first run on a tree built from the 13 proteins and on every lifespan record, against the
 rules above, and gave cytochrome b 43 as its one site; rerun on the dated tree with the quality filter, that
 site does not pass (q = 0.29), COX1 419 sits at the threshold in its place, and the summary is that no
 single residue is robustly associated with lifespan. Step 4 (RELAX) gave two genes in one draw of species
@@ -125,6 +127,24 @@ questions, in order:
 A kept frame is not a translated peptide: the data has no ribosome profiling and no mass spectrometry, and
 nuclear copies (humanin has them) are out of its sight. The code lives in `dna-seq/mitoage-pipelines`.
 Reported in `#mitoage`; nothing goes on the site before the maintainer has seen it.
+
+## RM18 — The assembly technology of each mitogenome, Ensembl first
+
+**State:** unattended (opened 2026-11-14 by H8, which could not run its control) · **Owner:** lead
+
+H8 tests the mtDNA motif, repeat and contact-zone features against lifespan, and its control - the same
+tests on records built from long reads - could not be run: of the 2,311 records matched in RefSeq
+mitochondrion release 237, exactly one carries a sequencing technology. mitoVGP
+(doi:10.1186/s13059-021-02336-9) and MitoHiFi (doi:10.1186/s12859-023-05385-y) both report that short-read
+reference mitogenomes misrepresent repeats and control regions, which is most of what those features count,
+so every number H8 reports is on records of unknown assembly type.
+
+What is already in hand: 1,773 of the matched records name the source INSDC accession their sequence came
+from, in the COMMENT. Resolving those gives the technology. The maintainer's preference is Ensembl where it
+has the species and NCBI for the rest; Ensembl covers a small fraction of 2,335 animals, so it is the
+referee, not the source of breadth. The run needs network access, which the batch job did not have.
+
+Until it is done, H8's conclusion is "not assessed", not "no effect of assembly quality".
 
 ## RM13 — Structural alignments: a check
 

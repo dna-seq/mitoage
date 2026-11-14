@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **H7 and H8 in `docs/ANALYSIS_FINDINGS.md`**, following `docs/HYPOTHESES.md` of mitoage-pipelines at
+  6149fa1. H7: substitution rates against lifespan by the relative-rate test on 339 sister pairs of the
+  dated tree, with dN and dS as Nei-Gojobori counts in each species' own mitochondrial code; nothing
+  survives on the concatenated genes under any of four normalisations, and the four single-gene tests that
+  pass q < 0.05 of 655 disagree in sign. H8: the mtDNA motif, repeat and contact-zone features the pipeline
+  now writes, against lifespan in H1's model; one test of 131 passes (reptile G-quadruplexes, q = 0.027),
+  and the mammalian G-quadruplex result an exploratory run had reported does not reproduce on the
+  database's own features and the default dataset (q = 0.66). H8's control could not be run at all, which
+  opens RM18: no record in the build states its sequencing technology, so the long-read-only replication
+  the mitoVGP and MitoHiFi reports call for is "not assessed" rather than negative. Documents only.
 - The manuscript draft's worked example reports the H1 rerun on the dated tree (mitoage-pipelines da0c112): in 604 mammals of the default dataset no amino acid passes a 5% false discovery rate once base composition is in the model (threonine q = 0.12, cysteine q = 0.15), against seven with order and family as random intercepts; references 33 (Kitazoe et al. 2008) and 34 (Aledo, Valverde & de Magalhães 2012) added; NOTES.md gives the tables. Documents only.
 - **Manuscript draft reviewed and corrected against the build and the code.** Body-mass control is claimed only for lifespan, where the pipeline computes it; "All three" is said to admit a reversed sign (418 of the 472 keep it); the GC result is stated within classes; the survivors are said to include, not to lie mostly in, the skews and codons; there are 106 invertebrates, not 104; the record choice, the alignment command, the codon-usage measure, the quality scale, zero-length contrasts, the tree's location and the cross-check counts are described as the code does them; and the reproduction sentence reports what `docs/BUILD2_REPRODUCTION.md` (mitoage-pipelines 3550281) found. `NOTES.md` gains a source for each new number. Ten decisions stay with the authors (strand rerun, the definition of "All three", contrast diagnostics and chance correction, length and supplement, the worked example, licence, maintenance and AI-use statements, timing, invertebrates in the Abstract). Documents only.
 - `docs/ANALYSIS_FINDINGS.md` follows `docs/HYPOTHESES.md` of mitoage-pipelines at da0c112: H1 (amino-acid content against lifespan) rerun as a phylogenetic regression on the dated tree with the manuscript's default dataset and all 20 amino acids with q; with base composition in the model no amino acid passes q < 0.05 in mammals (threonine q = 0.12, cysteine q = 0.15), and the earlier family/order mixed model's hits are set against the published record both ways (Kitazoe et al. 2008; Aledo et al. 2012). H2's two columns hold on three other aligners; its detectable effect sizes are stated. Documents only.
