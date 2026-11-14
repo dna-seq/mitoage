@@ -103,10 +103,13 @@ reason gets argued away at 2 a.m.
 ```
 src/         the site: pages, components, styles, lib, and the data contract (src/data/schema.ts)
 pipeline/    the data pipeline (bun run data): sources, steps, lib, validate.ts, tests
+mcp/         the MCP server (D8), its own npm package `mitoage-mcp`: src/, tests/, its own
+             package.json, tsconfig and README; built by `bun run mcp`, released by a `mcp-v*` tag
 public/      static assets; public/data/ holds the downloads the pipeline writes
 docs/        all new markdown except this file and README.md; docs/seats/ holds the seats' primings
 plans/       plans and handoffs written before this file (DATA_BUILD2_DECISIONS.md, handoffs/)
-.github/     workflows/deploy.yml: every push to main builds and deploys the site
+.github/     workflows/deploy.yml: every push to main builds and deploys the site;
+             workflows/mcp-release.yml: a `mcp-v*` tag publishes mcp/ to npm
 ```
 
 `README.md` describes the code under `src/` in detail (routes, components, the design system) and is
@@ -132,11 +135,18 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | `bun run data` | run the data pipeline, writing `src/data/generated/` and `public/data/`; it needs the raw inputs, which are not in git |
 | `bun run align` | align the mitochondrial genes of the committed build with MAFFT, writing `public/data/alignments/`; it needs MAFFT at the pinned version and the pinned RefSeq release in `data/cache/` |
 | `bun run hf` | package the committed build for Hugging Face into `out/hf/` (the data files, `alignments/alignments.parquet`, the dataset card); the upload is run by hand, `hf upload longevity-genie/mitoage out/hf . --repo-type dataset` (D6) |
+| `bun run sqlite` | write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads; runs after `bun run hf`, and needs `dist/data/correlations.parquet` from `bun run build` (D8) |
+| `bun run mcp` | compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | dev server |
 | `bun run build` | build the static site into `dist/` |
 | `bun run preview` | serve `dist/` locally, with the same `BASE_PATH` as the build |
 | `bun run check` | type-check `.ts` and `.tsx` (`.astro` files are not covered) |
 | `bun test` | unit tests |
+
+**A `mcp-v*` tag publishes `mcp/` to npm** (`.github/workflows/mcp-release.yml`), and nothing else
+does: a push to `main` never releases the package. The workflow refuses to publish while
+`mcp/src/dataset.ts` names no dataset revision, or names anything other than a full commit SHA.
+Tags are the maintainer's (section 2), so the release is theirs to start.
 
 **A push to `main` deploys the site** (`.github/workflows/deploy.yml`), built with
 `SITE_URL=https://just-dna.life BASE_PATH=/mitoage`. The workflow fails on any root-absolute link

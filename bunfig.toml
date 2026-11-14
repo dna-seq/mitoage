@@ -1,0 +1,5 @@
+# Adding the mcp workspace flipped `bun install` to the isolated linker, which installs @types/d3
+# as a symlink into the store without its own type dependencies, and `bun run check` then cannot
+# resolve d3-hierarchy. The repository installs hoisted, as it did before mcp/ existed.
+[install]
+linker = "hoisted"

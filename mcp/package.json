@@ -1,0 +1,47 @@
+{
+  "name": "mitoage-mcp",
+  "version": "0.1.0",
+  "description": "Experimental MCP server for MitoAge: mitochondrial DNA features of animal species against maximum lifespan, every correlation served with its false discovery rate and its phylogenetic and body-mass controls.",
+  "keywords": [
+    "mcp",
+    "modelcontextprotocol",
+    "mitochondria",
+    "mtdna",
+    "longevity",
+    "ageing",
+    "comparative-genomics",
+    "bioinformatics"
+  ],
+  "license": "MIT",
+  "author": "MitoAge",
+  "homepage": "https://www.mitoage.info",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dna-seq/mitoage.git",
+    "directory": "mcp"
+  },
+  "bugs": "https://github.com/dna-seq/mitoage/issues",
+  "type": "module",
+  "bin": {
+    "mitoage-mcp": "dist/index.js"
+  },
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "prepublishOnly": "bun run build"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
+  }
+}

@@ -48,6 +48,26 @@ answer.
 - [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) on Hugging Face: the
   published build (tables, gene alignments and the frozen build 1), packaged by `bun run hf`.
 
+## MCP server (experimental)
+
+`mcp/` is a Model Context Protocol server, published to npm as
+[`mitoage-mcp`](https://www.npmjs.com/package/mitoage-mcp), that serves this build to language-model
+agents. It is its own package inside this repository, with its own version and its own release
+(`.github/workflows/mcp-release.yml`, on a `mcp-v*` tag), so the site's cadence and the package's
+never force each other. The downloads stay the access route to cite; this is a second one.
+
+It opens one SQLite copy of the published tables (`bun run sqlite`, about 114 MB), downloaded once
+from a pinned revision of the Hugging Face dataset, and offers seven tools: `build_info`,
+`search_species`, `species_profile`, `correlation`, `rank_features`, `region_summary` and a read-only
+`query`. The design follows from the re-analysis this release is about: an agent asked whether an
+mtDNA feature predicts lifespan will otherwise download a table and correlate two columns, which is
+the uncontrolled estimate the paper argues against. So no tool returns a correlation alone — each one
+carries its q-value, the partial correlation on body mass, the correlation on independent contrasts
+and the filters of the dataset it was computed on, with a verdict that uses the manuscript's Table 3
+definitions and reports a control that was never computed as not assessed rather than as a failure.
+
+`mcp/README.md` is the package's own page. Needs Node 24 or newer, for the built-in `node:sqlite`.
+
 ## Commands
 
 | Command | What it does |
@@ -56,6 +76,8 @@ answer.
 | `bun run data` | Run the data pipeline (`pipeline/`), writing `src/data/generated/` and `public/data/` |
 | `bun run align` | Align the 13 proteins and two rRNAs of every live species with MAFFT (pinned version), writing `public/data/alignments/` |
 | `bun run hf` | Package the committed build for Hugging Face into `out/hf/`: the data files, the alignments as one parquet table, the dataset card. The dataset is [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) |
+| `bun run sqlite` | Write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads: one table per download, plus the correlations. Runs after `bun run hf` (which empties `out/hf/`) and needs `dist/data/correlations.parquet` from `bun run build` |
+| `bun run mcp` | Compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | Dev server |
 | `bun run build` | Build the static site into `dist/` |
 | `bun run preview` | Serve `dist/` locally (set the same `BASE_PATH` as the build) |

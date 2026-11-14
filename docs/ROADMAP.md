@@ -238,3 +238,20 @@ Seen in the data on the same day, during the site-by-site analysis (RM12): whale
 two orders in the species table (Balaenidae, Delphinidae and Monodontidae appear under both Artiodactyla
 and Cetacea), so a taxon page or a per-order statistic splits them. Which source gives which, and the rule
 that makes them one, are not looked at yet.
+
+## RM20 — Pin the MCP server to the uploaded build and release it
+
+**State:** open; blocked on the upload · **Owner:** maintainer
+
+`mcp/src/dataset.ts` has `revision: null`, so the server starts only with `MITOAGE_DB` or
+`MITOAGE_REVISION` set, and the release workflow refuses to publish. After `bun run hf` and
+`bun run sqlite`, upload `out/hf/` (D6; the folder now holds `mitoage.sqlite` too), then put the
+dataset's commit SHA and the file's SHA-256 into `dataset.ts`, and tag `mcp-v0.1.0`. The npm name
+`mitoage-mcp` was free on 2026-11-15 and is not reserved; `NPM_TOKEN` has to be a repository secret.
+
+## RM21 — `deploy.yml` is two majors behind on `actions/checkout`
+
+**State:** open · **Owner:** lead
+
+It pins `actions/checkout@v4`; v7.0.1 is current. `mcp-release.yml` was written to match the existing
+pin rather than split the repository across two versions, so both move together when this is done.

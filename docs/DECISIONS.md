@@ -132,3 +132,36 @@ explorer payload would have grown by about 2 MB had the features not been exclud
 
 **Why:** one feature set is simpler to explain than two, and the new features answer the same questions about
 lifespan that the old ones do.
+
+## D8 — The MCP server lives in this repository, in TypeScript (2026-11-15)
+
+MitoAge gets a Model Context Protocol server. It is a directory of this repository, `mcp/`, a separate
+npm package built and released on its own, and it is described in the paper as experimental.
+
+- **Here, not a repository of its own.** The maintainer: "as mcp is more like an extra feature that we
+  can say is experimental I assume we can just include it in ts to the website repo". A separate
+  repository front-loads a CI, a README, issue triage and a release process on a feature that may find
+  no users; a directory costs a workspace entry, and `git subtree split` moves it out later with its
+  history if it earns one. **Rejected:** `dna-seq/mitoage-mcp` from the start.
+- **TypeScript, not Python.** Section 3 of `CLAUDE.md` allows no Python here, and the server type-checks
+  against `src/data/schema.ts` in the same `bun run check` as the site. **Rejected:** a Python server
+  delivered by `uvx`, as `opengenes-mcp` and the other Longevity Genie servers are, which would have
+  read as a sibling of theirs and given a `pip install` library for free; it would also have meant a
+  second toolchain and a second repository.
+- **SQLite, not the parquet.** `correlations.parquet` is 203,648 rows and 56 MB as Arrow; a resident
+  server should not carry that, and an indexed SQLite answers a lookup at constant memory with no
+  native dependency in either language (`node:sqlite` is built in from Node 24; Python's `sqlite3` is
+  stdlib). **Rejected:** reading the parquet with hyparquet, and DuckDB — whose npm binding has 61
+  published versions and not one without a prerelease suffix.
+- **Pinned to a dataset revision, never to a branch.** A database that is cited has to give the same
+  answer tomorrow. The release workflow refuses to publish while the revision is unset or is not a full
+  commit SHA, and the server refuses to start rather than fetch the newest file. **Rejected:**
+  following `main` of the dataset, which is how the file would otherwise be fetched.
+- **No tool returns a correlation coefficient alone.** Every one carries its q-value and both controls,
+  with the verdict using the definitions the manuscript's Table 3 uses (`q < 0.05`; `pic_p < 0.05` with
+  the same sign; `partial_p < 0.05`, the sign said beside it). **Why:** the re-analysis this release is
+  about says most raw correlations do not survive those controls, and an agent handed the raw table
+  reproduces exactly that error.
+
+**What it costs, and was accepted:** a second package in a repository that had one, and a Node
+prerequisite for anyone who takes the Longevity Genie servers as a set.

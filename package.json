@@ -25,6 +25,11 @@
     "check": "tsc --noEmit",
     "data": "bun run pipeline/build.ts",
     "align": "bun run pipeline/align.ts",
-    "hf": "bun run pipeline/hf.ts"
-  }
+    "hf": "bun run pipeline/hf.ts",
+    "sqlite": "bun run pipeline/sqlite.ts",
+    "mcp": "bun run --cwd mcp build"
+  },
+  "workspaces": [
+    "mcp"
+  ]
 }

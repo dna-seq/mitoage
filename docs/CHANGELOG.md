@@ -4,6 +4,20 @@ Newest first.
 
 ## Unreleased
 
+- **An experimental MCP server, `mcp/`, published as `mitoage-mcp`** (D8): the build as tools for a
+  language-model agent, over stdio. `bun run sqlite` writes `out/hf/mitoage.sqlite` (114 MB, one table
+  per download plus the correlations, each table checked against the parquet it came from by row count
+  and by per-column sums); the server opens one such file, downloaded once from a pinned revision of
+  the Hugging Face dataset and cached, or named by `MITOAGE_DB`. Seven tools: `build_info`,
+  `search_species`, `species_profile`, `correlation`, `rank_features`, `region_summary` and a read-only
+  `query`. No tool returns a correlation coefficient on its own: each carries its q-value, the partial
+  correlation on body mass, the correlation on independent contrasts, the filters of its dataset and a
+  verdict that uses the manuscript's Table 3 definitions, and that says "not assessed" for a control
+  that was never computed. The package is released by a `mcp-v*` tag
+  (`.github/workflows/mcp-release.yml`), never by a push to `main`, and the workflow refuses to publish
+  while the dataset revision is unset. The manuscript describes it, as experimental, in "Data access
+  and versioning".
+
 - **Species with no name at a rank form no scope** (IC-8). `buildScopes` grouped species on a blank rank
   key, so the 41 species whose order is unknown were tested together as if they were an order: a scope of
   204 lifespan tests that is not a taxon. They now join no scope at that rank, which leaves 32 scopes and

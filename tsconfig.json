@@ -4,10 +4,12 @@
     ".astro/types.d.ts",
     "src/**/*",
     "pipeline/**/*",
+    "mcp/**/*",
     "astro.config.ts"
   ],
   "exclude": [
     "dist",
+    "mcp/dist",
     "node_modules"
   ],
   "compilerOptions": {
