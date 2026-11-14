@@ -97,7 +97,7 @@ feature values and correlations are derived from them during the build (decision
 functions in `pipeline/steps/` and `pipeline/lib/` (never `pipeline/lib/cache.ts`, which is Bun-only).
 `/data/explorer.json` and `/data/correlations.parquet` are build-time endpoints (`src/pages/data/`). Islands receive
 data as props or fetch static JSON emitted at build time (`/search-index.json`,
-`/species/gc-lifespan.json`, `/species/{slug}.json`, `/species/table.json`, `/tree/tree.json`,
+`/species/gc-lifespan.json`, `/species/{slug}.json`, `/species/table.json`, `/species/retired.json`, `/tree/tree.json`,
 `/genes/{gene}/gc-lifespan.json`, `/genes/alignment-species.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
 `/compare/plot/values/{chunk}.json`, `/compare/species-index.json`, `/compare/taxonomy.json`,
 `/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
@@ -124,6 +124,14 @@ shown), serves two more places, so all three say the same things:
   their cards (`src/lib/compare/speciesFasta.ts`). The accession comes with each species' record
   (`/species/{slug}.json`), so `/compare/species-index.json` is unchanged. A chosen entry that did not
   load is named as left out.
+
+All three name the build's retired records a file holds (`src/lib/retired.ts`). The site still lists
+retired species, most of them because RefSeq removed their record, and NCBI still serves a removed
+record, so without this a download would hand one out under a plain "Downloaded". The record stays
+in the file, since it is one of the rows asked for; the note names it and turns amber. The list is
+`/species/retired.json` (record status "retired", by accession, 1.6 KB), fetched once per page when a
+download starts; if it cannot be read, the note says the check could not be made, never that there
+is no retired record.
 
 The charts of the Compare section draw what `src/lib/compare/charts.ts` returns: it turns the rows
 of a table into the marks of a range chart, a group's summaries into the lifespan-correlation map

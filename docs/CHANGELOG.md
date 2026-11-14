@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **A FASTA download names the retired records it holds.** Build 2 retired 19 species (18 because
+  RefSeq removed their record, one without a curated lifespan), and the site still lists them. NCBI
+  still serves the removed records, so the species list, a taxon page and the side-by-side view
+  handed them out under a plain "Downloaded": on the Squamata page, 4 of the 65 genomes. The record
+  stays in the file, since it is one of the rows asked for; the note now names it, says it is left
+  out of the build's correlations and alignments, and turns amber. The list is the new
+  `/species/retired.json` (record status "retired", by accession, 1.6 KB), fetched once per page when
+  a download starts; when it cannot be read the note says the check could not be made, never that
+  there is none. `src/lib/retired.ts`, tested on the build's species and on two removed records as
+  NCBI serves them (`src/lib/testdata/retired.fasta`), and checked by breaking the code 14 ways.
 - **FASTA of a hand-picked set of species and of a taxon's species**, the two places the species
   list's download did not reach (see its entry below):
   - `/compare/species/?species=a,b`: "FASTA of these species" downloads the genomes of exactly the
