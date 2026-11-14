@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- The manuscript draft's figures are numbered in order of first citation: the controls chart is now
+  Figure 1, the codons Figure 2, the interface Figure 3, the alignment Figure 4 and the plot explorer
+  Figure 5 (the entries below use the old numbers). The image files are renamed to match, and `NOTES.md`
+  and the README follow.
 - The manuscript draft's figures sit at the end of the section that first cites them, as its tables do,
   instead of in a Figures section at the end: Figures 3 and 4 after Table 3, Figures 1, 2 and 5 at the end
   of "Website and interface". An author note says they move after the references for submission, as NAR

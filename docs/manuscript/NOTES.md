@@ -90,8 +90,9 @@ tagged release with a Zenodo DOI.
 
 ## Figures
 
-Figures 1, 2 and 5 are screenshots of the site, in `figures/` as JPEG. The site was built with
-`bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the
+Figures are numbered in order of first citation (draft 0.1's planned Figures 1 to 4 are now 3, 5, 1
+and 2; the alignment is 4). Figures 3, 4 and 5 are screenshots of the site, in `figures/` as JPEG. The
+site was built with `bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the
 commit every number comes from), served with `bun run preview`, and captured in headless Google Chrome 157
 over the DevTools protocol: light theme, 1,440 × 1,400 CSS pixels at a device scale of 2, each panel cut to
 its card. ImageMagick put the panels together and wrote the JPEGs (quality 85). The capture script was a
@@ -99,43 +100,43 @@ one-off and is not in the repository. The pages, with what was done on each befo
 
 | Panel | Page | State |
 |---|---|---|
-| 1A | `/species/` | sorted by maximum lifespan, longest first |
-| 1B | `/tree/` | as it opens (by rank, lifespan ring) |
-| 1C | `/compare/class/mammalia/?chart=r` | the Regions card: chart and the top of its table |
-| 1D | `/species/balaena-mysticetus/` | the Genome map card |
-| 2A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | the plot card and the corrected statistics |
-| 2B | the same page | Strongest correlations, as it opens (maximum lifespan, all species), first 10 rows |
-| 5 | `/genes/cox1/` | Alignment card, class Mammalia, longest-lived first |
+| 3A | `/species/` | sorted by maximum lifespan, longest first |
+| 3B | `/tree/` | as it opens (by rank, lifespan ring) |
+| 3C | `/compare/class/mammalia/?chart=r` | the Regions card: chart and the top of its table |
+| 3D | `/species/balaena-mysticetus/` | the Genome map card |
+| 4 | `/genes/cox1/` | Alignment card, class Mammalia, longest-lived first |
+| 5A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | the plot card and the corrected statistics |
+| 5B | the same page | Strongest correlations, as it opens (maximum lifespan, all species), first 10 rows |
 
 Every number in the figure legends was read off the screenshots. Two differ from the text on purpose: the
-scatter of Figure 2A and its live statistics use all 627 mammals the site lists, where the text's r = 0.47
+scatter of Figure 5A and its live statistics use all 627 mammals the site lists, where the text's r = 0.47
 uses the 615 of the default dataset; and the explorer's count of features that "hold up" on contrasts (424
 for all species) does not require the same sign, where Table 3's "Both" (250) does.
 
 Headless Chrome 157 returned a stale computed colour when an element's inline style changed within one
-task, so the tree (1B) and the alignment (5) drew every mark in one colour. The capture read each colour
+task, so the tree (3B) and the alignment (4) drew every mark in one colour. The capture read each colour
 from a fresh element instead, which matches what the app's own Chromium 156 draws on the same pages. A
 headed Chrome 157 resolves the same colours correctly on the live site (checked on 2026-11-14), so this is
 a quirk of headless capture, not of the site.
 
-Figures 3 and 4 are charts of `dist/data/correlations.parquet` as `bun run build` wrote it on 2026-11-14
+Figures 1 and 2 are charts of `dist/data/correlations.parquet` as `bun run build` wrote it on 2026-11-14
 (site code and data as at 84ba6f7), rows of dataset `default` and trait `maxLongevityYears`, with the
 definitions of Table 3 above. A one-off TypeScript script read the file with hyparquet, drew each chart as
 SVG and had headless Chrome render it at three times its size; ImageMagick wrote the JPEGs (quality 92).
 The script is not in the repository.
 
-- **Figure 3** stacks, for each scope of Table 3, the tests with p < 0.05 by the furthest control they pass
+- **Figure 1** stacks, for each scope of Table 3, the tests with p < 0.05 by the furthest control they pass
   in turn (FDR, then contrasts with the same sign, then body mass), as a share of the scope's tests. Each
   stage is a subset of the one before, so the segments are exact differences of Table 3's columns. The
   four greens are one ordinal ramp (#86c27c, #4fa65a, #1f8a3b, #0b3a1c), checked for monotone lightness,
   step gaps and contrast with the white page.
-- **Figure 4** places the 64 codons of `codon:total_pc:*` in scope `all` by Pearson r and contrast r, one
+- **Figure 2** places the 64 codons of `codon:total_pc:*` in scope `all` by Pearson r and contrast r, one
   panel per third base, filled where the codon passes all three controls. The bases wear the site's
   nucleotide colours (`--nt-t`, `--nt-c`, `--nt-a`; G one step darker than `--nt-g`, #e09a10, to show on
   white). As four colours in one scatter they fail a colour-blindness check (A against U), so each panel
   shows one base and greys the rest.
 
-Recomputing Table 3 from the same file for Figure 3 reproduced every count in it. The total row's count of
+Recomputing Table 3 from the same file for Figure 1 reproduced every count in it. The total row's count of
 scopes was wrong in draft 0.1: the table holds 33 scopes (32 named and the empty `order:`), not 34.
 
 ## Not yet done

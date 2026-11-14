@@ -262,7 +262,7 @@ computed from the sequence.
 In the default dataset, 13,947 correlations of mtDNA features with maximum lifespan were tested across all
 scopes. Of these, 4,851 have p < 0.05 before any correction, and 3,854 pass a false discovery rate of 5%.
 Of those 3,854, 770 are also significant on phylogenetic contrasts with the same sign, and 472 pass the
-partial correlation on body mass as well (Table 3, Figure 3). Most correlations of the kind the 2016
+partial correlation on body mass as well (Table 3, Figure 1). Most correlations of the kind the 2016
 release counted do not survive a control for shared ancestry. The AnAge-only dataset gives the same picture
 (3,568 pass the false discovery rate, 559 also on contrasts), and over all features in all species the
 correlations of the two datasets agree at r = 0.975.
@@ -277,7 +277,7 @@ The correlations that survive all three controls lie mostly in the strand skews 
 that follows them. Across all species, the AT skew of the whole genome correlates with lifespan at
 r = 0.31 (0.22 with body mass controlled, 0.11 on contrasts, p < 10⁻⁶). In the total protein-coding
 sequence, every codon ending in U among those that pass all three controls (8 codons) is used less in
-longer-lived species, and every codon ending in C (8 codons) more (Figure 4). On the deposited strand
+longer-lived species, and every codon ending in C (8 codons) more (Figure 2). On the deposited strand
 this is a shift from T to C at the third codon position, the direction expected from an excess of A>G
 mutations on the heavy strand (21). In mammals, the GC content of ND4, ND1 and the rRNAs, and isoleucine usage, keep
 their sign under all three controls.
@@ -309,16 +309,17 @@ p < 0.05.
 > scopes include an empty order ("order:", 41 species without an order). Neither affects the "Both"
 > column much, which needs the FDR as well, but both affect the PIC column total.
 
-> AUTHOR: each figure sits at the end of the section that first cites it, as the tables do. NAR wants
-> the legends after the references and the figure files uploaded on their own, so they move there at
-> submission. Figures 3 and 4 are charts of the correlation table the build writes; Figures 1, 2 and 5 are
-> screenshots of the build 2 site, taken on 2026-11-14 at a desktop width of 1,440 pixels (NOTES.md,
-> "Figures", says how both were made). Renumber the figures in order of citation before submission: 3 and
-> 4 are cited first.
+> AUTHOR: each figure sits at the end of the section that first cites it, as the tables do, and the
+> figures are numbered in order of citation. Draft 0.1 listed the planned figures as 1 (interface),
+> 2 (GC content against lifespan), 3 (controls) and 4 (codons); they are now 3, 5, 1 and 2, and the
+> alignment, new with the screenshots, is 4. NAR wants the legends after the references and the figure
+> files uploaded on their own, so they move there at submission. Figures 1 and 2 are charts of the
+> correlation table the build writes; Figures 3, 4 and 5 are screenshots of the build 2 site, taken on
+> 2026-11-14 at a desktop width of 1,440 pixels (NOTES.md, "Figures", says how both were made).
 
-![Figure 3. What the controls leave of the lifespan correlations](figures/FIGURE_3_CONTROLS.jpg)
+![Figure 1. What the controls leave of the lifespan correlations](figures/FIGURE_1_CONTROLS.jpg)
 
-**Figure 3.** What the three controls leave of the correlations of mtDNA features with maximum lifespan,
+**Figure 1.** What the three controls leave of the correlations of mtDNA features with maximum lifespan,
 by scope (default dataset; the data of Table 3). Each bar is the share of a scope's tests, one per mtDNA
 feature, with p < 0.05, split by how far each gets through the controls in turn: the false discovery rate
 (Benjamini–Hochberg q < 0.05 within the scope), phylogenetically independent contrasts (p < 0.05, with the
@@ -326,9 +327,9 @@ sign of the correlation across species) and the partial correlation on body mass
 the right gives how many of the correlations that pass the false discovery rate pass all three; across all
 33 scopes, 472 of 3,854 do.
 
-![Figure 4. Codon usage against lifespan, raw and on contrasts](figures/FIGURE_4_CODONS.jpg)
+![Figure 2. Codon usage against lifespan, raw and on contrasts](figures/FIGURE_2_CODONS.jpg)
 
-**Figure 4.** Codon usage in the total protein-coding sequence against maximum lifespan across all species
+**Figure 2.** Codon usage in the total protein-coding sequence against maximum lifespan across all species
 (n = 2,202), one panel per third base. Each codon is placed by its Pearson r with log10 maximum lifespan
 across species (x) and its r on phylogenetically independent contrasts (y). Filled points pass all three
 controls (false discovery rate, contrasts with the same sign, partial correlation on body mass), open
@@ -357,33 +358,34 @@ two columns near the threshold change with the tree, as chance would have them.
 
 The website is a static site: every page is generated when the data are built, and the browser fetches
 small JSON files for the interactive views, so the site needs no database server and can be mirrored
-whole. The menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 1).
+whole. The menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
 
 - **Species.** A sortable, filterable list of all species in two views, genome features and life
-  history (Figure 1A), with a page per species and its circular genome map (Figure 1D). The filtered rows
+  history (Figure 3A), with a page per species and its circular genome map (Figure 3D). The filtered rows
   download as CSV and their mitogenomes as one FASTA file, which the browser fetches from NCBI; MitoAge
   stores no sequences.
-- **Tree.** A zoomable radial tree of the species on the dated phylogeny (Figure 1B), with a page per
+- **Tree.** A zoomable radial tree of the species on the dated phylogeny (Figure 3B), with a page per
   class, order and family.
 - **Genes.** A circular map of the genome of any species, and a page per gene with its distribution
   across species, its correlations with lifespan, and its alignment with lifespan shown beside the rows
-  (Figure 5).
+  (Figure 4).
 - **Compare.** The comparative statistics of the original site (n, mean, standard deviation, coefficient
   of variation, minimum, median, maximum, and r with log10 lifespan, by region or by child taxon, and codon
-  usage), each table with a chart of its rows (Figure 1C). Two to six species can be set side by side.
+  usage), each table with a chart of its rows (Figure 3C). Two to six species can be set side by side.
 - **Plot explorer.** Any two mtDNA features, or a feature against a life-history trait, for all species or
   one taxon, with the strongest correlations listed with their false discovery rate, partial and contrast
-  statistics (Figure 2).
+  statistics (Figure 5).
 
 Old addresses redirect to their new pages, so links to the original site in the literature keep working.
 
-> AUTHOR: Figure 2 was planned as a scatter across species beside one on contrasts; the site does not
+> AUTHOR: Figure 5 was planned as a scatter across species beside one on contrasts; the site does not
 > plot the contrasts themselves, so panel A gives the contrast r beside the scatter, and panel B shows the
-> explorer's ranking of every feature. Figure 5 is new with the screenshots: keep it or drop it.
+> explorer's ranking of every feature. Figure 4 is new with the screenshots: keep it or drop it (without
+> it, the plot explorer becomes Figure 4).
 
-![Figure 1. The MitoAge 2 interface](figures/FIGURE_1_INTERFACE.jpg)
+![Figure 3. The MitoAge 2 interface](figures/FIGURE_3_INTERFACE.jpg)
 
-**Figure 1.** The MitoAge 2 interface. (**A**) The species list, genome view, sorted by maximum lifespan:
+**Figure 3.** The MitoAge 2 interface. (**A**) The species list, genome view, sorted by maximum lifespan:
 the ocean quahog (*Arctica islandica*, 507 years) and the Greenland shark (*Somniosus microcephalus*,
 392 years) lead the 2,335 species. The rows shown, after any filter, download as CSV and their mitogenomes
 as one FASTA file. (**B**) The radial tree of all species by taxonomic rank, coloured by class, with each
@@ -395,9 +397,18 @@ circular genome map of the bowhead whale (*Balaena mysticetus*, NC_005268.1, 16,
 two strands in the outer and inner rings, and in the middle ring the GC content of each gene against that
 of the whole genome.
 
-![Figure 2. The plot explorer](figures/FIGURE_2_PLOT_EXPLORER.jpg)
+![Figure 4. The alignment of COX1](figures/FIGURE_4_ALIGNMENT.jpg)
 
-**Figure 2.** The plot explorer. (**A**) Whole-genome GC content against maximum lifespan (log scale) in
+**Figure 4.** The alignment of COX1 on its gene page, shown for the 625 mammals it holds and sorted
+longest-lived first: the bowhead whale (211 years), human (123 years), then the fin, blue and humpback
+whales. Residues are coloured by the class of their side chain; the bar above each column is the share of
+the rows on show that carry its most common residue, and each species' maximum lifespan is drawn beside its
+row. The alignment (MAFFT v7.526, FFT-NS-2) covers 2,316 species in 679 columns; columns where more than
+half of the rows on show have a gap are hidden (514 of 679 are shown).
+
+![Figure 5. The plot explorer](figures/FIGURE_5_PLOT_EXPLORER.jpg)
+
+**Figure 5.** The plot explorer. (**A**) Whole-genome GC content against maximum lifespan (log scale) in
 all 627 mammals the site lists (the two retired ones included), with four species highlighted and the
 least-squares line. The live statistics below the plot are computed in the browser for the points shown
 (Pearson r = 0.48 with log10 lifespan, n = 627). The panel on the right gives the statistics the pipeline computed on the default dataset, which
@@ -406,15 +417,6 @@ contrasts 0.17 (p = 4.4 × 10⁻⁵) and partial r on body mass 0.40 (n = 612). 
 ranked by the strength of their correlation with maximum lifespan across all species, each with its q, its
 r on contrasts and its partial r on body mass. Of the 1,257 features, 1,037 have q < 0.05 and 424 of
 those have a contrast p < 0.05 (of either sign; Table 3 counts the 250 with the same sign).
-
-![Figure 5. The alignment of COX1](figures/FIGURE_5_ALIGNMENT.jpg)
-
-**Figure 5.** The alignment of COX1 on its gene page, shown for the 625 mammals it holds and sorted
-longest-lived first: the bowhead whale (211 years), human (123 years), then the fin, blue and humpback
-whales. Residues are coloured by the class of their side chain; the bar above each column is the share of
-the rows on show that carry its most common residue, and each species' maximum lifespan is drawn beside its
-row. The alignment (MAFFT v7.526, FFT-NS-2) covers 2,316 species in 679 columns; columns where more than
-half of the rows on show have a gap are hidden (514 of 679 are shown).
 
 ## Data access and versioning
 
