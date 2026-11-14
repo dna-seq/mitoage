@@ -45,6 +45,7 @@ Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-1
 | Exclusions behind 2,202: 49 estimated and 65 questionable lifespans | computed from `public/data/species.parquet` (live species, lifespan quality and method) |
 | 106 invertebrates: 104 non-chordates, a lancelet and an ascidian | computed from `public/data/species.parquet` (live species by phylum and subphylum) |
 | Cross-check: 8,733 changelog rows compared for the original species, 3,325 in both, 5,394 of the other 5,408 `refseq_successor` | `docs/BUILD2_CROSSCHECK.md`, the comparison table and the successor counts |
+| The MCP server's paragraph (Data access and versioning) and its sentence in Data availability | `mcp/` and `mcp/README.md`; D8 in `docs/DECISIONS.md`. Its verdict uses the Table 3 definitions below, so the server and the paper count the same rows |
 
 Definitions used for Table 3: "FDR" is `q_value < 0.05`; "PIC" is `pic_p_value < 0.05`; "Both" adds
 `sign(pearson_r) == sign(pic_r)` to both; "All three" adds `partial_p_value < 0.05`. The repository rule
@@ -211,5 +212,12 @@ scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty 
 IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
+- **Figure 5's statistics predate D7.** The caption gives q = 2.8 x 10^-33 for whole-genome GC against
+  maximum lifespan in mammals; the current build answers q = 2.44 x 10^-33 (checked 2026-11-15 against
+  `out/hf/mitoage.sqlite`, `gc:total_mtDNA`, `class:Mammalia`, default dataset). D7 put the extended
+  features into the same false-discovery-rate set, which moves every q, as D7 said it would. The other
+  three numbers in that panel are unchanged: contrast r 0.165 (p = 4.4 x 10^-5) and partial r 0.398 on
+  612 species. Re-read the caption against the build before submission, and check whether the other
+  q-values in the text have moved too.
 - No reference-check pass; references 19, 21, 24–32 and 35–36 are new.
 - No journal formatting (NAR word limits, the required sections and the data-availability statement).

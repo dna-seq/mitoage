@@ -477,6 +477,22 @@ DOI.
 
 > AUTHOR: Zenodo DOIs are planned, not minted.
 
+An experimental Model Context Protocol (MCP) server, `mitoage-mcp`, serves the same build to
+language-model agents. It opens one SQLite copy of the published tables and offers them as tools: the
+record of a species, the composition of each region of its mitogenome, the features of a taxon ranked
+by their correlation with a trait, and a read-only query. Its design follows from the re-analysis
+above. An agent asked whether an mtDNA feature predicts lifespan otherwise downloads a table and
+correlates two columns, which is the uncontrolled estimate this release argues against, so no tool
+returns a correlation coefficient on its own: each carries its q-value, the partial correlation on body
+mass, the correlation on independent contrasts and the filters of the dataset it was computed on, and
+reports a control that was never computed as not assessed rather than as a failure. The server is
+pinned to one dataset revision, so an answer quoted from it does not change between builds. It is an
+addition to the downloads, not a replacement.
+
+> AUTHOR: the server is experimental and is described as such on purpose. If you would rather leave it
+> out until it has users, this paragraph and one sentence in Data availability are the only places it
+> appears.
+
 ## Conclusion
 
 MitoAge 2 keeps what the first release offered, the composition of every animal mitogenome with a known
@@ -497,7 +513,9 @@ a recorded body mass.
 The website is at https://www.mitoage.info and https://just-dna.life/mitoage/, with the downloads under
 `/data/`. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40). The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
-analyses at https://github.com/dna-seq/mitoage-pipelines (42), both under the MIT licence. Lifespan values from
+analyses at https://github.com/dna-seq/mitoage-pipelines (42), both under the MIT licence. The
+experimental MCP server is the npm package `mitoage-mcp`, with its source in `mcp/` of the site
+repository. Lifespan values from
 FishBase and SeaLifeBase are CC BY-NC 4.0 and are marked as such in the downloads; AnAge data are subject
 to the Human Ageing Genomic Resources conditions of use; NCBI data carry no use restrictions.
 
