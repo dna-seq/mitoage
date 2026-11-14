@@ -14,7 +14,8 @@ prepared inputs are `mitoage-nuclear-partners`, `mitoage-embeddings` and `mitoag
 
 **Not done**: structural alignments (RM13); the complexes section of the site with nuclear and mitochondrial
 subunits side by side (RM17); anything about lifespan in the mito-nuclear pairing; the long-read-only
-replication of H8, because no record in the build states its sequencing technology (RM18).
+replication of H8, because no record in the build states its sequencing technology (RM18); the
+extended features in the plot explorer (RM19).
 
 Each entry: the hypothesis as we held it, the test, the control that keeps the test honest, the result, and
 its limits. Results that did not hold are kept next to those that did: a reader should see what was tried.
@@ -252,17 +253,20 @@ deviation. `mitoage longevity motif-pgls`, into `motif_pgls.tsv`.
 **Control.** Every test is run a second time on records whose sequencing technology includes long reads,
 since mitoVGP and MitoHiFi both report that short-read reference mitogenomes misrepresent exactly these
 features.
-**Result.** 131 tests over four classes; **one passes q < 0.05**: G-quadruplex motifs in reptiles
-(q = 0.027, 73 species, Spearman rho 0.23). Nothing passes in mammals, birds or ray-finned fishes.
-**What this replaced.** An exploratory run of the same idea - a Python implementation over 2,311 species, the
-quality filter instead of the default dataset, and tandem-repeat counts that did not reject units built from
-a shorter period - reported mammalian G-quadruplexes at q = 0.048 over 601 species. On the database's own
-features and H1's dataset that result is gone (q = 0.66, 383 species), and the surviving test is in another
-class. A screen whose one survivor changes class when the species set and the feature definition change is
-not reporting a finding.
-**Limit, and it is the important one.** **The control could not be run.** Of the records in this build
-exactly none state a sequencing technology, so the long-read subset is empty and the mitoVGP caveat stays
-open: every repeat, motif and contact-zone number above is computed on records of unknown assembly type.
-The features also reach only part of the build - they ship from the site pipeline's `mtdna-features` work,
-which covers 922 of the current build's 2,335 species - so the classes are tested at 62 to 383 species, not
-at the build's full breadth.
+**Result.** 132 tests over four classes on the full build; **none passes a 5% false discovery rate**
+(smallest q = 0.16, smallest p = 0.005). The strongest raw correlation in the set is the one the
+literature reports: perfect inverted repeats against lifespan in 604 mammals, Spearman r = -0.399
+(p = 2 x 10^-24), and over the major arc r = -0.334 in 530 (p = 3 x 10^-15). With body mass, fourfold
+composition and Pagel's lambda on the dated tree, both are gone (p = 0.67 and p = 0.45). Repeat pairs
+bridging the two contact zones behave the same way: r = -0.181 raw (p = 8 x 10^-6, 602 mammals),
+p = 0.03 and q = 0.56 after the controls.
+**What this replaced, twice.** An exploratory Python run over 2,311 species, with tandem-repeat counts
+that did not reject units built from a shorter period, reported mammalian G-quadruplexes at q = 0.048
+over 601 species. Rerun on the database's own features while they still covered only 922 species, that
+result was gone (q = 0.66) and a reptile G-quadruplex test passed instead (q = 0.027). On the full
+build that one is gone too (q = 0.38). Three runs, three different survivors, and none of them
+survives the next run: the screen is reporting noise, and this entry reports that rather than any of
+the three.
+**Limit, and it is the important one.** **The control could not be run.** No record in the build states
+a sequencing technology, so the long-read subset is empty and the mitoVGP caveat stays open: every
+repeat, motif and contact-zone number above is computed on records of unknown assembly type.

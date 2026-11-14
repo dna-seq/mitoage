@@ -60,26 +60,27 @@ branch at 5f526c9.
 
 | Number in the draft | Where it comes from |
 | --- | --- |
-| Inverted repeats, mammals, r = −0.40 (p = 4 × 10⁻¹⁶), n = 383 | `motif_pgls.tsv`, class Mammalia, feature `inverted_repeats_total`, `spearman_rho`/`spearman_p` |
-| the same over the major arc, −0.37, n = 334 | same table, `inverted_repeats_major_arc` |
-| p = 0.21 and p = 0.93 after the controls | same rows, column `p` (phylogenetic GLS with body mass and fourfold composition, Pagel's λ) |
-| 131 tests in four classes, one passes | `motif_pgls.tsv` row count and `q < 0.05` |
-| G-quadruplex motifs in 73 reptiles, q = 0.03 | same table, class Reptilia, `g4_forward_total`, q = 0.0266 |
-| contact-zone inverted pairs, mammals, r = −0.17 (p = 9 × 10⁻⁴), p = 0.41 after controls | same table, `contact_zone_inverted_pairs` |
+| Inverted repeats, mammals, r = -0.40 (p = 2 x 10^-24), n = 604 | `motif_pgls.tsv`, class Mammalia, feature `inverted_repeats_total`, `spearman_rho`/`spearman_p` |
+| the same over the major arc, r = -0.33, n = 530 (p = 3 x 10^-15) | same table, `inverted_repeats_major_arc` |
+| p = 0.67 and p = 0.45 after the controls | same rows, column `p` (phylogenetic GLS with body mass and fourfold composition, Pagel's lambda) |
+| 132 tests in four classes, none passes; smallest q = 0.16 | `motif_pgls.tsv` row count, `q` column |
+| contact-zone inverted pairs, mammals, r = -0.18 (p = 8 x 10^-6, n = 602), p = 0.03 after controls | same table, `contact_zone_inverted_pairs` |
 | 339 sister pairs | `rate_contrasts.tsv`, rows with `gene == CONCAT` |
 | mammals p = 0.02, q = 0.15 | `rates.tsv`, class Mammalia, gene CONCAT, normalisation `dS_mass_adj`, `includes_saturated` false |
-| four of 655 single-gene tests pass and disagree in sign | `rates.tsv`: 655 rows, 4 with q < 0.05 (ND6 all species −0.219; Mammalia ND5 +0.220; Aves CYTB −0.021; Mammalia ND2 dN −0.017) |
-| one record states a sequencing technology; 1,773 name a source INSDC accession | `assembly_provenance.tsv` from the haumea run of 2026-11-14 (`/data/uq2347/runs/mitoage/gaps/motifs/`), columns `sequencing_technology` and `source_insdc` |
+| four of 655 single-gene tests pass and disagree in sign | `rates.tsv`: 655 rows, 4 with q < 0.05 (ND6 all species -0.219; Mammalia ND5 +0.220; Aves CYTB -0.021; Mammalia ND2 dN -0.017) |
+| one record states a sequencing technology; 1,773 name a source INSDC accession | `assembly_provenance.tsv` from the haumea run of 2026-11-14 (`/data/uq2347/runs/mitoage/gaps/motifs/`) |
 
-**A result that was withdrawn.** An exploratory Python run of the same screen, over 2,311 species and with
-tandem-repeat counts that did not reject units built from a shorter period, gave mammalian G-quadruplexes at
-q = 0.048 over 601 species. On the database's own features and the default dataset that result is gone
-(q = 0.66, 383 species) and the surviving test is in another class. The draft reports the second run; the
-first is recorded here so the change is visible.
+**Two results that were withdrawn, not one.** An exploratory Python run over 2,311 species, with tandem-repeat
+counts that did not reject units built from a shorter period, gave mammalian G-quadruplexes at q = 0.048 over
+601 species. Rerun on the database's own features while those still covered 922 species, that was gone
+(q = 0.66) and a reptile G-quadruplex test passed instead (q = 0.027). On the full 2,335-species build the
+reptile one is gone too (q = 0.38) and nothing passes at all. Three runs, three different survivors, none
+reproducing: the draft reports the third and says the screen is null, and the trail is kept here.
 
-**Coverage.** The motif features reach 922 of the build's 2,335 species, because `mtdna-features` branched
-before build 2. Classes are tested at 62–383 species. Merging and rebuilding that branch would widen them,
-and would change the numbers in the table above; they should be refreshed if it happens before submission.
+**Coverage.** The motif features now cover all 2,335 species: the work was ported onto build 2 (site pipeline
+2808823, decision D7) and the features are ordinary members of the feature catalogue, so the false discovery
+rate runs over the combined set. Classes are tested at 97 (reptiles) to 604 (mammals) species. The plot
+explorer does not offer the new features yet (RM19), which does not affect any number here.
 
 ## Questions for the authors
 

@@ -352,17 +352,17 @@ associated with lifespan.
 
 ### Repeats, motifs and the rate of evolution
 
-Two of the relationships the introduction lists were tested on the same footing. Perfect inverted repeats
-correlate with maximum lifespan in mammals as reported (18): across the 383 mammals of the default dataset
-that carry the feature, Spearman r = −0.40 (p = 4 × 10⁻¹⁶) over the whole record and −0.37 over the major arc
-(n = 334). Neither survives the controls this release applies to every other feature. With log10 body mass and
-base composition at fourfold-degenerate sites in the model and Pagel's λ on the dated tree, the whole-record
-association is p = 0.21 and the major-arc one p = 0.93; across 131 tests of the motif, repeat and
-contact-zone features in four classes, one passes a 5% false discovery rate (G-quadruplex motifs in 73
-reptiles, q = 0.03). Repeat pairs bridging the two spans that flank most human mitochondrial deletions —
-ATP8 to COX3 and ND5 to CYTB — behave the same way: in mammals the inverted pairs correlate at r = −0.17
-(p = 9 × 10⁻⁴) and at p = 0.41 once the controls are applied. The inverted-repeat correlation is therefore
-of the kind this release was built to re-examine, and it does not outlast shared ancestry.
+Two of the relationships the introduction lists were tested on the same footing, on every species of the
+default dataset that carries the feature. Perfect inverted repeats correlate with maximum lifespan in mammals
+as reported (18), and strongly: across 604 mammals Spearman r = -0.40 (p = 2 x 10^-24) over the whole record,
+and r = -0.33 over the major arc (n = 530, p = 3 x 10^-15). Neither survives the controls this release applies
+to every other feature. With log10 body mass and base composition at fourfold-degenerate sites in the model
+and Pagel's λ on the dated tree, the whole-record association is p = 0.67 and the major-arc one p = 0.45.
+Repeat pairs bridging the two spans that flank most human mitochondrial deletions — ATP8 to COX3 and ND5 to
+CYTB — behave the same way: r = -0.18 raw (p = 8 x 10^-6, 602 mammals) and p = 0.03 after the controls, which
+does not pass the false discovery rate. **Across 132 tests of the motif, repeat and contact-zone features in
+four classes, none passes a 5% false discovery rate** (smallest q = 0.16). The inverted-repeat correlation is
+therefore of exactly the kind this release was built to re-examine, and it does not outlast shared ancestry.
 
 The rate at which the mitochondrial proteins evolve was tested by the relative-rate test, which avoids the
 normalisation choice that divides the literature (`mitoage longevity rates`). Two species sharing a parent in
@@ -381,12 +381,11 @@ matched in RefSeq mitochondrion release 237, one states a sequencing technology;
 INSDC accession from which it could be resolved. The same tests restricted to long-read assemblies are
 therefore not assessed here, rather than assessed and found negative.
 
-> AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 6149fa1 (`mitoage longevity rates` and
+> AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 22cb140 (`mitoage longevity rates` and
 > `mitoage longevity motif-pgls`, tables `rates.tsv`, `rate_contrasts.tsv` and `motif_pgls.tsv`; H7 and H8 in
-> `docs/ANALYSIS_FINDINGS.md`). The motif features come from the pipeline's `mtdna-features` work, which
-> covers 922 of the 2,335 species, so the classes here are tested at 62–383 species; merging that work and
-> rebuilding would widen them. Whether the paper should carry this subsection at all, or leave it to the
-> analysis repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
+> `docs/ANALYSIS_FINDINGS.md`), on the motif features of the site pipeline at 2808823, which computes them for
+> all 2,335 species. Whether the paper should carry this subsection at all, or leave it to the analysis
+> repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
 
 ## Website and interface
 
