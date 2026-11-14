@@ -350,6 +350,43 @@ associated with lifespan.
 > earlier mixed-model numbers (622 mammals, 10 of them with questionable lifespans). Whether a database
 > update should carry a worked example at all, or only point to the repository, is still yours (NOTES.md, Q6).
 
+### Repeats, motifs and the rate of evolution
+
+Two of the relationships the introduction lists were tested on the same footing, on every species of the
+default dataset that carries the feature. Perfect inverted repeats correlate with maximum lifespan in mammals
+as reported (18), and strongly: across 604 mammals Spearman r = -0.40 (p = 2 x 10^-24) over the whole record,
+and r = -0.33 over the major arc (n = 530, p = 3 x 10^-15). Neither survives the controls this release applies
+to every other feature. With log10 body mass and base composition at fourfold-degenerate sites in the model
+and Pagel's λ on the dated tree, the whole-record association is p = 0.67 and the major-arc one p = 0.45.
+Repeat pairs bridging the two spans that flank most human mitochondrial deletions — ATP8 to COX3 and ND5 to
+CYTB — behave the same way: r = -0.18 raw (p = 8 x 10^-6, 602 mammals) and p = 0.03 after the controls, which
+does not pass the false discovery rate. **Across 132 tests of the motif, repeat and contact-zone features in
+four classes, none passes a 5% false discovery rate** (smallest q = 0.16). The inverted-repeat correlation is
+therefore of exactly the kind this release was built to re-examine, and it does not outlast shared ancestry.
+
+The rate at which the mitochondrial proteins evolve was tested by the relative-rate test, which avoids the
+normalisation choice that divides the literature (`mitoage longevity rates`). Two species sharing a parent in
+the dated tree have had the same time since they split, so the difference in their distances to a common
+outgroup is a rate contrast needing no correction for divergence time. Over 339 such pairs, with dN and dS as
+Nei–Gojobori counts in each species' own mitochondrial code, no normalisation — the raw difference, the
+difference per million years, the dN/dS ratio, or the difference with body mass in the model — gives an
+association between lifespan and rate on the concatenated 13 genes, in mammals (p = 0.02, q = 0.15),
+birds, ray-finned fishes or all species together. Four of 655 single-gene tests pass a 5% false discovery
+rate and disagree in sign.
+
+One limit applies to every number in this subsection and cannot be removed from the records as they stand.
+Long-read assemblies of vertebrate mitogenomes recover repeats and control regions that short-read
+assemblies miss (35, 36), so repeat and motif counts depend on how a genome was sequenced. Of the records
+matched in RefSeq mitochondrion release 237, one states a sequencing technology; 1,773 name the source
+INSDC accession from which it could be resolved. The same tests restricted to long-read assemblies are
+therefore not assessed here, rather than assessed and found negative.
+
+> AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 22cb140 (`mitoage longevity rates` and
+> `mitoage longevity motif-pgls`, tables `rates.tsv`, `rate_contrasts.tsv` and `motif_pgls.tsv`; H7 and H8 in
+> `docs/ANALYSIS_FINDINGS.md`), on the motif features of the site pipeline at 2808823, which computes them for
+> all 2,335 species. Whether the paper should carry this subsection at all, or leave it to the analysis
+> repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
+
 ## Website and interface
 
 The website is a static site: every page is generated when the data are built, and the browser fetches
@@ -524,6 +561,10 @@ to the Human Ageing Genomic Resources conditions of use; NCBI data carry no use 
 34. Aledo JC, Valverde H, de Magalhães JP. Mutational bias plays an important role in shaping
     longevity-related amino acid content in mammalian mtDNA-encoded proteins. J Mol Evol.
     2012;74:332–341.
+35. Formenti G, Rhie A, Balacco J, et al. Complete vertebrate mitogenomes reveal widespread repeats
+    and gene duplications. Genome Biol. 2021;22:120.
+36. Uliano-Silva M, Ferreira JGRN, Krasheninnikova K, et al. MitoHiFi: a python pipeline for mitochondrial
+    genome assembly from PacBio high fidelity reads. BMC Bioinformatics. 2023;24:288.
 
 > AUTHOR: references 19, 21 and 24–34 are new and need checking (a reference-check pass is suggested).
 > Data citations are needed for the USGS BBL longevity records (v2025.1), the Hugging Face dataset and

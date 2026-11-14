@@ -1,8 +1,9 @@
 # Analysis findings
 
 What the research arms of MitoAge found on build 2, as of 2026-11-14: longevity in the alignments of the
-mitochondrial proteins, the peptides encoded inside mtDNA, and the pairing of mitochondrial proteins with
-their nuclear partners (mitoport). Results that did not hold, and one mistake, are kept next to those that
+mitochondrial proteins, the peptides encoded inside mtDNA, the pairing of mitochondrial proteins with
+their nuclear partners (mitoport), the substitution rates of the 13 proteins, and the mtDNA motif, repeat
+and deletion-contact-zone features. Results that did not hold, and one mistake, are kept next to those that
 did. Nothing here is peer reviewed and nothing of it is on the site.
 
 The code is in [dna-seq/mitoage-pipelines](https://github.com/dna-seq/mitoage-pipelines); the commands named
@@ -12,7 +13,9 @@ result tables are the Hugging Face dataset
 prepared inputs are `mitoage-nuclear-partners`, `mitoage-embeddings` and `mitoage-aligner-variants` there.
 
 **Not done**: structural alignments (RM13); the complexes section of the site with nuclear and mitochondrial
-subunits side by side (RM17); anything about lifespan in the mito-nuclear pairing.
+subunits side by side (RM17); anything about lifespan in the mito-nuclear pairing; the long-read-only
+replication of H8, because no record in the build states its sequencing technology (RM18); the
+extended features in the plot explorer (RM19).
 
 Each entry: the hypothesis as we held it, the test, the control that keeps the test honest, the result, and
 its limits. Results that did not hold are kept next to those that did: a reader should see what was tried.
@@ -201,3 +204,69 @@ mitochondrial subunits of complexes III, I and V almost as well (+0.31, +0.27, +
 genome changes more; being mitochondrial without such a partner is not enough. The common cause is
 probably the lineage's mitochondrial rate, which the tree's time does not remove.
 **Open.** The coupling against lifespan; per-residue embeddings at contact and non-contact positions.
+
+## H7. Lifespan predicts the substitution rate of the mitochondrial proteins
+
+**Hypothesis.** Published, and contested in both directions: long-lived lineages have been reported with
+slower mitochondrial substitution rates in bivalves (Sacco et al. 2021, Front Mol Biosci,
+doi:10.3389/fmolb.2021.626042) and in fishes (doi:10.1098/rstb.2025.0085), while a survey across
+vertebrates found that whether the association appears at all depends on how the rate is normalised
+(Hernandez-Pacheco et al. 2026, GBE, doi:10.1093/gbe/evag067). The caveat is the reason to test it here.
+**Test.** The relative-rate test on cherries of the dated tree. Two tips sharing a parent have had the same
+time since they split, so measuring each against one common outgroup makes the rate difference a contrast
+that needs no divergence-time correction. dN and dS are Nei-Gojobori counts with the Jukes-Cantor
+correction, in each species' own mitochondrial code, averaging codon pairs that differ more than once over
+every pathway that avoids a stop. The contrast is regressed on the lifespan contrast through the origin,
+per gene and over the concatenated 13. `mitoage longevity rates`, into `rates.tsv` and `rate_contrasts.tsv`.
+**Control.** Four normalisations, because the choice is what moves results in the published record: the raw
+difference, the difference per million years of the cherry's depth, the dN/dS ratio, and the raw difference
+with the body-mass contrast in the model. A sign test on the same pairs asks the question directly. Pairs
+whose dS exceeds 1 are flagged saturated and every test is reported with and without them.
+**Species.** H1's default dataset: 1,369 species with a tip in the dated tree, giving 339 cherries;
+dS > 1 in 24.2% of the concatenated pairs.
+**Result.** **Nothing survives on the concatenated genes, under any normalisation, in any class.** The
+closest are mammals with body mass in the model (slope +0.113 per unit log10 lifespan, p = 0.021, q = 0.15,
+115 pairs) and birds per million years (p = 0.073, q = 0.26, 95 pairs). Four of 655 tests pass q < 0.05, all
+single genes, and their signs disagree: ND6 across all species (-0.219, q = 0.0076) and avian CYTB per
+million years (-0.021, q = 0.011) go one way, mammalian ND5 (+0.220, q = 0.010) the other, and mammalian ND2
+on dN (-0.017, q = 0.039) is a fourth direction. Four of 655 at a 5% false discovery rate is what the
+correction is designed to allow.
+**Reading.** In these data lifespan does not predict the mitochondrial substitution rate, and that answer is
+the same under all four normalisations. This does not refute the bivalve and fish reports, which are within
+clades this build barely covers; it says the effect is not general across vertebrates.
+**Limit.** A cherry gives one contrast, so the test uses 339 of the 1,369 species. Nei-Gojobori counting is
+appropriate for close pairs and strained at the divergences a quarter of these cherries reach, which is why
+the saturated flag exists rather than a silent filter.
+
+## H8. mtDNA motifs, repeats and the deletion contact zones follow lifespan
+
+**Hypothesis.** Non-B DNA motif counts per mitogenome were proposed as longevity features by the MitoAge
+group itself (Toren et al. 2021, Mech Ageing Dev, doi:10.1016/j.mad.2021.111429), repeats have been reported
+to track lifespan (Yang, Seluanov & Gorbunova 2013), and the repeats that flank mitochondrial deletions sit
+in two defined zones of the genome (Persson et al. 2023, BMC Biol, doi:10.1186/s12915-023-01606-1).
+**Test.** The features the site's pipeline publishes in `mtdna_structure.parquet` - G-quadruplex motifs on
+each strand, homopurine and homopyrimidine tracts, homopolymer runs, di/tri/tetranucleotide tandem repeats,
+direct, inverted and mirror repeats, and the repeat pairs bridging the ATP8-COX3 and ND5-CYTB spans - against
+log10 maximum lifespan, in H1's model unchanged: phylogenetic regression on the dated tree with Pagel's
+lambda, body mass and fourfold composition in it. Features are standardised, so a slope is per standard
+deviation. `mitoage longevity motif-pgls`, into `motif_pgls.tsv`.
+**Control.** Every test is run a second time on records whose sequencing technology includes long reads,
+since mitoVGP and MitoHiFi both report that short-read reference mitogenomes misrepresent exactly these
+features.
+**Result.** 132 tests over four classes on the full build; **none passes a 5% false discovery rate**
+(smallest q = 0.16, smallest p = 0.005). The strongest raw correlation in the set is the one the
+literature reports: perfect inverted repeats against lifespan in 604 mammals, Spearman r = -0.399
+(p = 2 x 10^-24), and over the major arc r = -0.334 in 530 (p = 3 x 10^-15). With body mass, fourfold
+composition and Pagel's lambda on the dated tree, both are gone (p = 0.67 and p = 0.45). Repeat pairs
+bridging the two contact zones behave the same way: r = -0.181 raw (p = 8 x 10^-6, 602 mammals),
+p = 0.03 and q = 0.56 after the controls.
+**What this replaced, twice.** An exploratory Python run over 2,311 species, with tandem-repeat counts
+that did not reject units built from a shorter period, reported mammalian G-quadruplexes at q = 0.048
+over 601 species. Rerun on the database's own features while they still covered only 922 species, that
+result was gone (q = 0.66) and a reptile G-quadruplex test passed instead (q = 0.027). On the full
+build that one is gone too (q = 0.38). Three runs, three different survivors, and none of them
+survives the next run: the screen is reporting noise, and this entry reports that rather than any of
+the three.
+**Limit, and it is the important one.** **The control could not be run.** No record in the build states
+a sequencing technology, so the long-read subset is empty and the mitoVGP caveat stays open: every
+repeat, motif and contact-zone number above is computed on records of unknown assembly type.
