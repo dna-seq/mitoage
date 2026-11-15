@@ -1,6 +1,6 @@
 # MitoAge 2: Supplementary Methods
 
-*Supplement to `mitoage2.md`, draft of 2026-11-15. It describes MitoAge build 2 (2026-11-13) as built by
+*Supplement to `../mitoage2.md`, draft of 2026-11-15. It describes MitoAge build 2 (2026-11-13) as built by
 `dna-seq/mitoage` and the analyses run on it in `dna-seq/mitoage-pipelines`. Hidden comments in this file give the file, and where it matters the line, that each rule is taken from; they are
 for the authors and are not part of the text. Lines starting `> AUTHOR:` are questions for the authors,
 also not part of the text.*
@@ -880,7 +880,7 @@ Actinopterygii and all species should be read with its sign-flip p value beside 
 S1 gives the share of tests each scope rejects on contrasts.
 
 <!-- src: docs/PIC_CALIBRATION.md "What could be done" 2-4; docs/manuscript/NOTES.md Q5;
-docs/manuscript/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
+docs/manuscript/supplementary/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
 
 ### S10.7 How the three controls combine, and what each count counts
 

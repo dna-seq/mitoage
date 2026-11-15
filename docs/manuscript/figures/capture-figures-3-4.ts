@@ -28,7 +28,8 @@
 // Figure 3 (decision D7) is panel A across the page (178 mm) with panel B centred under it, as wide as a
 // total height of 218 mm allows. Figure 3—figure supplement 1 is C beside D, relabelled A and B, each in a
 // column of 86 mm across the page. Figure 4 is one column (86 mm). ImageMagick labels the panels and writes
-// FIGURE_3_INTERFACE.jpg, FIGURE_3_SUPPLEMENT_1.jpg and FIGURE_4_ALIGNMENT.jpg (quality 90). The script
+// FIGURE_3_INTERFACE.jpg and FIGURE_4_ALIGNMENT.jpg here, and FIGURE_3_SUPPLEMENT_1.jpg into
+// ../supplementary/figures/, where the supplementary material lives (quality 90). The script
 // prints, for each panel, the smallest text in it and the size that text prints at.
 
 import { openChrome, originArg, magick, size, printedPt, sleep, join, type Rect } from "./cdp.ts";
@@ -46,7 +47,7 @@ const colPx = Math.round((COLUMN_MM / 25.4) * DPI);
 const gutterPx = Math.round(((PAGE_MM - 2 * COLUMN_MM) / 25.4) * DPI);
 const MAX_HEIGHT_MM = 218; // Figure 3, as printed
 const out3 = join(import.meta.dir, "FIGURE_3_INTERFACE.jpg");
-const out3s = join(import.meta.dir, "FIGURE_3_SUPPLEMENT_1.jpg");
+const out3s = join(import.meta.dir, "..", "supplementary", "figures", "FIGURE_3_SUPPLEMENT_1.jpg");
 const out4 = join(import.meta.dir, "FIGURE_4_ALIGNMENT.jpg");
 
 type Panel = { letter: string; file: string; cssWidth: number; smallest: { px: number; text: string }; note?: string };

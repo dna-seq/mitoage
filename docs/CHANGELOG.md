@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript's supplementary material has its own folder** (2026-11-15): `docs/manuscript/supplementary/`
+  holds the Supplementary Methods (`mitoage2.supplementary.md`), Supplementary Table S1
+  (`supplementary_table_S1_scopes.csv`) and the supplementary figures (`supplementary/figures/`, now Figure
+  3—figure supplement 1), so `docs/manuscript/figures/` holds only the paper's own figures and the scripts that
+  draw all of them. `capture-figures-3-4.ts` writes the figure supplement there; the image link in
+  `mitoage2.md` and the paths in NOTES.md follow.
+
 - **Lifespan with and without body mass, side by side** (D11, 2026-11-15): `correlations.parquet` carries
   `pic_mass_r` and `pic_mass_p_value` on every lifespan row of both datasets, the contrast correlation with
   log10 adult weight partialled out (`partialContrastCorrelation`; `picContrasts` now carries an optional third

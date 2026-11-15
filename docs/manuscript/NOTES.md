@@ -169,7 +169,9 @@ all defensible. Related to Q6, which asks the same of the amino-acid example.
 Figures are numbered in order of first citation (draft 0.1's planned Figures 1 to 4 are now 3, 5, 1
 and 2; the alignment is 4).
 
-Every figure is made by a script in `figures/` from the current build (`bun run build` first), and the
+The paper's figures are in `figures/`; the supplementary material (the Supplementary Methods, Table S1 and
+Figure 3—figure supplement 1) is in `supplementary/`, its figures in `supplementary/figures/`. Every figure is
+made by a script in `figures/` from the current build (`bun run build` first), and the
 JPEGs are overwritten in place. Redrawn and recaptured on 2026-11-15 for print sizes: one column 86 mm,
 the page 178 mm, text at least 6 pt and images at least 300 dpi as printed.
 
@@ -251,7 +253,7 @@ IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Supplementary Methods
 
-`mitoage2.supplementary.md` (added 2026-11-15) is the long form of the Methods: sections S1 to S14, each the
+`supplementary/mitoage2.supplementary.md` (added 2026-11-15) is the long form of the Methods: sections S1 to S14, each the
 flow of decisions behind one step (what was done, why, the alternative not taken, what it assumes, what is not
 known), for a reader who will not open the code. The main text points to them ("Supplementary Methods S4") from
 each Methods subsection, the two worked-analysis subsections and the MCP paragraph; it is otherwise unchanged.

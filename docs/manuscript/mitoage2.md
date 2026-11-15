@@ -398,7 +398,7 @@ the ocean quahog (*Arctica islandica*, 507 years) and the Greenland shark (*Somn
 as one FASTA file. (**B**) The radial tree of all species by taxonomic rank, coloured by class, with each
 species' maximum lifespan on a log scale in the outer ring; any clade zooms into view.
 
-![Figure 3—figure supplement 1. Two further views of the interface](figures/FIGURE_3_SUPPLEMENT_1.jpg)
+![Figure 3—figure supplement 1. Two further views of the interface](supplementary/figures/FIGURE_3_SUPPLEMENT_1.jpg)
 
 **Figure 3—figure supplement 1.** Two further views of the interface. (**A**) Compare,
 class Mammalia: Pearson's r of the GC content of each region with log10 maximum lifespan and its 95%
