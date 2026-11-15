@@ -223,3 +223,8 @@ machine and this project that reading the code does not reveal.
 - 2026-11-13, the maintainer, once headless screenshots of the built site worked on the cluster: "you can
   also do visual work on cluster and post screenshots to zulip as proofs of changes". A change a visitor
   sees is posted in the repository's channel with its screenshots, a phone's and a desktop's width.
+- 2026-11-15, the maintainer: "heavy computations must start at haumea server that first should pull this
+  [repository], make analysis at slurm and than push the results". A computation too heavy for the laptop
+  (permutation nulls, model fits over many features, folding, MCMC) runs on the cluster host `haumea` (user
+  `uq2347`): pull the repository there first, submit the work as Slurm jobs, then commit and push the results
+  from there, so the run, its job files and its outputs come from one commit anyone can rerun.
