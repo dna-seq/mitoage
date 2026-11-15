@@ -251,6 +251,14 @@ export async function validateGenerated(): Promise<string[]> {
     }
     const cds = new Set(fs.filter((f) => f.type === "CDS").map((f) => f.name));
     if (fs.length) check(cds.size >= 12, `${s.slug}: only ${cds.size} distinct CDS names`);
+    // A protein gene a live species lacks carries a flag naming it (its reason, or "unexplained"); never silent.
+    if (fs.length && s.provenance?.recordStatus !== "retired") {
+      const geneFlags = new Set((s.reviewFlags ?? []).filter((f) => f.startsWith("gene_") && !f.startsWith("gene_annotated_by_mitoage:")).map((f) => f.slice(f.indexOf(":") + 1)));
+      for (const gene of PROTEIN_GENES) {
+        if (!cds.has(gene)) check(geneFlags.has(gene), `${s.slug}: ${gene} is missing and no review flag names it`);
+        else check(!geneFlags.has(gene), `${s.slug}: ${gene} is present but flagged as missing`);
+      }
+    }
   }
   check(withFeatures >= species.length - 5, `only ${withFeatures} species have genome features`);
 

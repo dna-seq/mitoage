@@ -42,8 +42,8 @@ homology statements. Regenerate with `bun run align`.
 | ND4.codon.fasta.gz | 2325 | 2043 | 1380 | 477 | 837 KB |
 | ND5.aa.fasta.gz | 2324 | 1189 | 605 | 235 | 445 KB |
 | ND5.codon.fasta.gz | 2324 | 3567 | 1815 | 630 | 1169 KB |
-| ND6.aa.fasta.gz | 2323 | 449 | 171 | 29 | 174 KB |
-| ND6.codon.fasta.gz | 2323 | 1347 | 513 | 124 | 395 KB |
+| ND6.aa.fasta.gz | 2324 | 446 | 171 | 29 | 174 KB |
+| ND6.codon.fasta.gz | 2324 | 1338 | 513 | 124 | 396 KB |
 | CYTB.aa.fasta.gz | 2324 | 548 | 379 | 220 | 188 KB |
 | CYTB.codon.fasta.gz | 2324 | 1644 | 1137 | 519 | 614 KB |
 | rRNA-12S.nt.fasta.gz | 2323 | 3419 | 934 | 454 | 661 KB |

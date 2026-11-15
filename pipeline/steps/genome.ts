@@ -1,7 +1,9 @@
 /** Per-species genome annotation from RefSeq records: normalised features, sequences, codes. */
 import type { GenomeFeature } from "../../src/data/schema";
 import { type GbRecord, type Segment, extractFeature, parseGenBank } from "../lib/genbank";
+import { applyGenePatches } from "../lib/gene-patch";
 import { normaliseFeature } from "../lib/names";
+import type { ProteinGene } from "../../src/data/schema";
 
 export interface AnnotatedFeature extends GenomeFeature {
   segments: Segment[];
@@ -18,6 +20,8 @@ export interface SpeciesGenome {
   translTable: number;
   taxid: number | null;
   unrecognised: string[];
+  /** Protein genes added by a hand-checked annotation patch (`pipeline/sources/gene-annotation.ts`). */
+  patched: ProteinGene[];
 }
 
 /** Overall span of a feature on the circular genome; start > end when it wraps the origin. */
@@ -89,6 +93,7 @@ function resolveByPosition(features: AnnotatedFeature[], len: number, useGeneOrd
 
 export function annotateGenome(text: string, fallbackTable: number, vertebrateGeneOrder = true): SpeciesGenome {
   const record = parseGenBank(text);
+  const patched = applyGenePatches(record, fallbackTable);
   const len = record.sequence.length;
   const features: AnnotatedFeature[] = [];
   const unrecognised: string[] = [];
@@ -139,7 +144,7 @@ export function annotateGenome(text: string, fallbackTable: number, vertebrateGe
   let translTable = fallbackTable;
   let best = 0;
   for (const [t, c] of tables) if (c > best) [translTable, best] = [t, c];
-  return { record, features, translTable, taxid, unrecognised };
+  return { record, features, translTable, taxid, unrecognised, patched };
 }
 
 /** Positions (0-based) covered by the given features, as a bitmap over the genome. */

@@ -34,6 +34,11 @@ FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its `lifesp
   `transl_table` (NCBI genetic code used for amino acids).
 - `retired_reason`, `review_flags` (open questions for curators, `; `-separated), `change_kinds` (what changed against
   build 1: genome, annotation, correction, lifespan, name, taxonomy, common_name, ncbi_taxid).
+  Every protein gene a live species lacks is named by a flag that gives the reason: `gene_absent_from_record:`,
+  `gene_frameshifted_in_record:`, `gene_not_annotated:`, `gene_lost_in_lineage:`, or `gene_unexplained_absence:`
+  when none is recorded yet. `gene_annotated_by_mitoage:` marks a gene intact in the record's sequence but not annotated
+  there, which the build adds from a hand-checked list (`pipeline/sources/gene-annotation.ts`; the changelog row,
+  `diff_class` annotation_patch, says how it was checked).
 
 ### region_stats.parquet (one row per species and region)
 - `species_id`, `slug`, `region`: total_mtDNA, total_pc (all protein-coding genes, overlaps counted once), total_rRNA,
@@ -136,6 +141,6 @@ next to them. Correlation datasets: `default` (2211 species; lifespan sources An
 - Base-label bug of build 1: in every MitoAge CSV file the base columns are complement-labelled ("G" holds C on the RefSeq strand, "C" holds G, "A" holds T, "T" holds A). All a/c/g/t here are on the RefSeq strand as deposited; GC% is unaffected, GC and AT skews change sign relative to the old site.
 - Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds the EURING list of 2023-09-01 then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).
 - Class labels follow the build 1 scheme (AnAge build 12-era: Actinopterygii, Reptilia, ...) for every species, so correlation scopes stay comparable with the 2016 paper; AnAge build 15's fish reclassification (Teleostei, ...) is not adopted.
-- Orientation of the RefSeq records (canonical 2205, noncanonical 16, not_chordate 104, unknown 19). Heavy-strand (ffH) values are given only for canonical records; for the others the heavy strand is not identified from the record and the values are null.
-- Major arc defined for 1915 of 2344 species; the two deletion contact zones (ATP8-COX3 and ND5-CYTB) for 2225. Null otherwise, never guessed.
+- Orientation of the RefSeq records (canonical 2206, noncanonical 15, not_chordate 104, unknown 19). Heavy-strand (ffH) values are given only for canonical records; for the others the heavy strand is not identified from the record and the values are null.
+- Major arc defined for 1916 of 2344 species; the two deletion contact zones (ATP8-COX3 and ND5-CYTB) for 2225. Null otherwise, never guessed.
 - Repeat, motif and contact-zone counts are read from the deposited sequence as linear, and depend on how the genome was assembled: short-read records can miss repeats and duplicated control regions.

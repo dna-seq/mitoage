@@ -76,6 +76,12 @@ const FLAGS: Record<string, (detail: string) => string> = {
   ncbi_taxid_shared_in_build1: () => "Build 1 held another entry under the same NCBI taxon.",
   anage_name_differs: (d) => `AnAge lists this species as ${d || "another name"}.`,
   rows_not_in_current_record: () => "Some regions come from the record build 1 cited: the current record does not annotate them.",
+  gene_annotated_by_mitoage: (d) => `${d || "A gene"} is intact in the record's sequence but not annotated there; MitoAge added it, and the changelog says how it was checked.`,
+  gene_absent_from_record: (d) => `${d || "A protein gene"} is not in the record's sequence, so this species has no ${d || "such"} data.`,
+  gene_frameshifted_in_record: (d) => `The record marks ${d || "a gene"} as not intact (it reads in two frames), so this species has no ${d || "such"} data.`,
+  gene_not_annotated: (d) => `The record does not annotate ${d || "a protein gene"}; whether it is lost or only unannotated was not checked.`,
+  gene_lost_in_lineage: (d) => `${d || "This gene"} is absent from the mitochondrial genomes of this lineage.`,
+  gene_unexplained_absence: (d) => `${d || "A protein gene"} is not annotated in the record, and the reason has not been checked yet.`,
 };
 
 /** A review flag ("kind" or "kind:detail") as a sentence; an unknown kind is shown as written, never dropped. */

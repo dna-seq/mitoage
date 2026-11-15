@@ -40,6 +40,11 @@ FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its \`lifes
   \`transl_table\` (NCBI genetic code used for amino acids).
 - \`retired_reason\`, \`review_flags\` (open questions for curators, \`; \`-separated), \`change_kinds\` (what changed against
   build 1: genome, annotation, correction, lifespan, name, taxonomy, common_name, ncbi_taxid).
+  Every protein gene a live species lacks is named by a flag that gives the reason: \`gene_absent_from_record:\`,
+  \`gene_frameshifted_in_record:\`, \`gene_not_annotated:\`, \`gene_lost_in_lineage:\`, or \`gene_unexplained_absence:\`
+  when none is recorded yet. \`gene_annotated_by_mitoage:\` marks a gene intact in the record's sequence but not annotated
+  there, which the build adds from a hand-checked list (\`pipeline/sources/gene-annotation.ts\`; the changelog row,
+  \`diff_class\` annotation_patch, says how it was checked).
 
 ### region_stats.parquet (one row per species and region)
 - \`species_id\`, \`slug\`, \`region\`: total_mtDNA, total_pc (all protein-coding genes, overlaps counted once), total_rRNA,

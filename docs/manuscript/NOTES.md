@@ -45,6 +45,21 @@ f75bdc9b812d7845d2ccb24a49643d88d00d57b5 (2026-11-15): its eight data files have
 725da08, and a site build of main after it reproduces Table 3 (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550 / 393, and 535
 by the sign-flip test). The correlation code is unchanged between 725da08 and that build.
 
+**The gene-annotation patch moves a few of them** (2026-11-15, after fb54cec; `docs/CHANGELOG.md`). The African grey
+parrot gains its ND6, which its record leaves unannotated, so the ND6 features gain one bird. `numbers.ts` on the
+build with the patch, against fb54cec, changes these and nothing else. Round v0.3 pins revision f75bdc9 (above), which
+has no patch, so its printed values stay right for the build it cites; they differ from main's build from here on:
+- funnel, default dataset: p < 0.05 5,436 → 5,441, FDR 4,295 → 4,296, PIC 3,023 → 3,025. Both (900), All three (550),
+  PIC + mass (393) and the sign-flip "Both" (535) are unchanged;
+- funnel, AnAge-only dataset: p < 0.05 4,960 → 4,964, FDR 4,068 → 4,069, Both 659 → 658, sign-flip 502 → 501;
+- Table 3 rows: all species PIC 565 → 566; Aves p < 0.05 684 → 687; Psittaciformes 56 / 35 / 19 → 58 / 36 / 20;
+- all-species FDR correlations significant on contrasts with the opposite sign: 202 → 203 under the t test and
+  49 → 48 under the sign-flip test (keys `all.fdr.picOppositeSign.t` and `.flip`);
+- species in canonical orientation 2,205 → 2,206 (non-canonical 16 → 15), major arc defined 1,915 → 1,916;
+  changelog rows 14,428 → 14,429 (corrections 1,639 → 1,640);
+- the PIC calibration run on haumea from fb54cec (b6c6ec6) predates the patch; of its scopes, all species, Aves and
+  Psittaciformes gain the parrot's ND6.
+
 **Still from the build before EURING (2,335 species), until rerun:**
 - the worked analyses run in mitoage-pipelines (Table 4 and the generation-time models, the amino-acid example,
   the site screen, repeats and motifs, the rate test, H11 and H12): their mammal results cannot change, since no

@@ -11,6 +11,7 @@ import { join } from "node:path";
 import { PROTEIN_GENES } from "../../src/data/schema";
 import { type Seq, checkAlignment, formatFasta, parseFasta } from "../lib/align";
 import { extractFeature, parseGenBank } from "../lib/genbank";
+import { applyGenePatches } from "../lib/gene-patch";
 import { geneticCode } from "../lib/genetic-code";
 import { normaliseFeature } from "../lib/names";
 
@@ -93,6 +94,7 @@ export function collectSequences(species: readonly SpeciesRef[], records: Readon
     if (!text) throw new Error(`no GenBank record for ${s.slug} (${s.refseq})`);
     const rec = parseGenBank(text);
     if (!rec.sequence) throw new Error(`record ${s.refseq} of ${s.slug} carries no sequence`);
+    applyGenePatches(rec, null);
     const desc = `${s.scientificName} ${s.refseq}`;
     const copies = new Map<string, number>();
     for (const f of rec.features) {

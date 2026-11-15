@@ -280,25 +280,25 @@
    "file": "ND6.aa.fasta.gz",
    "gene": "ND6",
    "kind": "protein",
-   "sequences": 2323,
-   "columns": 449,
+   "sequences": 2324,
+   "columns": 446,
    "occupiedColumns": 171,
    "invariantColumns": 0,
    "conserved90Columns": 29,
-   "sha256": "daf3a506f7dc9ee1265aeb560c17009e28fcbda7da178454c60f61bdf37ea539",
-   "bytes": 178012
+   "sha256": "7d649c6b90ccbb48e2a02b4eb5d433caa489c06e80f6ccdd63b0b401769ffe49",
+   "bytes": 177977
   },
   {
    "file": "ND6.codon.fasta.gz",
    "gene": "ND6",
    "kind": "codon",
-   "sequences": 2323,
-   "columns": 1347,
+   "sequences": 2324,
+   "columns": 1338,
    "occupiedColumns": 513,
    "invariantColumns": 0,
    "conserved90Columns": 124,
-   "sha256": "934c046efaf5ff4c503f205c43eb15c9ce9d9516bc11a5503cbad3595f7423aa",
-   "bytes": 404855
+   "sha256": "fba5bd230950f6b823c849ba3449c53e486f1728db6911ce60586695d2d3842f",
+   "bytes": 405955
   },
   {
    "file": "CYTB.aa.fasta.gz",
@@ -478,11 +478,6 @@
   {
    "gene": "rRNA-16S",
    "slug": "protonibea-diacanthus",
-   "reason": "not annotated in the record"
-  },
-  {
-   "gene": "ND6",
-   "slug": "psittacus-erithacus",
    "reason": "not annotated in the record"
   },
   {

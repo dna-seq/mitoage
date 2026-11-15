@@ -23,6 +23,7 @@ import { CACHE_DIR } from "../lib/cache";
 import { CODONS, aminoAcidCounts } from "../lib/genetic-code";
 import { round } from "../lib/stats";
 import type { AnAge, AnAgeEntry } from "../sources/anage";
+import { ANNOTATION_PATCHES, GENE_GAPS, type GeneGap, LINEAGE_GENE_GAPS } from "../sources/gene-annotation";
 import type { NcbiTaxonomy } from "../sources/ncbi-taxonomy";
 import type { SourceObservation } from "../sources/observation";
 import { ANAGE_PINNED, REFSEQ_RELEASE } from "../sources/pinned";
@@ -627,6 +628,44 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
       log({ table, rowKey: `${id}:*`, field: "(rows)", oldValue: null, newValue: `${n} rows`, ...added, reason: `Rows of new species ${name}` }, RS, c.rec.header.version);
     }
     for (const o of c.obs) if (o.valueYears !== null) observations.push(toObservation(id, c.t, o, o === c.chosen));
+  }
+
+  // -------------------------------------------------------------- protein genes a record leaves out
+  // A patched gene is logged and flagged; a missing gene carries its reason as a flag, and one with no
+  // recorded reason is flagged as unexplained and listed for review, never dropped in silence.
+  const liveSpecies = species.filter((s) => statusOf.get(s.id) !== "retired" && genomes.has(s.id));
+  const liveAccessions = new Set(liveSpecies.map((s) => s.refseq));
+  for (const p of ANNOTATION_PATCHES) {
+    if (!liveAccessions.has(p.accession)) throw new Error(`annotation patch ${p.accession} ${p.gene}: no live species uses that record; remove it from pipeline/sources/gene-annotation.ts`);
+  }
+  const gapUsed = new Set<GeneGap>();
+  for (const s of liveSpecies) {
+    const g = genomes.get(s.id)!;
+    for (const gene of g.patched) {
+      const p = ANNOTATION_PATCHES.find((x) => x.accession === s.refseq && x.gene === gene)!;
+      flag(s.id, `gene_annotated_by_mitoage:${gene}`);
+      kind(s.id, "annotation");
+      log({ table: "genome_features", rowKey: `${s.id}:${gene}#1`, field: "(row)", oldValue: null, newValue: `${gene} CDS ${p.location}`, changeType: "correction", diffClass: "annotation_patch", reason: p.evidence, scope: "row" }, RS, s.refseq);
+    }
+    const present = new Set((features.get(s.id) ?? []).filter((f) => f.type === "CDS").map((f) => f.name));
+    for (const gene of PROTEIN_GENES) {
+      const own = GENE_GAPS.find((x) => x.accession === s.refseq && x.gene === gene);
+      if (present.has(gene)) {
+        if (own) throw new Error(`gene gap ${own.accession} ${gene}: the build now has ${gene} for ${s.scientificName}; remove the entry from pipeline/sources/gene-annotation.ts`);
+        continue;
+      }
+      const gap = own ?? LINEAGE_GENE_GAPS.find((x) => x.gene === gene && (x.rank === "phylum" ? s.taxonomy.phylum : s.taxonomy.class) === x.taxon);
+      if (own) gapUsed.add(own);
+      if (gap) {
+        flag(s.id, `gene_${gap.reason}:${gene}`);
+      } else {
+        flag(s.id, `gene_unexplained_absence:${gene}`);
+        review.push({ reviewType: "protein_gene_not_annotated", ncbiTaxid: s.ncbiSpeciesTaxid ?? null, scientificName: s.scientificName, refseq: s.refseq, source: null, sourceName: null, detail: `${gene} is not annotated in the record and no reason is recorded in pipeline/sources/gene-annotation.ts` });
+      }
+    }
+  }
+  for (const x of GENE_GAPS) {
+    if (!gapUsed.has(x)) throw new Error(`gene gap ${x.accession} ${x.gene}: no live species uses that record without the gene; remove the entry from pipeline/sources/gene-annotation.ts`);
   }
 
   // -------------------------------------------------------------- review flags, possible duplicates, review list

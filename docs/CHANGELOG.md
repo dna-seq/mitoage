@@ -4,6 +4,32 @@ Newest first.
 
 ## Unreleased
 
+- **Every protein gene a species lacks now says why, and the African grey parrot gains its ND6** (2026-11-15, the
+  maintainer: "Yes, fix the gaps"). 26 live species lacked one of the 13 protein genes, silently. The records were
+  read one by one:
+  - *Psittacus erithacus* (NC_027847.1) has an intact ND6 its record does not annotate, complement(17376..17891)
+    between tRNA-Pro and tRNA-Glu, where birds carry it, reading like the Amazon parrot's ND6. The build adds it from
+    `pipeline/sources/gene-annotation.ts`, logs it in the changelog (`diff_class` annotation_patch) and flags the
+    species `gene_annotated_by_mitoage:ND6`. A patch is refused if the record ever annotates the gene itself, or if
+    its location is not one open reading frame ending in a stop (`pipeline/lib/gene-patch.ts`). The genome tables,
+    the extended features and the alignments all read it.
+  - The other five are not annotation gaps and stay out, each with a flag giving the reason: the tuatara's ND5
+    and the icefish *Chionodraco myersi*'s ND6 are not in their records' sequences (both records say so); the
+    *Homarus gammarus* record is incomplete and has no ND2; the Pacific golden plover's CYTB and the great crested
+    grebe's ND1 are marked by their records as frameshifted (`gene_absent_from_record`,
+    `gene_frameshifted_in_record`).
+  - ATP8 in 18 bivalves (`gene_not_annotated`, not searched) and in both nematodes (`gene_lost_in_lineage`,
+    Okimoto et al. 1992).
+  - A missing gene with no recorded reason is flagged `gene_unexplained_absence` and listed for review, and
+    `validate.ts` fails when a live species lacks a gene that no flag names. The site shows each flag as a sentence.
+  - Tested on the real records from the pinned RefSeq release, and each test checked by breaking the code it
+    guards.
+  - The rebuilt data differ from the committed build only in the parrot's rows (one ND6 feature, its region stats,
+    codon tables and protein features, one changelog row) and in the 26 flags. `bun run align` with MAFFT v7.526
+    changes the ND6 alignment alone (2,324 sequences); the other 26 files are byte-identical. A few correlation
+    counts move by one to five (`docs/manuscript/NOTES.md` lists them; round v0.3 pins Hugging Face revision f75bdc9, which predates the patch). The
+    Hugging Face mirror is not re-uploaded (D6: by hand).
+
 - **Round v0.3 pins the build with the EURING birds** (2026-11-15): Data availability and reference 40 name Hugging Face
   revision f75bdc9 (its data files match `public/data/` at 725da08 byte for byte) and the build commit 725da08, in
   place of c525adb and 84ba6f7, which describe the build before EURING.
