@@ -313,14 +313,14 @@ defined, and 19 have no record. A heavy-strand convention would have needed a gu
 <!-- src: pipeline/steps/extended.ts:90-106 (orientationOf); public/data/README.md "Data notes" (canonical 2196,
 noncanonical 16, not_chordate 104, unknown 19) -->
 
-What changes for a reader of release 1: GC content does not change; GC and AT skews change sign, and so do
+What changes for a reader of release 1: GC content does not change; the GC and AT balance change sign, and so do
 their correlations with any trait. Codon and amino-acid usage do not change, because they were and are
 counted in gene sense. The new features that need the heavy strand (base composition at fourfold sites in
 heavy-strand notation, S7.3) are given only for canonical records and are left empty for the others.
 
 **Assumptions and what is not known.** The canonical test is a test of annotation: a record deposited
-the other way round would show ND6 on the plus strand and would be classed noncanonical. Outside the chordates, which strand each record deposits is not known, so the strand
-skews of the 104 non-chordates are on deposited strands that need not correspond to one another.
+the other way round would show ND6 on the plus strand and would be classed noncanonical. Outside the chordates, which strand each record deposits is not known, so the GC/AT
+balance of the 104 non-chordates is on deposited strands that need not correspond to one another.
 
 ## S6. Re-verification of release 1 and the changelog
 
@@ -416,15 +416,16 @@ place on 2026-10-08) is read as release 237 has it; the next build will pick up 
 
 ## S7. Mitochondrial features
 
-### S7.1 Regions, base composition and skews
+### S7.1 Regions, base composition and GC/AT balance
 
 Values are computed for 20 regions: the whole genome, each of the 13 protein-coding genes, the two
 rRNAs, the D-loop, and the aggregates of all protein-coding genes, all rRNA genes and all tRNA genes. An
 aggregate is the union of the positions of its features, so a base shared by two overlapping genes is
 counted once. A single gene is its first copy in genome order when a record annotates it twice. The
 D-loop is the record's D-loop features; a feature annotated as a control region (a misc_feature; pseudo, partial and repeat features excluded) is used only when the record has no D-loop feature. Counts are on the
-deposited strand (S5). GC content is 100 (G+C)/(A+C+G+T) over unambiguous bases; the GC skew is
-(G−C)/(G+C) and the AT skew (A−T)/(A+T), undefined when the denominator is zero. The non-coding length is
+deposited strand (S5). GC content is 100 (G+C)/(A+C+G+T) over unambiguous bases; the GC balance is
+(G−C)/(G+C) and the AT balance (A−T)/(A+T), undefined when the denominator is zero (the GC and AT skew of the
+data files, the site and release 1). The non-coding length is
 the number of positions covered by no protein-coding, rRNA or tRNA gene, so the D-loop counts as non-coding.
 
 <!-- src: pipeline/steps/regions.ts:30-70; pipeline/lib/stats.ts:11-30; D-loop rule as stated in
@@ -446,14 +447,14 @@ of the gene rows. Each codon is given as a percentage of all codons counted, sto
 amino acid as a percentage of the sense codons. Amino acids are translated with the genetic code of the
 record: the `transl_table` that most of its coding features state, or, when none states one, code 2 for
 chordates, 9 for echinoderms and 5 otherwise. Feature values enter the correlations rounded (GC content
-and codon percentages to three decimals, skews to four).
+and codon percentages to three decimals, GC and AT balance to four).
 
 <!-- src: pipeline/lib/genetic-code.ts:50-61 (countCodons); pipeline/steps/features.ts:52-84;
 pipeline/steps/genome.ts:115-142 (transl_table vote and fallback); fallback codes as stated in
 mitoage-pipelines docs/BUILD2_REPRODUCTION.md "Genome values" -->
 
 These two families, with length and non-coding length, are the 1,257 features release 1 also had in
-some form: four per region (length, GC content and the two skews) for 20 regions, the non-coding length,
+some form: four per region (length, GC content, GC balance and AT balance) for 20 regions, the non-coding length,
 and 64 codons and 20 amino acids for each of the 13 genes and their total.
 
 <!-- src: pipeline/steps/features.ts:24-49 (20 x 4 + 1 + 14 x 64 + 14 x 20 = 1,257) -->

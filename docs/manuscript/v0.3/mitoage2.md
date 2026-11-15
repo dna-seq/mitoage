@@ -48,7 +48,7 @@ in the evolution of lifespan (1–6). Maximum lifespan varies by orders of magni
 and so does the composition of the mitochondrial genome. Correlations between the two have been
 reported repeatedly in mammals and birds: with base composition, direct and inverted repeats, the amino-acid content of the encoded proteins, and
 the rate at which those proteins evolve (4, 13–18, 30, 31). The two strands of mtDNA differ in composition,
-and this asymmetry between the heavy and light strands, which the skews measure, is set by replication and
+and this asymmetry between the heavy and light strands, which the GC/AT balance measures, is set by replication and
 by the mutations it favours (7, 8, 20). It has recently been tied to ageing directly: an A>G mutational
 signature on the heavy strand rises with age and, across mammals, with longer generation times (21). Composition
 has also been tied to other traits of the slow life history: in a machine-learning model of maximum lifespan in
@@ -131,7 +131,7 @@ field by field.
 
 For the whole mitogenome, each of the 13 protein-coding genes, the two rRNAs, the D-loop, and the
 aggregates of all protein-coding, rRNA and tRNA genes, MitoAge 2 reports the length, the count of each
-base, the GC content, the GC skew (G−C)/(G+C) and the AT skew (A−T)/(A+T). It also reports the non-coding length of the genome, codon usage for each protein-coding gene and their total, and amino-acid usage translated with the genetic code each RefSeq record specifies. Codon usage counts complete codons only, in gene sense, each codon as a percentage of all codons. Annotated
+base, the GC content and the GC/AT balance of the strand: the GC balance (G−C)/(G+C) and the AT balance (A−T)/(A+T), often called the GC and AT skews. It also reports the non-coding length of the genome, codon usage for each protein-coding gene and their total, and amino-acid usage translated with the genetic code each RefSeq record specifies. Codon usage counts complete codons only, in gene sense, each codon as a percentage of all codons. Annotated
 features are given with start, end and strand, with names made consistent across
 records (COI, CO1 and COX1, for example) and the two leucine and two serine tRNAs told apart by codon
 family. The extended features are the base composition of fourfold-degenerate sites (in gene sense and, for records
@@ -149,7 +149,7 @@ deposited sequence has A = 5,124, C = 5,181, G = 2,169 and T = 4,094. For most v
 deposited strand is the light strand, so the release-1 counts are those of the heavy strand, as the paper
 intended. RefSeq does not, however, fix which strand is deposited, and outside the vertebrates the convention is
 not uniform. MitoAge 2 reports every count on the strand as deposited. GC content is unaffected; the GC
-and AT skews, and their correlations with any trait, change sign relative to release 1 (Supplementary
+and AT balance, and their correlations with any trait, change sign relative to release 1 (Supplementary
 Methods S5).
 
 > AUTHOR: the repository's documents call this a "base-label bug" of build 1. The 2016 paper states
@@ -208,7 +208,7 @@ computation step by step, and S10.7 what each count of the Results requires.
 ### Life-history and structural models
 
 To ask whether a composition feature follows lifespan or the slow life history it belongs to, we fixed 43
-composition features before any of these models was run: the GC content, GC skew and AT skew of the protein-coding
+composition features before any of these models was run: the GC content, GC balance and AT balance of the protein-coding
 genes and of the whole record; the four bases at fourfold-degenerate sites, in gene sense; the share of
 pyrimidine-ending codons that end in C; and the 32 codons ending in U or C, each as a percentage of all
 complete codons. Each feature, standardised, was regressed on the dated tree with Pagel's λ (49) estimated by
@@ -380,16 +380,16 @@ beside its classes.
 
 We then asked which features survive all three controls. Codon usage makes up most of the survivors because
 it makes up most of the tests (54% of the 547, 54% of the tests), so the share of each family that survives
-is the better guide. In all species, 27 of the 40 skew correlations and 11 of the 16 GC-content
+is the better guide. In all species, 27 of the 40 GC/AT-balance correlations and 11 of the 16 GC-content
 correlations that pass the false discovery rate survive, against 138 of 744 for codons. Across all species,
-the AT skew of the whole genome correlates with lifespan at r = 0.31 (0.22 with body mass controlled, 0.11
+the AT balance of the whole genome correlates with lifespan at r = 0.31 (0.22 with body mass controlled, 0.11
 on contrasts, p < 10⁻⁶).
 
 These survivors pass the controls one at a time, so we asked whether they also survive two stricter tests:
 contrasts with body mass partialled out, which control for ancestry and size together, and a sign-flip p
 value, which does not assume that the contrasts are normal with equal variance (Materials and methods).
-Across all species the skews do not. Of the 27 skew correlations, 5 keep a sign-flip p < 0.05 and 1 keeps
-its sign and significance with mass partialled out of the contrasts; the whole-genome AT skew falls to
+Across all species the GC/AT balance does not. Of its 27 correlations, 5 keep a sign-flip p < 0.05 and 1 keeps
+its sign and significance with mass partialled out of the contrasts; the whole-genome AT balance falls to
 r = 0.04 (p = 0.10) there. The contrast test is also unreliable in the all-species scope: with
 lifespan shuffled across its species, it rejects 29% of the tests at p < 0.05, against 9% in mammals and 22% to 33% in the fish scopes. GC
 content holds up better: of its 11 correlations, 9 keep a sign-flip p < 0.05 and 6 keep their sign and significance with mass partialled out of the contrasts. In mammals the survivors hold under both: whole-genome GC
@@ -398,7 +398,7 @@ content keeps a sign-flip p = 0.0001 and, with mass partialled out of the contra
 which falls with lifespan. The next subsection asks
 what this mammalian signal follows.
 
-We also looked at the codons whose usage the skews shape. In the total protein-coding
+We also looked at the codons whose usage the GC/AT balance shapes. In the total protein-coding
 sequence, the 8 codons ending in U that pass all three controls are all used less in longer-lived species,
 and the 8 ending in C all more (Figure 2). Seven of the eight pairs code the same amino acid (threonine,
 isoleucine, aspartate, tyrosine, serine, cysteine and phenylalanine), so the shift is synonymous. On
@@ -728,7 +728,7 @@ the result agrees with the earlier finding that in mammals cysteine shows no det
 and threonine follows nucleotide composition (34). Divergence of the mitochondrial residues at the contacts with the
 nuclear subunits of cytochrome c oxidase, measured against each class's most common residue, follows lifespan in no class. This divergence does not measure compatibility with a species' own nuclear partners, which compensating changes could preserve.
 
-The correlations that pass on contrasts are fewer and weaker. Across all species, the strand skews pass the three controls one at a time but 26 of the 27 do not survive ancestry and body
+The correlations that pass on contrasts are fewer and weaker. Across all species, the GC/AT-balance correlations pass the three controls one at a time but 26 of the 27 do not survive ancestry and body
 mass controlled together. The codon usage they shape survives them only in part (6 of 16 codons), and the all-species contrast test rejects too often under shuffled lifespans to be
 read on its own. What survives both in mammals is base composition, and its signal is shared by lifespan and the other traits
 of the slow life history. That agrees with the earlier model of mammalian lifespan, in which mtDNA GC
@@ -755,12 +755,12 @@ established relationships within lineages, and the partial correlation reverses 
 correlation across species in 66 of them. Fourth, the tree is partly interpolated: 184 of the 2,229 node
 ages are placed midway between their parent and their oldest child rather than taken from TimeTree.
 
-Strand orientation limits the skews in particular. They are reported on the strand deposited in RefSeq,
+Strand orientation limits the GC/AT balance in particular. They are reported on the strand deposited in RefSeq,
 which for most vertebrate records is the light strand, but RefSeq does not fix which strand is deposited,
 and outside the vertebrates the convention is not uniform. The all-species scope includes 89 of the 104
-non-chordates (the quality filter leaves out the others). Its skew correlations, the AT skew of the whole genome among them, therefore combine records whose
-deposited strand need not correspond to the vertebrates'. Users of the release-1 skews also need to know
-that their sign has changed.
+non-chordates (the quality filter leaves out the others). Its GC/AT-balance correlations, the AT balance of the whole genome among them, therefore combine records whose
+deposited strand need not correspond to the vertebrates'. Users of release 1's GC and AT skews, the same
+quantities, also need to know that their sign has changed.
 
 The records themselves limit the repeat and motif results, and this limit cannot be removed from the records
 as they stand: repeat and motif counts depend on how a genome was sequenced. Long-read assemblies of

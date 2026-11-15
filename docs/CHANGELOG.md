@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript says GC/AT balance, not skews** (2026-11-15, the maintainer): round v0.3 and its supplement
+  call (G−C)/(G+C) and (A−T)/(A+T) the GC balance and the AT balance, defined once as "often called the GC and AT
+  skews"; the supplement notes that the data files, the site and release 1 keep the name skew. The site and the
+  data files are unchanged.
+
 - **The v0.3 manuscript no longer talks about EURING** (2026-11-15). Its Materials and methods said birds take
   EURING then USGS values and that EURING could not be retrieved, and an author note repeated it; no EURING value
   is used, so the text now says the 26 birds take USGS ringing records, and the note is gone from `mitoage2.md`
