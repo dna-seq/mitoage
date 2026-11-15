@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 pins the build with the EURING birds** (2026-11-15): Data availability and reference 40 name Hugging Face
+  revision f75bdc9 (its data files match `public/data/` at 725da08 byte for byte) and the build commit 725da08, in
+  place of c525adb and 84ba6f7, which describe the build before EURING.
+
 - **Round v0.3 reports the peptides encoded inside mtDNA and lists every download** (2026-11-15). A Results
   subsection, "Peptides encoded inside mtDNA", gives H4's pilot (humanin, SHLP6, MOTS-c, MTALTND4: frames open in
   21% to 89% of mammals, none kept more widely than random open windows of its gene), with references 54 to 57

@@ -40,6 +40,11 @@ per line, so two builds can be compared with `diff`; on the build before EURING 
 text then printed. `--s1` writes Supplementary Table S1. Figures 1 and 2 were redrawn and Figures 3 to 5 recaptured
 from that build.
 
+Data availability and reference 40 pin the build with the EURING list as Hugging Face revision
+f75bdc9b812d7845d2ccb24a49643d88d00d57b5 (2026-11-15): its eight data files have the same SHA-256 as `public/data/` at
+725da08, and a site build of main after it reproduces Table 3 (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550 / 393, and 535
+by the sign-flip test). The correlation code is unchanged between 725da08 and that build.
+
 **Still from the build before EURING (2,335 species), until rerun:**
 - the worked analyses run in mitoage-pipelines (Table 4 and the generation-time models, the amino-acid example,
   the site screen, repeats and motifs, the rate test, H11 and H12): their mammal results cannot change, since no

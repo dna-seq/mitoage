@@ -4,7 +4,7 @@
 (the fourth journal selection; a presubmission inquiry asks the editors whether they take it outside the
 Database issue), then Molecular Biology and Evolution (Resources). The sections follow NAR's order:
 Introduction, Materials and methods, Results, Discussion. Every number
-is from MitoAge build 2 (2026-11-13) as committed in `dna-seq/mitoage` at 84ba6f7 (the correlations as rebuilt at 1dda8be, with the extended features and 32 scopes), from its report
+is from MitoAge build 2 with the EURING bird records, as committed in `dna-seq/mitoage` at 725da08 (Hugging Face revision f75bdc9; the correlations from the site build of that commit), from its report
 (`docs/BUILD2_REPORT.md`) or from the correlation table its site build writes
 (`dist/data/correlations.parquet`); `docs/manuscript/NOTES.md` gives the source of each number and the
 questions only the authors can answer. Lines starting `> AUTHOR:` are notes to the authors, not
@@ -829,10 +829,9 @@ supervision.
 ## Data availability
 
 The website is at [www.mitoage.info](https://www.mitoage.info), with the downloads under `/data/`; until that
-address, which still serves the 2016 site, moves to MitoAge 2, the site is at https://just-dna.life/mitoage/. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
-c525adbff8c12b19981fdada7f1615c2559b7140. The site and its
+address, which still serves the 2016 site, moves to MitoAge 2, the site is at https://just-dna.life/mitoage/. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2, with the EURING bird records, is its revision f75bdc9b812d7845d2ccb24a49643d88d00d57b5. The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
-analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their code under the MIT licence; the data in them keep the terms given below. Build 2 was made by `dna-seq/mitoage` at commit 84ba6f787ebe89655206aa26e8caa65d8da658c1, and its correlation table by the site build at commit 1dda8be7548b7c581a374929f8f2f4a7d901e478. The build and
+analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their code under the MIT licence; the data in them keep the terms given below. Build 2 was made by `dna-seq/mitoage` at commit 725da087120f535cb87bc5fde189c7c5f35fe436, and its correlation table by the site build of the same commit. The build and
 the datasets of the analyses (snapshots of build 2's sources, the nuclear partners, ESM-2 embeddings, the
 alignments by other aligners, predicted structures and the result tables) are gathered in the Hugging Face
 collection MitoAge, https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5 (44).
@@ -922,7 +921,7 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
     https://www.pwrc.usgs.gov/BBL/Bander_Portal/login/Longevity.php [data set]
 39. Open Tree of Life. Open Tree of Life synthetic tree, version opentree16.1.
     https://files.opentreeoflife.org/synthesis/opentree16.1/ [data set]
-40. MitoAge build 2. Hugging Face dataset `longevity-genie/mitoage`, revision c525adbff8c12b19981fdada7f1615c2559b7140.
+40. MitoAge build 2. Hugging Face dataset `longevity-genie/mitoage`, revision f75bdc9b812d7845d2ccb24a49643d88d00d57b5.
     https://huggingface.co/datasets/longevity-genie/mitoage [data set]
 41. dna-seq/mitoage: the MitoAge 2 site and data pipeline. https://github.com/dna-seq/mitoage [software]
 42. dna-seq/mitoage-pipelines: the independent reproduction of MitoAge build 2 and its analyses.
