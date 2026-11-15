@@ -1,4 +1,4 @@
-/** /compare/values/{region}.json: every species' base counts, skews and length for one region (see ~/lib/compare/wire). */
+/** /compare/values/{region}.json: every species' base counts, GC/AT balance and length for one region (see ~/lib/compare/wire). */
 import type { APIRoute, GetStaticPaths } from "astro";
 import type { Region } from "~/data";
 import { regionValues } from "~/lib/compare/build";

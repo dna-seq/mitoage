@@ -211,8 +211,8 @@ export function speciesColumns(): Column[] {
     { key: "g", label: "G", format: "int", title: "Guanine (bases)", hideOnMobile: true },
     { key: "c", label: "C", format: "int", title: "Cytosine (bases)", hideOnMobile: true },
     { key: "gc", label: "GC %", format: "pct2" },
-    { key: "gcSkew", label: "GC skew", format: "signed3", title: "(G − C) / (G + C) on the L strand" },
-    { key: "atSkew", label: "AT skew", format: "signed3", title: "(A − T) / (A + T) on the L strand" },
+    { key: "gcSkew", label: "GC balance", format: "signed3", title: "(G − C) / (G + C) on the L strand" },
+    { key: "atSkew", label: "AT balance", format: "signed3", title: "(A − T) / (A + T) on the L strand" },
     { key: "lifespan", label: "Max lifespan", format: "lifespan", title: "Maximum recorded lifespan (AnAge)" },
   ];
 }

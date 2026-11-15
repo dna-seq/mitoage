@@ -27,8 +27,8 @@ export function buildFeatureDefs(): FeatureDef[] {
     const l = REGION_LABELS[r];
     defs.push({ key: `size:${r}`, label: `Length of ${l} (bp)`, region: r, group: "size" });
     defs.push({ key: `gc:${r}`, label: `GC% of ${l}`, region: r, group: "composition" });
-    defs.push({ key: `gcSkew:${r}`, label: `GC skew of ${l}`, region: r, group: "skew" });
-    defs.push({ key: `atSkew:${r}`, label: `AT skew of ${l}`, region: r, group: "skew" });
+    defs.push({ key: `gcSkew:${r}`, label: `GC balance of ${l}`, region: r, group: "skew" });
+    defs.push({ key: `atSkew:${r}`, label: `AT balance of ${l}`, region: r, group: "skew" });
   }
   defs.push({ key: "noncoding:total_mtDNA", label: "Non-coding length of mtDNA (bp)", region: "total_mtDNA", group: "size" });
   for (const r of ["total_pc", ...PROTEIN_GENES] as const) {

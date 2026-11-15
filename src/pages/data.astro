@@ -42,7 +42,7 @@ const DESCRIPTIONS: [RegExp, string][] = [
   [/^alignments\/README\.md$/, "How the alignments were made and how to read the files."],
   [/genome.?features|annotation/i, "Coordinates and strand of every annotated gene, rRNA, tRNA and D-loop."],
   [/species/i, "One row per species: taxonomy, maximum lifespan, life-history traits, genome size and GC content."],
-  [/region/i, "Base composition (A, C, G, T, GC%, skews, length) of every gene and region in every species."],
+  [/region/i, "Base composition (A, C, G, T, GC%, GC/AT balance, length) of every gene and region in every species."],
   [/codon/i, "Codon counts per protein-coding gene and species, with amino-acid totals."],
   [/correlation/i, "Correlations of each mtDNA feature with lifespan and other traits, per taxonomic scope, with q-values."],
   [/feature.?values|features?\b/i, "Every numeric mtDNA feature for every species, wide format, ready for plotting."],

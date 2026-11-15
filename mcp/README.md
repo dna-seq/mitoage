@@ -60,7 +60,7 @@ variables. It never quietly falls back to the newest file.
 | `species_profile` | One species: its record, every region of its mitogenome, its structural features, and every lifespan observation with its source |
 | `correlation` | One feature against one trait: r, rho, p, q, partial r on body mass, r on contrasts, and the verdict |
 | `rank_features` | The features of a trait and scope, strongest first, each with its controls; `only_surviving` keeps those that pass the FDR and hold on contrasts with the same sign |
-| `region_summary` | Counts, means and ranges of GC %, the skews and the length across the species of a scope |
+| `region_summary` | Counts, means and ranges of GC %, the GC and AT balance and the length across the species of a scope |
 | `query` | One read-only SQL statement against the build |
 
 A scope is `all`, or a rank and a name as the build spells it: `class:Mammalia`, `order:Primates`,

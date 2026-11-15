@@ -4,7 +4,7 @@
  *   /compare/taxonomy.json          every species with its class, order, family, genus and lifespan
  *   /compare/stats/{group}.json     summary of every region and parameter in one group
  *   /compare/codons/{group}.json    codon and amino-acid frequency summaries in one group
- *   /compare/values/{region}.json   every species' base counts, skews and length for one region
+ *   /compare/values/{region}.json   every species' base counts, GC/AT balance and length for one region
  *   /compare/values/{region}.csv    the same as a CSV download
  */
 import type { Rank, Region } from "~/data/schema";

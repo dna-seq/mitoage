@@ -63,8 +63,8 @@ const KIND_LETTER: Record<VarGroup, string> = {
 const MEASURES: { m: Measure; label: string }[] = [
   { m: "size", label: "Length" },
   { m: "gc", label: "GC %" },
-  { m: "gcSkew", label: "GC skew" },
-  { m: "atSkew", label: "AT skew" },
+  { m: "gcSkew", label: "GC balance" },
+  { m: "atSkew", label: "AT balance" },
 ];
 const RESULT_LIMIT = 60;
 
@@ -369,7 +369,7 @@ export default function VariablePicker(props: Props) {
                     </Show>
 
                     <Show when={tab() === "composition"}>
-                      <p class="vp-hint">Length, GC content and strand skews of each region, from the RefSeq record.</p>
+                      <p class="vp-hint">Length, GC content and GC/AT balance of each region, from the RefSeq record.</p>
                       <div class="vp-matrix" role="group" aria-label="Region and measure">
                         <For each={REGION_ORDER}>
                           {(r) => (

@@ -268,7 +268,7 @@ export function rankFeatures(
 
 /**
  * Counts and averages of the published `region_stats` rows for a scope: n, mean and sample standard
- * deviation of GC %, the skews and the length. These are computed here, from published values; the
+ * deviation of GC %, the GC and AT balance and the length. These are computed here, from published values; the
  * answer says so, and a correlation with lifespan is never computed — that is what `correlation` is.
  */
 export function regionSummary(db: DatabaseSync, args: { scope?: string | undefined; region?: string | undefined }): { computed: string; scope: string; regions: Row[] } {

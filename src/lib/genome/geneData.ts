@@ -123,8 +123,8 @@ export const featureLifespanPoints = (featureKey: string): ScatterPoint[] => {
 export const MEASURES = [
   { prefix: "gc", label: "GC%", long: "GC content" },
   { prefix: "size", label: "Length", long: "Length" },
-  { prefix: "gcSkew", label: "GC skew", long: "GC skew" },
-  { prefix: "atSkew", label: "AT skew", long: "AT skew" },
+  { prefix: "gcSkew", label: "GC balance", long: "GC balance" },
+  { prefix: "atSkew", label: "AT balance", long: "AT balance" },
 ] as const;
 
 export interface MeasureCorrelations {

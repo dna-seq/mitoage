@@ -1,5 +1,5 @@
 /**
- * Every species' values for one region (region page): length, base counts, GC %, skews and
+ * Every species' values for one region (region page): length, base counts, GC %, GC/AT balance and
  * lifespan, searchable by name or taxon (?q=), filterable by class, sortable, with a CSV of the
  * filtered rows, and above the table a scatter of the same rows with selectable axes. Loads
  * /compare/taxonomy.json and /compare/values/{region}.json when visible.

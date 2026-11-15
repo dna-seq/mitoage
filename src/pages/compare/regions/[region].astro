@@ -47,7 +47,7 @@ const hasGenePage = (GENE_PAGE_REGIONS as readonly string[]).includes(region);
 const n = values.species.length;
 
 const title = `${label}: mitochondrial DNA compared`;
-const description = `${info.name} in ${fmtInt(n)} animal species: length, base composition, GC and AT skew summarised (n, mean, SD, min, median, max), by class, order and family, and every species' values with a CSV download.`;
+const description = `${info.name} in ${fmtInt(n)} animal species: length, base composition, GC and AT balance summarised (n, mean, SD, min, median, max), by class, order and family, and every species' values with a CSV download.`;
 ---
 
 <BaseLayout
@@ -63,7 +63,7 @@ const description = `${info.name} in ${fmtInt(n)} animal species: length, base c
     <p class="hero__eyebrow">{info.kind} · mtDNA statistics</p>
     <h1 class="hero__title">{label}</h1>
     <p class="hero__lede">
-      {info.name === label ? "" : `${info.name}. `}Length, base composition and strand skews in {fmtInt(n)} species, by
+      {info.name === label ? "" : `${info.name}. `}Length, base composition and GC/AT balance in {fmtInt(n)} species, by
       taxon and species by species.
     </p>
   </Hero>

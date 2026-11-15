@@ -105,8 +105,8 @@ const plotHref = href(
 
 const title = isAll ? "Compare mitochondrial DNA" : `${group.name}: mitochondrial DNA compared`;
 const description = isAll
-  ? `Comparative tables of the mitochondrial genomes of ${fmtInt(group.members.length)} animal species: base composition, GC and AT skew, length and codon usage of every region, with n, mean, SD, min, median and max, by class, order and family.`
-  : `Mitochondrial DNA of the ${fmtInt(group.members.length)} species of the ${group.rank} ${group.name}${friendly && friendly !== group.name ? ` (${friendly.toLowerCase()})` : ""}: base composition, skews, length and codon usage of every region, compared across its ${many}.`;
+  ? `Comparative tables of the mitochondrial genomes of ${fmtInt(group.members.length)} animal species: base composition, GC and AT balance, length and codon usage of every region, with n, mean, SD, min, median and max, by class, order and family.`
+  : `Mitochondrial DNA of the ${fmtInt(group.members.length)} species of the ${group.rank} ${group.name}${friendly && friendly !== group.name ? ` (${friendly.toLowerCase()})` : ""}: base composition, GC/AT balance, length and codon usage of every region, compared across its ${many}.`;
 const ld = breadcrumbLd(Astro.site, [
   { name: "Compare", path: "/compare/" },
   ...(isAll ? [] : [{ name: group.name, path: `/compare/${group.rank}/${group.slug}/` }]),
@@ -123,7 +123,7 @@ const ld = breadcrumbLd(Astro.site, [
       {
         isAll ? (
           <>
-            Base composition, strand skew, length and codon usage of every region of the mitochondrial genome across{" "}
+            Base composition, GC/AT balance, length and codon usage of every region of the mitochondrial genome across{" "}
             {fmtInt(group.members.length)} species, and how classes, orders and families differ.
           </>
         ) : (
@@ -198,7 +198,7 @@ const ld = breadcrumbLd(Astro.site, [
         <Fragment slot="footer">
           <div class="cluster" style="--cluster-gap: var(--space-2)">
             {!isAll && group.node && <Button href={taxonUrl(group.node.rank, group.node.slug)} variant="soft" size="sm" iconEnd="arrowRight">{group.name} taxon page</Button>}
-            {canPlot && <Button href={plotHref} variant="soft" size="sm" iconEnd="arrowRight">Plot GC content against GC skew</Button>}
+            {canPlot && <Button href={plotHref} variant="soft" size="sm" iconEnd="arrowRight">Plot GC content against GC balance</Button>}
             <Button href={href("/data/")} variant="soft" size="sm" icon="download">All data downloads</Button>
           </div>
         </Fragment>
@@ -212,7 +212,7 @@ const ld = breadcrumbLd(Astro.site, [
             <b>Chart</b> sets its axis.
           </li>
           <li><b>Distribution</b>: the range (line), mean ± SD (bar), median (tick) and mean (dot). Lengths of the regions are on a log scale.</li>
-          <li><b>Variation</b>: the coefficient of variation, or the SD for the skews, which vary around zero.</li>
+          <li><b>Variation</b>: the coefficient of variation, or the SD for the GC/AT balance, which varies around zero.</li>
           <li>
             <b>Lifespan r</b>: r with its 95% confidence interval (Fisher z). <b>Lifespan map</b>: r of every parameter
             in every region at once, bold where the Benjamini–Hochberg q-value over the map is below 0.05.
@@ -222,7 +222,7 @@ const ld = breadcrumbLd(Astro.site, [
       <Card title="What the numbers are" level={2} variant="flat">
         <ul>
           <li><b>Species</b>: species with the region annotated. <b>SD</b> is the sample standard deviation, <b>CV</b> = SD / mean.</li>
-          <li>Base percentages are over A + C + G + T, so GC % + AT % = 100. Skews are on the L strand as deposited in RefSeq: GC skew = (G − C) / (G + C), AT skew = (A − T) / (A + T).</li>
+          <li>Base percentages are over A + C + G + T, so GC % + AT % = 100. The GC/AT balance is on the L strand as deposited in RefSeq: GC balance = (G − C) / (G + C), AT balance = (A − T) / (A + T).</li>
           <li><b>Min</b> and <b>Max</b> name the species with the extreme value.</li>
         </ul>
       </Card>
@@ -234,7 +234,7 @@ const ld = breadcrumbLd(Astro.site, [
           q-values and phylogenetic contrasts.
         </p>
         <p>
-          The original site labelled the base columns with their complements, so its skews have the opposite sign. See
+          The original site labelled the base columns with their complements, so its GC/AT balance has the opposite sign. See
           <a href={href("/about/")}>methods</a>.
         </p>
       </Card>

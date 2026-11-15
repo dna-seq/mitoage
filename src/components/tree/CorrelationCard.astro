@@ -28,7 +28,7 @@ const significant = tested.filter((r) => r.qValue < 0.05).length;
 
 const GROUP: Record<FeatureDef["group"], string> = {
   composition: "Composition",
-  skew: "Strand skew",
+  skew: "GC/AT balance",
   size: "Length",
   codon: "Codon",
   aminoAcid: "Amino acid",

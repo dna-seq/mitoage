@@ -254,3 +254,21 @@ sign-flip count stood only in sentences. The maintainer chose "Add a sign-flip c
   sign-flip version of the 393); recomputing every test as phylogenetic regression with Pagel's lambda on the cluster.
 - **What it costs, and was accepted:** a tenth column in Table 3. In a few small scopes the sign-flip count exceeds
   the t-test one (Primates 11 against 8), since the two p values differ in both directions.
+
+## D14 — The site and the manuscript say GC/AT balance; the data files keep `gc_skew` and `at_skew` (2026-11-15)
+
+The maintainer, on the v0.3 abstract: "usually people do not use skewer as term in mito papers and just use CG ratios
+or something", then "Rename to GC/AT balance" for the manuscript and "Rename them too" for the site and the data.
+Asked how far the rename goes, with the cost of renaming the identifiers named, the maintainer chose "Labels only".
+
+- **Decided:** (G−C)/(G+C) and (A−T)/(A+T) are the GC balance and the AT balance wherever a person reads them: the
+  manuscript and its supplement, the site's labels, columns, chart axes, feature names ("GC balance of ND6") and page
+  text, the README, and the MCP server's tool descriptions. The About page and the supplement say they are often
+  called the GC and AT skew, the name the downloads keep.
+- **Rejected:** renaming the identifiers too (the `gc_skew`/`at_skew` columns, the `gcSkew:` feature keys, the
+  `skew` feature group). That would need a new data build, a new Hugging Face revision uploaded by hand and the
+  manuscript's cited revision changed, mitoage-pipelines changed in step (its reproduction compares the tables by
+  column), an MCP release, and it would break shared plot links that carry the old keys.
+- **What it costs, and was accepted:** the downloads, the CSV exports and the plot URLs still say skew, documented
+  on the About page and in the supplement.
+

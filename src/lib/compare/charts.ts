@@ -36,7 +36,7 @@ export interface Plot {
 
 export const PLOTS: readonly Plot[] = [
   { key: "dist", label: "Distribution", title: "Mean ± SD, median and range of the parameter" },
-  { key: "var", label: "Variation", title: "Coefficient of variation (SD / mean); standard deviation for the skews" },
+  { key: "var", label: "Variation", title: "Coefficient of variation (SD / mean); standard deviation for the GC/AT balance" },
   { key: "r", label: "Lifespan r", title: "Pearson r with log10 maximum lifespan and its 95% confidence interval" },
   { key: "map", label: "Lifespan map", title: "r with log10 maximum lifespan of every parameter in every region" },
 ];
@@ -402,7 +402,7 @@ const paramAxis = (key: ParamKey): ScatterAxis => {
     title: p.unit === "%" ? `${p.label.replace(" %", "")} content, %` : p.unit === "bp" ? "Length, bp" : p.label,
     log: false,
     tick: p.unit === "%" ? (v) => fmtNum(v, 1) : p.unit === "bp" ? fmtCompact : (v) => fmtSignedTick(v, 2),
-    // Named, so the two values of a tooltip can be told apart: "GC 41.82%", "GC skew −0.214".
+    // Named, so the two values of a tooltip can be told apart: "GC 41.82%", "GC balance −0.214".
     value:
       p.unit === "%"
         ? (v) => `${p.label.replace(" %", "")} ${fmtPct(v, 2)}`

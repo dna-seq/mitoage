@@ -39,7 +39,7 @@ const withTraits = species.filter((s) => s.traits.adultWeightG !== null || s.tra
 const title = view === "genome" ? "All species" : "Life history of every species";
 const description =
   view === "genome"
-    ? `All ${fmtInt(species.length)} species in MitoAge with their mitochondrial genome: length, GC content, GC and AT skew, non-coding length and maximum lifespan. Sort, filter, download and open any species.`
+    ? `All ${fmtInt(species.length)} species in MitoAge with their mitochondrial genome: length, GC content, GC and AT balance, non-coding length and maximum lifespan. Sort, filter, download and open any species.`
     : `Maximum lifespan, body mass, maturity, gestation, litter size, growth and metabolic rate from AnAge for the ${fmtInt(species.length)} species in MitoAge. Sort, filter and download.`;
 ---
 

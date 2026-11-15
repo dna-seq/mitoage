@@ -1,6 +1,6 @@
 /**
  * Everything the plot explorer can put on an axis: 11 life-history traits and every mtDNA feature
- * of the pipeline (size, GC%, skews per region; codon and amino-acid frequencies per protein-coding
+ * of the pipeline (size, GC%, GC/AT balance per region; codon and amino-acid frequencies per protein-coding
  * region; and the extended features: fourfold-site composition, protein hydropathy, repeats, non-B
  * motifs, the major arc, the control-region count and the deletion contact zones). Labels, units,
  * default log scale and formatters live here.
@@ -365,13 +365,13 @@ const feature = (
       return {
         ...base,
         key: `${measure}:${region}`,
-        label: `${gc ? "GC" : "AT"} skew of ${rp}`,
-        short: `${rs} ${gc ? "GC" : "AT"} skew`,
+        label: `${gc ? "GC" : "AT"} balance of ${rp}`,
+        short: `${rs} ${gc ? "GC" : "AT"} balance`,
         unit: "",
         group: "composition",
         tick: (v) => fmtSignedTick(v, 2),
         value: (v) => fmtSigned(v, 3),
-        search: `${gc ? "gc skew gcskew g-c" : "at skew atskew a-t"} strand asymmetry ${regionWords(region)}`.toLowerCase(),
+        search: `${gc ? "gc balance gc skew gcskew g-c" : "at balance at skew atskew a-t"} strand asymmetry ${regionWords(region)}`.toLowerCase(),
       };
     }
     case "codon": {

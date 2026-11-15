@@ -76,7 +76,7 @@ const suggestions: Suggestion[] = PAIRS.flatMap((p) => {
   ];
 });
 
-const description = `Compare the mitochondrial genomes of up to six of ${fmtInt(speciesCount)} animal species side by side: genome size, base composition and skews, gene-by-gene GC content and length, codon usage, and their life history.`;
+const description = `Compare the mitochondrial genomes of up to six of ${fmtInt(speciesCount)} animal species side by side: genome size, base composition and GC/AT balance, gene-by-gene GC content and length, codon usage, and their life history.`;
 ---
 
 <BaseLayout
@@ -106,14 +106,14 @@ const description = `Compare the mitochondrial genomes of up to six of ${fmtInt(
       <div class="grid-auto" style="--grid-min: 18rem; --grid-gap: var(--space-5)">
         <Card title="Genome" level={3}>
           <p>
-            Genome size, GC content, strand skews and the lengths of the non-coding region, the D-loop, the rRNA and
+            Genome size, GC content, GC/AT balance and the lengths of the non-coding region, the D-loop, the rRNA and
             tRNA genes, with the taxonomy of each species.
           </p>
         </Card>
         <Card title="Composition and genes" level={3}>
           <p>
             A/T/G/C bars for each region of the mitochondrial genome, and a gene-by-gene view of GC content, length and
-            skews for the 13 protein-coding genes, both rRNAs and the D-loop. Every species keeps one colour and one
+            GC/AT balance for the 13 protein-coding genes, both rRNAs and the D-loop. Every species keeps one colour and one
             marker shape throughout.
           </p>
         </Card>

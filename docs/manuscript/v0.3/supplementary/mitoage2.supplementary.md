@@ -424,8 +424,8 @@ aggregate is the union of the positions of its features, so a base shared by two
 counted once. A single gene is its first copy in genome order when a record annotates it twice. The
 D-loop is the record's D-loop features; a feature annotated as a control region (a misc_feature; pseudo, partial and repeat features excluded) is used only when the record has no D-loop feature. Counts are on the
 deposited strand (S5). GC content is 100 (G+C)/(A+C+G+T) over unambiguous bases; the GC balance is
-(G−C)/(G+C) and the AT balance (A−T)/(A+T), undefined when the denominator is zero (the GC and AT skew of the
-data files, the site and release 1). The non-coding length is
+(G−C)/(G+C) and the AT balance (A−T)/(A+T), undefined when the denominator is zero (columns `gc_skew` and
+`at_skew` of the data files, and the GC and AT skew of release 1). The non-coding length is
 the number of positions covered by no protein-coding, rRNA or tRNA gene, so the D-loop counts as non-coding.
 
 <!-- src: pipeline/steps/regions.ts:30-70; pipeline/lib/stats.ts:11-30; D-loop rule as stated in

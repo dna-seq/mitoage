@@ -3,8 +3,8 @@
  * the Compare section. No data imports: safe for islands.
  *
  * Base percentages are over unambiguous bases (A + C + G + T), like GC % in the pipeline, so
- * GC % + AT % = 100. Skews are on the L strand as deposited in RefSeq: GC skew = (G − C) / (G + C),
- * AT skew = (A − T) / (A + T).
+ * GC % + AT % = 100. The GC/AT balance is on the L strand as deposited in RefSeq: GC balance = (G − C) / (G + C),
+ * AT balance = (A − T) / (A + T).
  */
 import { AGGREGATE_REGIONS, PROTEIN_GENES, type Rank, type Region } from "~/data/schema";
 import { fmtFixed, fmtInt, fmtSigned } from "~/lib/format";
@@ -16,12 +16,12 @@ export type ParamKey = "gc" | "at" | "a" | "t" | "g" | "c" | "gcSkew" | "atSkew"
 
 export interface Param {
   key: ParamKey;
-  /** Button and column label: "GC %", "GC skew", "Length". */
+  /** Button and column label: "GC %", "GC balance", "Length". */
   label: string;
-  /** Sentence label: "GC content", "GC skew", "length". */
+  /** Sentence label: "GC content", "GC balance", "length". */
   noun: string;
   unit: "%" | "bp" | "";
-  /** Coefficient of variation is meaningful only for ratio-scale values (not skews around 0). */
+  /** Coefficient of variation is meaningful only for ratio-scale values (not the GC/AT balance around 0). */
   cv: boolean;
   /** Decimals of the mean, SD, min, median and max. */
   digits: number;
@@ -36,8 +36,8 @@ export const PARAMS: readonly Param[] = [
   { key: "t", label: "T %", noun: "thymine content", unit: "%", cv: true, digits: 2, title: "T / (A + C + G + T)" },
   { key: "g", label: "G %", noun: "guanine content", unit: "%", cv: true, digits: 2, title: "G / (A + C + G + T)" },
   { key: "c", label: "C %", noun: "cytosine content", unit: "%", cv: true, digits: 2, title: "C / (A + C + G + T)" },
-  { key: "gcSkew", label: "GC skew", noun: "GC skew", unit: "", cv: false, digits: 3, title: "(G − C) / (G + C) on the L strand" },
-  { key: "atSkew", label: "AT skew", noun: "AT skew", unit: "", cv: false, digits: 3, title: "(A − T) / (A + T) on the L strand" },
+  { key: "gcSkew", label: "GC balance", noun: "GC balance", unit: "", cv: false, digits: 3, title: "(G − C) / (G + C) on the L strand" },
+  { key: "atSkew", label: "AT balance", noun: "AT balance", unit: "", cv: false, digits: 3, title: "(A − T) / (A + T) on the L strand" },
   { key: "length", label: "Length", noun: "length", unit: "bp", cv: true, digits: 0, title: "Length in base pairs" },
 ];
 

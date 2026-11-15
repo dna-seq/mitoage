@@ -97,8 +97,8 @@ const LIFE_METRICS: Metric[] = [
 const GENOME_METRICS: Metric[] = [
   { key: "size", label: "mtDNA size", get: (d) => d.species.mtdnaSizeBp, fmt: fmtBp, bar: true },
   { key: "gc", label: "GC content", get: (d) => d.species.gcPercent, fmt: (v) => fmtPct(v, 2), bar: true },
-  { key: "gcSkew", label: "GC skew", get: (d) => region(d, "total_mtDNA")?.gcSkew ?? null, fmt: (v) => fmtSigned(v, 3) },
-  { key: "atSkew", label: "AT skew", get: (d) => region(d, "total_mtDNA")?.atSkew ?? null, fmt: (v) => fmtSigned(v, 3) },
+  { key: "gcSkew", label: "GC balance", get: (d) => region(d, "total_mtDNA")?.gcSkew ?? null, fmt: (v) => fmtSigned(v, 3) },
+  { key: "atSkew", label: "AT balance", get: (d) => region(d, "total_mtDNA")?.atSkew ?? null, fmt: (v) => fmtSigned(v, 3) },
   { key: "noncoding", label: "Non-coding DNA", get: (d) => d.species.nonCodingBp, fmt: fmtBp, bar: true },
   { key: "dloop", label: "D-loop", get: lengthOf("D_Loop"), fmt: fmtBp, bar: true },
   { key: "pc", label: "Protein-coding genes", get: lengthOf("total_pc"), fmt: fmtBp, bar: true },
@@ -114,8 +114,8 @@ type GeneMetric = "gc" | "length" | "gcSkew" | "atSkew";
 const GENE_METRICS: { k: GeneMetric; label: string; axis: string }[] = [
   { k: "gc", label: "GC %", axis: "GC content, %" },
   { k: "length", label: "Length", axis: "Length, bp" },
-  { k: "gcSkew", label: "GC skew", axis: "GC skew (G − C) / (G + C)" },
-  { k: "atSkew", label: "AT skew", axis: "AT skew (A − T) / (A + T)" },
+  { k: "gcSkew", label: "GC balance", axis: "GC balance (G − C) / (G + C)" },
+  { k: "atSkew", label: "AT balance", axis: "AT balance (A − T) / (A + T)" },
 ];
 
 let indexPromise: Promise<CompareIndex> | null = null;

@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **The site says GC/AT balance, not skew** (2026-11-15, D14): labels, table columns, chart axes, feature names
+  ("GC balance of ND6"), page text, the README and the MCP server's tool descriptions call (G−C)/(G+C) and
+  (A−T)/(A+T) the GC balance and the AT balance; the About page notes the usual name, skew. The data files, the CSV
+  exports and the plot URLs keep `gc_skew`, `at_skew` and `gcSkew:` as identifiers, and the plot explorer's search
+  still finds "skew". The supplement names the columns instead of saying the site calls it skew.
+
 - **The manuscript says GC/AT balance, not skews** (2026-11-15, the maintainer): round v0.3 and its supplement
   call (G−C)/(G+C) and (A−T)/(A+T) the GC balance and the AT balance, defined once as "often called the GC and AT
   skews"; the supplement notes that the data files, the site and release 1 keep the name skew. The site and the

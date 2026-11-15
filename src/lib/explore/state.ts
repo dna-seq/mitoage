@@ -15,7 +15,7 @@ export interface ExploreState {
   fit: boolean;
 }
 
-/** mtDNA first: GC content against GC skew of the whole genome. Lifespan is one click away. */
+/** mtDNA first: GC content against GC balance of the whole genome. Lifespan is one click away. */
 export const DEFAULT_X = "gc:total_mtDNA";
 export const DEFAULT_Y = "gcSkew:total_mtDNA";
 export const MAX_HIGHLIGHTS = 8;

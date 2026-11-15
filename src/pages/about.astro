@@ -9,7 +9,7 @@ import { CITATION, CITATION_TEXT } from "~/lib/site";
 
 const info = getBuildInfo();
 const description =
-  "How MitoAge is built: data sources, how base composition, skews, codon usage and correlations with lifespan are computed, known data issues, and how to cite.";
+  "How MitoAge is built: data sources, how base composition, GC/AT balance, codon usage and correlations with lifespan are computed, known data issues, and how to cite.";
 ---
 
 <BaseLayout title="About, methods and sources" description={description}>
@@ -31,7 +31,7 @@ const description =
         MitoAge is a database for comparative analysis of mitochondrial DNA (mtDNA), with a special focus on animal
         longevity. For each of {fmtInt(info.speciesCount)} species it combines the complete mitochondrial genome from
         NCBI RefSeq with the maximum recorded lifespan and other life-history traits from AnAge, and computes base
-        composition, strand skews and codon usage for the whole genome and for every gene.
+        composition, GC/AT balance and codon usage for the whole genome and for every gene.
       </p>
 
       <h2>How the numbers are computed</h2>
@@ -43,8 +43,9 @@ const description =
         </li>
         <li><strong>GC content</strong> is (G + C) divided by all bases, in percent.</li>
         <li>
-          <strong>GC skew</strong> is (G − C) / (G + C) and <strong>AT skew</strong> is (A − T) / (A + T), both on the
-          L strand.
+          <strong>GC balance</strong> is (G − C) / (G + C) and <strong>AT balance</strong> is (A − T) / (A + T), both on the
+          L strand. They are often called the GC and AT skew, the name the downloads keep for their columns
+          (<code>gc_skew</code>, <code>at_skew</code>).
         </li>
         <li>
           <strong>Codon usage</strong> counts codons of each protein-coding gene in frame. Amino acids are assigned with

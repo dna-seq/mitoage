@@ -146,8 +146,8 @@ const geneColumns: Column[] = [
   { key: "g", label: "G", format: "pct1", hideOnMobile: true },
   { key: "c", label: "C", format: "pct1", hideOnMobile: true },
   { key: "gc", label: "GC", format: "pct2" },
-  { key: "gcSkew", label: "GC skew", format: "signed3", title: "(G − C) / (G + C) on the L strand" },
-  { key: "atSkew", label: "AT skew", format: "signed3", title: "(A − T) / (A + T) on the L strand" },
+  { key: "gcSkew", label: "GC balance", format: "signed3", title: "(G − C) / (G + C) on the L strand" },
+  { key: "atSkew", label: "AT balance", format: "signed3", title: "(A − T) / (A + T) on the L strand" },
 ];
 
 // ---- Codon usage ----
@@ -292,9 +292,9 @@ const tabs = [
           {
             total && (
               <dl class="kv">
-                <dt>GC skew <span class="muted">(G − C) / (G + C)</span></dt>
+                <dt>GC balance <span class="muted">(G − C) / (G + C)</span></dt>
                 <dd>{fmtSigned(total.gcSkew)}</dd>
-                <dt>AT skew <span class="muted">(A − T) / (A + T)</span></dt>
+                <dt>AT balance <span class="muted">(A − T) / (A + T)</span></dt>
                 <dd>{fmtSigned(total.atSkew)}</dd>
               </dl>
             )

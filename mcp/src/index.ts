@@ -151,7 +151,7 @@ const TOOLS: Tool[] = [
   {
     name: "region_summary",
     description:
-      "Counts, means and ranges of GC %, the skews and the length of every region of the mitogenome across the species of a scope, computed from the published rows. These are descriptive only: for a relationship with lifespan use correlation or rank_features, which carry the controls.",
+      "Counts, means and ranges of GC %, the GC and AT balance and the length of every region of the mitogenome across the species of a scope, computed from the published rows. These are descriptive only: for a relationship with lifespan use correlation or rank_features, which carry the controls.",
     inputSchema: {
       type: "object",
       properties: {
