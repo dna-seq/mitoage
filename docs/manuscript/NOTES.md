@@ -245,8 +245,15 @@ scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty 
 IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
-- The decisions of the 2026-11-15 review run are listed in `mitoage2.dashboard.html` (To-do tab): the venue
-  (NAR Database issue, earliest January 2028, against Database (Oxford)), the canonical URL, the contrast
-  test's calibration, strand orientation per record, the licence of MitoAge's own tables, TimeTree's
-  redistribution terms, table order and Figure 4, Zenodo DOIs, the AI-use statement, Funding and the
-  corresponding author's e-mail.
+- The decisions of the 2026-11-15 runs are in `mitoage2.dashboard.html` (To-do tab, 18 decisions; the run that
+  revised the paper has its own dashboard, `mitoage2.revision-run.dashboard.html`; both files stay out of git).
+  The venue comes first: a second journal selection that keeps the results and allows rolling submission
+  recommends a bioRxiv preprint now, then eLife (Tools and Resources), Molecular Biology and Evolution
+  (Resources) or Database (Oxford); NAR's Database issue (January 2028, results cut) is the slow option. The
+  draft still carries NAR's layout.
+- A second, independent panel read the revised paper for eLife: three major and three minor revisions, against
+  five and one this morning (for NAR, so not like for like). What persists needs the authors: the contrast
+  test's calibration (it rejects about 40% of tests in fish scopes, more than the uncontrolled test, which
+  suggests checking the contrast code against an established implementation), strand orientation per record,
+  a second ancestry model, and the Abstract's "independent reproduction", which does not cover the correlations.
+- Figure 3 cannot be printed legibly as one figure (panel A at 2.4 pt): split it or move panels to a supplement.

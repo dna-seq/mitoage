@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **A second journal selection and a second, independent panel on the revised manuscript** (2026-11-15,
+  runs `20261115T001950Z-ea39ab48` and `20261115T054110Z-dac824e9`, not in git). The selection drops NAR's
+  annual Database issue as the first choice (next open issue January 2028, results cut) for a bioRxiv preprint
+  and eLife Tools and Resources, then MBE Resources or Database (Oxford). The panel, three referees and three
+  readers each on Claude and Codex, judged the paper for eLife: three major and three minor revisions against
+  five and one before the revision; the stale figures, the quality-label rule and the out-of-scope objection
+  are gone, and the contrast test's calibration, strand orientation and the reach of the reproduction remain.
+  Its 29 text fixes are proposals only; `docs/manuscript/NOTES.md` lists what waits on the authors.
+
 - **The cluster analyses are reproducible from `dna-seq/mitoage-pipelines`** (2026-11-15, its commit
   f2006a9). The one-off cluster scripts behind H3's Coevol run, H5's residue-level test, H9 and H10 are now
   commands there (`download pdb`, `mitoport contacts|burial|iface-align|iface`, `structure within|fold|msa`,
