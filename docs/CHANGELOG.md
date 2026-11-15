@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The MCP server is pinned to the patched build** (2026-11-15): `mcp/src/dataset.ts` names Hugging Face revision
+  0f4e970 and the SHA-256 of its `mitoage.sqlite`; the server's own download code fetched the file at that revision
+  and accepted its hash, and the parrot's ND6 is in it. npm still serves 0.1.0 until an `mcp-v*` tag releases this.
+
 - **The provenance of Hugging Face revision f75bdc9 is recorded** (2026-11-15, under D9): the build with the EURING
   birds, packaged on haumea from fb54cec (Slurm job 6489879) and uploaded from a session on the maintainer's
   instruction, 78 files checked against the hub. Round v0.3 cites it; the MCP server is still pinned to c525adb.
