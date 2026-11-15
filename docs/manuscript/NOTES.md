@@ -544,6 +544,15 @@ assessed; humanin in reptiles q = 0.0386). References 58 (Robitaille 2026, PMID 
 42559346) were checked by title in PubMed. Table S3's revisions are the Hugging Face `sha` values read after the
 refresh by another session (mitoage-pipelines 126d237, mitoage-nuclear-partners 7deb2e0, mitoage 0f4e970).
 
+The record audit in Database content and S16 (the maintainer: "if RefSeq provided wrong data we should mention it,
+maybe very short in the paper and in details in supplements") reads mitoage-pipelines H13 on build 0f4e970 (job
+6490297, `results/job3-audit/0f4e970/` at b6af4ed): `pairs.tsv` (84 pairs at >= 0.99, 9 across genera, 3 at >= 0.999),
+`nearest.tsv` (Seriolella porosa 0.97527 to Piaractus against 0.869142 in order; Neogobius 0.917873 against 0.844433;
+136 out of order, 4 out of class), `strand.tsv` and `strand_summary.tsv` (2,210 conventional, GC skew negative in 2,209;
+3 reversed, +0.27087 to +0.27971; 7 mixed; 124 unknown), `order_flags.tsv` (72 flags: strand only 34, gene content 22,
+tRNAs only 6, reversed deposit 5, order 5), `code.tsv` (no mismatch; Pelomedusa subrufa 6 + 8 stops). Reference 60
+(Hebert 2003, PMID 12614582) was checked by title in PubMed.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

@@ -268,3 +268,22 @@ estimate, and the question the paper poses (how much of the loss drift causes) i
 How each outcome will be read is fixed in the plan before anything runs. Which count leads is settled (D16: the t test,
 with chance bounds beside every count). PGLS over the whole table runs (D18).
 Open there: whether to rerun the rate test with a codon model.
+
+## RM23 — The records the audit questions
+
+**State:** open; one question to the maintainer (reporting to NCBI) · **Owner:** lead
+
+The record audit (mitoage-pipelines H13, run on build 0f4e970; Supplementary Methods S16 and Table S4 of round
+v0.3) found records that are probably wrong: near-identical records under different genera (*Echis coloratus* and
+*Vipera berus* identical over 11,265 bases; *Tadorna tadorna* a mallard's), a butterfish record that looks like a
+characiform's, three vertebrate records deposited reverse-complemented, and genes left unannotated. The build keeps
+them as RefSeq deposits them. What is left:
+
+- A per-record flag in the build and on the species pages, naming the audit's finding, so a user can leave a record
+  out; nothing is removed by default.
+- The GC/AT balance of the three reversed deposits is of the other strand: compute it on the conventional strand
+  for vertebrate records the audit calls reversed, with a changelog row each.
+- Annotation gaps (CYTB of *Pluvialis fulva*, ND6 of *Phalacrocorax auritus*, both rRNAs of *Crocidura russula*):
+  patch them the way the parrot's ND6 was patched, or leave them stated as missing.
+- Whether to report the candidates to NCBI (RefSeq's record-feedback route) is the maintainer's call; nothing is
+  sent before that.

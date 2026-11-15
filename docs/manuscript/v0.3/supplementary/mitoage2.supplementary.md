@@ -1510,7 +1510,7 @@ repositories only, so far. Supplementary Table S3 lists them.
 | 806 predicted structures of the 13 proteins in 62 mammals (ESMFold2) | Hugging Face `longevity-genie/mitoage-structures` | 8e5cfdc |
 | The contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase (PDB 5Z62), with burial-matched control residues and their pairs, the coupling of each nuclear protein with the mitochondrial ones, and its fits against lifespan | Hugging Face `longevity-genie/mitoage-pipelines`, `output/mitoport/iface/` | 126d237 |
 | The structural against the sequence alignments of the 13 proteins in 62 mammals, and the superposition of the human chains | GitHub `dna-seq/mitoage`, `docs/analyses/cluster-2026-11-15/` | 094aa57 |
-| The audit of every record: strand orientation, gene order, genetic code, near-identical pairs and records nearest to another order or class (H13) | GitHub `dna-seq/mitoage-pipelines`, `results/job3-audit/` | aa97d25 |
+| The audit of every record: strand orientation, gene order, genetic code, near-identical pairs and records nearest to another order or class (H13, S16) | GitHub `dna-seq/mitoage-pipelines`, `results/job3-audit/0f4e970/` | b6af4ed |
 | The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | Hugging Face `longevity-genie/mitoage-pipelines`: `output/longevity/structure_pgls.tsv`, `output/mitoport/partners.tsv`, `output/structure/embed_cox.parquet`; GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 126d237; 7692a55 |
 | The reading frames of the nine peptides encoded inside mtDNA, per species, with their nulls, tree changes and lifespan fits (S12.8, H15) | GitHub `dna-seq/mitoage-pipelines`, `results/job4-peptides/0f4e970/` | 72b3eb2 |
 | The other result tables of the worked analyses (aligner agreement, the column screen, RELAX, rate covariation, co-embedding, composition) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/` | 126d237 |
@@ -1519,8 +1519,81 @@ Lifespan values from FishBase and SeaLifeBase keep their CC BY-NC 4.0 terms in e
 (main text, Data availability).
 
 > AUTHOR: the GitHub-only rows are to move to the Hugging Face dataset `longevity-genie/mitoage-pipelines` when it is
-> next refreshed, together with the runs in progress (the contact maps of complexes I, III and V; the audit rerun on
-> build 0f4e970; the peptides over the whole build); the revisions of those rows change then. The audit row is of
-> build c525adb until the rerun lands. The correlation table
+> next refreshed, together with the contact maps of complexes I, III and V, which were running when this was
+> written; the revisions of those rows change then. The correlation table
 > is computed by the site build and not committed (decision D3): deposit the release's copy (Zenodo) so it has a
 > revision of its own.
+
+## S16. An audit of the records
+
+**What was asked.** Whether the records the build reads are what their names and annotations say: deposited on
+the usual strand, with their genes in their family's order, under the genetic code of their taxon, and not a copy
+of another species' record. Every finding below is a candidate for a person to check, not a verdict; nothing was
+removed from the build because of it, and the analyses of the main text include every record.
+
+**How.** `mitoage audit` (analysis repository, H13; the rules were written and committed before any audit step ran
+on the build). Each species' record is read from RefSeq release 237 as deposited, with its features named by build 2's
+rules; where the build patches an annotation (the parrot's ND6), the audit names the difference rather than taking the
+patch. The build is 0f4e970 (2,344 species; 2,326 records in release 237, 18 retired species without one).
+- *Strand.* The vertebrate convention: 12 protein genes on one strand, ND6 on the other. A record is conventional,
+  reversed (every copy on the other strand), mixed (the genes against the convention are named) or unknown (outside
+  the vertebrates, where the convention is not defined, or with fewer than 7 of the 13 genes annotated).
+- *Gene order.* The 13 protein genes, 2 rRNAs and the tRNAs, signed by strand and taken from COX1 round the circle. A
+  record is flagged when its family has at least three records, all others share one arrangement, and the record's
+  occurs once; each flag says what differs.
+- *Genetic code.* The translation table the record states, against the mitochondrial code NCBI Taxonomy gives its
+  taxon, and the internal stop codons of the 13 genes under each.
+- *Near-identical pairs.* Nucleotide identity over the 13 protein genes (the build's codon alignments, at least 5,000
+  compared bases). Two records of different species within 1% are where one species would be: mitochondrial
+  divergence within an animal species is usually under 1%, and sister species usually differ by more than 2% at COX1
+  (main text reference 60). Possible causes are one animal under two names, a misidentified specimen, a hybrid's or
+  introgressed mitogenome, or a very young pair of species.
+- *Out of place.* Amino-acid identity over the 13 proteins concatenated. A record is out of its order (class) when a
+  record outside it is strictly closer than every record inside it, ranked by the margin.
+
+**Results.** *Strand*: 2,210 conventional, 3 reversed, 7 mixed and 124 unknown (106 outside the vertebrates and 18
+without a record). The GC balance is negative in 2,209 of the 2,210 conventional records (the exception, *Albula
+vulpes* NC_082992.1, is +0.04 with its genes laid out conventionally) and positive (+0.27 to +0.28) in all three
+reversed ones, whose GC/AT balance in the build is therefore of the other strand. *Gene order*: 245 arrangements with
+tRNAs and 74 without; 72 flags are raised, 34 for a difference of strand alone (mostly a single tRNA), 22 for a gene
+annotated in the record but not in its family or the reverse, 6 for tRNAs alone, 5 for a reversed deposit and 5
+for a different order of genes. *Genetic code*: every record states the code
+its taxon is given; one record has internal stops under it. *Near-identical pairs*: 84 pairs of species are within
+1%, 75 of them within a genus; nine pairs cross genera, three of them within 0.1%. No two records have equal whole
+sequences. *Out of place*: 136 records are out of their order and 4 out of their class, but most are not evidence of
+an error. In 86 of the 136 the nearest record is of the same family, and the build names that family's order two
+ways (Perciformes beside Scombriformes, Artiodactyla beside Cetacea, Soricomorpha beside Eulipotyphla); most of the
+rest have margins under 1%. The four out of their class are the coelacanth and the Australian lungfish, nearest to
+sturgeons, and two bivalves nearest to gastropods, all at long distances, as expected where a class is paraphyletic
+or deep (Sarcopterygii beside Actinopterygii). Supplementary Table S4 lists the candidates worth a person's look.
+
+**Supplementary Table S4.** Records the audit questions (build 0f4e970, RefSeq release 237).
+
+| Kind | Record(s) | Evidence | Reading |
+|---|---|---|---|
+| Near-identical, different genera | *Echis coloratus* NC_060592.1, *Vipera berus* NC_036956.1 | 0 differences in 11,265 bases | one specimen or sequence under two names |
+| Near-identical, different genera | *Echis carinatus* NC_060591.1, *Vipera berus* NC_036956.1 | 3 differences in 11,265 bases | as above |
+| Near-identical, different genera | *Tadorna tadorna* NC_024750.1, *Anas platyrhynchos* NC_009684.1 | 5 differences in 11,373 bases; the other shelduck, *T. ferruginea*, is nearest a scaup | the shelduck record is a mallard's |
+| Near-identical, different genera | *Carcharhinus acronotus* NC_024055.1, *Negaprion brevirostris* NC_072260.1 | 19 differences in 11,400 bases | a misidentified specimen, or very close lineages |
+| Near-identical, different genera | *Didelphis marsupialis* NC_057518.1, *Metachirus nudicaudatus* NC_006516.1 | 31 differences in 11,346 bases | as above |
+| Near-identical, different genera | *Arius maculatus* NC_045222.1, *Netuma thalassina* NC_030323.1 | 21 differences in 11,376 bases | as above; ariid genera are unsettled |
+| Near-identical, different genera | *Catostomus rimiculus* NC_066944.1, *Chasmistes brevirostris* NC_066948.1, *Deltistes luxatus* NC_054258.1 | 82 to 101 differences in 11,400 bases (three pairs) | shared or introgressed mitogenomes, or very close lineages |
+| Out of place | *Seriolella porosa* NC_025665.1 (Centrolophidae) | nearest *Piaractus brachypomus* (Characidae) at 0.975 protein identity, against 0.869 within its order | the record looks like a characiform's |
+| Out of place | *Neogobius melanostomus* NC_052757.1 (Gobiidae) | nearest *Sarda sarda* (Scombridae) at 0.918, against 0.844 within its order | possible misidentification or contamination |
+| Reversed deposit | *Dasycercus cristicauda* NC_057634.1; *Pseudocaranx dentex* NC_058961.1; *Pseudoscaphirhynchus hermanni* NC_058992.1 | every gene on the other strand; GC balance +0.27 to +0.28 | deposited reverse-complemented; the build's GC/AT balance of these three is of the other strand |
+| ND6 on the other strand | *Anguis fragilis* NC_012431.1; *Phocoenoides dalli* NC_053753.1 | ND6 alone with the 12 other genes | likely an annotation error |
+| ND1 on the other strand | five *Trematomus*: NC_057674.1, NC_086619.1, NC_048965.1, NC_068275.1, NC_065826.1 | ND1 alone against the convention; GC balance near zero (−0.01 to −0.04) | a real rearrangement or a shared annotation error; cannot tell from the records |
+| Gene unannotated | *Pluvialis fulva* NC_033966.1 (CYTB); *Phalacrocorax auritus* NC_052822.1 (ND6); *Crocidura russula* NC_056768.1 (both rRNAs); *Ostrea edulis* NC_016180.1 (12S rRNA) | the gene is annotated in the rest of the family | an annotation gap; the build has no features for that gene in these records |
+| Gene order | *Galaxiella nigrostriata* NC_008448.1; *Sepioteuthis lessoniana* NC_007894.1; *Rana amurensis* NC_030042.1 | genes in another order than the rest of the family | a real rearrangement or an annotation error |
+| Internal stops | *Pelomedusa subrufa* NC_001947.1 | 6 stops in ND3 and 8 in ND4L under its stated code and the expected one | a frameshift in the record, or a misannotated reading frame |
+
+The whole tables, with every record, are `results/job3-audit/0f4e970/` of the analysis repository (Supplementary
+Table S3).
+
+**Limits.** RefSeq's mitochondrion records are curated copies of submissions to GenBank, ENA and DDBJ, and most of
+these problems will have come with the submission. The audit cannot tell which name of a near-identical pair is wrong,
+nor a real rearrangement from an annotation error; both need the specimen or the original submission. Strand
+orientation is not assessed outside the vertebrates. Many out-of-order calls cannot be read until the build uses one
+set of order names (main text, Table 1 note).
+
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H13; results/job3-audit/0f4e970/ at b6af4ed (Slurm job 6490297) -->

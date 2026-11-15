@@ -315,6 +315,19 @@ retired).*
 > new ones (NCBI); 41 new species have no order. Counts of orders and families are therefore left out of
 > this draft (NOTES.md, Q4).
 
+Some records in RefSeq are probably wrong, and the build carries them as RefSeq deposits them. We compared every
+record with its nearest neighbours in the alignments and with its own annotation (Supplementary Methods S16).
+Nine pairs of records from different genera are within 1% of each other over the 13 protein genes, the
+divergence expected within one species (60), and three are within 0.1%. *Echis coloratus* (NC_060592.1) and *Vipera berus*
+(NC_036956.1) do not differ at any of 11,265 aligned bases, and the record of the shelduck *Tadorna tadorna*
+(NC_024750.1) differs from the mallard's at 5 of 11,373. The record of the butterfish *Seriolella porosa*
+(NC_025665.1) is closest to a South American characin, *Piaractus brachypomus*, at 97.5% protein identity. Three
+vertebrate records are deposited on the strand opposite to the usual one, which reverses the sign of their GC/AT
+balance in the build, and others leave a gene unannotated or annotate ND6 on the wrong strand. The genetic code
+every record states is the one NCBI Taxonomy gives its taxon. Supplementary Table S4 lists every candidate. Which
+name of a pair is wrong, or whether a gene order is a real rearrangement, needs the specimen or the original
+submission, so this build keeps the records and flags nothing; its analyses include them.
+
 ### What changed in the original 922 species
 
 To see how far the sources have moved, we compared every value of the original species, re-derived from
@@ -839,7 +852,9 @@ Strand orientation limits the GC/AT balance in particular. They are reported on 
 which for most vertebrate records is the light strand, but RefSeq does not fix which strand is deposited,
 and outside the vertebrates the convention is not uniform. The all-species scope includes 89 of the 104
 non-chordates (the quality filter leaves out the others). Its GC/AT-balance correlations, the AT balance of the whole genome among them, therefore combine records whose
-deposited strand need not correspond to the vertebrates'. Users of release 1's GC and AT skews, the same
+deposited strand need not correspond to the vertebrates'. Within the vertebrates the deposits were checked record
+by record: the GC balance is negative in 2,209 of the 2,210 records deposited the usual way and positive in the
+three deposited the other way round (Supplementary Methods S16). Users of release 1's GC and AT skews, the same
 quantities, also need to know that their sign has changed.
 
 The records themselves limit the repeat and motif results, and this limit cannot be removed from the records
@@ -861,10 +876,11 @@ only one non-chordate class is large enough to test, and none of its species has
 
 ## Supplementary data
 
-Supplementary data is available online. Supplementary Methods S1–S15 describe each step of the
+Supplementary data is available online. Supplementary Methods S1–S16 describe each step of the
 build and of the worked analyses at length, with the reasons, alternatives and assumptions behind them;
 Supplementary Table S1 gives all 32 scopes of Table 3, Supplementary Table S2 the pinned version of
-each source, Supplementary Table S3 every download with where it is and at which revision, and
+each source, Supplementary Table S3 every download with where it is and at which revision, Supplementary
+Table S4 the records the audit questions, and
 Supplementary Figure S1 two further views of the interface.
 
 ## Acknowledgements
@@ -1033,6 +1049,8 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
     Biol Sci. 2026;381(1947). https://doi.org/10.1098/rstb.2025.0078
 59. Yen K, Ramirez R, Miller B et al. MENTSH: a novel mitochondrial microprotein linked to a SNP associated with
     type 2 diabetes. Theranostics. 2026;16:8180-8194. https://doi.org/10.7150/thno.134637
+60. Hebert PDN, Cywinska A, Ball SL, deWaard JR. Biological identifications through DNA barcodes. Proc Biol Sci.
+    2003;270:313-321. https://doi.org/10.1098/rspb.2002.2218
 
 > AUTHOR: references 19, 21 and 24–36 are new and need checking (a reference-check pass is suggested).
 > The data and software citations 38–42 are placed but have no version-level DOI yet: mint the Zenodo

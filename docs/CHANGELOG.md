@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 says which RefSeq records are probably wrong** (2026-11-15). Database content gains a paragraph
+  on the record audit (mitoage-pipelines H13, rerun on build 0f4e970 as haumea job 6490297, tables at b6af4ed):
+  nine near-identical pairs across genera (*Echis coloratus* and *Vipera berus* identical over 11,265 bases; the
+  shelduck record a mallard's), a butterfish record nearest a characin, three reverse-complemented vertebrate
+  deposits whose GC/AT balance is of the other strand, genes left unannotated; every stated genetic code matches
+  its taxon. New Supplementary Methods S16 and Table S4 give the method and every candidate, the Discussion's
+  strand paragraph says the vertebrate deposits were checked record by record, reference 60 (Hebert et al. 2003,
+  checked against PubMed) supports the 1% threshold, and RM23 holds the follow-ups (flags in the build, the three
+  reversed deposits, the annotation gaps, whether to report to NCBI). Documents only.
+
 - **Round v0.3's peptides section reports H15 on the cited build** (2026-11-15). The Results subsection and
   Supplementary Methods S12.8 now cover nine published peptides (humanin, SHLP1-6, MOTS-c, MTALTND4, MTALTCO1,
   MENTSH; references 58 and 59 checked against PubMed by title) on build 0f4e970 (mitoage-pipelines H15, haumea job
