@@ -186,6 +186,14 @@ this records the one run and the conditions it was done under, rather than chang
 **What it costs, and was accepted:** one upload whose provenance is this entry rather than a shell
 history. The next one follows D6 unless the maintainer says otherwise again.
 
+**A second upload under the same conditions (2026-11-15), the build with the EURING birds.** The maintainer: "Yes,
+upload and rerun". Revision `f75bdc9b812d7845d2ccb24a49643d88d00d57b5`, 78 files, packaged on haumea in a fresh
+clone of fb54cec (`/data/uq2347/runs/mitoage/site-main`: `bun run build`, `bun run hf`, `bun run sqlite`, Slurm job
+6489879) and uploaded through `huggingface_hub` with haumea's stored login, the token not read. Verified file by file
+against the hub: LFS SHA-256 equal; `mitoage.sqlite` 116,387,840 bytes, SHA-256 62dd4d871643b0c7…. Its
+`species.parquet` (4e4aab66ae53…) is the file the cluster reruns of round v0.3 read (mitoage-pipelines
+`results/euring/`, job 6489877). Round v0.3 cites this revision; D17 records the next one.
+
 ## D10 — The contrast t test stays the published PIC test (2026-11-15)
 
 `docs/PIC_CALIBRATION.md` found the contrast code correct (it matches R `ape::pic`) and its t test exact

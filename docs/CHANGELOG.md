@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The provenance of Hugging Face revision f75bdc9 is recorded** (2026-11-15, under D9): the build with the EURING
+  birds, packaged on haumea from fb54cec (Slurm job 6489879) and uploaded from a session on the maintainer's
+  instruction, 78 files checked against the hub. Round v0.3 cites it; the MCP server is still pinned to c525adb.
+
 - **The Hugging Face mirror carries the patched build** (2026-11-15, D17): revision 0f4e970 of
   `longevity-genie/mitoage`, uploaded from the session on the maintainer's instruction, every file checked against
   the local copy. Round v0.3 still cites f75bdc9 and the MCP server c525adb.
