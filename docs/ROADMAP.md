@@ -175,7 +175,14 @@ non-contact ones (excess +0.049 against +0.016 for the cytosolic controls, p = 0
 not an interface one. Lifespan on the contact-minus-control mismatch, 1,373 species with body mass: slope
 −0.024 log10 years per standard deviation, 95% interval [−0.050, +0.002], a bounded null. **The stop rule is
 reached for the contact-residue branch**: it is not pursued further. Still open: contact maps for complexes I,
-III and V; the cybrid calibration.
+III and V.
+
+The cybrid calibration ran on 2026-11-15 (`mitoport cybrid`, `docs/ANALYSIS_FINDINGS.md` H16). It covered six
+papers, 30 measured (host, donor, complex) points and four donors that gave no cybrid, and the literature table
+was rebuilt from the papers rather than taken from the helper's. A count of differing contact residues does about
+as well as divergence over whole proteins, and like divergence it cannot say which complex fails in a pair, so the
+counts used so far are not a measure of incompatibility. Open: an interface energy on the threaded chimeric
+complexes (FoldX or Rosetta), on haumea, scored against the same table.
 
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 

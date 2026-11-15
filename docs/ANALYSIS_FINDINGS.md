@@ -375,3 +375,59 @@ and H0's soft genes (ND6, ND5) are also where structure and sequence differ most
 **Limits.** Mammals only (62 species); one prediction per sequence; agreement between two methods is not
 correctness. Distant phyla, where sequence aligners are more likely to err, are not assessed; at the same rate,
 20 species across phyla would take about one GPU-hour.
+
+## H16. The published cybrids, simulated: does mismatch at the mito-nuclear contacts predict which complex fails?
+
+**Question.** H5, H9 and H14 ask whether the residues where mtDNA-encoded subunits touch nuclear ones carry
+anything beyond the whole protein, using sequences alone. Xenomitochondrial cybrids measure it: a donor species'
+mtDNA in cells of a host species, so every nuclear subunit is the host's and every mtDNA-encoded one the donor's.
+Before any of our interface scores is read as incompatibility, it should order the published cybrids as their
+measured complex activities do. This is RM11's calibration, first proposed and not run until now.
+**Data.** `src/mitoage_pipelines/mitoport/cybrid_measurements.tsv` (in dna-seq/mitoage-pipelines), transcribed by hand with the figure or table of
+each value: human cells with chimpanzee, bonobo and gorilla mtDNA (doi 10.1074/jbc.273.23.14210); mouse cells with
+*Mus spretus* and rat mtDNA (10.1074/jbc.M004070200), rat again from a second laboratory (10.1074/jbc.M004053200),
+and *M. caroli*, *M. terricolor* (the papers' *Mus dunni* line), *M. pahari* and *Otomys irroratus*
+(10.1093/molbev/msg132); donors that gave no respiring cybrid: orangutan in human cells (10.1073/pnas.94.17.9131;
+the paper names no species, so both *Pongo* species are scored) and two hamsters in mouse cells
+(10.1074/jbc.M004070200). In all, 30 measured (host, donor, complex) points: 9 reduced, 20 not, and one where the
+two laboratories disagree (rat, complex III: 37% of control in one, not reduced in the other), which is left out.
+Only 13 points have a stated value; the rest are given as not significantly different, without a number, and are
+used only as not reduced. Complex III in the murid papers is a linked II+III assay, which shows only severe defects.
+**Method.** `mitoport cybrid`, fixed in its docstring before the first run. Contact maps of the four human complexes
+(I 5XTD, III 5XTE, IV 5Z62, V 8H9S) with H14's chain table and definition (4.5 A heavy atoms, the reference chain of
+each gene, complex III's other cytochrome b a mitochondrial partner): 621, 104, 298 and 129 contact positions, the
+same sets `mitoport contacts` finds (tested). Host and donor proteins from RefSeq at fixed versions, placed on human
+positions by a global alignment; the cytochrome b the 2003 paper sequenced from its own cell lines replaces RefSeq's
+for *M. spretus*, *M. terricolor* and *Otomys* (identical for the first two, 2 residues apart for *Otomys*). Scores per
+(host, donor, complex): differing contact positions (`d_contact`), their share (`f_contact`), those with a negative
+BLOSUM62 score, and the same counts at the resolved non-contact positions and over every position (`d_all`, `f_all`:
+divergence, the baseline any interface score has to beat). Tests: T1 Spearman of the stated activities against each
+score; T2 the area under the ROC curve for reduced against not reduced; T3 whether the highest-scoring complex of a
+pair is its most reduced one; T4 whether donors that gave no cybrid score above every donor that did, in the same host.
+No significance is claimed anywhere: the points are few and not independent (one host, one laboratory per series).
+**Result** (dna-seq/mitoage-pipelines `results/h16/summary.tsv` and `calibration.tsv`, commit 0b1c5e8).
+- T1, 13 stated values: the contact count orders them worse than divergence (Spearman −0.20 against −0.36 for
+  `d_all`; as shares −0.46 against −0.59).
+- T2, 9 reduced against 20 not: `d_contact` 0.80, `d_all` 0.74, non-contact positions 0.73; as shares 0.68, 0.61 and
+  0.54. The edge of the contact count over divergence is about 10 of the 180 reduced-against-not orderings.
+- T3, six pairs with a reduced complex: the raw counts, contact or not, always name complex I, the largest, and so are
+  right for the three apes and the rat and wrong for *M. pahari* (complex IV reduced) and *Otomys* (complex III at 2%);
+  shares do worse (2 of 6 for `f_contact`, 1 of 6 for `f_all`). No score here says which complex fails.
+- T4: both orangutans and both hamsters score above every donor that respired, with the contact count and with
+  divergence alike.
+- Exploratory, added after the above had been read (T2b, T2 within one complex): complex IV 0.86 for the contact count
+  against 0.72 for divergence (3 reduced, 6 not); complex III 0.86 against 0.71 (one reduced); complex I 0.60 against
+  0.55. Complex I is where hosts differ: the apes' complex I is reduced with 42 to 53 differing contacts, while
+  *M. pahari*'s is normal with 100.
+**Reading.** The cybrids confirm what divergence alone predicts: defects grow with the distance between host and
+donor, and the donors that fail are the most distant. A count of differing contact residues adds little to it:
+slightly better at telling reduced from normal complexes, worse at ordering the measured activities, and unable to
+say which complex fails in a given pair. That agrees with H5, H9 and H14 (the coupling belongs to whole proteins),
+and it means the interface mismatch scores used so far cannot be read as a measure of incompatibility. It neither
+confirms nor refutes an interface mechanism: a count weighs every substitution alike, while the murid paper points
+to a few cytochrome b residues near the Rieske protein's path. What could test that is an energy at the threaded
+interface (FoldX or Rosetta on the chimeric complexes), which is heavier and belongs on haumea.
+**Limits.** RefSeq individuals stand in for the donor cell lines except for cytochrome b. The mouse host is scored
+on human structures through its own sequences, not on a mouse structure. Activities are percentages of each paper's
+control, by different assays and normalisations. Failure to form a cybrid can have causes other than the respiratory
+chain (replication, translation). T2b was added after the first run.

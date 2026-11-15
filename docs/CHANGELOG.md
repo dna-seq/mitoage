@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The published cybrids against our contact scores** (2026-11-15, RM11, H16): `docs/ANALYSIS_FINDINGS.md` gains
+  H16. Its code, measurement table and result tables are in `dna-seq/mitoage-pipelines` at 0b1c5e8 (`mitoport
+  cybrid`, `results/h16/`). The ROADMAP's RM11 no longer lists the calibration as open and names the interface
+  energy as the next step.
+
 - **PGLS with Pagel's lambda for every lifespan test** (2026-11-15, D18, RM22). Three new files:
   - `pipeline/lib/pgls.ts` fits it as contrasts on the λ-scaled tree, pruned to the species fitted.
   - `pipeline/pgls-table.ts` fits each test of the table as feature ~ log10 lifespan, and once more with log10
