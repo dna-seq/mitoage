@@ -614,6 +614,31 @@ single-gene tests pass a 5% false discovery rate and disagree in sign. The synon
 > pipeline computes for all 2,335 species (main at e3d99b2). Whether the paper should carry this subsection at all, or leave it to the analysis
 > repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
 
+### Peptides encoded inside mtDNA
+
+Short peptides are reported to be translated from open reading frames inside mitochondrial genes: humanin
+(54) and the six small humanin-like peptides (55) inside the 16S rRNA gene, MOTS-c inside the 12S rRNA gene
+(56), and MTALTND4 in an alternative reading frame of ND4 (57). Almost all of the evidence for them comes from
+human cells. The alignments let us ask whether their reading frames exist beyond human. For four of them we
+found the published sequence in the human row, carried its columns over to every species, and asked whether
+the frame keeps its start codon and has no stop codon before 90% of its length. The null is the set of other
+windows of the same length in the same gene that are open in human (Supplementary Methods S12.8). In mammals
+the humanin frame is open in 558 of 624 species (89%) but keeps its ATG start in 464 (74%). SHLP6 is open in
+548 of 621 mammals (88%) and keeps its start codon in 2,189 of 2,191 vertebrates that have the region. Neither
+is kept more widely than chance would give: 10% and 14% of random 16S windows that are open in human are kept
+at least as widely. The MOTS-c frame is open in 54% of mammals, no more than a random open window of 12S
+(median 56%). The MTALTND4 frame is open in 21% of mammals (131 of 625), and every one of 68 random open
+windows of ND4 in the same frame is kept at least as widely. A frame that stays open is not evidence that it
+is translated, and the nuclear copies of these regions, which humanin is known to have, are out of reach of
+these data. Whether keeping a frame follows lifespan is not tested here.
+
+> AUTHOR: pilot run of `mitoage peptides pilot` (mitoage-pipelines; table `output/peptides/summary.txt` of
+> the Hugging Face dataset `longevity-genie/mitoage-pipelines` at b9be61a; H4 in `docs/ANALYSIS_FINDINGS.md`).
+> A run over the whole build with the full catalogue (SHLP1–6, MTALTCO1, MENTSH) and the null of the host
+> gene's synonymous codons shuffled, which H4 lists as not done, is under way on the cluster; its numbers
+> will replace these. The earlier text of H4 said SHLP6 keeps its start "in every vertebrate"; the table gives
+> 2,189 of 2,191.
+
 ### The website and interface
 
 The website, [www.mitoage.info](https://www.mitoage.info) (for now at https://just-dna.life/mitoage/), presents the same build, and its menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
@@ -798,10 +823,11 @@ only one non-chordate class is large enough to test, and none of its species has
 
 ## Supplementary data
 
-Supplementary data is available online. Supplementary Methods S1–S14 describe each step of the
+Supplementary data is available online. Supplementary Methods S1–S15 describe each step of the
 build and of the worked analyses at length, with the reasons, alternatives and assumptions behind them;
 Supplementary Table S1 gives all 32 scopes of Table 3, Supplementary Table S2 the pinned version of
-each source, and Supplementary Figure S1 two further views of the interface.
+each source, Supplementary Table S3 every download with where it is and at which revision, and
+Supplementary Figure S1 two further views of the interface.
 
 ## Acknowledgements
 
@@ -836,7 +862,12 @@ analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their c
 the datasets of the analyses (snapshots of build 2's sources, the nuclear partners, ESM-2 embeddings, the
 alignments by other aligners, predicted structures and the result tables) are gathered in the Hugging Face
 collection MitoAge, https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5 (44).
-The experimental MCP server is in `mcp/` of the site repository and is to be released as the npm package
+Supplementary Table S3 lists each of them with its revision: besides the build, the alignments and the dated
+tree, they hold data that are not about lifespan and that other studies can reuse, among them ESM-2
+embeddings of the 13 mitochondrial proteins and of 61 nuclear partners, 806 predicted structures of the 13
+proteins in 62 mammals, the contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase
+with burial-matched control residues, and the reading frames of the peptides encoded inside mtDNA in every
+species. The experimental MCP server is in `mcp/` of the site repository and is to be released as the npm package
 `mitoage-mcp`. Lifespan values from
 FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial use only) and are marked as such in the downloads.
 AnAge data are under the Creative Commons Attribution 3.0 Unported licence of the Human Ageing Genomic Resources (37; https://genomics.senescence.info/legal.html),
@@ -948,6 +979,18 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
     2018;28:1026–1034. https://doi.org/10.1038/s41422-018-0071-1
 53. Fransson T, Kolehmainen T, Moss D, Robinson R. EURING list of longevity records for European birds.
     List of 1 September 2023. https://euring.org/data-and-codes/longevity-list-2023 [data set]
+54. Hashimoto Y, Niikura T, Tajima H et al. A rescue factor abolishing neuronal cell death by a wide spectrum
+    of familial Alzheimer's disease genes and Abeta. Proc Natl Acad Sci USA. 2001;98:6336–6341.
+    https://doi.org/10.1073/pnas.101133498
+55. Cobb LJ, Lee C, Xiao J et al. Naturally occurring mitochondrial-derived peptides are age-dependent
+    regulators of apoptosis, insulin sensitivity, and inflammatory markers. Aging (Albany NY).
+    2016;8:796–809. https://doi.org/10.18632/aging.100943
+56. Lee C, Zeng J, Drew BG et al. The mitochondrial-derived peptide MOTS-c promotes metabolic homeostasis and
+    reduces obesity and insulin resistance. Cell Metab. 2015;21:443–454.
+    https://doi.org/10.1016/j.cmet.2015.02.009
+57. Kienzle L, Bettinazzi S, Choquette T et al. A small protein coded within the mitochondrial canonical gene
+    nd4 regulates mitochondrial bioenergetics. BMC Biol. 2023;21:111.
+    https://doi.org/10.1186/s12915-023-01609-y
 
 > AUTHOR: references 19, 21 and 24–36 are new and need checking (a reference-check pass is suggested).
 > The data and software citations 38–42 are placed but have no version-level DOI yet: mint the Zenodo

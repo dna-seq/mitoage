@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 reports the peptides encoded inside mtDNA and lists every download** (2026-11-15). A Results
+  subsection, "Peptides encoded inside mtDNA", gives H4's pilot (humanin, SHLP6, MOTS-c, MTALTND4: frames open in
+  21% to 89% of mammals, none kept more widely than random open windows of its gene), with references 54 to 57
+  checked against PubMed by title; Supplementary Methods S12.8 gives the test and the mammalian table, and S12.5
+  no longer lists the peptides as unreported. New S15 and Supplementary Table S3 list each download (site `/data/`,
+  the seven Hugging Face datasets and two tables still only in the repositories) with its revision, and Data
+  availability names the data reusable beyond lifespan (embeddings, structures, the complex IV contact map, the
+  peptide frames). The pilot's numbers are from `longevity-genie/mitoage-pipelines` b9be61a; H4's "start codon in
+  every vertebrate" for SHLP6 is 2,189 of 2,191. Documents only.
 - **The PIC calibration's per-scope table is made by code** (2026-11-15). `bun run pipeline/pic-calibration.ts summary
   <dir>` writes `docs/analyses/pic-calibration/summary.tsv` from the scope TSVs of a cluster run; on the first run it
   reproduces the committed table except one rounding (Bivalvia's Brownian-motion share, 5.21 against 5.20, from a test

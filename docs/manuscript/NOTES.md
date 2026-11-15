@@ -452,6 +452,21 @@ version: the working copy plus one proposal (DS-C1, the Introduction's "orders o
 - **The v0.2 Docs:** no comments yet (`v0.2/comments.yaml`, empty). The sync found two "edits" that are a
   conversion loss in the Docs ("`> AUTHOR:`" shown as "AUTHOR:`"), not carried.
 
+## Peptides and downloads in round v0.3 (2026-11-15)
+
+The maintainer: the peptides encoded inside mtDNA "must be mentioned", and the downloads, contact maps among them,
+should be named. The numbers of the new Results subsection and of Supplementary Methods S12.8 are read from
+`output/peptides/summary.txt` of the Hugging Face dataset `longevity-genie/mitoage-pipelines` at b9be61a (`mitoage
+peptides pilot`): humanin open 558 of 624 mammals, ATG 464; SHLP6 open 548 of 621, ATG 621, and ATG in 2,189 of 2,191
+vertebrates with the region (Actinopterygii 890/891, Aves 417/418); MOTS-c open 333 of 622, null median 0.564;
+MTALTND4 open 131 of 625, share of 68 null windows at least as kept 1.000; null shares for humanin and SHLP6 0.097
+and 0.143. References 54 to 57 were checked by title in PubMed (PMIDs 11371646, 27070352, 25738459, 37198654).
+Supplementary Table S3's revisions are each Hugging Face dataset's `sha` on 2026-11-15 and the last commits of
+`docs/analyses/cluster-2026-11-15/` (094aa57) and `results/h12/` of mitoage-pipelines (7692a55). A whole-build
+peptide run with the synonymous-codon null, the contact maps of complexes I, III and V and an audit of the RefSeq
+records were running on haumea when this was written; their numbers, and a refreshed `mitoage-pipelines` dataset,
+replace the pilot's and the two GitHub rows.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
