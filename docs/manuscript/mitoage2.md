@@ -363,9 +363,9 @@ has no partial correlation, so none of its tests passes all three.
 > files uploaded on their own, so they move there at submission. Figures 1 and 2 are charts of the
 > correlation table the build writes; Figures 3, 4 and 5 are screenshots of the build 2 site at a desktop width
 > of 1,440 pixels, taken on 2026-11-14. Figure 1 was redrawn and Figure 5 retaken on 2026-11-15 by
-> `figures/figure-1-controls.ts` and `figures/capture-figure-5.ts` (NOTES.md, "Figures", says how). Still
-> open: Figure 5B shows the site's stale "Rank all 1,257 mtDNA features" line and two raw feature keys
-> (`gravy:total_pc`, `ff:ND2:U`); retake it once the site is fixed (roadmap RM19).
+> `figures/figure-1-controls.ts` and `figures/capture-figure-5.ts` (NOTES.md, "Figures", says how), and
+> Figure 5 was retaken again the same day once the site named every extended feature and took its feature
+> count from the data (roadmap RM19, done); the legend's numbers were checked against the new capture.
 
 ![Figure 1. What the controls leave of the lifespan correlations](figures/FIGURE_1_CONTROLS.jpg)
 

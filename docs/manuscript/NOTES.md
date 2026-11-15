@@ -176,9 +176,10 @@ made by scripts in `figures/`, from the current build:
   site served with `env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port PORT`
   (any free port; read it from the preview log), with the colour workaround described below.
 
-Panel 5B still shows two faults of the live site, which are roadmap item RM19 (the plot explorer does not
-yet offer the extended features): its intro line says "Rank all 1,257 mtDNA features", and two of its top
-rows show raw keys (`gravy:total_pc`, `ff:ND2:U`). Recapture 5B once RM19 lands.
+Panel 5B, as first retaken, showed two faults of the site: the intro line said "Rank all 1,257 mtDNA
+features", and two of its top rows showed raw keys (`gravy:total_pc`, `ff:ND2:U`). Roadmap item RM19 fixed
+both (the count comes from the data, and every extended feature has a name and a family), and Figure 5 was
+recaptured with the same script later on 2026-11-15; every number in its legend was checked against it.
 
 Figures 3 and 4 and the description below are as first made: screenshots of the site, in `figures/` as JPEG. The
 site was built with `bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the

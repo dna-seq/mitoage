@@ -72,7 +72,7 @@ const tryChips = [
 ];
 
 const title = "Plot mtDNA features";
-const description = `Plot any two of ${fmtInt(featureCount)} mitochondrial DNA features (length, GC content, skews, codon and amino-acid usage of every region) for ${fmtInt(
+const description = `Plot any two of ${fmtInt(featureCount)} mitochondrial DNA features (length, GC content, skews, codon and amino-acid usage of every region, fourfold-site composition, protein hydropathy, repeats and non-B motifs) for ${fmtInt(
   speciesCount,
 )} animal species, or set one against lifespan, with live correlations, multiple-testing correction and phylogenetic contrasts.`;
 const appLd: JsonLd = {
@@ -112,7 +112,9 @@ const appLd: JsonLd = {
         <Card title="Pick what to plot" level={3}>
           <p>
             Choose any of {fmtInt(featureCount)} mtDNA features for each axis: the length, GC content and strand skews
-            of every region, and the frequency of each codon and amino acid in each protein-coding gene. Type in the
+            of every region; the frequency of each codon and amino acid, the base composition at fourfold-degenerate
+            sites and the protein hydropathy (GRAVY) of each protein-coding gene; and the repeats, non-B DNA motifs
+            and simple repeats of the whole genome and its major arc. Type in the
             picker to find one quickly, e.g. <q>ND6 GC</q> or <q>CUA</q>. Maximum lifespan and {TRAIT_KEYS.length - 1}{" "}
             other life-history traits from AnAge are in the picker's last tab.
           </p>

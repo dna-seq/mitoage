@@ -164,7 +164,9 @@ data as props or fetch static JSON emitted at build time (`/search-index.json`,
 `/genes/{gene}/gc-lifespan.json`, `/genes/alignment-species.json`, `/compare/plot/correlations/{trait}/{scope}.json`,
 `/compare/plot/values/{chunk}.json`, `/compare/species-index.json`, `/compare/taxonomy.json`,
 `/compare/stats/{group}.json`, `/compare/codons/{group}.json`, `/compare/values/{region}.json`
-and `.csv`, `/data/*`). Large tables render their first view at build time and load the rest, and
+and `.csv`, `/data/*`). The plot explorer's `/compare/plot/values/{chunk}.json` holds what
+`explorer.json` leaves out to stay small: per-gene codon and amino-acid frequencies (`{gene}-codon`,
+`{gene}-aa`) and the extended mtDNA features, one file per region (`{region}-ext`). Large tables render their first view at build time and load the rest, and
 island props are packed (`packRows` in `src/lib/compare/rows.ts`), to keep pages under about 150 KB.
 
 The site hosts no sequences. A species page links to its FASTA and GenBank record at NCBI, and

@@ -16,12 +16,15 @@ interface Props {
   onPick: (trait: TraitKey, feature: string, scope: string) => void;
 }
 
-type Kind = "all" | Exclude<VarGroup, "trait">;
-const KINDS: { k: Kind; label: string }[] = [
-  { k: "all", label: "All" },
-  { k: "composition", label: "Size and GC" },
-  { k: "codon", label: "Codons" },
-  { k: "aminoAcid", label: "Amino acids" },
+type Kind = "all" | "composition" | "codon" | "aminoAcid" | "fourfold" | "structure";
+/** Feature filters; protein hydropathy is listed with the amino acids it is computed from, as in the picker. */
+const KINDS: { k: Kind; label: string; groups: VarGroup[] }[] = [
+  { k: "all", label: "All", groups: [] },
+  { k: "composition", label: "Size and GC", groups: ["composition"] },
+  { k: "codon", label: "Codons", groups: ["codon"] },
+  { k: "aminoAcid", label: "Amino acids", groups: ["aminoAcid", "hydropathy"] },
+  { k: "fourfold", label: "Fourfold sites", groups: ["fourfold"] },
+  { k: "structure", label: "Repeats", groups: ["structure"] },
 ];
 const PAGE = 15;
 
@@ -60,10 +63,11 @@ export default function StrongestPanel(props: Props) {
   });
 
   const rows = createMemo(() => {
-    const k = kind();
+    const groups = KINDS.find((x) => x.k === kind())?.groups ?? [];
     let list = allRows().filter((r) => {
-      if (k === "all") return true;
-      return getVariable(r.feature)?.group === k;
+      if (!groups.length) return true;
+      const g = getVariable(r.feature)?.group;
+      return g !== undefined && groups.includes(g);
     });
     if (onlySig()) list = list.filter((r) => r.q !== null && r.q < 0.05 && r.picP !== null && r.picP < 0.05);
     if (rankBy() === "pic") list = [...list].sort((a, b) => Math.abs(b.pic ?? 0) - Math.abs(a.pic ?? 0));
@@ -108,7 +112,8 @@ export default function StrongestPanel(props: Props) {
           </h2>
         </div>
         <p class="card__desc xp-strong__lede">
-          Rank all 1,257 mtDNA features by how strongly they track a trait. Select a row to plot it.
+          Rank all {fmtInt(props.index.features)} mtDNA features by how strongly they track a trait. Select a row to
+          plot it.
         </p>
       </div>
 
@@ -286,7 +291,9 @@ export default function StrongestPanel(props: Props) {
         <ul>
           <li>
             <strong>q</strong> is the Benjamini–Hochberg false discovery rate across all features tested against this
-            trait in this group. With 1,257 tests, some strong-looking ρ values appear by chance; q accounts for that.
+            trait in this group. With {fmtInt(rowsFor(effectiveScope()))} tests here, some strong-looking ρ values appear
+            by chance; q accounts for that. Per-gene features are tested in all species and in each class, not within
+            orders.
           </li>
           <li>
             <strong>PIC r</strong> correlates changes along a dated tree (phylogenetically independent contrasts), so

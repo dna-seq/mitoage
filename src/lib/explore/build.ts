@@ -2,28 +2,20 @@
  * Build-time helpers for the explorer endpoints and page. Reads the data API: do not import
  * from islands (use ./wire and ./variables there).
  */
-import { getAllSpecies, getCorrelations, getFeatureDefs, getFeatureValues, PROTEIN_GENES, type Correlation, type Region, type TraitKey } from "~/data";
+import { getAllSpecies, getCorrelations, getFeatureDefs, getFeatureValues, type Correlation, type TraitKey } from "~/data";
 import { type ChunkFile, type CorrFile, type CorrIndex, chunkName } from "./wire";
-import { FEATURE_KEYS, getVariable, TRAIT_KEYS } from "./variables";
-
-/* Features the plot explorer does not offer yet. The extended mtDNA features (fourfold-site
- * composition, heavy-strand notation, hydropathy, repeats, non-B motifs, the major arc and the
- * deletion contact zones) are in the data, in the correlations and in the downloads, but the picker
- * has no entries for them: they need labels, units, log defaults and a place in its grouping, and
- * `major_arc` and `major12` are not regions the picker knows. That is RM19.
- *
- * This is an exclusion, not a loosening: every key outside it must still be in the catalogue, and a
- * key that is in neither fails the build exactly as before. The predicate lives with the features
- * themselves, in pipeline/steps/extended.ts, so the payload and this check cannot drift apart.
- */
-export { isExtendedFeature as EXPLORER_EXCLUDED } from "../../../pipeline/steps/extended";
+import { type ChunkKind, chunkOf, FEATURE_KEYS, getVariable, isExtendedVar, TRAIT_KEYS, type VarRegion } from "./variables";
 import { isExtendedFeature } from "../../../pipeline/steps/extended";
 
-
-/** Fail the build if the island's feature catalogue drifts from the pipeline's feature list. */
+/**
+ * Fail the build if the island's feature catalogue drifts from the pipeline's feature list, or if
+ * the payload and the chunks disagree on where a feature's values are. explorer.json leaves the
+ * extended features out (`isExtendedFeature`, pipeline/steps/extended.ts) and the client looks for
+ * them in the per-region chunks (`isExtendedVar`); a feature on one side only would plot as empty.
+ */
 export function assertCatalogMatchesData(): void {
   const ours = new Set(FEATURE_KEYS());
-  const theirs = getFeatureDefs().map((d) => d.key).filter((k) => !isExtendedFeature(k));
+  const theirs = getFeatureDefs().map((d) => d.key);
   const missing = theirs.filter((k) => !ours.has(k));
   const extra = [...ours].filter((k) => !theirs.includes(k));
   if (missing.length || extra.length) {
@@ -32,26 +24,37 @@ export function assertCatalogMatchesData(): void {
         `missing e.g. ${missing.slice(0, 5).join(", ")}; unexpected e.g. ${extra.slice(0, 5).join(", ")}`,
     );
   }
+  const split = theirs.filter((k) => isExtendedFeature(k) !== isExtendedVar(getVariable(k)!));
+  if (split.length) {
+    throw new Error(`Explorer payload and chunks disagree on ${split.length} features, e.g. ${split.slice(0, 5).join(", ")}`);
+  }
 }
 
 // ---------------------------------------------------------------- per-gene value chunks
 
 export interface ChunkSpec {
   name: string;
-  region: Region;
-  kind: "codon" | "aa";
+  region: VarRegion;
+  kind: ChunkKind;
 }
 
-export const chunkSpecs = (): ChunkSpec[] =>
-  PROTEIN_GENES.flatMap((region) =>
-    (["codon", "aa"] as const).map((kind) => ({ name: chunkName(region, kind), region, kind })),
-  );
+/** One chunk per (region, kind) that some feature of the catalogue loads from, in catalogue order. */
+export const chunkSpecs = (): ChunkSpec[] => {
+  const seen = new Map<string, ChunkSpec>();
+  for (const k of FEATURE_KEYS()) {
+    const c = chunkOf(getVariable(k)!);
+    if (!c) continue;
+    const name = chunkName(c.region, c.kind);
+    if (!seen.has(name)) seen.set(name, { name, region: c.region, kind: c.kind });
+  }
+  return [...seen.values()];
+};
 
 export function buildChunk(spec: ChunkSpec): ChunkFile {
   const ids = getAllSpecies().map((s) => s.id);
   const keys = FEATURE_KEYS().filter((k) => {
-    const v = getVariable(k);
-    return v?.kind === "feature" && v.region === spec.region && v.measure === spec.kind;
+    const c = chunkOf(getVariable(k)!);
+    return c !== null && c.region === spec.region && c.kind === spec.kind;
   });
   const values = keys.map((k) => {
     const byId = getFeatureValues(k);
@@ -85,6 +88,7 @@ export function corrIndex(): CorrIndex {
     traits,
     scopes,
     rows: traits.map((t) => scopes.map((s) => getCorrelations({ trait: t, scope: s }).length)),
+    features: getFeatureDefs().length,
   };
 }
 

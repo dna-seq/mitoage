@@ -14,6 +14,7 @@ export function buildExplorer(
   const classes = [...new Set(species.map((s) => s.taxonomy.class))].sort();
   const orders = [...new Set(species.map((s) => s.taxonomy.order))].sort();
   const families = [...new Set(species.map((s) => s.taxonomy.family))].sort();
+  // Per-gene codons and amino acids, and the extended features, load from the site's chunks instead.
   const keep = defs.filter((d) => (!/^(codon|aa):/.test(d.key) || d.key.includes(":total_pc:")) && !isExtendedFeature(d.key));
   const sig = (v: number | null) => (v === null ? null : Math.abs(v) >= 1000 ? Math.round(v) : roundSig(v, 4));
   return {

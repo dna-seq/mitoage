@@ -128,31 +128,6 @@ A kept frame is not a translated peptide: the data has no ribosome profiling and
 nuclear copies (humanin has them) are out of its sight. The code lives in `dna-seq/mitoage-pipelines`.
 Reported in `#mitoage`; nothing goes on the site before the maintainer has seen it.
 
-## RM19 — The extended mtDNA features in the plot explorer
-
-**State:** unattended (opened 2026-11-14, when the features landed in the catalogue) · **Owner:** lead
-
-The 157 extended features (fourfold-site composition, heavy-strand notation, hydropathy, direct, inverted and
-mirror repeats, non-B motifs, the major arc, the control-region count and the deletion contact zones) are in
-`getFeatureDefs()`, in the correlations and in the two committed tables. The plot explorer does not offer them:
-its variable catalogue (`src/lib/explore/variables.ts`) is hand-built, with a label, a short axis name, a unit,
-a default log scale, a formatter and a picker group per feature, and `major_arc` and `major12` are not regions
-it knows.
-
-Until that is written they are excluded by `isExtendedFeature` (`pipeline/steps/extended.ts`), in one place that
-both the payload and the build-time catalogue check read, so `explorer.json` stays the size it was and nothing
-drifts silently. The build still fails if any feature outside that exclusion is missing from the picker.
-
-What it needs: the measures and groups in the picker's taxonomy, units (counts, bp, percent, a dimensionless
-GRAVY), which default to a log scale, where `major_arc` and `major12` sit in the region order, and whether the
-picker's groups get a new heading or the features join the existing ones.
-
-The "Strongest correlations" panel already lists them, since it reads the correlation table: two of its top ten
-rows for maximum lifespan in all species show raw keys (`gravy:total_pc`, `ff:ND2:U`) with no name or family,
-and its intro still says "Rank all 1,257 mtDNA features" (`src/components/explore/StrongestPanel.tsx`, lines 111
-and 289). The manuscript's Figure 5B shows both; recapture it with `docs/manuscript/figures/capture-figure-5.ts`
-once this lands (found by the manuscript review of 2026-11-15).
-
 ## RM18 — The assembly technology of each mitogenome, Ensembl first
 
 **State:** unattended (opened 2026-11-14 by H8, which could not run its control) · **Owner:** lead

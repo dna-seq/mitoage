@@ -1,8 +1,21 @@
 import { describe, expect, test } from "bun:test";
-import { fmtCompact, fmtP, fmtR, fmtSignedTick } from "./format";
+import { fmtCompact, fmtP, fmtR, fmtSignedTick, labelPhrase } from "./format";
+import { FEATURE_KEYS, getVariable } from "./variables";
 import { scopeSlug } from "./wire";
 
 describe("explorer formatters", () => {
+  test("a label inside a sentence keeps its symbols and initialisms", () => {
+    expect(labelPhrase("Maximum lifespan")).toBe("maximum lifespan");
+    expect(labelPhrase("GC content of ND6")).toBe("GC content of ND6");
+    expect(labelPhrase("U at fourfold-degenerate sites of ND2 (gene sense)")).toBe("U at fourfold-degenerate sites of ND2 (gene sense)");
+    expect(labelPhrase("G-quadruplex motifs, both strands in the major arc")).toBe("G-quadruplex motifs, both strands in the major arc");
+    // no feature label starting with a base, a codon or an initialism is lowered
+    for (const k of FEATURE_KEYS()) {
+      const l = getVariable(k)!.label;
+      if (/^[A-Z][^a-z]/.test(l)) expect(labelPhrase(l)).toBe(l);
+    }
+  });
+
   test("compact ticks", () => {
     expect(fmtCompact(0)).toBe("0");
     expect(fmtCompact(0.0001)).toBe("1e−4");

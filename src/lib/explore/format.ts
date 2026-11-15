@@ -42,3 +42,11 @@ export const fmtP = (p: number | null | undefined): string => {
 /** Correlation coefficient with a real minus sign: "−0.284", "0.512". */
 export const fmtR = (r: number | null | undefined, digits = 3): string =>
   !isNum(r) ? "–" : `${r < 0 ? MINUS : ""}${Math.abs(r).toFixed(digits)}`;
+
+/**
+ * A label inside a sentence: "Maximum lifespan" -> "maximum lifespan". "GC content of ND6",
+ * "U at fourfold-degenerate sites" and "G-quadruplex motifs" stay as they are: only a capital
+ * followed by a lower-case letter is lowered.
+ */
+export const labelPhrase = (label: string): string =>
+  /^[A-Z][a-z]/.test(label) ? label[0]!.toLowerCase() + label.slice(1) : label;

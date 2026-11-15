@@ -13,7 +13,7 @@ import type { TraitKey } from "~/data/schema";
 import { CLASS_GROUPS, classColor } from "~/lib/classes";
 import { fmtInt, fmtLifespan, fmtNum } from "~/lib/format";
 import { type Column, type Dataset, loadColumnByKey, loadCorr, loadDataset, scopeFilter, scopeLabel } from "~/lib/explore/client";
-import { fmtP, fmtR } from "~/lib/explore/format";
+import { fmtP, fmtR, labelPhrase } from "~/lib/explore/format";
 import { DEFAULT_X, DEFAULT_Y, MAX_HIGHLIGHTS, parseState, serializeState } from "~/lib/explore/state";
 import { describePairs, strengthWord } from "~/lib/explore/stats";
 import { axisTitle, FEATURE_KEYS, getVariable, type Variable } from "~/lib/explore/variables";
@@ -45,11 +45,7 @@ const Svg = (p: { name: keyof typeof ICONS; size?: number }) => (
   />
 );
 
-/** "Maximum lifespan" -> "maximum lifespan"; "GC content of ND6" stays as is. */
-const phrase = (v: Variable): string => {
-  const l = v.label;
-  return l.length > 1 && l[1] === l[1]?.toLowerCase() ? l[0]?.toLowerCase() + l.slice(1) : l;
-};
+const phrase = (v: Variable): string => labelPhrase(v.label);
 
 const shortName = (name: string, common: string): string => {
   if (!common) return name;

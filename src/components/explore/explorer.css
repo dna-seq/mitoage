@@ -715,10 +715,17 @@
   .vp-cell--wide {
     grid-column: span 2;
   }
+  /* Repeats tab: a measure per row, two regions per row, so the label column gets the room. */
+  .vp-matrix--measures .vp-matrix__row {
+    grid-template-columns: minmax(8.5rem, 1.3fr) repeat(2, minmax(0, 1fr));
+  }
   @media (max-width: 34rem) {
     .vp-matrix__row {
       grid-template-columns: 4.6rem repeat(4, minmax(0, 1fr));
       gap: 0.375rem;
+    }
+    .vp-matrix--measures .vp-matrix__row {
+      grid-template-columns: minmax(6.5rem, 1.3fr) repeat(2, minmax(0, 1fr));
     }
     .vp-matrix__region {
       font-size: var(--fs-xs);
@@ -779,6 +786,9 @@
   .vp-grid--codons {
     grid-template-columns: repeat(auto-fill, minmax(4.4rem, 1fr));
   }
+  .vp-grid--three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
   .vp-results {
     display: flex;
     flex-direction: column;
@@ -826,6 +836,18 @@
   .vp-result__kind--aminoAcid {
     color: var(--tone-violet-ink);
     background: color-mix(in srgb, var(--tone-violet-bar) 20%, transparent);
+  }
+  .vp-result__kind--hydropathy {
+    color: var(--tone-violet-ink);
+    background: color-mix(in srgb, var(--tone-violet-bar) 20%, transparent);
+  }
+  .vp-result__kind--fourfold {
+    color: var(--tone-orange-ink);
+    background: color-mix(in srgb, var(--tone-orange-bar) 20%, transparent);
+  }
+  .vp-result__kind--structure {
+    color: var(--tone-navy-ink);
+    background: color-mix(in srgb, var(--tone-navy-bar) 18%, transparent);
   }
   .vp-result__text {
     min-width: 0;

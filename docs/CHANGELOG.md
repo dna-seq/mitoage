@@ -4,6 +4,24 @@ Newest first.
 
 ## Unreleased
 
+- **The plot explorer offers the 157 extended mtDNA features** (RM19, 2026-11-15). Each has a label, a
+  short axis name, a unit and a family in the hand-built catalogue (`src/lib/explore/variables.ts`):
+  fourfold sites (gene sense and heavy strand, % of fourfold sites), protein hydropathy (GRAVY, no unit),
+  and repeats and structure (pairs, counts or bp); none defaults to a log scale, as no composition feature
+  does, since the counts include zeros. `major12` is labelled "All but ND6" and sits after "All
+  protein-coding" in the fourfold regions; `major_arc` sits after "Whole genome" in the repeat regions. The
+  picker gains two tabs, "Fourfold sites" and "Repeats", and GRAVY joins the amino-acid grid it is computed
+  from; the Strongest correlations panel gains the same two filters. Its intro and its "How to read" note
+  now take the feature count and the number of tests from the data (1,414 for maximum lifespan in all
+  species) instead of the literal 1,257, and no row shows a raw key. `explorer.json` is unchanged at
+  2,675,901 bytes (RM2): the extended features load from 17 per-region chunks,
+  `/compare/plot/values/{region}-ext.json` (130–150 kB each, 2.4 MB in all), fetched only when plotted.
+  The build now fails if the catalogue and the pipeline's feature list differ at all (the RM19 exclusion
+  is gone), or if `explorer.json` and the chunks disagree on where a feature's values are. The live
+  statistics' sentence no longer lowers a label's first letter when it is a base or a symbol ("U at
+  fourfold-degenerate sites", "G-quadruplex motifs"). Manuscript
+  Figure 5 recaptured with `capture-figure-5.ts`; its legend's numbers checked against it.
+
 - **The manuscript, reviewed and corrected in a full manuscript-improve run** (2026-11-15, run
   `20261115T001950Z-ea39ab48` under `data/cache/manuscript-reviews/`, not in git). Seven review stages,
   six simulated referees and six readers (each once on Claude and once on Codex) and an independent

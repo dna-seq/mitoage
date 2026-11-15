@@ -1,11 +1,13 @@
 /**
  * Wire formats of the static JSON the explorer reads, and their URLs. Safe for islands.
  *
- *   /data/explorer.json                               pipeline output: species, traits, 165 features
+ *   /data/explorer.json                               species, traits, the whole-genome and region features
  *   /compare/plot/values/{gene}-{codon|aa}.json       per-gene codon / amino-acid frequencies
+ *   /compare/plot/values/{region}-ext.json            extended features of one region (fourfold sites,
+ *                                                     hydropathy, repeats and structure)
  *   /compare/plot/correlations/{trait}/{scope}.json   precomputed correlations for one trait and scope
  */
-import type { FeatureDef, Region, TraitKey } from "~/data/schema";
+import type { ExtendedRegion, FeatureDef, Region, TraitKey } from "~/data/schema";
 import { href } from "~/lib/url";
 import { geneSlug } from "~/lib/urls";
 
@@ -35,18 +37,18 @@ export interface ExplorerFile {
 
 export const EXPLORER_URL = href("/data/explorer.json");
 
-/** Codon or amino-acid frequencies of one protein-coding gene for every species. */
+/** Codon or amino-acid frequencies of one protein-coding gene, or the extended features of one region, for every species. */
 export interface ChunkFile {
-  region: Region;
-  kind: "codon" | "aa";
+  region: Region | ExtendedRegion;
+  kind: "codon" | "aa" | "ext";
   /** Species ids, aligned with each values row. */
   ids: number[];
   keys: string[];
   values: Num[][];
 }
 
-export const chunkName = (region: Region | string, kind: "codon" | "aa"): string => `${geneSlug(region)}-${kind}`;
-export const chunkUrl = (region: Region | string, kind: "codon" | "aa"): string =>
+export const chunkName = (region: Region | string, kind: "codon" | "aa" | "ext"): string => `${geneSlug(region)}-${kind}`;
+export const chunkUrl = (region: Region | string, kind: "codon" | "aa" | "ext"): string =>
   href(`/compare/plot/values/${chunkName(region, kind)}.json`);
 
 /**
@@ -76,6 +78,8 @@ export interface CorrIndex {
   traits: TraitKey[];
   scopes: string[];
   rows: number[][];
+  /** Number of mtDNA features in the pipeline's catalogue (getFeatureDefs()), for the panel's text. */
+  features: number;
 }
 
 /** "all" -> "all", "class:Mammalia" -> "class-mammalia". */

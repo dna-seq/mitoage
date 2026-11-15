@@ -4,9 +4,9 @@
  * hydropathy (GRAVY) of the mtDNA-encoded proteins, the major arc between the light-strand origin
  * region and the control region, perfect direct and inverted repeats, and control-region copies.
  *
- * Published as separate downloads (mtdna_structure.parquet, protein_gene_features.parquet,
- * correlations_extended.parquet) so the site's feature catalogue and correlations.parquet are
- * unchanged.
+ * The per-species tables are committed downloads (mtdna_structure.parquet,
+ * protein_gene_features.parquet); the features computed from them are ordinary features of the
+ * catalogue, in correlations.parquet like every other (D7).
  */
 import { type CodonUsage, type FeatureDef, PROTEIN_GENES, type ProteinGene } from "../../src/data/schema";
 import { geneticCode } from "../lib/genetic-code";
@@ -372,9 +372,9 @@ export function buildExtendedDefs(): FeatureDef[] {
 }
 
 /**
- * True for the extended mtDNA features. They are in the data, the correlations and the downloads,
- * but the plot explorer has no picker entries for them yet (RM19), so they are left out of its
- * payload rather than shipped as values nothing can plot.
+ * True for the extended mtDNA features. explorer.json leaves them out, keeping its size (RM2); the
+ * plot explorer loads them from per-region chunks instead (/compare/plot/values/{region}-ext.json).
+ * The site build fails if this predicate and the explorer's catalogue (`isExtendedVar`) disagree.
  */
 export const isExtendedFeature = (key: string): boolean =>
   /^(ff|ffH|gravy|repeats|motifs|contactZone):/.test(key) || key === "size:major_arc" || key === "controlRegions:total_mtDNA";

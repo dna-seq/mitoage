@@ -1,27 +1,32 @@
 /**
  * Axis picker for the plot explorer: a trigger button plus a modal dialog (a bottom sheet on
- * phones) that makes ~1,270 variables usable. Type to filter across everything (arrow keys +
+ * phones) that makes some 1,400 variables usable. Type to filter across everything (arrow keys +
  * Enter), or browse by kind: life-history traits, a region x measure matrix for size and
- * composition, and codon / amino-acid grids per protein-coding region.
+ * composition, codon / amino-acid grids per protein-coding region, fourfold-site bases per region,
+ * and a measure x region matrix for repeats and motifs.
  */
 import { createEffect, createMemo, createSignal, createUniqueId, For, Show } from "solid-js";
 import { ICONS } from "~/components/ui/icons";
 import { fmtInt } from "~/lib/format";
 import { AMINO_ACIDS, CODONS } from "~/lib/geneticCode";
-import type { Region } from "~/data/schema";
 import {
   AMINO_ACID_LETTERS,
   CODING_REGIONS,
   codonAminoAcid,
+  CONTACT_KINDS,
+  FOURFOLD_REGIONS,
   getCatalog,
   getVariable,
   GROUP_LABEL,
   type Measure,
   REGION_ORDER,
   regionPickerLabel,
+  STRUCTURE_REGIONS,
+  STRUCTURE_SPECS,
   type Variable,
   type VarGroup,
   variableContext,
+  type VarRegion,
 } from "~/lib/explore/variables";
 
 interface Props {
@@ -32,13 +37,28 @@ interface Props {
   count?: ((key: string) => number | undefined) | undefined;
 }
 
+/** Picker tabs: one per group, except that protein hydropathy sits with the amino acids it is computed from. */
+type Tab = Exclude<VarGroup, "hydropathy">;
+const tabOf = (g: VarGroup): Tab => (g === "hydropathy" ? "aminoAcid" : g);
+
 /** mtDNA first; life-history traits last. */
-const TABS: VarGroup[] = ["composition", "codon", "aminoAcid", "trait"];
-const TAB_LABEL: Record<VarGroup, string> = {
+const TABS: Tab[] = ["composition", "codon", "aminoAcid", "fourfold", "structure", "trait"];
+const TAB_LABEL: Record<Tab, string> = {
   trait: "Life history",
   composition: "Size and GC",
   codon: "Codons",
   aminoAcid: "Amino acids",
+  fourfold: "Fourfold sites",
+  structure: "Repeats",
+};
+const KIND_LETTER: Record<VarGroup, string> = {
+  trait: "T",
+  composition: "G",
+  codon: "C",
+  aminoAcid: "A",
+  hydropathy: "H",
+  fourfold: "F",
+  structure: "R",
 };
 const MEASURES: { m: Measure; label: string }[] = [
   { m: "size", label: "Length" },
@@ -63,7 +83,15 @@ const Svg = (p: { name: keyof typeof ICONS; size?: number }) => (
   />
 );
 
-const groupPenalty: Record<VarGroup, number> = { trait: 0, composition: 0.4, codon: 0.8, aminoAcid: 0.8 };
+const groupPenalty: Record<VarGroup, number> = {
+  trait: 0,
+  composition: 0.4,
+  codon: 0.8,
+  aminoAcid: 0.8,
+  hydropathy: 0.6,
+  fourfold: 0.8,
+  structure: 0.6,
+};
 
 function searchVars(query: string): Variable[] {
   const tokens = query.toLowerCase().replace(/[%,()]/g, " ").split(/\s+/).filter(Boolean);
@@ -85,7 +113,12 @@ function searchVars(query: string): Variable[] {
       }
     }
     if (!ok) continue;
-    const gene = v.kind === "feature" && !v.region.startsWith("total") && v.region !== "D_Loop" && !v.region.startsWith("rRNA");
+    const gene =
+      v.kind === "feature" &&
+      !v.region.startsWith("total") &&
+      !v.region.startsWith("major") &&
+      v.region !== "D_Loop" &&
+      !v.region.startsWith("rRNA");
     out.push({ v, s: s - groupPenalty[v.group] - (gene ? 0.3 : 0) });
   }
   return out.sort((a, b) => b.s - a.s).map((x) => x.v);
@@ -103,8 +136,10 @@ export default function VariablePicker(props: Props) {
   const current = createMemo(() => getVariable(props.value));
   const [query, setQuery] = createSignal("");
   const [active, setActive] = createSignal(0);
-  const [tab, setTab] = createSignal<VarGroup>("composition");
-  const [region, setRegion] = createSignal<Region>("total_pc");
+  const [tab, setTab] = createSignal<Tab>("composition");
+  const [region, setRegion] = createSignal<VarRegion>("total_pc");
+  /** The selected region if this tab has it, else all protein-coding genes (every per-gene tab has them). */
+  const regionIn = (list: readonly VarRegion[]): VarRegion => (list.includes(region()) ? region() : "total_pc");
 
   const results = createMemo(() => searchVars(query()));
   const shown = createMemo(() => results().slice(0, RESULT_LIMIT));
@@ -113,8 +148,8 @@ export default function VariablePicker(props: Props) {
     const v = current();
     setQuery("");
     setActive(0);
-    setTab(v?.group ?? "composition");
-    if (v?.kind === "feature" && (v.group === "codon" || v.group === "aminoAcid")) setRegion(v.region);
+    setTab(tabOf(v?.group ?? "composition"));
+    if (v?.kind === "feature" && ["codon", "aminoAcid", "hydropathy", "fourfold"].includes(v.group)) setRegion(v.region);
     else setRegion("total_pc");
     dialog?.showModal();
     // Phones: do not pop the keyboard over the sheet straight away; desktops: type immediately.
@@ -189,11 +224,11 @@ export default function VariablePicker(props: Props) {
     </Show>
   );
 
-  const RegionChips = () => (
+  const RegionChips = (p: { regions: readonly VarRegion[] }) => (
     <div class="vp-regions" role="group" aria-label="Region">
-      <For each={CODING_REGIONS}>
+      <For each={p.regions}>
         {(r) => (
-          <button type="button" class="vp-region" aria-pressed={region() === r} onClick={() => setRegion(r)}>
+          <button type="button" class="vp-region" aria-pressed={regionIn(p.regions) === r} onClick={() => setRegion(r)}>
             {regionPickerLabel(r)}
           </button>
         )}
@@ -358,28 +393,99 @@ export default function VariablePicker(props: Props) {
                         Codon frequency, % of all codons in the region. Amino acids follow the vertebrate mitochondrial
                         code.
                       </p>
-                      <RegionChips />
-                      <div class="vp-grid vp-grid--codons" role="group" aria-label={`Codons in ${regionPickerLabel(region())}`}>
+                      <RegionChips regions={CODING_REGIONS} />
+                      <div class="vp-grid vp-grid--codons" role="group" aria-label={`Codons in ${regionPickerLabel(regionIn(CODING_REGIONS))}`}>
                         <For each={CODONS}>
                           {(c) => (
-                            <OptionButton v={getVariable(`codon:${region()}:${c}`)} text={c} sub={codonAminoAcid(c)} class="vp-cell--codon" />
+                            <OptionButton
+                              v={getVariable(`codon:${regionIn(CODING_REGIONS)}:${c}`)}
+                              text={c}
+                              sub={codonAminoAcid(c)}
+                              class="vp-cell--codon"
+                            />
                           )}
                         </For>
                       </div>
                     </Show>
 
                     <Show when={tab() === "aminoAcid"}>
-                      <p class="vp-hint">Amino-acid frequency, % of sense codons in the region.</p>
-                      <RegionChips />
-                      <div class="vp-grid" role="group" aria-label={`Amino acids in ${regionPickerLabel(region())}`}>
+                      <p class="vp-hint">
+                        Amino-acid frequency, % of sense codons in the region. GRAVY is the mean Kyte–Doolittle
+                        hydropathy of the encoded protein.
+                      </p>
+                      <RegionChips regions={CODING_REGIONS} />
+                      <div class="vp-grid" role="group" aria-label={`Amino acids in ${regionPickerLabel(regionIn(CODING_REGIONS))}`}>
                         <For each={AMINO_ACID_LETTERS}>
                           {(a) => (
                             <OptionButton
-                              v={getVariable(`aa:${region()}:${a}`)}
+                              v={getVariable(`aa:${regionIn(CODING_REGIONS)}:${a}`)}
                               text={AMINO_ACIDS[a]?.three ?? a}
                               sub={AMINO_ACIDS[a]?.name ?? ""}
                             />
                           )}
+                        </For>
+                        <OptionButton v={getVariable(`gravy:${regionIn(CODING_REGIONS)}`)} text="GRAVY" sub="Hydropathy" />
+                      </div>
+                    </Show>
+
+                    <Show when={tab() === "fourfold"}>
+                      <p class="vp-hint">
+                        Base composition at fourfold-degenerate sites, % of those sites. Gene sense reads each gene's own
+                        strand; the heavy strand is defined only for chordate records in the usual gene order.
+                      </p>
+                      <RegionChips regions={FOURFOLD_REGIONS} />
+                      <div class="vp-matrix" role="group" aria-label={`Fourfold sites of ${regionPickerLabel(regionIn(FOURFOLD_REGIONS))}`}>
+                        <Show when={getVariable(`ff:${regionIn(FOURFOLD_REGIONS)}:A`)}>
+                          <div class="vp-matrix__row">
+                            <span class="vp-matrix__region">Gene sense</span>
+                            <For each={["A", "C", "G", "U"]}>
+                              {(b) => <OptionButton v={getVariable(`ff:${regionIn(FOURFOLD_REGIONS)}:${b}`)} text={b} />}
+                            </For>
+                          </div>
+                        </Show>
+                        <Show when={getVariable(`ffH:${regionIn(FOURFOLD_REGIONS)}:A`)}>
+                          <div class="vp-matrix__row">
+                            <span class="vp-matrix__region">Heavy strand</span>
+                            <For each={["A", "C", "G", "T"]}>
+                              {(b) => <OptionButton v={getVariable(`ffH:${regionIn(FOURFOLD_REGIONS)}:${b}`)} text={b} />}
+                            </For>
+                          </div>
+                        </Show>
+                      </div>
+                    </Show>
+
+                    <Show when={tab() === "structure"}>
+                      <p class="vp-hint">
+                        Perfect repeats, non-B DNA motifs and simple repeats of the whole record and of the major arc (from
+                        the light-strand origin to the control region), counted on the RefSeq sequence.
+                      </p>
+                      <div class="vp-matrix vp-matrix--measures" role="group" aria-label="Measure and region">
+                        <For each={STRUCTURE_SPECS}>
+                          {(m) => (
+                            <div class="vp-matrix__row">
+                              <span class="vp-matrix__region">{m.short[0]?.toUpperCase() + m.short.slice(1)}</span>
+                              <For each={STRUCTURE_REGIONS}>
+                                {(r) => <OptionButton v={getVariable(`${m.measure}:${m.sub}:${r}`)} text={regionPickerLabel(r)} />}
+                              </For>
+                            </div>
+                          )}
+                        </For>
+                        <div class="vp-matrix__row">
+                          <span class="vp-matrix__region">Length</span>
+                          <span />
+                          <OptionButton v={getVariable("size:major_arc")} text="Major arc" />
+                        </div>
+                        <div class="vp-matrix__row">
+                          <span class="vp-matrix__region">Control regions</span>
+                          <OptionButton v={getVariable("controlRegions:total_mtDNA")} text="Whole genome" />
+                        </div>
+                      </div>
+                      <p class="vp-hint">
+                        Repeat pairs with one arm in each deletion contact zone (ATP8 to COX3, and ND5 to CYTB).
+                      </p>
+                      <div class="vp-grid vp-grid--three" role="group" aria-label="Repeat pairs bridging the contact zones">
+                        <For each={CONTACT_KINDS}>
+                          {(k) => <OptionButton v={getVariable(`contactZone:${k}:total_mtDNA`)} text={k[0]?.toUpperCase() + k.slice(1)} sub="pairs" />}
                         </For>
                       </div>
                     </Show>
@@ -405,7 +511,7 @@ export default function VariablePicker(props: Props) {
                         onClick={() => pick(v.key)}
                       >
                         <span class={`vp-result__kind vp-result__kind--${v.group}`} aria-hidden="true">
-                          {v.group === "trait" ? "T" : v.group === "composition" ? "G" : v.group === "codon" ? "C" : "A"}
+                          {KIND_LETTER[v.group]}
                         </span>
                         <span class="vp-result__text">
                           <span class="vp-result__label">{v.label}</span>

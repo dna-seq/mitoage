@@ -1,7 +1,7 @@
 /**
  * Precomputed correlations for one trait and scope, sorted by |Spearman rho|:
  * /compare/plot/correlations/{trait}/{scope}.json, e.g. /compare/plot/correlations/maxLongevityYears/class-mammalia.json.
- * Each file is one (trait, scope) slice of the pipeline's correlation table (at most 1,257 rows),
+ * Each file is one (trait, scope) slice of the pipeline's correlation table (at most one row per feature),
  * so the browser never downloads the whole table.
  */
 import type { APIRoute, GetStaticPaths } from "astro";
