@@ -4,6 +4,20 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3's cluster numbers come from the build with the EURING birds too** (2026-11-15). The PIC calibration
+  ran again for all 32 scopes (array job 6489844 from fb54cec, committed from haumea as b6c6ec6): the 28 scopes the
+  birds do not enter keep every observed value, the shuffled-lifespan rate in all species is 29.0% (was 29.1%), the
+  Brownian-motion rates 4.77–5.24%. The mitoage-pipelines analyses ran in one job on the build before and after the
+  birds (`slurm/manuscript-rerun.sbatch`; `results/euring/` at e1b862b there); the run before reproduces the published
+  tables. Birds go from 379 to 381, bird maturity follows seven or eight features (was six or seven), the column screen
+  has 5,262 mammal tests (the realignment moved its columns; the same two pass), and the reptile contact divergence of
+  H12 passes at q = 0.046 (was 0.052) with no reptile added, which the text reports and does not claim. Two corrections:
+  292 live birds have a maturity age (296 counted retired records), and S10.6's "3,958" rows were 2,132 the cluster
+  fills alone plus 1,826 neither side computes. Both runs read `public/data/` of fb54cec, byte-identical to
+  Hugging Face revision f75bdc9, which the round pins. `docs/manuscript/NOTES.md` lists what still describes the build
+  before EURING: the reproduction, the audit, the Hugging Face sources mirror and mitoage-pipelines' `docs/HYPOTHESES.md`.
+
+
 - **Every protein gene a species lacks now says why, and the African grey parrot gains its ND6** (2026-11-15, the
   maintainer: "Yes, fix the gaps"). 26 live species lacked one of the 13 protein genes, silently. The records were
   read one by one:

@@ -60,18 +60,33 @@ has no patch, so its printed values stay right for the build it cites; they diff
 - the PIC calibration run on haumea from fb54cec (b6c6ec6) predates the patch; of its scopes, all species, Aves and
   Psittaciformes gain the parrot's ND6.
 
-**Still from the build before EURING (2,335 species), until rerun:**
-- the worked analyses run in mitoage-pipelines (Table 4 and the generation-time models, the amino-acid example,
-  the site screen, repeats and motifs, the rate test, H11 and H12): their mammal results cannot change, since no
-  mammal was added, but their bird and all-species numbers can (379 birds, 107 to 281 birds, 132 tests in four
-  classes, 339 sister pairs, 655 single-gene tests). They need a rerun on the cluster at 725da08 or later;
-- the PIC calibration (`pipeline/pic-calibration.sbatch`): the shuffled-lifespan rejection rates of the text (29%
-  in all species) and of S10.6, and the "cluster run" figures there, for the four scopes that changed (all species,
-  Aves, Passeriformes, Anseriformes). Supplementary Table S1's rate column is computed from the table and is current;
+**Rerun on the build with EURING (2026-11-15):** the worked analyses of mitoage-pipelines (Table 4 and the
+generation-time models, the amino-acid example, the site screen, repeats and motifs, the rate test, H11 and H12) ran
+again in one Slurm job on the build before and after the nine birds (`slurm/manuscript-rerun.sbatch` at 2ee27a1, jobs
+6489876 and 6489877; tables, logs and the comparison in `results/euring/` at e1b862b). Both read `public/data/` and the dated tree of
+fb54cec, whose data are byte-identical to 725da08's and so to Hugging Face revision f75bdc9; the gene-annotation patch
+above does not enter them. The run before reproduces the
+published tables, so every change is the build's. Mammal results are unchanged except the column screen, whose columns
+moved with the realignment (5,262 tests, the same two pass); birds go from 379 to 381 in the composition and structure
+models and 281 to 282 in the maturity models; bird maturity now follows seven or eight features (was six or seven);
+the rate test has the same 339 cherries from 1,371 species (was 1,369). **The reptile contact divergence of H12 now
+passes (q = 0.046, was 0.052) with no reptile added**: the alignment moved under it. The text reports it and does not
+claim it; whether to keep that sentence or drop the result is the authors' call. The PIC calibration was rerun for all
+32 scopes (array job 6489844 from fb54cec; `docs/PIC_CALIBRATION.md`): only the four scopes with the birds change their
+observed values; the shuffled-lifespan rate in all species is 29.0% (was 29.1%), still "29%" in the text.
+
+Two corrections came out of the rerun: the bird maturity ages are 292 live species (the "296" counted retired
+records), and the S10.6 note on rows the cluster computes alone gave 3,958, which counted rows neither side computes
+(2,132 are the cluster's alone).
+
+**Still from the build before EURING (2,335 species):**
 - the reproduction in mitoage-pipelines (`docs/BUILD2_REPRODUCTION.md`, 5,302,404 identical values) and the Python
   audit's cross-check, which do not read the EURING list: the text says so where it reports them;
 - the Hugging Face mirror of the sources (`longevity-genie/mitoage-build2-sources`), which has neither the EURING PDF
-  nor the 16 TimeTree answers fetched for the new birds; Table S2 therefore gives no count of tree answers.
+  nor the 16 TimeTree answers fetched for the new birds; Table S2 therefore gives no count of tree answers;
+- `docs/HYPOTHESES.md` of mitoage-pipelines, the record the text cites for H1 to H12, still gives the numbers of the
+  build before (379 birds, six or seven maturity features, no reptile contact result); `results/euring/README.md` there
+  lists every change.
 
 | Numbers | Source |
 |---|---|
@@ -88,7 +103,7 @@ has no patch, so its printed values stay right for the build it cites; they diff
 | 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
 | Table 3, the funnel (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
 | Codon third-position pattern (8 U-ending down, 7 C-ending up; UGC no longer passes with the EURING birds) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
-| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` at da0c112: `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
+| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` `results/euring/` at e1b862b (run of 2ee27a1 on fb54cec; mammals as first run at da0c112): `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
 | Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
 | 485 of the 550 "All three" keep the sign of the correlation across species in the partial correlation (65 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,386 of 2,211 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.027 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
@@ -108,9 +123,10 @@ keeps Table 3, the pipeline's report should emit it, so the manuscript can cite 
 
 ### Repeats, motifs and the rate of evolution (added 2026-11-14)
 
-Every number in this subsection comes from mitoage-pipelines main at 22cb140, run on build 2's species table,
-the dated tree and the quality filter, with the motif features from this repository's pipeline, merged into
-main at e3d99b2.
+Every number in this subsection was first computed from mitoage-pipelines main at 22cb140, run on build 2's species
+table, the dated tree and the quality filter, with the motif features from this repository's pipeline, merged into
+main at e3d99b2. Each is unchanged on the build with the EURING birds (`results/euring/` at e1b862b, where the bird
+rows of the motif table move and none passes; the rate test's cherries come from 1,371 species instead of 1,369).
 
 | Number in the draft | Where it comes from |
 | --- | --- |

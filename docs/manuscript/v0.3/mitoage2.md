@@ -230,7 +230,7 @@ log10 maximum lifespan regressed on each standardised feature, log10 body mass a
 fourfold-degenerate sites, with Pagel's λ (`mitoage longevity structure-pgls`). The 298 residues of cytochrome c oxidase subunits 1 to 3 at contacts with its nuclear-encoded subunits were taken from the
 structure 5Z62 (52). The first structural feature is the share of them where a species' residue differs from the class's most common one.
 The others are the same share at 298 control residues matched for burial, the difference between the two shares, and the hydropathy (GRAVY) of each of the 13 proteins and of all 13 together. Both analyses ran
-on build 2 from `dna-seq/mitoage-pipelines` at commit 858974b; their
+on build 2 with the nine EURING birds from `dna-seq/mitoage-pipelines` at commit 2ee27a1; their
 records are entries H11 and H12 of its `docs/HYPOTHESES.md`, and Supplementary Methods S12.6 and S12.7 describe them.
 
 ### Reproducibility
@@ -519,10 +519,10 @@ composition feature per standard deviation of the slow-fast axis. Its direction,
 gene sense at the slow end, is the one the heavy-strand A>G signature predicts for the twelve genes read on the light strand in mammals with long generation times (21).
 
 In birds we detected no such signal. Incubation, birth weight, body mass alone and either slow-fast axis
-follow no composition feature (107 to 175 species). Lifespan follows one, codon UAU, in the 115 birds with a birth weight, and none in its other species sets (107 to 281 birds). Only age at maturity follows six or seven features,
+follow no composition feature (107 to 175 species). Lifespan follows one, codon UAU, in the 115 birds with a birth weight, and none in its other species sets (107 to 282 birds). Only age at maturity follows seven or eight features,
 in the opposite direction to mammals: later-maturing birds carry more T and less C in gene sense. That
 reversal comes from a screen of 43 features without replication, and the bird traits are coarse: 72% of the
-296 bird maturity ages are whole years.
+292 bird maturity ages of live species are whole years.
 
 **Table 4.** Mammalian composition features (of 43) that follow each life-history trait at q < 0.05, in
 phylogenetic regressions with Pagel's λ. Each row uses the mammals of the default dataset with a body mass,
@@ -551,7 +551,7 @@ acid of the 20 passed a 5% false discovery rate: threonine rose by 0.15 percenta
 lifespan (p = 0.03, q = 0.12), cysteine fell by 0.021 (p = 0.05, q = 0.15) and methionine did not change
 (p = 0.94). The answer depends on how shared ancestry is modelled: random intercepts of order and family in
 place of the tree, on the same species, gave seven amino acids at q < 0.05, cysteine and threonine among
-them. Birds (379), ray-finned fishes (235) and reptiles (97) showed nothing at q < 0.05.
+them. Birds (381), ray-finned fishes (235) and reptiles (97) showed nothing at q < 0.05.
 
 If single residues differed with lifespan, the alignments could show them, so we also screened single
 alignment columns on the dated tree. The screen found two columns at q < 0.05 in mammals and none in birds.
@@ -559,9 +559,11 @@ One is a substitution found almost only in the marsupials (24 of its 28 carriers
 (q = 0.049). Without a replication, neither is reported here as associated with lifespan (Supplementary
 Methods S12.2).
 
-> AUTHOR: rerun of 2026-11-14 in mitoage-pipelines at da0c112 (`mitoage longevity aa-pgls`, tables
-> `aa_pgls.<Class>.tsv`; dataset longevity-genie/mitoage at 6efa0959, dated tree at 18a13ec), replacing the
-> earlier mixed-model numbers (622 mammals, 10 of them with questionable lifespans). Whether a database
+> AUTHOR: rerun of 2026-11-15 in mitoage-pipelines at 2ee27a1 on the build with the EURING birds (Slurm job
+> 6489877, `slurm/manuscript-rerun.sbatch`; tables `aa_pgls.<Class>.tsv` and `pgls.<Class>.tsv` in `results/euring/`;
+> build and dated tree of dna-seq/mitoage at fb54cec). The mammal results are those of the run of 2026-11-14 at
+> da0c112, unchanged; the column screen moved with the realignment (5,262 tests, the same two columns pass). The
+> earlier mixed-model numbers (622 mammals, 10 of them with questionable lifespans) were replaced on 2026-11-14. Whether a database
 > update should carry a worked example at all, or only point to the repository, is still yours (NOTES.md, Q6).
 
 ### Repeats, motifs, protein structure and the rate of evolution
@@ -588,10 +590,12 @@ with body mass and base composition in the model.
 
 If mismatch between the two genomes at the contacts of their proteins mattered for lifespan, the mitochondrial residues at the
 contacts of cytochrome c oxidase might diverge with it. We therefore measured their divergence from each class's most common residue, against residues
-matched for burial (Materials and methods). This divergence follows lifespan in no class. In mammals the slope of the
+matched for burial (Materials and methods). This divergence does not follow lifespan in mammals, birds or ray-finned fishes. In mammals the slope of the
 contact-specific divergence is −0.007 log10 years per standard deviation (95% interval −0.029 to +0.015,
-q = 0.83, 604 species) and in birds −0.014 (−0.037 to +0.009, q = 0.24, 379 species); nothing passes in
-ray-finned fishes (235) or reptiles (97). Of the hydropathy of the 13 proteins and of their total, two pass
+q = 0.83, 604 species) and in birds −0.015 (−0.037 to +0.008, q = 0.20, 381 species); nothing passes in
+ray-finned fishes (235). In reptiles it passes narrowly, −0.11 (−0.21 to −0.010, q = 0.046, 97 species), but on
+the alignment made before the nine EURING birds were added it gave q = 0.052 on the same 97 reptiles. A result
+that crosses the threshold when birds join the alignment rests on the alignment, and we do not claim it. Of the hydropathy of the 13 proteins and of their total, two pass
 in mammals and none in the other classes: ND5 is less hydrophobic in longer-lived mammals (−0.026 log10
 years per standard deviation, q = 0.013) and ND6, the one protein read from the other strand, more so
 (+0.030, q = 0.024).
@@ -610,8 +614,10 @@ single-gene tests pass a 5% false discovery rate and disagree in sign. The synon
 
 > AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 22cb140 (`mitoage longevity rates` and
 > `mitoage longevity motif-pgls`, tables `rates.tsv`, `rate_contrasts.tsv` and `motif_pgls.tsv`; H7 and H8 in
-> `docs/ANALYSIS_FINDINGS.md`, mitoage-pipelines main at 22cb140), on the motif features this repository's
-> pipeline computes for all 2,335 species (main at e3d99b2). Whether the paper should carry this subsection at all, or leave it to the analysis
+> `docs/ANALYSIS_FINDINGS.md`, mitoage-pipelines main at 22cb140), rerun on 2026-11-15 at 2ee27a1 on the build
+> with the EURING birds and its motif features for all 2,344 species (Slurm job 6489877; `results/euring/` of
+> mitoage-pipelines, with the structural models of H12). Every number in this subsection is the same on both builds
+> except the bird and reptile structural results given in the text. Whether the paper should carry this subsection at all, or leave it to the analysis
 > repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
 
 ### Peptides encoded inside mtDNA
@@ -769,7 +775,7 @@ methionine (31) and threonine (33) pass no false discovery rate on the dated tre
 do with random intercepts of order and family, a model that ignores the branch lengths. On the dated tree
 the result agrees with the earlier finding that in mammals cysteine shows no detectable effect of longevity
 and threonine follows nucleotide composition (34). Divergence of the mitochondrial residues at the contacts with the
-nuclear subunits of cytochrome c oxidase, measured against each class's most common residue, follows lifespan in no class. This divergence does not measure compatibility with a species' own nuclear partners, which compensating changes could preserve.
+nuclear subunits of cytochrome c oxidase, measured against each class's most common residue, follows lifespan in no class but reptiles, where it passes only on the alignment that includes the EURING birds. This divergence does not measure compatibility with a species' own nuclear partners, which compensating changes could preserve.
 
 The correlations that pass on contrasts are fewer and weaker. Across all species, the GC/AT-balance correlations pass the three controls one at a time but 26 of the 27 do not survive ancestry and body
 mass controlled together. The codon usage they shape survives them only in part (6 of 16 codons), and the all-species contrast test rejects too often under shuffled lifespans to be

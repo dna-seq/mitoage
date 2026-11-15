@@ -12,9 +12,9 @@ across species in the same scopes.
   r and p values to every printed digit, in Chondrichthyes, Mammalia and Rajiformes. There is no bug to fix,
   so this report comes with no code fix and no regression test.
 - **The test is calibrated under its own model and not under the data.** When log10 lifespan is replaced by
-  Brownian motion simulated on the same dated tree, the test rejects 4.75–5.30% at p < 0.05 in every one of
+  Brownian motion simulated on the same dated tree, the test rejects 4.77–5.24% at p < 0.05 in every one of
   the 32 scopes. When log10 lifespan is shuffled across the species of a scope, which breaks any relation to
-  the tree and to the feature, it rejects 22–33% in the fish scopes and in all species (29.1%).
+  the tree and to the feature, it rejects 22–33% in the fish scopes and in all species (29.0%).
 - **Why it over-rejects:** in the scopes that over-reject, one pair of sister species carries most of the
   lifespan contrasts' variance. In Chondrichthyes and Rajiformes it is *Dipturus trachyderma* (26 y) against
   *Zearaja nasuta* (9 y), placed about 0.4 Myr apart on the dated tree: that one contrast holds 55% of the
@@ -32,12 +32,19 @@ across species in the same scopes.
 - **A test that does not assume equal-variance normal contrasts** (flipping the signs of the lifespan
   contrasts at random, 9,999 times, which keeps every contrast's size and so any node where both traits
   change a lot) rejects 59 of 1,368 tests in Chondrichthyes (4.3%) instead of 585, 4 of 191 in Rajiformes
-  instead of 74, and 197 of 1,398 in Mammalia against 224 for the t test. Where the data fit the model the
+  instead of 74, and 198 of 1,398 in Mammalia against 224 for the t test. Where the data fit the model the
   two tests agree; where one node dominates they do not.
 
 ## How it was checked
 
-All runs from commit `0d67d1e` on `main`, on haumea (`/data/uq2347/runs/mitoage/pic-check/`).
+The first runs were made from commit `0d67d1e` on `main`, on haumea (`/data/uq2347/runs/mitoage/pic-check/`), on the
+build before the nine EURING birds (D15). The calibration (2 below) was rerun on the build with them, from `fb54cec`
+(Slurm array job 6489844, `/data/uq2347/runs/mitoage/pic-euring/`), and the scope TSVs, the summary and the tables and
+numbers of this document are from that rerun, except where a section says it describes the first run. In the 28 scopes
+the birds do not enter, every test keeps its observed values (r, p, q, contrast r and p, mass-partialled r and p); only
+the Monte Carlo columns move, by noise, because the Brownian-motion replicates are drawn over the whole dated tree,
+which has nine more tips. All species, Aves, Passeriformes and Anseriformes change (Anseriformes has 195 tests, not
+193). The ape comparison (1) was not rerun: none of its three scopes changed.
 
 1. **Against ape::pic** (Slurm job 6486181). `bun run pipeline/pic-calibration.ts export` wrote the dated tree
    as Newick, the tip values of six lifespan tests per scope and the site's own contrasts, each keyed by the
@@ -53,10 +60,10 @@ All runs from commit `0d67d1e` on `main`, on haumea (`/data/uq2347/runs/mitoage/
      site's t test with m − 1 degrees of freedom.
    - Not covered by ape: two sister tips both on branches of length 0 make ape divide by zero; the site
      averages them and makes no contrast. None of the 18 tests compared hit that case.
-2. **Calibration, every lifespan test of every scope** (Slurm array job 6486136, 32 tasks;
-   `pipeline/pic-calibration.sbatch`). For each of the 15,904 lifespan tests of dataset `default`,
+2. **Calibration, every lifespan test of every scope** (Slurm array job 6489844, 32 tasks, first run 6486136;
+   `pipeline/pic-calibration.sbatch`). For each of the 15,906 lifespan tests of dataset `default`,
    `bun run pipeline/pic-calibration.ts calibrate` recomputed the contrasts (identical to the table in all
-   15,904: the run checks), then: 1,000 Brownian-motion lifespans on the dated tree, the same 1,000 per scope
+   15,906: the run checks), then: 1,000 Brownian-motion lifespans on the dated tree, the same 1,000 per scope
    for every feature; 1,000 shuffles of log10 lifespan across the scope's species; a sign-flip p value from
    9,999 flips; the contrast correlation with log10 adult body mass partialled out (regression through the
    origin on the three traits' contrasts, df = m − 2, on the species with a mass); the Garland diagnostic;
@@ -78,41 +85,41 @@ test, as the species sets of a scope's tests differ little).
 
 | Scope | Tests | p < 0.05 | FDR | PIC | BM null % | Shuffle null % | Sign-flip | PIC + mass | Top share | Garland r |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| all | 1414 | 1179 | 1168 | 565 | 4.95 | 29.1 | 170 | 180 | 0.05 | -0.21 |
-| class:Mammalia | 1398 | 954 | 918 | 224 | 4.98 | 9.1 | 197 | 202 | 0.03 | -0.12 |
-| class:Actinopterygii | 1402 | 832 | 769 | 546 | 5.00 | 30.2 | 148 | 141 | 0.08 | -0.33 |
-| class:Aves | 1390 | 688 | 590 | 181 | 5.03 | 11.2 | 77 | 191 | 0.06 | -0.34 |
-| class:Reptilia | 1403 | 405 | 231 | 94 | 4.99 | 8.8 | 78 | 88 | 0.10 | -0.22 |
-| order:Primates | 204 | 128 | 118 | 12 | 4.88 | 6.4 | 14 | 9 | 0.07 | -0.13 |
-| class:Bivalvia | 1331 | 111 | 0 | 90 | 5.20 | 7.3 | 73 | 0 | 0.19 | -0.32 |
-| order:Artiodactyla | 204 | 92 | 76 | 27 | 4.95 | 7.8 | 16 | 21 | 0.07 | -0.20 |
-| order:Perciformes | 205 | 91 | 81 | 12 | 4.98 | 5.3 | 8 | 21 | 0.07 | -0.39 |
-| order:Carnivora | 205 | 88 | 72 | 53 | 4.83 | 6.8 | 37 | 57 | 0.09 | -0.22 |
-| order:Rodentia | 204 | 77 | 50 | 23 | 5.05 | 8.3 | 17 | 27 | 0.09 | -0.19 |
-| order:Passeriformes | 204 | 72 | 41 | 28 | 4.75 | 7.5 | 23 | 27 | 0.09 | -0.36 |
-| class:Chondrichthyes | 1368 | 67 | 2 | 585 | 5.13 | 32.7 | 59 | 250 | 0.43 | -0.39 |
-| order:Cypriniformes | 200 | 67 | 45 | 14 | 5.10 | 6.9 | 18 | 19 | 0.08 | -0.31 |
-| order:Acipenseriformes | 197 | 63 | 43 | 78 | 5.13 | 22.5 | 51 | 17 | 0.42 | -0.60 |
-| order:Psittaciformes | 202 | 56 | 35 | 19 | 4.77 | 6.9 | 18 | 10 | 0.15 | -0.39 |
-| order:Siluriformes | 197 | 56 | 16 | 23 | 4.90 | 8.3 | 25 | 10 | 0.20 | -0.02 |
-| order:Pleuronectiformes | 203 | 53 | 11 | 10 | 4.90 | 4.2 | 15 | 12 | 0.20 | -0.44 |
-| order:Cetacea | 198 | 52 | 12 | 6 | 5.12 | 6.5 | 11 | 3 | 0.17 | 0.13 |
-| order:Charadriiformes | 199 | 44 | 21 | 3 | 4.93 | 8.1 | 13 | 10 | 0.14 | -0.27 |
-| order:Centrarchiformes | 198 | 41 | 0 | 15 | 5.17 | 7.4 | 7 | 7 | 0.24 | 0.06 |
-| class:Amphibia | 1386 | 37 | 0 | 146 | 4.97 | 10.6 | 54 | 118 | 0.21 | -0.30 |
-| order:Squamata | 205 | 26 | 0 | 6 | 5.30 | 6.4 | 13 | 8 | 0.11 | -0.22 |
-| order:Salmoniformes | 194 | 23 | 0 | 15 | 5.08 | 5.9 | 9 | 11 | 0.20 | -0.52 |
-| order:Anseriformes | 193 | 21 | 0 | 11 | 4.98 | 5.8 | 11 | 13 | 0.26 | -0.44 |
-| order:Scombriformes | 201 | 21 | 0 | 13 | 5.11 | 5.2 | 17 | 0 | 0.21 | -0.18 |
-| order:Chiroptera | 202 | 20 | 0 | 26 | 4.95 | 5.8 | 25 | 15 | 0.15 | -0.34 |
-| order:Carcharhiniformes | 197 | 19 | 0 | 12 | 4.98 | 5.7 | 8 | 9 | 0.18 | -0.22 |
-| order:Clupeiformes | 200 | 19 | 0 | 70 | 5.08 | 24.8 | 21 | 13 | 0.54 | -0.32 |
-| order:Caudata | 204 | 14 | 0 | 16 | 5.15 | 7.2 | 14 | 0 | 0.24 | -0.22 |
+| all | 1414 | 1175 | 1166 | 565 | 4.96 | 29.0 | 169 | 180 | 0.05 | -0.21 |
+| class:Mammalia | 1398 | 954 | 918 | 224 | 4.95 | 9.1 | 198 | 202 | 0.03 | -0.12 |
+| class:Actinopterygii | 1402 | 832 | 769 | 546 | 5.04 | 30.5 | 148 | 141 | 0.08 | -0.33 |
+| class:Aves | 1390 | 684 | 601 | 184 | 4.99 | 11.1 | 83 | 190 | 0.06 | -0.34 |
+| class:Reptilia | 1403 | 405 | 231 | 94 | 4.93 | 9.0 | 78 | 88 | 0.10 | -0.22 |
+| order:Primates | 204 | 128 | 118 | 12 | 4.80 | 6.5 | 14 | 9 | 0.07 | -0.13 |
+| class:Bivalvia | 1331 | 111 | 0 | 90 | 4.91 | 7.3 | 74 | 0 | 0.19 | -0.32 |
+| order:Artiodactyla | 204 | 92 | 76 | 27 | 4.98 | 7.8 | 16 | 21 | 0.07 | -0.20 |
+| order:Perciformes | 205 | 91 | 81 | 12 | 4.90 | 5.2 | 9 | 21 | 0.07 | -0.39 |
+| order:Carnivora | 205 | 88 | 72 | 53 | 5.00 | 6.8 | 38 | 57 | 0.09 | -0.22 |
+| order:Rodentia | 204 | 77 | 50 | 23 | 4.80 | 8.4 | 17 | 27 | 0.09 | -0.19 |
+| order:Passeriformes | 204 | 74 | 28 | 25 | 4.95 | 7.3 | 23 | 25 | 0.09 | -0.36 |
+| class:Chondrichthyes | 1368 | 67 | 2 | 585 | 5.24 | 32.7 | 59 | 250 | 0.43 | -0.39 |
+| order:Cypriniformes | 200 | 67 | 45 | 14 | 4.93 | 7.2 | 20 | 19 | 0.08 | -0.31 |
+| order:Acipenseriformes | 197 | 63 | 43 | 78 | 4.96 | 21.5 | 51 | 17 | 0.42 | -0.60 |
+| order:Psittaciformes | 202 | 56 | 35 | 19 | 5.22 | 7.2 | 18 | 10 | 0.15 | -0.39 |
+| order:Siluriformes | 197 | 56 | 16 | 23 | 4.81 | 8.1 | 25 | 10 | 0.20 | -0.02 |
+| order:Pleuronectiformes | 203 | 53 | 11 | 10 | 4.96 | 4.2 | 15 | 12 | 0.20 | -0.44 |
+| order:Cetacea | 198 | 52 | 12 | 6 | 4.96 | 6.6 | 10 | 3 | 0.17 | 0.13 |
+| order:Charadriiformes | 199 | 44 | 21 | 3 | 4.77 | 8.0 | 13 | 10 | 0.14 | -0.27 |
+| order:Centrarchiformes | 198 | 41 | 0 | 15 | 5.03 | 7.5 | 7 | 7 | 0.24 | 0.06 |
+| class:Amphibia | 1386 | 37 | 0 | 146 | 5.02 | 10.6 | 53 | 118 | 0.21 | -0.30 |
+| order:Squamata | 205 | 26 | 0 | 6 | 4.98 | 6.2 | 12 | 8 | 0.11 | -0.22 |
+| order:Anseriformes | 195 | 24 | 0 | 26 | 5.04 | 6.1 | 12 | 13 | 0.30 | -0.41 |
+| order:Salmoniformes | 194 | 23 | 0 | 15 | 4.91 | 6.0 | 10 | 11 | 0.20 | -0.52 |
+| order:Scombriformes | 201 | 21 | 0 | 13 | 4.99 | 5.1 | 17 | 0 | 0.21 | -0.18 |
+| order:Chiroptera | 202 | 20 | 0 | 26 | 4.98 | 5.7 | 24 | 15 | 0.15 | -0.34 |
+| order:Carcharhiniformes | 197 | 19 | 0 | 12 | 5.00 | 5.4 | 8 | 9 | 0.18 | -0.22 |
+| order:Clupeiformes | 200 | 19 | 0 | 70 | 4.97 | 24.5 | 22 | 13 | 0.54 | -0.32 |
+| order:Caudata | 204 | 14 | 0 | 16 | 4.79 | 7.3 | 14 | 0 | 0.24 | -0.22 |
 | order:Testudines | 205 | 13 | 0 | 11 | 4.98 | 7.5 | 4 | 12 | 0.20 | -0.22 |
-| order:Rajiformes | 191 | 10 | 0 | 74 | 5.18 | 23.9 | 4 | 3 | 0.62 | -0.51 |
-| **All scopes (32)** | **15,904** | **5,439** | **4,299** | **3,008** | | | **1,255** | **1,504** | | |
+| order:Rajiformes | 191 | 10 | 0 | 74 | 4.87 | 23.6 | 4 | 3 | 0.62 | -0.51 |
+| **All scopes (32)** | **15,906** | **5,436** | **4,295** | **3,023** | | | **1,265** | **1,501** | | |
 
-The Brownian-motion column is the check of the code: 4.75–5.30% everywhere, as a correct implementation
+The Brownian-motion column is the check of the code: 4.77–5.24% everywhere, as a correct implementation
 must give (conditional on a feature's contrasts, Brownian lifespan contrasts are independent normals of
 equal variance, so the t test is exact whatever the feature looks like). The shuffle column is the most
 extreme departure from the model: lifespan with no phylogenetic structure at all. The fish scopes whose
@@ -120,7 +127,8 @@ observed PIC rate is 35–43% reject 22–33% under that null.
 
 ## Which manuscript numbers would change
 
-None changes because of a bug. They change only if the authors replace the contrast t test by a test that
+Computed from the first run, on the build before the EURING birds; D10 kept the t test, so this table is the record
+of that decision and was not recomputed. None changes because of a bug. They change only if the authors replace the contrast t test by a test that
 survives the heavy tails. With the sign-flip p value in place of `pic_p_value`, recomputed from these runs
 (`docs/manuscript/mitoage2.md` was not edited):
 
@@ -149,8 +157,9 @@ symmetric contrasts of any sizes, which is a weaker assumption than the t test's
 The table has no single test that controls for both ancestry and body mass. `pic_r` controls for ancestry
 and not for mass; `partial_r` controls for mass and not for ancestry; "All three" asks both of them to agree.
 The new `mass_r` column of the calibration TSVs is the contrast correlation with mass partialled out, on the
-species that have a mass. Among the 4,299 FDR-passing correlations, 393 are significant on it with the same
-sign (281 also pass the partial correlation across species), against 896 for the contrast test without mass.
+species that have a mass. Among the 4,295 FDR-passing correlations of the rerun, 393 are significant on it with the
+same sign, against 900 for the contrast test without mass (first run: 393 of 4,299, 281 of them also passing the
+partial correlation across species, against 896).
 It uses the same t test and inherits the same heavy-tail problem in the fish scopes.
 
 Lifespan and body mass are strongly correlated across animals, so "does this feature track lifespan" and
@@ -161,9 +170,11 @@ to lifespan. That is a decision for the authors.
 
 **Decided (D11, 2026-11-15): both, side by side.** The site build writes `pic_mass_r` and `pic_mass_p_value`
 for every lifespan row (at least 10 species with a weight, as for `partial_r`), and Table 3 has a column "PIC +
-mass": 393 of 4,299 in `default`, the cluster run's count; the values agree with `mass_r` and `mass_p` above to
-the printed precision in all 11,946 rows both compute (the cluster run also filled 3,958 rows of scopes with 4
-to 9 masses, none of which passes).
+mass": 393 of 4,295 in `default` on the build with the EURING birds, the cluster rerun's count too; the values agree
+with `mass_r` and `mass_p` above to 5 × 10⁻⁹ in all 11,948 rows both compute. The cluster run also fills 2,132 rows of
+scopes with 6 to 8 species with a mass, which the site leaves empty and none of which passes FDR, mass p and sign
+together; neither computes the other 1,826. (The first run's note, "3,958 rows of scopes with 4 to 9 masses", counted
+both kinds.)
 
 ## What could be done
 

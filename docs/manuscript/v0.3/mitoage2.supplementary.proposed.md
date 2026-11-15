@@ -793,21 +793,22 @@ children in different orders, which changes the intermediate contrasts but not t
 cross-products, so r does not change. A regression through the origin in R gives the same p as the t test
 with m − 1 degrees of freedom. One case is outside the comparison: two sister tips both on branches of
 length zero, which this implementation averages and ape cannot handle; none of the 18 tests compared had
-it. The calibration run below, made on the build before the 9 birds from the EURING list, also recomputed the
-contrasts of all 15,904 lifespan tests of the default dataset and found them identical to the table of that build.
+it. The calibration run below also recomputed the contrasts of all 15,906 lifespan tests of the default dataset and
+found them identical to the table.
 
 <!-- src: docs/PIC_CALIBRATION.md "Answer" and "How it was checked" 1-2; docs/analyses/pic-calibration/ape/ -->
 
 **Calibration.** Each lifespan test was put through two null distributions on the cluster
 (`pipeline/pic-calibration.ts`, 1,000 replicates each, fixed seeds). With log10 lifespan replaced by
-Brownian motion simulated on the dated tree, the test rejects 4.75–5.30% of tests at p < 0.05 in every one
+Brownian motion simulated on the dated tree, the test rejects 4.77–5.24% of tests at p < 0.05 in every one
 of the 32 scopes: under its own model the test is exact, as a correct implementation must be. With log10
 lifespan shuffled across the species of a scope, which removes any relation to the tree and to the
-feature, it rejects 22–33% in the fish scopes and 29.1% in all species, against 9.1% in Mammalia. So the
+feature, it rejects 22–33% in the fish scopes and 29.0% in all species, against 9.1% in Mammalia. So the
 test is calibrated under Brownian motion. Because a shuffled trait has no relation to the tree, the shuffle does not estimate the test's false-positive rate for the observed traits; it shows how far the test departs from its nominal level when a trait does not evolve along the tree.
 
-<!-- src: docs/PIC_CALIBRATION.md "Answer", "Per scope" (BM null %, Shuffle null %); job 6486136 on haumea
-from commit 0d67d1e -->
+<!-- src: docs/PIC_CALIBRATION.md "Answer", "Per scope" (BM null %, Shuffle null %); job 6489844 on haumea
+from commit fb54cec (the build with the EURING birds); the first run, job 6486136 from 0d67d1e, gave 4.75–5.30%,
+29.1% and 9.1% -->
 
 **Why the fish scopes over-reject.** In the cartilaginous fishes (Chondrichthyes and its order Rajiformes) and in Clupeiformes, one pair of sister species carries
 most of the variance of the lifespan contrasts. In Chondrichthyes and Rajiformes it is *Dipturus
@@ -835,8 +836,8 @@ the smallest possible value is 1/10,000. The test keeps the size of every contra
 them normal with equal variance. That is a weaker assumption, but still one, and the sign-flip test was not itself put through
 the simulations above. In the default dataset it gives 1,269 of the 15,906 lifespan tests below 0.05,
 against 3,023 for the t test, and 535 "Both" against 900. Where the data fit the model the two tests
-agree, and where one node dominates they do not: in the cluster run, Mammalia gives 197 against 224 (Both
-153 against 164), Chondrichthyes 59 against 585 and Rajiformes 4 against 74. Among the correlations in all
+agree, and where one node dominates they do not: in the cluster run, Mammalia gives 198 against 224 (Both
+154 against 164), Chondrichthyes 59 against 585 and Rajiformes 4 against 74. Among the correlations in all
 species that pass the false discovery rate, 202 are significant on contrasts with the opposite sign under
 the t test and 49 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,017 of
 13,380 tests below 0.05, and 502 "Both" against 659. Other traits have no sign-flip value.
@@ -860,15 +861,16 @@ correlations of the default dataset that pass the false discovery rate, 393 are 
 same sign (Table 3, PIC + mass), against 900 for the contrast test without mass; 283 of the 393 also pass
 the partial correlation across species. In the AnAge-only dataset the same count is 374 of 4,068. The
 values reproduce the cluster run's to the precision it printed (largest difference in r 5 × 10⁻⁹, all
-11,946 rows that both compute), and the counts are the same. The test uses the t distribution and has
+11,948 rows that both compute), and the counts are the same. The test uses the t distribution and has
 the same problem in the fish scopes as the contrast test without mass, so its sign-flip p value is not
 computed.
 
 <!-- src: pipeline/lib/stats.ts (picContrasts with z, partialContrastCorrelation); pipeline/steps/correlations.ts
 (picMassR, MIN_PAIRS); pipeline/tests/stats.test.ts "contrasts with body mass partialled out"; counts and the
 comparison with docs/analyses/pic-calibration/scopes/*.tsv (mass_r, mass_p) from dist/data/correlations.parquet
-of the site build on 2026-11-15; the cluster run also computed rows of scopes with 4 to 9 species with a mass
-(3,958 rows), none of which passed; docs/PIC_CALIBRATION.md "Body mass: corrected, uncorrected, or both";
+of the site build of fb54cec on 2026-11-15; the cluster run also computed 2,132 rows of scopes with 6 to 8 species
+with a mass, none of which passes FDR, mass p and sign together, and neither computes the other 1,826 (the first run's
+"3,958" counted both kinds); docs/PIC_CALIBRATION.md "Body mass: corrected, uncorrected, or both";
 the maintainer's call "Both, side by side", 2026-11-15 -->
 
 **What is still not done.** The degrees of freedom are not reduced for polytomies, as Purvis and Garland
@@ -1020,7 +1022,7 @@ tables, the earlier tree-free and mixed-model tests, the column screen on the da
 pilot and several preparation steps. Equal to the second decimal: the rate-covariation test of the
 mitochondrial and nuclear subunits, because MAFFT run on several threads and IQ-TREE run without a seed
 are not repeatable. Not reproducing: HyPhy RELAX, whose optimiser landed on different optima on
-identical inputs, which is one reason no RELAX result is claimed. The README records reruns on 2026-11-15 that gave the same bytes for the motif regression and for the two newest analyses, the life-history models and the structural models (H11 and H12). It records no rerun of the amino-acid regression on the tree or of the rate test.
+identical inputs, which is one reason no RELAX result is claimed. The README records reruns on 2026-11-15 that gave the same bytes for the motif regression, the rate test and the two newest analyses, the life-history models and the structural models (H11 and H12). The amino-acid regression on the tree was rerun the same day and gives the numbers the main text prints, but its tables were not compared byte for byte.
 
 <!-- src: mitoage-pipelines README.md "How far it reproduces": identical bytes for controls, fourfold, composition,
 sites, pgls, peptides pilot, relax-prep, coevol-prep, mitoport select; aa-pgls, motif-pgls and rates are not
@@ -1040,7 +1042,7 @@ protein evolution. All four are in `mitoage-pipelines`, each run by one command,
 design. They use the species of the default dataset (S10.1) that have a body mass and a tip in the dated
 tree. They use the dated tree of S9 and never a tree built from the genes. Most models that test
 lifespan include body mass and base composition at fourfold-degenerate sites, the latter as a measure
-of mutational pressure; each section below names the covariates of its own models. The amino-acid regression and the column screen were run from `mitoage-pipelines` at commit da0c112 on dataset revision 6efa0959, and the repeat, motif and rate analyses at commit 22cb140. Two further analyses reported in the main text, of the slow life history (S12.6) and of the proteins' structural features (S12.7), were run later from commit 858974b; in the first, composition is the response rather than a covariate.
+of mutational pressure; each section below names the covariates of its own models. The amino-acid regression and the column screen were first run from `mitoage-pipelines` at commit da0c112 on dataset revision 6efa0959, and the repeat, motif and rate analyses at commit 22cb140. Two further analyses reported in the main text, of the slow life history (S12.6) and of the proteins' structural features (S12.7), were run later from commit 858974b; in the first, composition is the response rather than a covariate. All six were rerun together on 2026-11-15 from commit 2ee27a1 (`slurm/manuscript-rerun.sbatch`, Slurm job 6489877) on the build with the nine EURING birds, and the numbers reported here are from that run (`results/euring/` of the analysis repository, which lists every change against the build before).
 
 <!-- src: docs/ANALYSIS_FINDINGS.md H1 (hypothesis, test), H2 ("Fixed before any result"); mitoage-pipelines
 docs/PIPELINE.md ("Every model that tests lifespan carries body mass and base composition at fourfold-degenerate
@@ -1077,7 +1079,7 @@ values are Benjamini–Hochberg over the 20 amino acids, within class and model.
 src/mitoage_pipelines/longevity/pgls.py (shared_path_covariance, V, nll, gls) -->
 
 **Species.** In mammals: 625 with all 13 proteins and a lifespan, 615 in the default dataset, 612 with a
-body mass and 604 in the tree. Birds, ray-finned fishes and reptiles were tested the same way (379, 235
+body mass and 604 in the tree. Birds, ray-finned fishes and reptiles were tested the same way (381, 235
 and 97 species).
 
 **Why a tree, and not the earlier mixed model.** The first version of this test used random intercepts
@@ -1104,7 +1106,7 @@ independently in several lineages.
 residue in it present in at least 15 species and absent in at least 15, with both states occurring in at
 least 5 families: a phylogenetic regression of log10 lifespan on log10 body mass, the three composition
 shares and an indicator of the residue. Pagel's λ is estimated once, on the model without the residue,
-and held fixed for every column. The q values are Benjamini–Hochberg over all tests in the class (5,259
+and held fixed for every column. The q values are Benjamini–Hochberg over all tests in the class (5,262
 in mammals).
 
 <!-- src: mitoage-pipelines src/mitoage_pipelines/longevity/pgls.py:main (ok.mean() < 0.8; x.sum() < 15;
@@ -1190,9 +1192,9 @@ saturation filter.
 <!-- src: mitoage-pipelines src/mitoage_pipelines/longevity/rates.py (docstring, MIN_CODONS 30, MIN_CONTRASTS 12,
 NORMALISATIONS, cherries, outgroup_for, test_contrasts, q grouping); docs/ANALYSIS_FINDINGS.md H7 -->
 
-**Species and limits.** The default dataset gives 1,369 species with a tip in the tree and 339 cherries.
+**Species and limits.** The default dataset gives 1,371 species with a tip in the tree and 339 cherries.
 dS exceeds 1 in 24.2% of the concatenated pairs. A cherry gives one contrast, so the 339 contrasts come from 678 of
-the 1,369 species. Nei–Gojobori counting suits close pairs and is strained at the divergences a quarter
+the 1,371 species. Nei–Gojobori counting suits close pairs and is strained at the divergences a quarter
 of these cherries reach, which is why saturated pairs are flagged and kept.
 
 ### S12.5 Analyses run and not reported in the main text
@@ -1234,17 +1236,21 @@ size the four traits load 0.51 (lifespan), 0.44 (maturity), 0.56 (gestation) and
 carries 39% of their variance beyond size; the axis with size carries 55% of the variance of the five traits. In
 birds lifespan loads against the other three traits on the first component beyond size, so that component is not an axis on which all four rise together.
 
-**Run.** `mitoage longevity generation-time`, Slurm job 6487335 on the cluster, from commit 858974b, on dataset
-revision c525adbf. The tables (`generation_time.female.tsv`, `generation_time.female.classes.tsv`) and the job log are
-in `docs/analyses/h11/` of the analysis repository. A second run gave the same bytes.
+**Run.** `mitoage longevity generation-time`, Slurm job 6489877 on the cluster (`slurm/manuscript-rerun.sbatch`),
+from commit 2ee27a1, on the build with the EURING birds (`public/data/` and the dated tree of dna-seq/mitoage at
+fb54cec, the data of Hugging Face revision f75bdc9). The tables (`generation_time.female.tsv`, `generation_time.female.classes.tsv`)
+and the job log are in `results/euring/` of the analysis repository. The mammal tables are byte-identical to those of
+the first run on the build before the EURING birds (job 6487335 from 858974b, `docs/analyses/h11/`), which a second
+run reproduced byte for byte; in birds the maturity set grows from 281 to 282.
 
-**Limits.** Age at maturity stands in for generation length, which the build does not hold. 72% of the 296 bird
-maturity ages are whole years. The bird result comes from a screen of 43 features without replication. Models with
+**Limits.** Age at maturity stands in for generation length, which the build does not hold. 72% of the 292 bird
+female maturity ages of live species are whole years. The bird result comes from a screen of 43 features without replication. Models with
 several traits show how the signal is shared among traits that evolve together; they cannot say which trait carries
 it.
 
-<!-- src: mitoage-pipelines docs/HYPOTHESES.md H11; docs/analyses/h11/generation_time.female.tsv and
-generation_time.female.classes.tsv at 858974b -->
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H11; results/euring/generation_time.female.tsv and
+generation_time.female.classes.tsv at e1b862b; the 292 and 72% from public/data/species.parquet at fb54cec (class Aves,
+not retired, female_maturity_days set; HYPOTHESES' 296 counted retired records too) -->
 
 ### S12.7 Structural features of the proteins (H12)
 
@@ -1261,18 +1267,23 @@ reported for comparison. q is Benjamini–Hochberg within class, family and mode
 written down before the first run; while the tests were being written, a failing test printed three q values of the
 mass-only model for the bird contacts, and nothing was changed after that.
 
-**Species.** Mammals 604, birds 379, ray-finned fishes 235 and reptiles 97; a class with fewer than 25 species would
+**Species.** Mammals 604, birds 381, ray-finned fishes 235 and reptiles 97; a class with fewer than 25 species would
 not be assessed.
 
-**Run.** `mitoage longevity structure-pgls`, Slurm job 6487327 on the cluster, from commit 858974b, on dataset
-revision c525adbf. The table (`structure_pgls.tsv`) and the job log are in `results/h12/` of the analysis repository.
-A second run gave the same bytes.
+**Run.** `mitoage longevity structure-pgls`, Slurm job 6489877 on the cluster, from commit 2ee27a1, on the build
+with the EURING birds (dna-seq/mitoage at fb54cec). The table (`structure_pgls.tsv`) and the job log are in
+`results/euring/` of the analysis repository. The same job on the build before the EURING birds (job 6489876)
+reproduced the first run's table (job 6487327 from 858974b, `results/h12/`, which a second run reproduced byte for
+byte); against it, the mammal and fish rows are unchanged and the bird and reptile rows move.
 
-**Limits.** The two hydropathy results in mammals are two of 14 features in one class, without replication. The
+**Limits.** The two hydropathy results in mammals are two of 14 features in one class, without replication.
+The reptile contact result passes (q = 0.046) on the alignment that includes the nine EURING birds and not on the
+one before (q = 0.052), with the same 97 reptiles: the contact columns and their most common residues come from the
+alignment of all species, so a new bird can move a reptile's mismatch. We do not claim it. The
 reading in the main text, that one strand-wide mutational bias moves ND5 and ND6 in opposite directions, is not
 tested.
 
-<!-- src: mitoage-pipelines docs/HYPOTHESES.md H12; results/h12/structure_pgls.tsv at 858974b -->
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H12; results/euring/structure_pgls.tsv and comparison.txt at e1b862b -->
 
 ## S13. The MCP server
 
