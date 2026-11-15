@@ -246,7 +246,7 @@ pin rather than split the repository across two versions, so both move together 
 
 ## RM22 — Calibrated counts, power and a like-for-like comparison with release 1
 
-**State:** open; waits for the EURING calibration and rerun on haumea (jobs 6489844 and `mitoage-rerun`), and two questions to the maintainer · **Owner:** lead
+**State:** open; PGLS submitted on haumea (D18); A1 can start from the EURING calibration (b6c6ec6); one question to the maintainer · **Owner:** lead
 
 The v0.3 skeptic's verdict: the counts come from an uncalibrated test, the negative reading has no power
 estimate, and the question the paper poses (how much of the loss drift causes) is not answered. The plan is in
@@ -259,5 +259,5 @@ estimate, and the question the paper poses (how much of the loss drift causes) i
 - **C:** a waterfall from release 1's values to build 2's Table 3 on the 903 shared species, one change per step.
 
 How each outcome will be read is fixed in the plan before anything runs. Which count leads is settled (D16: the t test,
-with chance bounds beside every count). Open there: whether to run PGLS over the whole table, and whether to rerun
-the rate test with a codon model.
+with chance bounds beside every count). PGLS over the whole table runs (D18).
+Open there: whether to rerun the rate test with a codon model.

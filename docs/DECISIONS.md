@@ -331,3 +331,23 @@ machine's stored login itself, and the token was not read, printed or copied.
 - **Not changed:** round v0.3 keeps citing f75bdc9 (the build it describes), and the MCP server stays pinned to
   c525adb until a release moves its pin (D8; tags are the maintainer's).
 - **D6 stands as the default**, as D9 left it: the next upload is by hand unless the maintainer says otherwise.
+
+## D18 — PGLS with Pagel's lambda is run over every lifespan test of the table (2026-11-15)
+
+Question 2 of `docs/REVIEW_ANALYSES_PLAN.md`: whether to add a second ancestry control that does not rest on the
+contrast t test, which D10 found over-rejecting where one sister pair dominates a scope. D13 had rejected it as a
+presentation choice for v0.3. The maintainer: "Yes, run PGLS".
+
+- **Decided:** every lifespan test of the correlation table (dataset `default`, 32 scopes) is refitted as PGLS:
+  the feature on log10 lifespan, and with log10 body mass added, with lambda estimated by maximum likelihood in
+  each. It runs on haumea from `main` (`pipeline/pgls-table.sbatch`). The results go to `docs/analyses/pgls/`.
+  How they enter Table 3 and S1 is decided once they are read, by the reading rules of the plan's section A.
+- **In this repository, in TypeScript,** not in `mitoage-pipelines` as the plan first said. That way it fits
+  the tests Table 3 counts from the same feature code, and with λ = 1 it reproduces the table's own contrast p
+  values on every test.
+- **Rejected:** not running it, which left the answer to "uncalibrated" to the chance bounds and the
+  phylogenetic permutation alone (A1, A2); and the dense Python fit of `mitoage-pipelines`, which would have
+  needed every feature definition again in a second language.
+- **What it costs, and was accepted:** a model that is not symmetric in feature and lifespan, beside
+  correlations that are; and a fourth ancestry count beside PIC, sign-flip and PIC + mass, until the results
+  say which belongs in the main text.

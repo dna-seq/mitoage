@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **PGLS with Pagel's lambda for every lifespan test** (2026-11-15, D18, RM22). Three new files:
+  - `pipeline/lib/pgls.ts` fits it as contrasts on the λ-scaled tree, pruned to the species fitted.
+  - `pipeline/pgls-table.ts` fits each test of the table as feature ~ log10 lifespan, and once more with log10
+    body mass added.
+  - `pipeline/pgls-table.sbatch` runs it on haumea, one array task per scope.
+
+  `pipeline/tests/pgls.test.ts` checks it against a dense GLS written in the test, against the table's contrast
+  tests at λ = 1, and for the likelihood maximum. Each check was confirmed by breaking the code it guards. On
+  Primates the run reproduces the table's contrast p value at λ = 1 on all 204 tests.
+
 - **mitoage-pipelines' hypotheses record matches round v0.3** (2026-11-15): its `docs/HYPOTHESES.md` gives the numbers
   of the build with the EURING birds (H11 at 500e1d2, H1, H2, H7 and H12 at 35ae7ae), and `docs/manuscript/NOTES.md`
   no longer lists it among what describes the build before.

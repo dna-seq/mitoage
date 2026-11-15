@@ -29,12 +29,9 @@ outcome will be read. Those reading rules are fixed here so that the result cann
   per lifespan test, they compute: the contrasts; 1,000 Brownian-motion lifespans on the dated tree; 1,000
   shuffles of lifespan; a sign-flip p value; contrasts with body mass partialled out. The per-test results
   are in `docs/analyses/pic-calibration/scopes/` (`bm_reject`, `perm_reject`, `signflip_p`, `mass_r`,
-  `mass_p`). They describe the build **before** EURING.
-- **Running on haumea at the time of writing, in another session:**
-  - the same calibration on the EURING build (array job 6489844, `/data/uq2347/runs/mitoage/pic-euring`);
-  - the manuscript's cluster analyses on it (`mitoage-rerun`, `/data/uq2347/runs/mitoage/euring-rerun`).
-
-  This plan starts from those outputs and does not repeat them.
+  `mass_p`). Since b6c6ec6 they describe the build with the EURING birds (array job 6489844, run from fb54cec).
+- The manuscript's `mitoage-pipelines` analyses on the build before and after the EURING birds
+  (`slurm/manuscript-rerun.sbatch`; `results/euring/` at e1b862b there). B3 reads its tables from there.
 - `mitoage-pipelines`, `src/mitoage_pipelines/longevity/power.py`: the smallest effect a test detects with
   80% power, read from the standard errors of the tests themselves (written for H2's column screen).
 - Build 1 as published in 2015: the `build1/` folder of the Hugging Face dataset `longevity-genie/mitoage`,
@@ -81,14 +78,34 @@ say so and stop at A1.
 
 Outcome: a `pic_perm_p` beside `pic_p_value` and `pic_signflip_p`, and its Both count.
 
-**A3. A second ancestry control over the whole table: PGLS with Pagel's λ.** haumea, `mitoage-pipelines`
-(Python: `pgls.py` already fits it, with dense covariance), one array task per scope. Fit each feature on
-log10 lifespan, and once more with log10 body mass. This is the analysis the Discussion names as the next
-one. D13 rejected it as a presentation choice for v0.3; running it now is the maintainer's decision
-(question 2 below).
+**A3. A second ancestry control over the whole table: PGLS with Pagel's λ.** Run (D18). haumea, this
+repository, TypeScript: `pipeline/lib/pgls.ts`, `pipeline/pgls-table.ts`, `pipeline/pgls-table.sbatch`, one
+array task per scope. For every lifespan test of Table 3, on the test's species that have a place in the tree:
 
-Cost estimate, not measured: about 1 s per likelihood on the 2,211 species of the all-species scope, about
-20 per fit and 2,800 fits there, so several CPU-days over the 32 scopes, well within one array job.
+- the feature is fitted on log10 lifespan;
+- it is fitted once more with log10 body mass added, on the species with a mass (at least 10, as for the
+  partial correlation);
+- λ is estimated by maximum likelihood each time.
+
+The feature is the response, as in H1 and H11, so the model is not symmetric in the two traits as the
+correlations are.
+
+The plan first put A3 in `mitoage-pipelines` (Python, `pgls.py`, dense covariance, an estimated several
+CPU-days). It moved here for two reasons:
+
+- it then fits the very tests Table 3 counts, from the same feature code;
+- PGLS with λ is contrasts on a tree whose internal branches are scaled by λ, so each likelihood is linear in
+  the number of species. One scope takes about a minute, mostly spent recomputing the table.
+
+The tree is pruned to the species fitted and rooted at their most recent common ancestor, as R's `phylolm` does
+on a pruned tree, so λ does not scale a stem every species shares. `pipeline/tests/pgls.test.ts` checks it on
+real data:
+- against a dense GLS written independently in the test, at five values of λ;
+- against the table's contrast tests at λ = 1, where the two models are the same;
+- for the maximum of the likelihood, on a grid twenty times finer than the search.
+
+Each check was confirmed by breaking the code it guards. Every run repeats the λ = 1 comparison on every test,
+and a task that finds a difference fails.
 
 **How each outcome is read:**
 
@@ -208,14 +225,14 @@ stays "inconclusive". Whether to run it is question 3 below. haumea, `mitoage-pi
 
 ## Order, places and outputs
 
-1. Wait for `pic-euring` (6489844) and `euring-rerun`; fetch their outputs, so that every number below is
-   on the EURING build. The cluster pulls `main`; no code goes there that is not on `main`.
+1. Start from the EURING build's calibration (b6c6ec6) and the pipelines' rerun (e1b862b there), so that every
+   number below is on the EURING build. The cluster pulls `main`; no code goes there that is not on `main`.
 2. **A1, B2, C** on the laptop, from this repository. All three read only the committed build and the
    calibration outputs.
 3. **B1 and A2** on haumea, one array job per scope from a commit on `main`. Results come back as their own
    commit, naming the commit they ran from.
 4. **B3** on the laptop, `mitoage-pipelines`, from the tables of `euring-rerun`.
-5. **A3 and D1** on haumea, only if the maintainer says yes.
+5. **A3** on haumea (D18), submitted on 2026-11-15; **D1** only if the maintainer says yes.
 6. Results go to `docs/analyses/review/`, with a README naming the commit, the job ids and the cluster
    paths, and into `docs/ANALYSIS_FINDINGS.md`. The manuscript changes in the next round (v0.4): the
    chance bounds in Table 3 and S1, a "Where the correlations went" subsection from C, the table of
@@ -230,11 +247,8 @@ Each new function gets a test that runs it on real data and is checked by breaki
 1. **Which count leads.** Answered 2026-11-15 (D16): "t test + chance bounds". The t test stays the
    headline, as D10 and D13 have it, and A1's chance bounds go beside every count. Rejected: a calibrated
    count as the headline, and all counts side by side with no headline.
-2. **A3: PGLS over the whole table.**
-   - (a) Run it. Several CPU-days on haumea, and a new column or supplementary table. **Recommended:** it is
-     the one ancestry control that does not rest on the contrast t test, and the Discussion already says it
-     is needed.
-   - (b) Not now. The answer to "uncalibrated" rests on A1 and A2.
+2. **A3: PGLS over the whole table.** Answered 2026-11-15 (D18): "Yes, run PGLS". Rejected: leaving the
+   answer to "uncalibrated" to A1 and A2 alone.
 3. **D1: the rate test with a codon model.**
    - (a) Run it. A day or two on haumea, plus a tool to set up.
    - (b) Label H7 "inconclusive" and say why. **Recommended for the next round,** since it costs nothing and
