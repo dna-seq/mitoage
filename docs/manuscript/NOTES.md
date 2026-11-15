@@ -61,6 +61,7 @@ extended features and 32 scopes.
 | 106 invertebrates: 104 non-chordates, a lancelet and an ascidian | computed from `public/data/species.parquet` (live species by phylum and subphylum) |
 | Cross-check: 8,733 changelog rows compared for the original species, 3,325 in both, 5,394 of the other 5,408 `refseq_successor` | `docs/BUILD2_CROSSCHECK.md`, the comparison table and the successor counts |
 | The MCP server's paragraph (Data access and versioning) and its sentence in Data availability | `mcp/` and `mcp/README.md`; D8 in `docs/DECISIONS.md`. Its verdict uses the Table 3 definitions below, so the server and the paper count the same rows |
+| The 2016 site against MitoAge 2 (The website and interface, its last paragraph; the Discussion's sentence on exploring) | www.mitoage.info visited 2026-11-15: fixed tables only, no `svg` or `canvas` on its pages, no sorting or filtering script (jQuery 1.10 and Bootstrap), `<meta name=viewport content="width=1024">`, no tree or alignments in its menu or user guide; MitoAge 2's views from `README.md` (routes, `DataTable`) and `src/components/charts/Scatter.tsx` (tap, click or keyboard opens a point's page), checked on https://just-dna.life/mitoage/ the same day at 375 px and desktop width |
 
 Definitions used for Table 3: "FDR" is `q_value < 0.05`; "PIC" is `pic_p_value < 0.05`; "Both" adds
 `sign(pearson_r) == sign(pic_r)` to both; "All three" adds `partial_p_value < 0.05`; "PIC + mass" (D11) is

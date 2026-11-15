@@ -637,6 +637,21 @@ small JSON files for the interactive views, so the site needs no database server
 whole. Old addresses of the data pages (species, taxa, genes, statistics and comparisons) redirect to their new pages, so
 links to the original site's data in the literature keep working.
 
+Where the 2016 site showed its data, MitoAge 2 lets a reader work with it. The original site served each view
+as a fixed table (statistics by taxon, a page per species with its composition and codon usage, and each
+region's values in all species) that could be downloaded as CSV but not sorted or filtered on the page. It drew
+no charts and had no phylogeny or alignments, and its pages are laid out at a fixed width of 1,024 pixels, so a
+phone shows them shrunk or scrolled sideways. In MitoAge 2 every table sorts and filters in the browser and
+downloads the rows it shows, the species tables also as one FASTA file; each comparative table comes with a
+chart drawn from the rows the table shows, so a filter or a sort applies to both. Any two of the 1,414 features,
+or a feature and a life-history trait, can be plotted for all species or one taxon, with the statistics of
+the pair beside the plot, and a point of any scatter, chosen with the mouse, a tap or the keyboard, opens its
+species' page. The species can be followed on the zoomable tree from class to family, and each gene read
+aligned across species with the longest-lived first. The views keep their state in the page address (the
+axes of the plot explorer, the species set side by side, the clade the tree is zoomed to, the filter of the
+species list), so a view can be linked from a paper or a message, and the layout fits a phone as well as a
+desktop, in a light and a dark theme.
+
 > AUTHOR: Figure 5 was planned as a scatter across species beside one on contrasts; the site does not
 > plot the contrasts themselves, so panel A gives the contrast r beside the scatter, and panel B shows the
 > explorer's ranking of every feature. Figure 4 is new with the screenshots: keep it or drop it (without
@@ -709,6 +724,8 @@ MitoAge 2 keeps what the first release offered: the composition of a complete Re
 animal species with a curated lifespan, and its statistics by taxon. It adds what a comparative analysis now
 needs: values traceable to pinned sources, a stated strand convention, alignments of the genes, and controls
 for body size and shared ancestry next to every correlation in the correlation table and the plot explorer.
+It also turns a site that could be read into one that can be explored: from a correlation in the plot explorer
+to the species behind each point, and from a species to its clade on the tree and its genes in the alignments.
 We built it to ask how many of the reported correlations between mtDNA and lifespan survive a re-derivation
 from current sources and a test within lineages. Most correlations between mtDNA features and lifespan do not hold up on phylogenetic
 contrasts. That points to differences between lineages or to effects too weak to detect within them. Yet how much of that loss the re-derivation alone causes was not measured. The re-analysis is therefore a caution

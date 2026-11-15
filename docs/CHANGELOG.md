@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **The v0.3 manuscript says what the new website adds over the 2016 one** (2026-11-15, the maintainer: "in the
+  manuscript you should somewhere also praise our UI features"). A paragraph closing "The website and interface"
+  compares the two sites, from both visited the same day: the 2016 site's fixed tables, no charts, tree or alignments
+  and a 1,024-pixel layout, against tables that sort, filter and download what they show, charts that follow their
+  table, the plot explorer, the tree, the alignments, linkable views and a layout that fits a phone. One sentence in the
+  Discussion's first paragraph says the same; `mitoage2.proposed.md` carries both, and NOTES.md where each claim comes from.
+
 - **The site says GC/AT balance, not skew** (2026-11-15, D14): labels, table columns, chart axes, feature names
   ("GC balance of ND6"), page text, the README and the MCP server's tool descriptions call (G−C)/(G+C) and
   (A−T)/(A+T) the GC balance and the AT balance; the About page notes the usual name, skew. The data files, the CSV
