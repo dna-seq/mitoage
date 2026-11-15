@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The Hugging Face mirror carries the patched build** (2026-11-15, D17): revision 0f4e970 of
+  `longevity-genie/mitoage`, uploaded from the session on the maintainer's instruction, every file checked against
+  the local copy. Round v0.3 still cites f75bdc9 and the MCP server c525adb.
+
 - **Round v0.3's cluster numbers come from the build with the EURING birds too** (2026-11-15). The PIC calibration
   ran again for all 32 scopes (array job 6489844 from fb54cec, committed from haumea as b6c6ec6): the 28 scopes the
   birds do not enter keep every observed value, the shuffled-lifespan rate in all species is 29.0% (was 29.1%), the
@@ -16,7 +20,6 @@ Newest first.
   fills alone plus 1,826 neither side computes. Both runs read `public/data/` of fb54cec, byte-identical to
   Hugging Face revision f75bdc9, which the round pins. `docs/manuscript/NOTES.md` lists what still describes the build
   before EURING: the reproduction, the audit, the Hugging Face sources mirror and mitoage-pipelines' `docs/HYPOTHESES.md`.
-
 
 - **Every protein gene a species lacks now says why, and the African grey parrot gains its ND6** (2026-11-15, the
   maintainer: "Yes, fix the gaps"). 26 live species lacked one of the 13 protein genes, silently. The records were

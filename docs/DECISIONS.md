@@ -308,3 +308,18 @@ answers, the maintainer chose "t test + chance bounds".
 - **What it costs, and was accepted:** one more column in Table 3 and S1. A count whose upper chance bound
   reaches half of it is printed but not interpreted, the plan's reading rule fixed before the bounds are
   computed; the fish scopes are expected to fall there.
+
+## D17 — A second in-session Hugging Face upload, on the maintainer's instruction, amending D6 once more (2026-11-15)
+
+After the gene-annotation patch (03c0949), the maintainer: "upload on my behalf you have my hf key". The build was
+packaged (`bun run hf`, `bun run sqlite`) and uploaded from the session as under D9: `huggingface_hub` resolved the
+machine's stored login itself, and the token was not read, printed or copied.
+
+- **Done:** revision `0f4e970554b2fe0265e718321f422347293dde17` of `longevity-genie/mitoage`, the 78 files of
+  `out/hf/`. Every file was checked against the local copy after the upload (the hub's LFS SHA-256, or the git blob
+  hash for small files): 0 mismatches. Against f75bdc9 only the files the patch touches changed (the seven data
+  tables, `species.csv`, the ND6 alignments and `alignments.parquet`, `mitoage.sqlite`, the two READMEs and
+  `alignments.json`).
+- **Not changed:** round v0.3 keeps citing f75bdc9 (the build it describes), and the MCP server stays pinned to
+  c525adb until a release moves its pin (D8; tags are the maintainer's).
+- **D6 stands as the default**, as D9 left it: the next upload is by hand unless the maintainer says otherwise.
