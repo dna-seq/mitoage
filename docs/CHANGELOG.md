@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **The contrast (PIC) test is checked: the code is right, its p values are not calibrated on these data**
+  (2026-11-15, `docs/PIC_CALIBRATION.md`). `pipeline/pic-calibration.ts`, run on haumea from commit 0d67d1e
+  (Slurm jobs 6486136 and 6486181), reproduces R `ape::pic` (same contrasts, same r and p) and every
+  `pic_r` of the table, and rejects 4.75–5.30% in all 32 scopes when lifespan is Brownian motion on the
+  dated tree. The excess in the fish scopes comes from one sister pair per scope carrying most of the
+  lifespan contrasts' variance (*Dipturus trachyderma* / *Zearaja nasuta*, *Alosa sapidissima* /
+  *A. alabamae*); shuffled lifespans are rejected 22–33% there. A sign-flip test gives 1,255 PIC-significant
+  tests instead of 3,008, and 531 of 4,299 "Both" instead of 896. No pipeline change: the choice of test is
+  the maintainer's. Per-test results in `docs/analyses/pic-calibration/`.
 - **Supplementary Methods for the manuscript** (2026-11-15): `docs/manuscript/mitoage2.supplementary.md`,
   sections S1 to S14, the build and the worked analyses as a flow of decisions with their reasons, rejected
   alternatives, assumptions and unknowns, each rule sourced to its file in a hidden comment. It defines every

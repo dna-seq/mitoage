@@ -17,5 +17,6 @@ cd "$SLURM_SUBMIT_DIR"
 mkdir -p out/pic-calibration/logs
 scope=$(bun run pipeline/pic-calibration.ts scopes | sed -n "${SLURM_ARRAY_TASK_ID}p")
 if [ -z "$scope" ]; then echo "no scope at index $SLURM_ARRAY_TASK_ID"; exit 1; fi
-echo "commit $(git rev-parse HEAD) scope $scope"
+# git is not installed on the compute nodes: read the commit from .git directly.
+echo "commit $(cat .git/refs/heads/main 2>/dev/null || cat .git/HEAD) scope $scope"
 bun run pipeline/pic-calibration.ts calibrate "$scope" "out/pic-calibration/${scope//:/_}.tsv"
