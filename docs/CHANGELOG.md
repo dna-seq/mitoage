@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3's numbers come from the build with the EURING birds** (2026-11-15). `docs/manuscript/numbers.ts`
+  recomputes every number the manuscript takes from a build (counts, Table 1, the funnel, Table 3, the S10.7 counts,
+  the tree, the strand and feature coverage) and writes Supplementary Table S1 (`--s1`); on the build before EURING
+  it reproduces what the text printed, and the diff against the new build gave every change: 2,344 species, the
+  funnel 15,906 / 5,436 / 4,295 / 3,023 / 900 / 550, and 19 codons instead of 20 passing all three controls in all
+  species (UGC drops out, so six synonymous pairs, not seven). EURING is cited as reference 53. Figures 1 and 2 are
+  redrawn, Figures 3 to 5 recaptured (the species list needs a 1,390 px viewport since the GC/AT-balance headers).
+  The cluster analyses, the PIC calibration of the four bird-affected scopes, the reproduction and the audit still
+  describe the build before EURING; the text says so for the last two, and `docs/manuscript/NOTES.md` lists all four.
+
 - **The EURING bird longevity list is read, from the Internet Archive's copy** (2026-11-15, D15). euring.org
   shows a maintenance page, so the pinned input is the archive's capture of `EURING_longevity_list_20230901.pdf`
   (same digest from 2023-12-16 to 2026-10-11, md5 pinned). `pipeline/lib/pdf-text.ts` reads the spreadsheet-exported

@@ -33,37 +33,47 @@ to a Google Doc's 6.5-inch text width, because pandoc lays tables out for 5.5 in
 
 ## Where the numbers come from
 
-Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-14), build 2 of 2026-11-13; the
-correlation numbers (Table 3, the funnel, Figures 1, 2 and 5) are from the table as rebuilt at 1dda8be, with the
-extended features and 32 scopes.
+Since 2026-11-15 (D15) the numbers taken from the build are from the build with the EURING list, `dna-seq/mitoage`
+at 725da08: 2,344 species, 9 of them European birds with a EURING lifespan. `bun docs/manuscript/numbers.ts [ROOT]`
+recomputes every one of them from a checkout's `public/data/` and `dist/` (after `bun run build`), one `key<TAB>value`
+per line, so two builds can be compared with `diff`; on the build before EURING (4b5e433) it gives every number the
+text then printed. `--s1` writes Supplementary Table S1. Figures 1 and 2 were redrawn and Figures 3 to 5 recaptured
+from that build.
 
-**The build has moved on since (D15, 2026-11-15).** The EURING list is now read from the Internet Archive's copy,
-which adds 9 European birds: 2,344 species (1,422 new), `default` dataset 2,211, lifespan sources of new species
-AnAge 838 / FishBase 475 / SeaLifeBase 74 / EURING 9 / USGS 26. Rounds up to v0.3 describe the build without
-EURING (the supplement says so in S1 and S4); the next round refreshes its numbers, the
-correlation counts included, from the current build.
+**Still from the build before EURING (2,335 species), until rerun:**
+- the worked analyses run in mitoage-pipelines (Table 4 and the generation-time models, the amino-acid example,
+  the site screen, repeats and motifs, the rate test, H11 and H12): their mammal results cannot change, since no
+  mammal was added, but their bird and all-species numbers can (379 birds, 107 to 281 birds, 132 tests in four
+  classes, 339 sister pairs, 655 single-gene tests). They need a rerun on the cluster at 725da08 or later;
+- the PIC calibration (`pipeline/pic-calibration.sbatch`): the shuffled-lifespan rejection rates of the text (29%
+  in all species) and of S10.6, and the "cluster run" figures there, for the four scopes that changed (all species,
+  Aves, Passeriformes, Anseriformes). Supplementary Table S1's rate column is computed from the table and is current;
+- the reproduction in mitoage-pipelines (`docs/BUILD2_REPRODUCTION.md`, 5,302,404 identical values) and the Python
+  audit's cross-check, which do not read the EURING list: the text says so where it reports them;
+- the Hugging Face mirror of the sources (`longevity-genie/mitoage-build2-sources`), which has neither the EURING PDF
+  nor the 16 TimeTree answers fetched for the new birds; Table S2 therefore gives no count of tree answers.
 
 | Numbers | Source |
 |---|---|
-| 2,335 species, 1,413 new, record statuses (392 / 465 / 46 / 19), retired reasons, 18 successors, 2 new versions, 884 unchanged accessions | `docs/BUILD2_REPORT.md`, Summary and "Species by record status"; `public/data/species.parquet` |
+| 2,344 species, 1,422 new, record statuses (392 / 465 / 46 / 19), retired reasons, 18 successors, 2 new versions, 884 unchanged accessions | `docs/BUILD2_REPORT.md`, Summary and "Species by record status"; `public/data/species.parquet` |
 | Live species per taxon (Table 1), 23 classes, 9 phyla, 35 bivalves / 30 malacostracans / 11 cephalopods | computed from `public/data/species.parquet` (`record_status != retired`), grouped as in 2016 Table 1 |
-| Lifespan sources of new species (838 / 475 / 74 / 26) | `docs/BUILD2_REPORT.md`, "New species: class x lifespan source" |
-| Changelog 14,392 rows by type | `docs/BUILD2_REPORT.md`, "Changelog rows: table x change_type" |
+| Lifespan sources of new species (838 / 475 / 74 / 9 EURING / 26) | `docs/BUILD2_REPORT.md`, "New species: class x lifespan source" |
+| Changelog 14,428 rows by type | `docs/BUILD2_REPORT.md`, "Changelog rows: table x change_type" |
 | 59 revised AnAge lifespans + *Andrias davidianus* | build-2 verification audit (`data/cache/build2/verification/verification_summary.md`) and the report's retired list |
 | 320 regions missing from release 1, 263 D-loops | build-1 processing notes (`public/data/README.md` of build 1) and the audit ("gap fill: 320 rows") |
 | Human rCRS base counts, release 1 vs deposited | `public/data/README.md`, data notes |
 | 16,008 complete metazoan mitogenomes from 15,876 species, 14,970 species not in release 1 | `data/cache/build2/candidates/build2_candidates_summary.md` |
-| Tree: 2,305 of 2,335 placed, 2,045 of 2,229 nodes dated, 184 interpolated, 61 raised | `public/data/README.md`, data notes |
-| Datasets 2,202 / 1,710; agreement r = 0.977 | `docs/BUILD2_REPORT.md`, "Correlation datasets" and "Agreement between the datasets" |
+| Tree: 2,314 of 2,344 placed, 2,054 of 2,238 nodes dated, 184 interpolated, 61 raised | `public/data/README.md`, data notes |
+| Datasets 2,211 / 1,710; agreement r = 0.977 | `docs/BUILD2_REPORT.md`, "Correlation datasets" and "Agreement between the datasets" |
 | 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
-| Table 3, the funnel (15,904 / 5,439 / 4,299 / 3,008 / 896 / 547), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
-| Codon third-position pattern (8 U-ending down, 8 C-ending up) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
+| Table 3, the funnel (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
+| Codon third-position pattern (8 U-ending down, 7 C-ending up; UGC no longer passes with the EURING birds) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
 | Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` at da0c112: `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
 | Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
-| 481 of the 547 "All three" keep the sign of the correlation across species in the partial correlation (66 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
-| Partial-correlation sample 1,384 of 2,202 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.048 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
-| Survivors by feature: codons are 54% of the tests and 54% of the 547; in all species 27 of 40 skew, 11 of 16 GC-content and 138 of 744 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |
-| Exclusions behind 2,202: 49 estimated and 65 questionable lifespans | computed from `public/data/species.parquet` (live species, lifespan quality and method) |
+| 485 of the 550 "All three" keep the sign of the correlation across species in the partial correlation (65 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
+| Partial-correlation sample 1,386 of 2,211 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.027 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
+| Survivors by feature: codons are 54% of the tests and 55% of the 550; in all species 27 of 40 skew, 11 of 16 GC-content and 139 of 741 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |
+| Exclusions behind 2,211: 49 estimated and 65 questionable lifespans | computed from `public/data/species.parquet` (live species, lifespan quality and method) |
 | 106 invertebrates: 104 non-chordates, a lancelet and an ascidian | computed from `public/data/species.parquet` (live species by phylum and subphylum) |
 | Cross-check: 8,733 changelog rows compared for the original species, 3,325 in both, 5,394 of the other 5,408 `refseq_successor` | `docs/BUILD2_CROSSCHECK.md`, the comparison table and the successor counts |
 | The MCP server's paragraph (Data access and versioning) and its sentence in Data availability | `mcp/` and `mcp/README.md`; D8 in `docs/DECISIONS.md`. Its verdict uses the Table 3 definitions below, so the server and the paper count the same rows |

@@ -11,7 +11,7 @@
 // keeps its CSS size while the layout narrows, so a narrower capture prints its text larger:
 //
 //   3A /species/, sorted by maximum lifespan, longest first; the toolbar with the two download buttons, the
-//      species count and the first eight rows. Viewport 1,360 px: below it the sorted table scrolls sideways and
+//      species count and the first eight rows. Viewport 1,390 px: below it the sorted table scrolls sideways and
 //      the lifespan column leaves the card.
 //   3B /tree/ as it opens (by rank, lifespan ring): the tree and its legend, without the card of the selected
 //      taxon, which at this width stands between the two, and without the search, layout and ring controls
@@ -80,7 +80,7 @@ const cuts = async (name: string, clips: Rect[], skip = "") => {
 
 try {
   // ------------------------------------------------------------------------------------------- 3A species
-  await c.load(`${BASE}/species/`, 1360, 1400, SCALE);
+  await c.load(`${BASE}/species/`, 1390, 1400, SCALE);
   await c.show(".sp-index .card");
   await c.waitFor(`document.querySelectorAll(".sp-index table tbody tr").length >= 8`, "the species table");
   for (let i = 0; i < 3; i++) {

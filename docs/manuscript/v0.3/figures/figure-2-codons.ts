@@ -7,7 +7,7 @@
 // (x) and its r on phylogenetically independent contrasts (y), one panel per third base. A codon "passes"
 // with the definitions of Table 3 (docs/manuscript/NOTES.md, "Where the numbers come from"): q < 0.05,
 // contrast p < 0.05 with the sign of the correlation across species, and partial p < 0.05 on body mass.
-// The set of passing codons is checked against the twenty the manuscript names; any difference stops the
+// The set of passing codons is checked against the nineteen the manuscript names; any difference stops the
 // script before anything is written. Only the passing codons are labelled; their labels are placed so that
 // none overlaps another label or a coloured point, with a leader line where a label sits away from its point.
 // Headless Chrome renders the SVG at three times its size and ImageMagick writes FIGURE_2_CODONS.jpg
@@ -31,10 +31,10 @@ if (!existsSync(parquetPath)) {
   process.exit(1);
 }
 
-// The twenty codons the manuscript says pass all three controls.
+// The nineteen codons the manuscript says pass all three controls.
 const EXPECTED = [
   "GCU", "UCU", "UUU", "AUU", "GAU", "UGU", "ACU", "UAU",
-  "UGC", "GAC", "UAC", "UUC", "CGC", "UCC", "ACC", "AUC",
+  "GAC", "UAC", "UUC", "CGC", "UCC", "ACC", "AUC",
   "UUA", "CUA", "UGG", "GGG",
 ];
 
@@ -76,13 +76,13 @@ const passing = codons.filter((c) => c.pass).map((c) => c.codon);
 const missing = EXPECTED.filter((c) => !passing.includes(c));
 const extra = passing.filter((c) => !EXPECTED.includes(c));
 if (missing.length || extra.length) {
-  console.error(`the passing codons differ from the twenty the manuscript names; nothing written`);
+  console.error(`the passing codons differ from the nineteen the manuscript names; nothing written`);
   if (missing.length) console.error(`  named but not passing: ${missing.join(", ")}`);
   if (extra.length) console.error(`  passing but not named: ${extra.join(", ")}`);
   process.exit(1);
 }
 const species = new Set(codons.map((c) => c.n));
-console.log(`64 codons, n = ${[...species].join(", ")}; exactly the twenty named codons pass all three controls`);
+console.log(`64 codons, n = ${[...species].join(", ")}; exactly the nineteen named codons pass all three controls`);
 for (const c of codons.filter((c) => c.pass)) {
   console.log(`  ${c.codon}  r ${c.x.toFixed(3)}  contrast r ${c.y.toFixed(3)}  partial r ${c.partial?.toFixed(3)}`);
 }
@@ -295,7 +295,7 @@ BASES.forEach((b, i) => {
   out.push(`<circle cx="${lx + 7}" cy="${ly}" r="${R - 1}" fill="${OTHER}"/>`);
   out.push(`<text x="${lx + 20}" y="${ly + 5}" font-size="${FS.legend}" fill="${INK}">codons with another third base</text>`);
   out.push(
-    `<text x="${left}" y="${ly + 32}" font-size="${FS.legend}" fill="${MUTED}">All species, n = ${[...species][0].toLocaleString("en-US")}; total protein-coding sequence; the twenty codons that pass are labelled</text>`,
+    `<text x="${left}" y="${ly + 32}" font-size="${FS.legend}" fill="${MUTED}">All species, n = ${[...species][0].toLocaleString("en-US")}; total protein-coding sequence; the nineteen codons that pass are labelled</text>`,
   );
 }
 

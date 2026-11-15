@@ -43,8 +43,8 @@ We therefore fixed one version of each input and recorded it with a checksum whe
 | AnAge | build 15 (2023-07-03), `dataset.zip` | md5 7ec4d19f6c8f57b22595a9ffd50ea66b |
 | FishBase, SeaLifeBase | v26.06 Parquet tables on source.coop `cboettig/fishbase` (files of 2026-09-04) | md5 of each of the 8 tables read |
 | USGS Bird Banding Laboratory | NABBP Longevity Records v2025.1 | md5 of the table as saved |
-| EURING longevity list | list of 2023-09-01 requested | not retrieved (S4) |
-| Open Tree of Life | synthetic tree opentree16.1 | the 2,241 answers of its API and of TimeTree's, kept |
+| EURING longevity list | list of 2023-09-01, `EURING_longevity_list_20230901.pdf`, from the Internet Archive | md5 c82b37efe23fe95b5e2945f894c46496 |
+| Open Tree of Life | synthetic tree opentree16.1 | the answers of its API and of TimeTree's, kept |
 | TimeTree | TimeTree 5, public API | as above |
 | MitoAge release 1 | the full CSV export of 2015-07-01 | SHA-256 of every CSV file |
 
@@ -53,8 +53,8 @@ We therefore fixed one version of each input and recorded it with a checksum whe
 
 The pipeline refuses to run when a pinned file is missing, and it refuses an AnAge file whose md5 differs
 from the pin, since a new `dataset.zip` would be a new AnAge build. It does not fall back to a newer file.
-The one exception is the EURING list, which could not be retrieved (euring.org was in maintenance on
-2026-11-13); the build records it as not retrieved and uses no EURING value. The inputs that no upstream
+The EURING list is read from the Internet Archive's copy of the PDF (capture of 2026-10-11, the same
+file as every capture since 2023-12-16), because euring.org has shown a maintenance page since November 2026. The inputs that no upstream
 archive keeps (RefSeq release 237, the taxonomy dump of 2026-11-13, the GenBank records read by efetch,
 AnAge build 15, the USGS table, the Open Tree and TimeTree answers and the pages of the old site) are
 mirrored in the Hugging Face dataset `longevity-genie/mitoage-build2-sources` (revision 9d55d726…, 18
@@ -151,8 +151,8 @@ in pipeline/sources/ncbi-taxonomy.ts (nameKey), as stated in mitoage-pipelines d
 Records that could not be matched go to a review list and stay out of the build until someone resolves
 them. The list is limited to records that could have mattered: an unmatched name is listed only if the
 release has complete mitogenomes in its genus, and an ambiguous or set-aside record only if one of its
-candidate species has a complete mitogenome. Build 2's review list has 95 items: 79 source names that
-matched no species, 10 records set aside because a better-matched record of the same source named the
+candidate species has a complete mitogenome. Build 2's review list has 97 items: 80 source names that
+matched no species, 11 records set aside because a better-matched record of the same source named the
 same species, 3 pairs of possible duplicate species, 2 RefSeq species excluded because a release-1 row
 already links to them, and 1 release-1 row whose taxon identifier another release-1 row shares.
 
@@ -209,11 +209,10 @@ aquatic filter); plans/DATA_BUILD2_DECISIONS.md §2 -->
 The group is read from the lineage, so a lancelet or an ascidian counts as an
 invertebrate here, and four marine mammals whose only values are in SeaLifeBase get none, since
 SeaLifeBase is used only for invertebrates. The records give no reason for the order of the secondary
-sources beyond the table itself, which we agreed at the start of build 2. Because
-EURING could not be retrieved, its place is empty and the 26 birds whose lifespan comes from USGS are
-flagged as provisional: if EURING has a value for them, it would replace USGS's.
+sources beyond the table itself, which we agreed at the start of build 2. Of the birds
+without an AnAge value, 9 take theirs from EURING and 26 from USGS; none of the 26 is on the EURING list.
 
-<!-- src: docs/BUILD2_OPEN_QUESTIONS.md item h (4 marine mammals) and item 10 (26 provisional birds) -->
+<!-- src: docs/BUILD2_OPEN_QUESTIONS.md item h (4 marine mammals) and item 10; docs/DECISIONS.md D15 (EURING) -->
 
 **Which value within a source.** A secondary source often holds several values for one species. They are
 sorted into three tiers: reported values not marked questionable; then reported values marked
@@ -249,31 +248,32 @@ recaptured wild individual of a species. It is a real observation, so it is acce
 it usually underestimates the maximum. The mapping itself is a judgement: it puts values of different
 sources on one scale, and that scale has not been calibrated against anything.
 
-Every value of every matched source is kept, not only the chosen one, in a long table of 7,197 rows
+Every value of every matched source is kept, not only the chosen one, in a long table of 7,541 rows
 (`lifespan_observations.parquet`), with the source's record identifier, how its name was matched and
 whether it was chosen. The release-1 value of each original species is kept there too. It is chosen for
 one species only, *Andrias davidianus*, for which AnAge build 15 has no maximum longevity: the species is
 retired (S6) and keeps its 2015 value, flagged, because the data contract has no empty lifespan.
 
-<!-- src: docs/BUILD2_REPORT.md Summary (7,197 rows); docs/BUILD2_OPEN_QUESTIONS.md item b -->
+<!-- src: docs/BUILD2_REPORT.md Amendment of 2026-11-15 (7,541 rows); docs/BUILD2_OPEN_QUESTIONS.md item b -->
 
-Among the 2,316 live species the chosen values distribute as follows:
+Among the 2,325 live species the chosen values distribute as follows:
 
 | Source | Acceptable | High | Low | Questionable | Captive | Wild | Observed | Estimated |
 |----------------|----------:|----------:|----------:|----------:|----------:|----------:|----------:|----------:|
 | AnAge | 1,615 | 95 | 0 | 31 | 854 | 833 | 54 | 0 |
 | FishBase | 405 | 0 | 36 | 34 | 33 | 200 | 206 | 36 |
 | SeaLifeBase | 61 | 0 | 13 | 0 | 0 | 43 | 18 | 13 |
+| EURING | 9 | 0 | 0 | 0 | 0 | 9 | 0 | 0 |
 | USGS BBL | 26 | 0 | 0 | 0 | 0 | 26 | 0 | 0 |
-| **Total** | **2,107** | **95** | **49** | **65** | **887** | **1,102** | **278** | **49** |
+| **Total** | **2,116** | **95** | **49** | **65** | **887** | **1,111** | **278** | **49** |
 
 <!-- src: docs/BUILD2_REPORT.md "Lifespan source x quality and x record type (non-retired species)" -->
 
 The 49 values of low quality are exactly the 49 estimates, and the correlation datasets leave both out,
 together with the 65 questionable values (S10.1).
 
-**Assumptions and what is not known.** One value per species is used, the maximum. AnAge's sample size is kept where AnAge gives it, but is not used in any test. The 26 bird values
-from USGS are provisional until EURING is read.
+**Assumptions and what is not known.** One value per species is used, the maximum. AnAge's sample size is kept where AnAge gives it, but is not used in any test. The ringing
+records of EURING and USGS are minimum ages, from the oldest ringed birds recovered.
 
 ## S5. The strand convention, and how it was found
 
@@ -306,11 +306,11 @@ We chose to report every count on the strand as deposited, and not to convert al
 strand. The reason is that the heavy strand cannot be identified from every record. RefSeq does not fix
 which strand is deposited. We call a record's orientation canonical when it is a chordate record with all
 13 protein genes, every copy of ND6 on the minus strand and every other protein gene on the plus strand;
-the plus strand is then the light strand. Of the 2,335 species, 2,196 have canonical records, 16 are
+the plus strand is then the light strand. Of the 2,344 species, 2,205 have canonical records, 16 are
 chordates with another layout, 104 are not chordates, for which this heavy and light notation is not
 defined, and 19 have no record. A heavy-strand convention would have needed a guess for 120 of them.
 
-<!-- src: pipeline/steps/extended.ts:90-106 (orientationOf); public/data/README.md "Data notes" (canonical 2196,
+<!-- src: pipeline/steps/extended.ts:90-106 (orientationOf); public/data/README.md "Data notes" (canonical 2205,
 noncanonical 16, not_chordate 104, unknown 19) -->
 
 What changes for a reader of release 1: GC content does not change; the GC and AT balance change sign, and so do
@@ -391,7 +391,7 @@ Systematic corrections are logged once, as rules, instead of once per affected r
 base labels (S5), the counting of genes annotated in pieces over their annotated pieces only (the ND3 of
 birds and turtles carries an untranslated frameshift nucleotide that the 2015 counts included), the
 regions release 1 lacked although the records it cited annotate them, and the exclusion of the 923rd
-species. The changelog has 14,392 rows (main text).
+species. The changelog has 14,428 rows (main text).
 
 **Renames and status.** Names follow NCBI only. The NCBI name of a species replaces its release-1 name
 when the change is a genus transfer, a change of spelling or gender of the epithet, or both, and the old
@@ -505,20 +505,20 @@ tRNA-Asn (the light-strand origin lies between tRNA-Asn and tRNA-Cys) forward al
 base before the first control region downstream of CYTB, the control region excluded. It is defined
 only for canonical records with single copies of tRNA-Asn, COX1 and CYTB that do not span the origin and
 that come in the circular order tRNA-Asn, COX1, CYTB, control region; otherwise it is left empty. It is
-defined for 1,906 of the 2,335 species. Its length is a feature of its own.
+defined for 1,915 of the 2,344 species. Its length is a feature of its own.
 
-<!-- src: pipeline/steps/extended.ts:115-154 (majorArc); public/data/README.md "Data notes" (1,906 of 2,335) -->
+<!-- src: pipeline/steps/extended.ts:115-154 (majorArc); public/data/README.md "Data notes" (1,915 of 2,344) -->
 
 **Deletion contact zones.** Most human mitochondrial deletions are flanked by repeats with one arm in
 each of two regions, given in human work as roughly 6 to 9 kb and 13 to 16 kb. Kilobase coordinates do
 not transfer between species, so the zones are anchored on genes: the span from the start of ATP8 to the
 end of COX3, and the span from the start of ND5 to the end of CYTB. They are defined only when all four
-genes are annotated once, none spans the origin and they come in that order along the record (2,217
+genes are annotated once, none spans the origin and they come in that order along the record (2,225
 species). The features are the number of direct, inverted and mirror repeat pairs with one arm starting
 in each zone.
 
 <!-- src: pipeline/steps/extended.ts:156-198 (contactZones, bridgingPairs); public/data/README.md "Data notes"
-(2,217); the zones follow Shamanskiy et al. 2023, BMC Biol 21:103 (doi:10.1186/s12915-023-01606-1),
+(2,225); the zones follow Shamanskiy et al. 2023, BMC Biol 21:103 (doi:10.1186/s12915-023-01606-1),
 which the code comment and docs/ANALYSIS_FINDINGS.md H8 cite as Persson et al. 2023 -->
 
 **Sequence motifs.** Counted over the whole record and over the major arc, each on the sequence read as
@@ -564,7 +564,7 @@ little.
 <!-- src: docs/DECISIONS.md D5 -->
 
 **What is aligned.** Each of the 13 proteins, as RefSeq translates it (the record's own translation),
-first copy per record, across the 2,316 live species, sorted by the species' identifier (slug). The
+first copy per record, across the 2,325 live species, sorted by the species' identifier (slug). The
 codon alignment each protein alignment implies is written beside it: each residue replaced by its codon
 and each gap by three gaps, without the stop codon; codon rows that do not translate exactly to their
 protein are listed. The two rRNA genes are aligned as nucleotides the same way.
@@ -625,9 +625,9 @@ mitoage-pipelines src/mitoage_pipelines/structure/msa.py (L-INS-i, 500 pairs, co
 side-session note cluster-analyses-integrated.md (rerun on haumea, job 6486038) -->
 
 Two limits apply. The comparison is between FoldMason and MAFFT's L-INS-i on 62 mammals, not between
-structure and the shipped FFT-NS-2 alignment of 2,316 species; H0 links the two only for MAFFT's
+structure and the shipped FFT-NS-2 alignment of 2,325 species; H0 links the two only for MAFFT's
 iterative mode. And mammals are close relatives, so distant phyla, where sequence aligners are more
-likely to err, are not assessed. Folding every species with all 13 proteins (2,290 species) would take
+likely to err, are not assessed. Folding every species with all 13 proteins (2,299 species) would take
 about 120 GPU-hours on the card used.
 
 **Reproducibility.** The independent reproduction (S11) rebuilt all 28 alignment files with the same
@@ -652,25 +652,25 @@ matched to an Open Tree taxon by the Open Tree's name service, exact matches onl
 Animals. The subtree of synthetic tree opentree16.1 induced by the matched taxa was then requested.
 Taxa the synthetic tree does not contain were dropped and the request repeated. A species whose taxon the
 synthesis maps onto an internal node is attached there as a tip. Nodes with one child were collapsed.
-Polytomies were kept as they are, without resolving them: 2,305 of the 2,335 species are placed, under
-2,229 internal nodes, 54 of which are polytomies.
+Polytomies were kept as they are, without resolving them: 2,314 of the 2,344 species are placed, under
+2,238 internal nodes, 54 of which are polytomies.
 
 <!-- src: pipeline/sources/tree.ts:74-92 (TNRS exact, context Animals), 166-235 (induced subtree, broken taxa,
-unary collapse); public/data/README.md "Data notes" (2,305 of 2,335; 2,229 nodes); docs/manuscript/NOTES.md Q5
+unary collapse); public/data/README.md "Data notes" (2,314 of 2,344; 2,238 nodes); docs/manuscript/NOTES.md Q5
 (54 polytomies) -->
 
 **Ages.** For each internal node, TimeTree was asked for the age of the most recent common ancestor of up
 to three NCBI taxa from each of its first 12 child clades. Its adjusted age was taken, or its precomputed
 age when the adjusted age was missing or zero (TimeTree gives zero when a single study dates the node).
-TimeTree dated 2,045 of the 2,229 internal nodes. Two adjustments followed. First, going from the tips to
+TimeTree dated 2,054 of the 2,238 internal nodes. Two adjustments followed. First, going from the tips to
 the root, a node younger than its oldest child was raised to that child's age (61 nodes); this leaves
 some branches of length exactly zero. Second, going from the root to the tips, each undated node was
 placed midway between its parent's age and its oldest child's (184 nodes). Had the root been undated, it
 would have been placed 10% above its oldest child plus 1 million years. Branch lengths are differences of
-age, in millions of years. Of the 4,533 branches below the root, 555 have length exactly zero.
+age, in millions of years. Of the 4,551 branches below the root, 559 have length exactly zero.
 
 <!-- src: pipeline/sources/tree.ts:138-164 (timetreeMrca), 249-303 (reps, monotone, interpolation, root rule,
-lengths); public/data/README.md "Data notes" (2,045, 184, 61); docs/manuscript/NOTES.md Q5 (556 of 4,534
+lengths); public/data/README.md "Data notes" (2,054, 184, 61); docs/manuscript/NOTES.md Q5 (556 of 4,534
 zero-length branches) -->
 
 The code describes the midway placement as interpolation in the style of BLADJ; the records give no
@@ -690,8 +690,8 @@ result has not been measured. The Open Tree and TimeTree answers build 2 read ar
 
 Correlations are computed twice, on two sets of species. Both leave out retired species and lifespans
 that are estimated or of low or questionable quality. The quality filter was agreed at the start of build
-2. The **default** dataset takes a lifespan from any source: of the 2,316 live species, 49 have an
-estimated lifespan (they are also the 49 of low quality) and 65 a questionable one, which leaves 2,202.
+2. The **default** dataset takes a lifespan from any source: of the 2,325 live species, 49 have an
+estimated lifespan (they are also the 49 of low quality) and 65 a questionable one, which leaves 2,211.
 The **AnAge-only** dataset takes AnAge lifespans alone, for comparison with release 1: of 1,741 live
 species with an AnAge value, 31 are questionable, which leaves 1,710.
 
@@ -759,7 +759,7 @@ manuscript's numbers rebuilt on the committed feature catalogue) -->
 To separate lifespan from body size, for maximum lifespan only we also compute the first-order partial correlation of the feature and log10 lifespan given log10 adult weight:
 (r_xy − r_xz r_yz) / √((1 − r_xz²)(1 − r_yz²)), over the species of the scope that have an adult weight,
 when there are at least 10. Its p value uses the t distribution with n − 3 degrees of freedom. Adult
-weight comes from AnAge only, so the partial correlation covers 1,384 of the 2,202 species in all species,
+weight comes from AnAge only, so the partial correlation covers 1,386 of the 2,211 species in all species,
 235 of the 827 ray-finned fishes and no non-chordate.
 
 <!-- src: pipeline/lib/stats.ts:162-169; pipeline/steps/correlations.ts:123-153; docs/manuscript/NOTES.md
@@ -793,8 +793,8 @@ children in different orders, which changes the intermediate contrasts but not t
 cross-products, so r does not change. A regression through the origin in R gives the same p as the t test
 with m − 1 degrees of freedom. One case is outside the comparison: two sister tips both on branches of
 length zero, which this implementation averages and ape cannot handle; none of the 18 tests compared had
-it. The calibration run below also recomputed the contrasts of all 15,904 lifespan tests of the default
-dataset and found them identical to the published table.
+it. The calibration run below, made on the build before the 9 birds from the EURING list, also recomputed the
+contrasts of all 15,904 lifespan tests of the default dataset and found them identical to the table of that build.
 
 <!-- src: docs/PIC_CALIBRATION.md "Answer" and "How it was checked" 1-2; docs/analyses/pic-calibration/ape/ -->
 
@@ -826,19 +826,19 @@ Acipenseriformes), so short branches give contrasts larger than Brownian motion 
 <!-- src: docs/PIC_CALIBRATION.md "Answer" (dominating pairs, top shares, Garland r) and "Per scope" -->
 
 **A second p value: the sign-flip test.** The test behind Table 3 and every count of the funnel is the t test above, with the sign-flip counts reported beside it:
-we chose to keep it and the published counts (3,008, 896 and 547) rather than replace it. Both tests
+we chose to keep it and the published counts (3,023, 900 and 550) rather than replace it. Both tests
 are published. For every lifespan row of both datasets, the correlation table
 also carries `pic_signflip_p`: the share of random sign flips of the contrast products whose sum is at
 least as far from zero as the observed one. Up to 9,999 flips are drawn, seeded by dataset, scope, trait
 and feature, and the count stops once 100 flips are at least as extreme (Besag and Clifford, 1991), so
 the smallest possible value is 1/10,000. The test keeps the size of every contrast, so it assumes only that the contrasts are independent and symmetric about zero; the t test also assumes
 them normal with equal variance. That is a weaker assumption, but still one, and the sign-flip test was not itself put through
-the simulations above. In the default dataset it gives 1,253 of the 15,904 lifespan tests below 0.05,
-against 3,008 for the t test, and 533 "Both" against 896. Where the data fit the model the two tests
+the simulations above. In the default dataset it gives 1,269 of the 15,906 lifespan tests below 0.05,
+against 3,023 for the t test, and 535 "Both" against 900. Where the data fit the model the two tests
 agree, and where one node dominates they do not: in the cluster run, Mammalia gives 197 against 224 (Both
 153 against 164), Chondrichthyes 59 against 585 and Rajiformes 4 against 74. Among the correlations in all
-species that pass the false discovery rate, 205 are significant on contrasts with the opposite sign under
-the t test and 48 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,017 of
+species that pass the false discovery rate, 202 are significant on contrasts with the opposite sign under
+the t test and 49 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,017 of
 13,380 tests below 0.05, and 502 "Both" against 659. Other traits have no sign-flip value.
 
 <!-- src: docs/DECISIONS.md D10; pipeline/steps/correlations.ts:32-33, 176 (SIGN_FLIP_REPS = 9999, seed);
@@ -855,9 +855,9 @@ carried through the contrast recursion above on the species of the scope that ha
 lifespan contrast correlation is computed with the mass contrasts partialled out, through the origin:
 (r_xy − r_xz r_yz) / √((1 − r_xz²)(1 − r_yz²)), each r a correlation through the origin of two contrast
 vectors. Its p value is two-tailed, from the t distribution with m − 2 degrees of freedom. As for the
-partial correlation across species, a scope needs at least 10 species with a weight. Among the 4,299
+partial correlation across species, a scope needs at least 10 species with a weight. Among the 4,295
 correlations of the default dataset that pass the false discovery rate, 393 are significant on it with the
-same sign (Table 3, PIC + mass), against 896 for the contrast test without mass; 281 of the 393 also pass
+same sign (Table 3, PIC + mass), against 900 for the contrast test without mass; 283 of the 393 also pass
 the partial correlation across species. In the AnAge-only dataset the same count is 374 of 4,068. The
 values reproduce the cluster run's to the precision it printed (largest difference in r 5 × 10⁻⁹, all
 11,946 rows that both compute), and the counts are the same. The test uses the t distribution and has
@@ -901,27 +901,27 @@ scopes they are taken. All are for maximum lifespan in the default dataset:
 
 | Count | Scopes | What it counts |
 |-----------:|----------------------|------------------------------------------------------------------|
-| 15,904 | all 32, summed | lifespan tests |
-| 5,439 | all 32, summed | tests with p < 0.05 across species |
-| 4,299 | all 32, summed | tests with q < 0.05 |
-| 3,008 | all 32, summed | tests with contrast p < 0.05, of either sign, whether or not they pass the false discovery rate |
-| 896 | all 32, summed | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
-| 547 | all 32, summed | the 896, and partial p < 0.05 of either sign ("All three") |
-| 481 | all 32, summed | of the 547, those whose partial correlation keeps the sign of r |
-| 1,168 | all species only | q < 0.05 |
-| 496 | all species only | q < 0.05, and contrast p < 0.05 of either sign (the plot explorer, Figure 5B) |
-| 291 | all species only | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
-| 237 | all species only | "All three" |
-| 1,253 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, reported beside the t-test counts, which the funnel and Table 3 use) |
-| 533 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
+| 15,906 | all 32, summed | lifespan tests |
+| 5,436 | all 32, summed | tests with p < 0.05 across species |
+| 4,295 | all 32, summed | tests with q < 0.05 |
+| 3,023 | all 32, summed | tests with contrast p < 0.05, of either sign, whether or not they pass the false discovery rate |
+| 900 | all 32, summed | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
+| 550 | all 32, summed | the 900, and partial p < 0.05 of either sign ("All three") |
+| 485 | all 32, summed | of the 550, those whose partial correlation keeps the sign of r |
+| 1,166 | all species only | q < 0.05 |
+| 494 | all species only | q < 0.05, and contrast p < 0.05 of either sign (the plot explorer, Figure 5B) |
+| 292 | all species only | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
+| 238 | all species only | "All three" |
+| 1,269 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, reported beside the t-test counts, which the funnel and Table 3 use) |
+| 535 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
 | 393 | all 32, summed | q < 0.05, and p < 0.05 with the same sign on contrasts with body mass partialled out ("PIC + mass" in Table 3) |
 
 <!-- src: docs/manuscript/v0.2/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
 come from" and "Figures" (496 vs 291) -->
 
-So 896 and 291 apply the same rule, to 32 overlapping scopes and to one; 496 and 291 apply different
-rules to the same scope, the explorer not requiring the same sign; and 547 adds the body-mass control to
-the 896. The pipeline does not write these counts; they were made from the correlation table in an analysis session.
+So 900 and 292 apply the same rule, to 32 overlapping scopes and to one; 494 and 292 apply different
+rules to the same scope, the explorer not requiring the same sign; and 550 adds the body-mass control to
+the 900. The pipeline does not write these counts; they were made from the correlation table in an analysis session.
 The script that draws Figure 1 recomputes Table 3 from the same table and refuses to draw if any count
 differs.
 
@@ -953,7 +953,7 @@ docs/DECISIONS.md D4 (100 MB / 50 MB); bun test on 2e9c5d4 in this worktree, 202
 separate scripts in Python. The pipeline reads the audit's downloads but none of its tables; the audit
 tables are compared with the pipeline's output by `bun run pipeline/crosscheck.ts`, and are used only
 for that comparison. On the 1,413 new
-species the two agree on the species set and on every field compared: lifespan value, source, quality,
+species of the audit (it predates the 9 birds from the EURING list) the two agree on the species set and on every field compared: lifespan value, source, quality,
 RefSeq record, name, order, family, common name and AnAge sample size. The exceptions are class, where
 the audit labelled the 4 new lampreys Hyperoartia rather than release 1's Cephalaspidomorphi, and the
 source record and record type of 154 species, which are the tied values of S4. On the original
@@ -1341,4 +1341,3 @@ The questions raised above, in one place:
 8. **The open calls of build 2** (S3, S10.1): the defaults that still await a decision (the identifiers of new
    species, the records that now resolve to another species, a third correlation dataset, order and
    family), listed in `docs/BUILD2_OPEN_QUESTIONS.md`.
-9. **EURING** (S4): its 26 provisional bird lifespans, once the list can be retrieved.

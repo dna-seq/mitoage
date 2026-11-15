@@ -31,18 +31,18 @@ if (!existsSync(parquetPath)) {
 
 // Table 3 as the manuscript prints it: species, tests, p < 0.05, FDR, PIC, Both, All three.
 const TABLE_3: Record<string, number[]> = {
-  all: [2202, 1414, 1179, 1168, 565, 291, 237],
+  all: [2211, 1414, 1175, 1166, 565, 292, 238],
   "class:Mammalia": [615, 1398, 954, 918, 224, 164, 139],
   "class:Actinopterygii": [827, 1402, 832, 769, 546, 221, 86],
-  "class:Aves": [405, 1390, 688, 590, 181, 49, 22],
+  "class:Aves": [414, 1390, 684, 601, 184, 55, 24],
   "class:Reptilia": [126, 1403, 405, 231, 94, 21, 12],
   "order:Primates": [112, 204, 128, 118, 12, 8, 4],
   "order:Carnivora": [123, 205, 88, 72, 53, 35, 25],
   "order:Artiodactyla": [134, 204, 92, 76, 27, 9, 4],
   "order:Rodentia": [87, 204, 77, 50, 23, 9, 7],
-  "order:Passeriformes": [140, 204, 72, 41, 28, 8, 0],
+  "order:Passeriformes": [146, 204, 74, 28, 25, 5, 0],
 };
-const TABLE_3_TOTAL = { scopes: 32, tests: 15904, p05: 5439, fdr: 4299, pic: 3008, both: 896, all3: 547 };
+const TABLE_3_TOTAL = { scopes: 32, tests: 15906, p05: 5436, fdr: 4295, pic: 3023, both: 900, all3: 550 };
 
 type Row = {
   dataset: string;
