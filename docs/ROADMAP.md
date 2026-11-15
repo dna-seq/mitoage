@@ -243,3 +243,20 @@ references beside 40-42, which was left out while the URL would have 404ed.
 
 It pins `actions/checkout@v4`; v7.0.1 is current. `mcp-release.yml` was written to match the existing
 pin rather than split the repository across two versions, so both move together when this is done.
+
+## RM22 — Calibrated counts, power and a like-for-like comparison with release 1
+
+**State:** open; waits for the EURING calibration and rerun on haumea (jobs 6489844 and `mitoage-rerun`), and three questions to the maintainer · **Owner:** lead
+
+The v0.3 skeptic's verdict: the counts come from an uncalibrated test, the negative reading has no power
+estimate, and the question the paper poses (how much of the loss drift causes) is not answered. The plan is in
+`docs/REVIEW_ANALYSES_PLAN.md`:
+
+- **A:** expected chance passes beside every count, a phylogenetic permutation p value and, if the maintainer
+  agrees, PGLS over the whole table.
+- **B:** power of each step of the funnel by simulation on the tree, and which lost correlations are bounded
+  rather than underpowered; the retests' smallest detectable effects set against the published ones.
+- **C:** a waterfall from release 1's values to build 2's Table 3 on the 903 shared species, one change per step.
+
+How each outcome will be read is fixed in the plan before anything runs. Open questions there: which count
+leads (D10, D13), whether to run PGLS over the whole table, and whether to rerun the rate test with a codon model.

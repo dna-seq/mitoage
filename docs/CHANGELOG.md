@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **A plan for the analyses the v0.3 skeptic asked for** (2026-11-15, `docs/REVIEW_ANALYSES_PLAN.md`, RM22).
+  The analyses are calibrated counts (chance bounds from the PIC calibration, a phylogenetic permutation, PGLS
+  over the table), power (simulation on the tree per scope, bounded against inconclusive losses, the retests'
+  detectable effects against the published ones) and a waterfall from release 1 to Table 3 on the 903 shared
+  species. Each comes with the place it runs and how its outcomes will be read; nothing has run yet.
+
 - **Round v0.3's numbers come from the build with the EURING birds** (2026-11-15). `docs/manuscript/numbers.ts`
   recomputes every number the manuscript takes from a build (counts, Table 1, the funnel, Table 3, the S10.7 counts,
   the tree, the strand and feature coverage) and writes Supplementary Table S1 (`--s1`); on the build before EURING
