@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **A new abstract for round v0.3** (2026-11-15, the maintainer): it opens with the question, names what the
+  rebuild found (half of the original species changed, one in five correlations survives contrasts, published
+  relationships not detected, the mammalian GC signal of the slow life history) and no longer mentions strand
+  skews or the sign-flip count, which stay in the Results, Table 3 and the Discussion. 199 words.
+
 - **The manuscript names www.mitoage.info as the site, with where it is now** (2026-11-15, the v0.3 run's decision
   D14): the Results and Data availability give [www.mitoage.info](https://www.mitoage.info) and, until that address
   moves from the 2016 site, https://just-dna.life/mitoage/, so co-authors reading round v0.3 can open the site.

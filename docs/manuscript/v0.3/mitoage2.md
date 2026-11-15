@@ -23,16 +23,18 @@ manuscript text.*
 
 ## Abstract
 
-Comparative studies link mitochondrial DNA (mtDNA) composition to animal maximum lifespan, and MitoAge
-(2016) made such analyses possible for 922 species. We rebuilt it to ask which of
-these correlations survive when every value is re-derived from current sources and tested within lineages.
-MitoAge 2 holds 2,335 species, 1,413 of them new, from fixed source versions, logs each change with its cause and adds gene alignments; a second implementation reproduces its seven core tables. Base composition is now reported on the deposited strand, so strand
-skews (the excess of G over C, or A over T, on one strand) change sign. Every correlation carries its
-false discovery rate, a test on phylogenetically independent contrasts along a dated tree and, for
-lifespan, a body-mass control. Of the 4,299 lifespan correlations that pass the false
-discovery rate over 32 overlapping taxonomic scopes, 896 keep their sign and significance on contrasts (533 by a sign-flip test).
-With ancestry and body mass controlled together, 393 do. Across all species most skews do not survive both controls. The clearest survivor is mammalian base composition, which follows lifespan with the other
-traits of a slow life history; in birds none was detected.
+Do the reported links between mitochondrial DNA and animal lifespan hold up? MitoAge (2016) made such
+comparisons possible for 922 species. We rebuilt it as MitoAge 2: 2,316 species, 106 of them invertebrates,
+every value re-derived from pinned sources, with gene alignments and a dated tree. The sources had moved: half
+of the original species changed at least one value, each change logged with its cause. We tested every
+correlation against shared ancestry and body size. Of 4,299 lifespan correlations that pass the false
+discovery rate, one in five keeps its sign and significance between sister lineages, and 393 survive ancestry
+and body mass controlled together. Published relationships retested on the dated tree, among them inverted
+repeats, slower protein evolution and fewer cysteines in long-lived species, are not detected. One signal
+stands out: long-lived mammals have GC-richer mitogenomes, with C in place of T at synonymous sites, and the
+shift follows the slow life history as a whole, gestation, maturity and birth weight as much as lifespan. Its
+direction matches the age-related mutational signature on the heavy strand. Birds show no such signal. MitoAge
+2 puts these controls beside every correlation, so new claims can be checked within lineages.
 
 > AUTHOR: 200 words in one paragraph, without references or the URL, as NAR asks of a regular
 > article: one paragraph of at most 200 words, with URLs only in its Database and Web Server issues.
