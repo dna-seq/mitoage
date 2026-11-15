@@ -1446,32 +1446,35 @@ The questions raised above, in one place:
 
 Everything the paper reports can be downloaded, and most of it is useful beyond the question of lifespan. The
 website serves the build under `/data/`; the Hugging Face collection MitoAge (main text reference 44) holds the
-build and the datasets of the analyses, each pinned by its own revision; two tables of the cluster runs are in the
-repositories so far. Supplementary Table S3 lists them.
+build and the datasets of the analyses, each pinned by its own revision; a few tables of the cluster runs are in the
+repositories only, so far. Supplementary Table S3 lists them.
 
 **Supplementary Table S3.** The downloads of MitoAge 2, where each is and at which revision.
 
 | What | Where | Revision |
 |---|---|---|
-| The build: species, lifespan observations, region statistics, codon usage, genome, mtDNA-structure and protein features, the changelog against release 1, and release 1 as processed | site `/data/` (Parquet and CSV); Hugging Face `longevity-genie/mitoage` | c525adb (build 2) |
-| Alignments of the 13 protein-coding genes, as amino acids and as codons, and of the two rRNA genes | site `/data/alignments/`; Hugging Face `longevity-genie/mitoage` | c525adb |
+| The build: species, lifespan observations, region statistics, codon usage, genome, mtDNA-structure and protein features, the changelog against release 1, and release 1 as processed | site `/data/` (Parquet and CSV); Hugging Face `longevity-genie/mitoage` | 0f4e970 (build 2 with the EURING birds and the ND6 patch) |
+| Alignments of the 13 protein-coding genes, as amino acids and as codons, and of the two rRNA genes | site `/data/alignments/`; Hugging Face `longevity-genie/mitoage` | 0f4e970 |
 | The correlation table: every correlation with its three controls | site `/data/correlations.parquet`, computed by the site build | the site build of the release |
 | Snapshots of the upstream sources build 2 read | Hugging Face `longevity-genie/mitoage-build2-sources` | 9d55d72 |
-| The dated species tree | Hugging Face `longevity-genie/mitoage-pipelines`, `interim/tree/dated.nwk` | b9be61a |
+| The dated species tree | Hugging Face `longevity-genie/mitoage-pipelines`, `interim/tree/dated.nwk` | 126d237 |
 | The 13 proteins aligned by four aligners (MAFFT fast and iterative, FAMSA 2, Muscle 5) | Hugging Face `longevity-genie/mitoage-aligner-variants` | 32b2438 |
-| NCBI ortholog sets of the nuclear subunits of the respiratory complexes and of control proteins, with their alignments and trees | Hugging Face `longevity-genie/mitoage-nuclear-partners` | ed2c045 |
+| NCBI ortholog sets of the nuclear subunits of the respiratory complexes and of control proteins, with their alignments and trees | Hugging Face `longevity-genie/mitoage-nuclear-partners` (mammalian sets, and the vertebrate sets of complex IV's subunits) | 7deb2e0 |
 | ESM-2 650M embeddings, mean and per residue, of the 13 mitochondrial proteins and 61 nuclear partners | Hugging Face `longevity-genie/mitoage-embeddings` | fc70053 |
 | 806 predicted structures of the 13 proteins in 62 mammals (ESMFold2) | Hugging Face `longevity-genie/mitoage-structures` | 8e5cfdc |
-| The contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase (PDB 5Z62), with burial-matched control residues; the coupling of each nuclear protein with the mitochondrial ones; the structural against sequence alignments; the superposition of the human chains | GitHub `dna-seq/mitoage`, `docs/analyses/cluster-2026-11-15/` | 094aa57 |
-| The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 7692a55 |
-| The reading frames of the peptides encoded inside mtDNA, per species (S12.8) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/peptides/` | b9be61a |
-| The other result tables of the worked analyses (aligner agreement, the column screen, RELAX, rate covariation, co-embedding, composition) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/` | b9be61a |
+| The contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase (PDB 5Z62), with burial-matched control residues and their pairs, the coupling of each nuclear protein with the mitochondrial ones, and its fits against lifespan | Hugging Face `longevity-genie/mitoage-pipelines`, `output/mitoport/iface/` | 126d237 |
+| The structural against the sequence alignments of the 13 proteins in 62 mammals, and the superposition of the human chains | GitHub `dna-seq/mitoage`, `docs/analyses/cluster-2026-11-15/` | 094aa57 |
+| The audit of every record: strand orientation, gene order, genetic code, near-identical pairs and records nearest to another order or class (H13) | GitHub `dna-seq/mitoage-pipelines`, `results/job3-audit/` | aa97d25 |
+| The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | Hugging Face `longevity-genie/mitoage-pipelines`: `output/longevity/structure_pgls.tsv`, `output/mitoport/partners.tsv`, `output/structure/embed_cox.parquet`; GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 126d237; 7692a55 |
+| The reading frames of the peptides encoded inside mtDNA, per species (S12.8) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/peptides/` | 126d237 |
+| The other result tables of the worked analyses (aligner agreement, the column screen, RELAX, rate covariation, co-embedding, composition) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/` | 126d237 |
 
 Lifespan values from FishBase and SeaLifeBase keep their CC BY-NC 4.0 terms in every download that carries them
 (main text, Data availability).
 
-> AUTHOR: the two GitHub rows are to move to the Hugging Face dataset `longevity-genie/mitoage-pipelines` when it is
-> next refreshed, together with the runs in progress (the contact maps of complexes I, III and V; the audit of the
-> RefSeq records; the peptides over the whole build); the revision of that row changes then. The correlation table
+> AUTHOR: the GitHub-only rows are to move to the Hugging Face dataset `longevity-genie/mitoage-pipelines` when it is
+> next refreshed, together with the runs in progress (the contact maps of complexes I, III and V; the audit rerun on
+> build 0f4e970; the peptides over the whole build); the revisions of those rows change then. The audit row is of
+> build c525adb until the rerun lands. The correlation table
 > is computed by the site build and not committed (decision D3): deposit the release's copy (Zenodo) so it has a
 > revision of its own.
