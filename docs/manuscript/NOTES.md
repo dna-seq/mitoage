@@ -20,7 +20,9 @@ and lists the questions only the authors can answer.
 
 ## Where the numbers come from
 
-Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-14), build 2 of 2026-11-13.
+Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-14), build 2 of 2026-11-13; the
+correlation numbers (Table 3, the funnel, Figures 1, 2 and 5) are from the table as rebuilt at 1dda8be, with the
+extended features and 32 scopes.
 
 | Numbers | Source |
 |---|---|
@@ -162,7 +164,23 @@ all defensible. Related to Q6, which asks the same of the amino-acid example.
 ## Figures
 
 Figures are numbered in order of first citation (draft 0.1's planned Figures 1 to 4 are now 3, 5, 1
-and 2; the alignment is 4). Figures 3, 4 and 5 are screenshots of the site, in `figures/` as JPEG. The
+and 2; the alignment is 4).
+
+**Redrawn on 2026-11-15.** Figure 1 and Figure 5 were drawn before the extended features joined the
+catalogue (1,257 features, not 1,414), so they disagreed with Table 3 and their own legends. Both are now
+made by scripts in `figures/`, from the current build:
+
+- `bun docs/manuscript/figures/figure-1-controls.ts` draws Figure 1 from `dist/data/correlations.parquet`;
+  it holds a copy of Table 3 and refuses to write the image when any count differs.
+- `bun docs/manuscript/figures/capture-figure-5.ts http://localhost:PORT` captures Figure 5 from the built
+  site served with `env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port PORT`
+  (any free port; read it from the preview log), with the colour workaround described below.
+
+Panel 5B still shows two faults of the live site, which are roadmap item RM19 (the plot explorer does not
+yet offer the extended features): its intro line says "Rank all 1,257 mtDNA features", and two of its top
+rows show raw keys (`gravy:total_pc`, `ff:ND2:U`). Recapture 5B once RM19 lands.
+
+Figures 3 and 4 and the description below are as first made: screenshots of the site, in `figures/` as JPEG. The
 site was built with `bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the
 commit every number comes from), served with `bun run preview`, and captured in headless Google Chrome 157
 over the DevTools protocol: light theme, 1,440 × 1,400 CSS pixels at a device scale of 2, each panel cut to
@@ -212,12 +230,9 @@ scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty 
 IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
-- **Figure 5's statistics predate D7.** The caption gives q = 2.8 x 10^-33 for whole-genome GC against
-  maximum lifespan in mammals; the current build answers q = 2.44 x 10^-33 (checked 2026-11-15 against
-  `out/hf/mitoage.sqlite`, `gc:total_mtDNA`, `class:Mammalia`, default dataset). D7 put the extended
-  features into the same false-discovery-rate set, which moves every q, as D7 said it would. The other
-  three numbers in that panel are unchanged: contrast r 0.165 (p = 4.4 x 10^-5) and partial r 0.398 on
-  612 species. Re-read the caption against the build before submission, and check whether the other
-  q-values in the text have moved too.
-- No reference-check pass; references 19, 21, 24–32 and 35–36 are new.
-- No journal formatting (NAR word limits, the required sections and the data-availability statement).
+- Figure 5B shows the site's stale feature count and two raw feature keys until RM19 lands (above).
+- The decisions of the 2026-11-15 review run are listed in `mitoage2.dashboard.html` (To-do tab): the venue
+  (NAR Database issue, earliest January 2028, against Database (Oxford)), the canonical URL, the contrast
+  test's calibration, strand orientation per record, the licence of MitoAge's own tables, TimeTree's
+  redistribution terms, table order and Figure 4, Zenodo DOIs, the AI-use statement, Funding and the
+  corresponding author's e-mail.

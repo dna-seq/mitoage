@@ -4,6 +4,20 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript, reviewed and corrected in a full manuscript-improve run** (2026-11-15, run
+  `20261115T001950Z-ea39ab48` under `data/cache/manuscript-reviews/`, not in git). Seven review stages,
+  six simulated referees and six readers (each once on Claude and once on Codex) and an independent
+  re-check; every correction that needed no decision of the authors is applied to
+  `docs/manuscript/mitoage2.md`, recorded edit by edit, and the decisions that remain are in
+  `docs/manuscript/mitoage2.dashboard.html`. The author list and affiliations are in. Figures 1 and 5
+  showed the build before the extended features (1,257 features, not 1,414) and are redrawn from the current
+  build by scripts now kept beside them (`docs/manuscript/figures/figure-1-controls.ts`, which refuses to draw
+  when a count differs from Table 3, and `capture-figure-5.ts`). Panel 5B still shows the explorer's stale
+  feature count and two raw feature keys until RM19 lands. Every number in Tables 1–3 and S1 recomputed from
+  the build; the text fixes include the inverted-repeat result against its source (18), the methionine result
+  narrowed to mammals (31), the unpublished npm package, the AnAge licence (CC BY 3.0), the extended
+  features described in Methods, and an Abstract of 198 words with the references in NAR style and their DOIs.
+
 - **Build 2 uploaded to Hugging Face with `mitoage.sqlite`, and the MCP server pinned to it** (D9):
   dataset revision `c525adbff8c12b19981fdada7f1615c2559b7140`,
   the file 113,618,944 bytes, SHA-256 `b4f7dd75f5b11321ef8131c669d179ba928023ae4a71fd880dabd842ad11363f`,

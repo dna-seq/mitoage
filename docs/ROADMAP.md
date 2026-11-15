@@ -147,6 +147,12 @@ What it needs: the measures and groups in the picker's taxonomy, units (counts, 
 GRAVY), which default to a log scale, where `major_arc` and `major12` sit in the region order, and whether the
 picker's groups get a new heading or the features join the existing ones.
 
+The "Strongest correlations" panel already lists them, since it reads the correlation table: two of its top ten
+rows for maximum lifespan in all species show raw keys (`gravy:total_pc`, `ff:ND2:U`) with no name or family,
+and its intro still says "Rank all 1,257 mtDNA features" (`src/components/explore/StrongestPanel.tsx`, lines 111
+and 289). The manuscript's Figure 5B shows both; recapture it with `docs/manuscript/figures/capture-figure-5.ts`
+once this lands (found by the manuscript review of 2026-11-15).
+
 ## RM18 — The assembly technology of each mitogenome, Ensembl first
 
 **State:** unattended (opened 2026-11-14 by H8, which could not run its control) · **Owner:** lead
