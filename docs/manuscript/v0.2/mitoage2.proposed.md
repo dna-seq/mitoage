@@ -432,7 +432,7 @@ p < 0.05, whatever its sign (it keeps the sign of the correlation across species
 mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected.
 
 | Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three | PIC + mass |
-|-----------------|---------:|---------:|---------:|---------:|---------:|---------:|---------:|---------:|
+|--------------------|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
 | All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 237 | 80 |
 | Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 139 | 136 |
 | Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 86 | 38 |
