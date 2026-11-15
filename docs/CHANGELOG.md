@@ -4,6 +4,25 @@ Newest first.
 
 ## Unreleased
 
+- **The cluster analyses of mitoport's interface and of structural alignments, brought in; RM13 closes**
+  (2026-11-15). Another agent (Claude Science) ran them on `haumea` on 2026-11-14 and 15 and nothing had
+  reached this repository. Their result tables are now in `docs/analyses/cluster-2026-11-15/` (seven TSVs,
+  byte-identical to the cluster's, with a README giving each one's cluster path, the scripts and logs, and
+  the SHA-256s). They were not rerun here; their numbers were recomputed from the tables, and five of the
+  hand-off's statements were corrected against the files: column occupancy at the contacts has median 1.000
+  but is not full everywhere (290 of 298 at 0.99 or above); the coupling covers 87 to 182 mammals per
+  protein, not 166 to 183; the exposure contrast is contact against the non-contact non-control residues;
+  the ESM distance does give a small nuclear-side interface excess (+0.051, p = 0.0096, uncorrected) where
+  the sequence distance does not; the lifespan mismatch is against the consensus residue, not human.
+  `docs/ANALYSIS_FINDINGS.md`: H5 gains the residue-level test on complex IV (the group contrast
+  reproduces, the interface prediction fails: a whole-protein coupling, not compensation at contacts); H9,
+  lifespan on the contact mismatch, a bounded null (1,373 species, 95% interval [−0.050, +0.002] log10
+  years per SD); H10, the structural-alignment check, agreement with MAFFT at median 0.9997 in 62 mammals
+  and about 150 GPU-hours to fold every species; H3 gains Coevol's numbers, marked provisional because its
+  chains had not converged. Roadmap: RM13 is done, with the limit that it covered mammals only; RM11
+  records the interface result and that its stop rule is reached for the contact-residue branch; RM17
+  names `SITES.tsv` as its per-residue table, for complex IV only; RM12 records Coevol as unconverged.
+
 - **The plot explorer offers the 157 extended mtDNA features** (RM19, 2026-11-15). Each has a label, a
   short axis name, a unit and a family in the hand-built catalogue (`src/lib/explore/variables.ts`):
   fourfold sites (gene sense and heavy strand, % of fourfold sites), protein hydropathy (GRAVY, no unit),

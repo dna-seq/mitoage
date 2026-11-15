@@ -91,7 +91,7 @@ gene-level results are not independent tests.
    each paired with a short-lived relative; CSUBST (convergent codon substitutions against chance), PCOC
    (sites whose amino-acid preference shifts the same way), RERconverge (gene-level, weak with 13 linked
    genes).
-6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11 and RM13).
+6. Where the hits sit on the solved structures of complexes I, III, IV and V (joins RM11).
 
 Done so far (2026-11-13 and 14, reported in `#mitoalignments`): steps 1 and 2; step 3 for mammals and
 birds. Substitution rates, which the survey of the literature after the MitoAge paper raised as its own
@@ -100,7 +100,9 @@ lifespan does not predict the rate under any of four normalisations. Step 3 was 
 rules above, and gave cytochrome b 43 as its one site; rerun on the dated tree with the quality filter, that
 site does not pass (q = 0.29), COX1 419 sits at the threshold in its place, and the summary is that no
 single residue is robustly associated with lifespan. Step 4 (RELAX) gave two genes in one draw of species
-and none in a second. Running: lifespan as a continuous trait (Coevol) on the dated tree. Next: step 5.
+and none in a second. Lifespan as a continuous trait (Coevol, 106 mammals, two chains) ran on the cluster
+but had not converged (effective sample size 7 for dN/dS): provisional numbers in `docs/ANALYSIS_FINDINGS.md`
+H3, not to be quoted until the chains are resumed to an effective sample size above 100. Next: that, and step 5.
 
 Each tool's current version and limits are checked before use: the method names above are from memory of the
 literature. Reported in `#mitoalignments`; nothing goes on the site before the maintainer has seen it.
@@ -145,13 +147,6 @@ has the species and NCBI for the rest; Ensembl covers a small fraction of 2,335 
 referee, not the source of breadth. The run needs network access, which the batch job did not have.
 
 Until it is done, H8's conclusion is "not assessed", not "no effect of assembly quality".
-## RM13 — Structural alignments: a check
-
-**State:** after RM12 · **Owner:** lead
-
-The maintainer: "then we can check if we can do structural alignments". A check, not a build: for the
-respiratory complexes with solved structures, does aligning by structure (or predicted structure) change
-the columns of the well-conserved core, and at what cost for 2,300 species.
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
@@ -178,6 +173,17 @@ the measurements do. The port
 project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
 are a new data source (the maintainer's), and where the code lives (a separate repository is the default).
 
+Run on the cluster on 2026-11-14 and 15 by another agent (Claude Science), not reproduced here; the result
+tables and the cluster paths of the scripts and logs are in `docs/analyses/cluster-2026-11-15/`, the numbers
+in `docs/ANALYSIS_FINDINGS.md` H5 and H9. Complex IV only: 298 COX1-3 residues of PDB 5Z62 touch a nuclear
+subunit. The group contrast reproduces (complex IV's nuclear subunits couple with the COX genes at +0.58
+against +0.03 for cytosolic controls), but contact residues do not couple more than burial-matched
+non-contact ones (excess +0.049 against +0.016 for the cytosolic controls, p = 0.43), so the coupling is a whole-protein property,
+not an interface one. Lifespan on the contact-minus-control mismatch, 1,373 species with body mass: slope
+−0.024 log10 years per standard deviation, 95% interval [−0.050, +0.002], a bounded null. **The stop rule is
+reached for the contact-residue branch**: it is not pursued further. Still open: contact maps for complexes I,
+III and V; the cybrid calibration; moving the cluster scripts into `dna-seq/mitoage-pipelines`.
+
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
 **State:** after RM11 (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); its design goes to him in screenshots before it is live · **Owner:** lead
@@ -193,6 +199,11 @@ and structures are new sources for the pipeline, his decision as with build 2. S
 measured the same day for COX4I1: NCBI covers 183 of our 627 mammals, Ensembl release 116 covers 65 and
 says which pairs are one-to-one; proposed: NCBI for breadth, Ensembl as the referee. It depends on RM11's
 data.
+
+The per-residue table it needs exists for complex IV only: `docs/analyses/cluster-2026-11-15/SITES.tsv`, every
+COX1-3 residue of PDB 5Z62 with its MitoAge alignment column, burial in the complex and alone, its nuclear
+contact partners, occupancy and identity to human (a cluster result, not produced by the pipeline). Complexes
+I, III and V have no contact map yet; complex II has no mitochondrial subunit.
 
 ## RM14 — D-loops annotated as a point
 

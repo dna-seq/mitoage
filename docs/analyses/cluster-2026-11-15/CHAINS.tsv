@@ -1,0 +1,25 @@
+gene	pdb	chain	residues	mt	identity_to_human	description
+ATP6	8H9S	N	223	1	1.0	ATP synthase subunit a
+ATP8	8H9S	Q	51	1	1.0	ATP synthase protein 8
+COX1	5Z62	A	513	1	1.0	Cytochrome c oxidase subunit 1
+COX2	5Z62	B	227	1	1.0	Cytochrome c oxidase subunit 2
+COX3	5Z62	C	260	1	1.0	Cytochrome c oxidase subunit 3
+COX4I1	5Z62	D	144	0		Cytochrome c oxidase subunit 4 isoform 1, mitochondrial
+COX5A	5Z62	E	109	0		Cytochrome c oxidase subunit 5A, mitochondrial
+COX5B	5Z62	F	98	0		Cytochrome c oxidase subunit 5B, mitochondrial
+COX6A1	5Z62	G	75	0		Cytochrome c oxidase subunit 6A1, mitochondrial
+COX6B1	5Z62	H	82	0		Cytochrome c oxidase subunit 6B1
+COX6C	5Z62	I	73	0		Cytochrome c oxidase subunit 6C
+COX7A2	5Z62	J	56	0		Cytochrome c oxidase subunit 7A2, mitochondrial
+COX7B	5Z62	K	49	0		Cytochrome c oxidase subunit 7B, mitochondrial
+COX7C	5Z62	L	47	0		Cytochrome c oxidase subunit 7C, mitochondrial
+COX8A	5Z62	M	43	0		Cytochrome c oxidase subunit 8A, mitochondrial
+CYTB	5XTE	J	378	1	1.0	Cytochrome b
+ND1	5XTD	s	318	1	0.994	NADH-ubiquinone oxidoreductase chain 1
+ND2	5XTD	i	347	1	0.997	NADH-ubiquinone oxidoreductase chain 2
+ND3	5XTD	j	115	1	0.983	NADH-ubiquinone oxidoreductase chain 3
+ND4	5XTD	r	459	1	0.996	NADH-ubiquinone oxidoreductase chain 4
+ND4L	5XTD	k	97	1	0.979	NADH-ubiquinone oxidoreductase chain 4L
+ND5	5XTD	l	603	1	0.995	NADH-ubiquinone oxidoreductase chain 5
+ND6	5XTD	m	174	1	0.994	NADH-ubiquinone oxidoreductase chain 6
+NDUFA4	5Z62	N	79	0		Cytochrome c oxidase subunit NDUFA4
