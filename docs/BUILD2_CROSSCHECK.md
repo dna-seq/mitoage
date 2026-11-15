@@ -8,26 +8,26 @@ used only here, as a check; the pipeline computes every value from the pinned up
 
 |  | count |
 | --- | --- |
-| new species in build 2 (TS) | 1413 |
-| candidates in the audit | 1413 |
-| in both (by NCBI species taxid) | 1413 |
+| new species in build 2 (TS) | 1422 |
+| candidates in the audit | 1422 |
+| in both (by NCBI species taxid) | 1422 |
 | only in TS | 0 |
 | only in the audit | 0 |
 
 | field | agree | % |
 | --- | --- | --- |
-| lifespan value | 1413/1413 | 100.0% |
-| lifespan source | 1413/1413 | 100.0% |
-| source record id | 1259/1413 | 89.1% |
-| quality | 1413/1413 | 100.0% |
-| record type | 1259/1413 | 89.1% |
-| RefSeq accession.version | 1413/1413 | 100.0% |
-| scientific name | 1413/1413 | 100.0% |
-| class (build 1 scheme) | 1409/1413 | 99.7% |
-| order | 1413/1413 | 100.0% |
-| family | 1413/1413 | 100.0% |
-| common name | 1413/1413 | 100.0% |
-| AnAge sample size | 1413/1413 | 100.0% |
+| lifespan value | 1422/1422 | 100.0% |
+| lifespan source | 1422/1422 | 100.0% |
+| source record id | 1268/1422 | 89.2% |
+| quality | 1422/1422 | 100.0% |
+| record type | 1268/1422 | 89.2% |
+| RefSeq accession.version | 1422/1422 | 100.0% |
+| scientific name | 1422/1422 | 100.0% |
+| class (build 1 scheme) | 1418/1422 | 99.7% |
+| order | 1422/1422 | 100.0% |
+| family | 1422/1422 | 100.0% |
+| common name | 1422/1422 | 100.0% |
+| AnAge sample size | 1422/1422 | 100.0% |
 
 Disagreements (first 40):
 
@@ -76,11 +76,11 @@ Disagreements (first 40):
 
 |  | count |
 | --- | --- |
-| rows (TS) | 7197 |
-| rows (audit) | 7197 |
-| same (species taxid, source, record id) | 7197 |
-| value agrees | 7197/7197 |
-| is_chosen agrees | 6888/7197 |
+| rows (TS) | 7541 |
+| rows (audit) | 7541 |
+| same (species taxid, source, record id) | 7541 |
+| value agrees | 7541/7541 |
+| is_chosen agrees | 7232/7541 |
 | only TS | 0 |
 | only audit | 0 |
 

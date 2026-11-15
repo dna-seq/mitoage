@@ -15,8 +15,11 @@ European birds that have a RefSeq mitogenome and no AnAge lifespan: build 2 has 
 14,428 changelog rows, 7,541 lifespan observations and 97 review items; the dated tree places 2,314 of them;
 the `default` correlation dataset has 2,211 species (`anage_only` is unchanged at 1,710); the alignments cover
 the 2,325 live species. None of the 26 USGS-sourced birds is on the list: their values stand and they are no
-longer flagged provisional. The rest of this report, its correlation figures included, describes the build
-of 2026-11-13 without EURING.
+longer flagged provisional. The cross-check with the audit, rerun with the audit reading the list too (through
+`pdftotext`), agrees on all 1,422 new species (1,268 of 1,422 on source record id and record type, the same 154
+ties as before) and on all 7,541 lifespan observations (`docs/BUILD2_CROSSCHECK.md`); mitoage-pipelines reproduces
+the build with EURING value for value (its commit bb5d70d). The rest of this report, its correlation figures
+included, describes the build of 2026-11-13 without EURING.
 
 ## Summary
 

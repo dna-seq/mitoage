@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **The reproduction, the audit and the sources snapshot cover the EURING birds** (2026-11-15). mitoage-pipelines
+  (bb5d70d) reads the EURING PDF with its own parser and, from a fresh data folder, matches the build with the
+  EURING birds (Hugging Face f75bdc9) in all 5,328,755 values, the 28 alignments and the dated tree; it does not
+  apply D17's gene patch yet, which round v0.3 now says. The Python audit reads the list through `pdftotext` and
+  its cross-check agrees on all 1,422 new species (`docs/BUILD2_CROSSCHECK.md` regenerated); its scripts stay
+  unpublished. The sources snapshot `longevity-genie/mitoage-build2-sources` is at revision a762151 with the 2,250
+  tree answers (the 20 for the new birds byte-identical to the pipeline's cache); it does not copy the EURING PDF,
+  which the Internet Archive keeps and which states no licence.
+
 - **Round v0.3 cites the patched build** (2026-11-15, the maintainer: "Move v0.3 now"): Hugging Face revision 0f4e970,
   `dna-seq/mitoage` 03c0949, in the opening note, Data availability and reference 40. Materials and methods say how a
   missing protein gene is handled (flagged with its reason; the parrot's ND6 added). The numbers that move: the funnel

@@ -240,20 +240,22 @@ the pinned downloads, stops if one is missing, and validates its output. A secon
 makes the alignments, and the site build, `bun run build`, the derived tables (correlations and the explorer's
 data). The pipeline has 192 tests at build 2.
 Each new test of a build rule was checked when written, by breaking the code it guards and confirming that it
-fails (`docs/BUILD2_REPORT.md` lists the checks). The build was cross-checked against an audit made separately in Python from the same downloads; the audit's scripts are not published (`docs/BUILD2_CROSSCHECK.md` gives the comparison). The two agree on the new species and their lifespans, sources, quality, RefSeq records and names (1,413 of 1,413 for each field; the audit predates the 9 birds from the EURING list). For the original species, the cross-check compares the 8,733 changelog rows, other than additions, that name one of them (the
+fails (`docs/BUILD2_REPORT.md` lists the checks). The build was cross-checked against an audit made separately in Python from the same downloads; the audit's scripts are not published (`docs/BUILD2_CROSSCHECK.md` gives the comparison). The two agree on the new species and their lifespans, sources, quality, RefSeq records and names (1,422 of 1,422 for each field). For the original species, the cross-check compares the 8,733 changelog rows, other than additions, that name one of them (the
 remaining six record systematic rules), counted by table, row and field. The two agree on 99.0% of the 3,325 changed values that both record, and every remaining difference is traced to a named design choice. Almost all of the other 5,408 rows belong to species that the build moved to a successor record and the audit retired. Supplementary Methods S11 sets out what each of these checks covers and what it does not.
 
 A second repository, `dna-seq/mitoage-pipelines` (Python), is written for readers who want to rebuild
 without our machines. It downloads every input with a pinned version, rebuilds build 2 from the release-1
 export independently of the TypeScript pipeline, and compares the result with the published build.
-From the pinned inputs, all 5,302,404 values of its seven tables, its 28 alignment files and its dated
-tree come out identical (`docs/BUILD2_REPRODUCTION.md` there, at commit 3550281), for the build before the 9 birds
-from the EURING list were added; the reproduction does not read that list yet. Neither the two tables of extended
+From the pinned inputs, all 5,328,755 values of its seven tables, its 28 alignment files and its dated
+tree come out identical to the build with the EURING birds, Hugging Face revision f75bdc9 (`docs/BUILD2_REPRODUCTION.md`
+there, at commit bb5d70d). The build cited here differs from that one only by a later patch to gene annotations
+(the African grey parrot's ND6, added by hand, and review flags naming why other species lack a gene), which the
+reproduction does not make yet. Neither the two tables of extended
 features, added to the build afterwards, nor the correlations are part of that comparison: the correlation table and every count drawn from it rest on the TypeScript pipeline, whose contrast computation was checked against R's `ape::pic` (Supplementary Methods S10.6 and S11). `dna-seq/mitoage-pipelines` also holds the analyses that read the build (the worked examples in Results
 among them), each run by one command, with a record of which results reproduce byte for byte on a rerun and
 which do not. Package versions are fixed by the lock files of the two repositories at the commits cited (`bun.lock`, `uv.lock`), and the external programs of the analyses by the analysis repository's `environment.yml`.
 
-> AUTHOR: `docs/BUILD2_REPRODUCTION.md` is on `main` of mitoage-pipelines (commit 3550281, checked
+> AUTHOR: `docs/BUILD2_REPRODUCTION.md` is on `main` of mitoage-pipelines (commit bb5d70d, checked
 > 2026-11-15), and the paragraph above reports what it found. Still open: extend the comparison to the two
 > extended-feature tables, and cite the repository by a tagged release and Zenodo DOI rather than by commit.
 

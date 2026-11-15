@@ -97,11 +97,12 @@ above. The mammal column screen differs only in its ND6 rows, whose column indic
 results identical). Bird COX2 hydropathy passes under the gene's own composition (q = 0.045, was 0.056) and with mass
 only, not under the primary model (q = 0.085); the text, which reports the primary model, is unchanged there.
 
-**Still from the build before EURING (2,335 species):**
-- the reproduction in mitoage-pipelines (`docs/BUILD2_REPRODUCTION.md`, 5,302,404 identical values) and the Python
-  audit's cross-check, which do not read the EURING list: the text says so where it reports them;
-- the Hugging Face mirror of the sources (`longevity-genie/mitoage-build2-sources`), which has neither the EURING PDF
-  nor the 16 TimeTree answers fetched for the new birds; Table S2 therefore gives no count of tree answers;
+**Nothing is still from the build before EURING (2,335 species).** The reproduction in mitoage-pipelines reads the EURING list since bb5d70d and matches the build with the
+EURING birds (f75bdc9) in all 5,328,755 values, the 28 alignments and the tree; it does not yet apply D17's gene
+patch, so it does not reproduce 0f4e970, and the text says so. The audit's cross-check covers all 1,422 new species
+(the audit scripts in `data/cache/build2/scripts/`, not in any repository, read the list through `pdftotext`). The
+sources snapshot is at revision a762151 with the 2,250 tree answers; it does not copy the EURING PDF, which the
+Internet Archive keeps and which states no licence.
 
 | Numbers | Source |
 |---|---|
@@ -115,11 +116,11 @@ only, not under the primary model (q = 0.085); the text, which reports the prima
 | 16,008 complete metazoan mitogenomes from 15,876 species, 14,970 species not in release 1 | `data/cache/build2/candidates/build2_candidates_summary.md` |
 | Tree: 2,314 of 2,344 placed, 2,054 of 2,238 nodes dated, 184 interpolated, 61 raised | `public/data/README.md`, data notes |
 | Datasets 2,211 / 1,710; agreement r = 0.977 | `docs/BUILD2_REPORT.md`, "Correlation datasets" and "Agreement between the datasets" |
-| 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
+| 192 tests, cross-check (1,422 = 1,422; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands", "Cross-check with the audit" and its amendment of 2026-11-15; `docs/BUILD2_CROSSCHECK.md` |
 | Table 3, the funnel (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
 | Codon third-position pattern (8 U-ending down, 7 C-ending up; UGC no longer passes with the EURING birds) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
 | Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` `results/nd6-patch/` at fbb3798 (run of 2ee27a1 on 0f4e970; `results/euring/` at e1b862b for fb54cec; mammals as first run at da0c112): `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
-| Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
+| Reproduction: all 5,328,755 values of the seven tables, the 28 alignment files and the dated tree come out identical (against f75bdc9) | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at bb5d70d (origin/main), "How far it reproduces" |
 | 485 of the 550 "All three" keep the sign of the correlation across species in the partial correlation (65 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,386 of 2,211 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.027 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
 | Survivors by feature: codons are 54% of the tests and 55% of the 550; in all species 27 of 40 skew, 11 of 16 GC-content and 139 of 741 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |

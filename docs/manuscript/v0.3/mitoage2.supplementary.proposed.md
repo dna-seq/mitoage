@@ -44,12 +44,12 @@ We therefore fixed one version of each input and recorded it with a checksum whe
 | FishBase, SeaLifeBase | v26.06 Parquet tables on source.coop `cboettig/fishbase` (files of 2026-09-04) | md5 of each of the 8 tables read |
 | USGS Bird Banding Laboratory | NABBP Longevity Records v2025.1 | md5 of the table as saved |
 | EURING longevity list | list of 2023-09-01, `EURING_longevity_list_20230901.pdf`, from the Internet Archive | md5 c82b37efe23fe95b5e2945f894c46496 |
-| Open Tree of Life | synthetic tree opentree16.1 | the answers of its API and of TimeTree's, kept |
+| Open Tree of Life | synthetic tree opentree16.1 | the 2,250 answers of its API and of TimeTree's, kept |
 | TimeTree | TimeTree 5, public API | as above |
 | MitoAge release 1 | the full CSV export of 2015-07-01 | SHA-256 of every CSV file |
 
 <!-- src: docs/BUILD2_REPORT.md "Pinned upstream versions"; mitoage-pipelines docs/BUILD2_REPRODUCTION.md
-"Sources" (taxonomy md5, the 8 FishBase/SeaLifeBase files, the 2,241 tree answers); pipeline/sources/pinned.ts -->
+"Sources" (taxonomy md5, the 8 FishBase/SeaLifeBase files, the 2,250 tree answers of snapshot revision a762151); pipeline/sources/pinned.ts -->
 
 The pipeline refuses to run when a pinned file is missing, and it refuses an AnAge file whose md5 differs
 from the pin, since a new `dataset.zip` would be a new AnAge build. It does not fall back to a newer file.
@@ -954,8 +954,8 @@ docs/DECISIONS.md D4 (100 MB / 50 MB); bun test on 2e9c5d4 in this worktree, 202
 **The cross-check against a separate audit.** The sources were first downloaded and audited by
 separate scripts in Python. The pipeline reads the audit's downloads but none of its tables; the audit
 tables are compared with the pipeline's output by `bun run pipeline/crosscheck.ts`, and are used only
-for that comparison. On the 1,413 new
-species of the audit (it predates the 9 birds from the EURING list) the two agree on the species set and on every field compared: lifespan value, source, quality,
+for that comparison. On the 1,422 new
+species the two agree on the species set and on every field compared: lifespan value, source, quality,
 RefSeq record, name, order, family, common name and AnAge sample size. The exceptions are class, where
 the audit labelled the 4 new lampreys Hyperoartia rather than release 1's Cephalaspidomorphi, and the
 source record and record type of 154 species, which are the tied values of S4. On the original
@@ -975,15 +975,17 @@ build 15. The audit scripts are not published.
 Python for readers who want to rebuild without our machines. It was written from the rules as stated, not
 translated line by line from the TypeScript. It reads the published build in one place only, the final
 comparison, so that no value is filled from the source that checks it. Every input has a downloader, and
-the inputs no archive keeps come from the snapshot dataset of S1. From the pinned inputs, all 5,302,404
+the inputs no archive keeps come from the snapshot dataset of S1. From the pinned inputs, all 5,328,755
 values of the seven tables (species, region statistics, codon usage, genome features, lifespan
 observations, changelog and review list), all 28 alignment files and the dated tree come out identical:
-the values compared exactly, the alignments by SHA-256, the tree byte for byte. The whole sequence takes
-about seven minutes.
+the values compared exactly, the alignments by SHA-256, the tree byte for byte, against the build with the EURING
+birds (Hugging Face revision f75bdc9). The build cited in the main text adds to that one a patch to gene
+annotations (the African grey parrot's ND6, and review flags naming why other species lack a gene), which the
+reproduction does not make yet. The whole sequence takes about six minutes.
 
-<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md (opening, "How far it reproduces", run times total 429 s) -->
+<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md (opening, "How far it reproduces", run times total 362 s; at commit bb5d70d) -->
 
-The reproduction was also run with other inputs, to show what moves when a source does. With the
+The reproduction was also run with other inputs, on the build before the EURING birds, to show what moves when a source does. With the
 taxonomy archive of 2026-11-01 instead of the dump of 2026-11-13, four species change, because NCBI
 renamed or split taxa in between; this is why the snapshot keeps the later dump. With build 2's record
 versions fetched by efetch instead of read from release 237, the only change of values is *Pongo
