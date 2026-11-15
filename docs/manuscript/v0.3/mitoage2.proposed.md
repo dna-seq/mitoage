@@ -617,7 +617,7 @@ single-gene tests pass a 5% false discovery rate and disagree in sign. The synon
 
 ### The website and interface
 
-The website (https://just-dna.life/mitoage/) presents the same build, and its menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
+The website, [www.mitoage.info](https://www.mitoage.info) (for now at https://just-dna.life/mitoage/), presents the same build, and its menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
 
 - **Species.** A sortable, filterable list of all species in two views, genome features and life
   history (Figure 3A), with a page per species and its circular genome map (Supplementary Figure S1B). The filtered rows
@@ -812,8 +812,8 @@ supervision.
 
 ## Data availability
 
-The website is at https://just-dna.life/mitoage/, with the downloads under `/data/`; it will also answer at
-https://www.mitoage.info once that address, which still serves the 2016 site, is redirected. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
+The website is at [www.mitoage.info](https://www.mitoage.info), with the downloads under `/data/`; until that
+address, which still serves the 2016 site, moves to MitoAge 2, the site is at https://just-dna.life/mitoage/. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
 c525adbff8c12b19981fdada7f1615c2559b7140. The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
 analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their code under the MIT licence; the data in them keep the terms given below. Build 2 was made by `dna-seq/mitoage` at commit 84ba6f787ebe89655206aa26e8caa65d8da658c1, and its correlation table by the site build at commit 1dda8be7548b7c581a374929f8f2f4a7d901e478. The build and

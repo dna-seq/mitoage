@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript names www.mitoage.info as the site, with where it is now** (2026-11-15, the v0.3 run's decision
+  D14): the Results and Data availability give [www.mitoage.info](https://www.mitoage.info) and, until that address
+  moves from the 2016 site, https://just-dna.life/mitoage/, so co-authors reading round v0.3 can open the site.
+
 - **The title page names the corresponding author's email and HEALES's city** (2026-11-15, the v0.3 run's decision
   JA-8): round v0.3 now reads "\* Corresponding author: robi.tacutu@gmail.com.", as the maintainer gave it, and
   affiliation 4 reads "HEALES (Healthy Life Extension Society), Brussels, Belgium", from heales.org's contact page
