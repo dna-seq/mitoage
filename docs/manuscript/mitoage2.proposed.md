@@ -361,11 +361,12 @@ has no partial correlation, so none of its tests passes all three.
 > 2 (GC content against lifespan), 3 (controls) and 4 (codons); they are now 3, 5, 1 and 2, and the
 > alignment, new with the screenshots, is 4. NAR wants the legends after the references and the figure
 > files uploaded on their own, so they move there at submission. Figures 1 and 2 are charts of the
-> correlation table the build writes; Figures 3, 4 and 5 are screenshots of the build 2 site at a desktop width
-> of 1,440 pixels, taken on 2026-11-14. Figure 1 was redrawn and Figure 5 retaken on 2026-11-15 by
-> `figures/figure-1-controls.ts` and `figures/capture-figure-5.ts` (NOTES.md, "Figures", says how), and
-> Figure 5 was retaken again the same day once the site named every extended feature and took its feature
-> count from the data (roadmap RM19, done); the legend's numbers were checked against the new capture.
+> correlation table the build writes; Figures 3, 4 and 5 are screenshots of the build 2 site. On 2026-11-15
+> every figure was redrawn or retaken for print by the scripts in `figures/` (NOTES.md, "Figures"), the
+> screenshots from a build of `main` after roadmap RM19, and every legend number was checked against them.
+> Still yours: the screenshots' smallest text prints at 2.4 to 6 pt (Figure 3A smallest, and Figure 3 is
+> taller than a page), so Figure 3 needs splitting or some panels moved to a supplement (eLife allows
+> figure supplements).
 
 ![Figure 1. What the controls leave of the lifespan correlations](figures/FIGURE_1_CONTROLS.jpg)
 
@@ -502,17 +503,16 @@ longest-lived first: the bowhead whale (211 years), human (123 years), then the 
 whales. Residues are coloured by the class of their side chain; the bar above each column is the share of
 the rows on show that carry its most common residue, and each species' maximum lifespan is drawn beside its
 row. The alignment (MAFFT v7.526, FFT-NS-2) covers 2,316 species in 679 columns; columns where more than
-half of the rows on show have a gap are hidden (514 of 679 remain; the panel shows the top rows and about 80 of
+half of the rows on show have a gap are hidden (514 of 679 remain; the panel shows the first 20 rows and 24 of
 those columns).
 
 ![Figure 5. The plot explorer](figures/FIGURE_5_PLOT_EXPLORER.jpg)
 
 **Figure 5.** The plot explorer. (**A**) Whole-genome GC content against maximum lifespan (log scale) in
 all 627 mammals the site lists (the two retired ones included), with four species highlighted and the
-least-squares line. The live statistics below the plot are computed in the browser for the points shown
-(Pearson r = 0.48 with log10 lifespan, n = 627). The panel on the right gives the statistics the pipeline computed on the default dataset, which
+least-squares line. The panel on the right gives the statistics the pipeline computed on the default dataset, which
 leaves out estimated and low-quality lifespans: q = 2.4 × 10⁻³³, r on phylogenetically independent
-contrasts 0.17 (p = 4.4 × 10⁻⁵) and partial r on body mass 0.40 (n = 612). (**B**) The mtDNA features
+contrasts 0.17 (p = 4.4 × 10⁻⁵) and partial r on body mass 0.40 (n = 612). (**B**) The first five of the mtDNA features
 ranked by the strength of their correlation with maximum lifespan across all species, each with its q, its
 r on contrasts and its partial r on body mass. Of the 1,414 features, 1,168 have q < 0.05 and 496 of
 those have a contrast p < 0.05 (of either sign; Table 3 counts the 291 with the same sign).

@@ -166,54 +166,66 @@ all defensible. Related to Q6, which asks the same of the amino-acid example.
 Figures are numbered in order of first citation (draft 0.1's planned Figures 1 to 4 are now 3, 5, 1
 and 2; the alignment is 4).
 
-**Redrawn on 2026-11-15.** Figure 1 and Figure 5 were drawn before the extended features joined the
-catalogue (1,257 features, not 1,414), so they disagreed with Table 3 and their own legends. Both are now
-made by scripts in `figures/`, from the current build:
+Every figure is made by a script in `figures/` from the current build (`bun run build` first), and the
+JPEGs are overwritten in place. Redrawn and recaptured on 2026-11-15 for print sizes: one column 86 mm,
+the page 178 mm, text at least 6 pt and images at least 300 dpi as printed.
 
-- `bun docs/manuscript/figures/figure-1-controls.ts` draws Figure 1 from `dist/data/correlations.parquet`;
-  it holds a copy of Table 3 and refuses to write the image when any count differs.
-- `bun docs/manuscript/figures/capture-figure-5.ts http://localhost:PORT` captures Figure 5 from the built
-  site served with `env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port PORT`
-  (any free port; read it from the preview log), with the colour workaround described below.
+```
+bun docs/manuscript/figures/figure-1-controls.ts        # Figure 1
+bun docs/manuscript/figures/figure-2-codons.ts          # Figure 2
+env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port 4349   # read the port it took from its log
+bun docs/manuscript/figures/capture-figures-3-4.ts http://localhost:4349            # Figures 3 and 4
+bun docs/manuscript/figures/capture-figure-5.ts http://localhost:4349               # Figure 5
+```
+
+| Figure | Script | Printed width | Image | Smallest text as printed |
+|---|---|---|---|---|
+| 1 | `figure-1-controls.ts` | 178 mm | 3,000 × 2,568 px, 428 dpi | 7.6 pt |
+| 2 | `figure-2-codons.ts` | 178 mm (158 mm tall) | 3,000 × 2,670 px, 428 dpi | 7.1 pt |
+| 3 | `capture-figures-3-4.ts` | 178 mm, 2 × 2 in columns of 86 mm (242 mm tall) | 3,154 × 4,285 px, 450 dpi | A 2.4 pt, B 4.3 pt, C 5.9 pt, D 3.4 pt |
+| 4 | `capture-figures-3-4.ts` | 86 mm (95 mm tall) | 1,524 × 1,678 px, 450 dpi | 4.3 pt |
+| 5 | `capture-figure-5.ts` | 178 mm, A above B (207 mm tall) | 3,600 × 4,181 px, 514 dpi | A 5.3 pt, B 6.0 pt |
+
+The screenshots cannot reach 6 pt by cropping alone: the site's smallest text is 8.4 to 13 CSS px, and the
+narrowest layout that keeps a panel whole is 520 to 1,300 px wide. 3A needs 1,360 px before the table
+stops scrolling sideways; the genome map (3D) draws its scale at 8.4 px; the alignment viewer cuts species
+names when its grid is under 560 px. Each script prints the smallest text of each panel and its printed size.
+
+- `figure-1-controls.ts` and `figure-2-codons.ts` read `dist/data/correlations.parquet` with hyparquet
+  (dataset `default`, trait `maxLongevityYears`, the definitions of Table 3 above), draw SVG, have headless
+  Chrome render it at three times its size, and have ImageMagick write the JPEG (quality 92). Figure 1 holds
+  a copy of Table 3 and refuses to write when any count differs; Figure 2 refuses unless exactly the twenty
+  codons the legend names pass all three controls.
+- `capture-figures-3-4.ts` and `capture-figure-5.ts` drive headless Google Chrome 157 over the DevTools
+  protocol through `cdp.ts` (light theme, device scale 3), each panel at the narrowest viewport that keeps
+  it whole, and have ImageMagick label and join the panels (quality 90). `cdp.ts` also holds the colour
+  workaround below and turns sticky bars to relative so they are not painted over a capture.
+
+| Panel | Page | Viewport | State and cut |
+|---|---|---|---|
+| 3A | `/species/` | 1,360 px | sorted by maximum lifespan, longest first; toolbar with the two download buttons, the count and the first eight rows |
+| 3B | `/tree/` | 600 px | as it opens (by rank, lifespan ring); the tree and its legend, without the taxon card and the controls |
+| 3C | `/compare/class/mammalia/?chart=r` | 560 px | the Regions card's title, chart, key and note, without the selectors |
+| 3D | `/species/balaena-mysticetus/` | 640 px | the Genome map card's title, map, legend and keys, without the help card |
+| 4 | `/genes/cox1/` | 660 px | Alignment card, class Mammalia, longest-lived first; title, count line, the first 20 rows (24 columns) and the colour key |
+| 5A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | 1,280 px | the plot card down to its class legend, beside the corrected statistics; without the hint, the switch, the buttons and the live statistics |
+| 5B | the same page | 1,150 px | Strongest correlations as it opens (maximum lifespan, all species): the title, the summary line and the first five rows |
 
 Panel 5B, as first retaken, showed two faults of the site: the intro line said "Rank all 1,257 mtDNA
 features", and two of its top rows showed raw keys (`gravy:total_pc`, `ff:ND2:U`). Roadmap item RM19 fixed
 both (the count comes from the data, and every extended feature has a name and a family), and Figure 5 was
-recaptured with the same script later on 2026-11-15; every number in its legend was checked against it.
+recaptured in this layout from a build of `main` after RM19; every number in its legend was checked against it.
 
-Figures 3 and 4 and the description below are as first made: screenshots of the site, in `figures/` as JPEG. The
-site was built with `bun run build` from this repository at f06a0ac on 2026-11-14 (site code and data as at 84ba6f7, the
-commit every number comes from), served with `bun run preview`, and captured in headless Google Chrome 157
-over the DevTools protocol: light theme, 1,440 × 1,400 CSS pixels at a device scale of 2, each panel cut to
-its card. ImageMagick put the panels together and wrote the JPEGs (quality 85). The capture script was a
-one-off and is not in the repository. The pages, with what was done on each before the capture:
-
-| Panel | Page | State |
-|---|---|---|
-| 3A | `/species/` | sorted by maximum lifespan, longest first |
-| 3B | `/tree/` | as it opens (by rank, lifespan ring) |
-| 3C | `/compare/class/mammalia/?chart=r` | the Regions card: chart and the top of its table |
-| 3D | `/species/balaena-mysticetus/` | the Genome map card |
-| 4 | `/genes/cox1/` | Alignment card, class Mammalia, longest-lived first |
-| 5A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | the plot card and the corrected statistics |
-| 5B | the same page | Strongest correlations, as it opens (maximum lifespan, all species), first 10 rows |
-
-Every number in the figure legends was read off the screenshots. Two differ from the text on purpose: the
-scatter of Figure 5A and its live statistics use all 627 mammals the site lists, where the text's r = 0.47
-uses the 615 of the default dataset; and the explorer's count of features that "hold up" on contrasts (424
-for all species) does not require the same sign, where Table 3's "Both" (250) does.
+Every number in the figure legends was read off the images. Two differ from the text on purpose: the
+scatter of Figure 5A shows all 627 mammals the site lists, where the text's r = 0.47 uses the 615 of the
+default dataset; and the explorer's count of features that "hold up" on contrasts (496 for all species)
+does not require the same sign, where Table 3's "Both" (291) does.
 
 Headless Chrome 157 returned a stale computed colour when an element's inline style changed within one
-task, so the tree (3B) and the alignment (4) drew every mark in one colour. The capture read each colour
+task, so the tree (3B) and the alignment (4) drew every mark in one colour. The capture reads each colour
 from a fresh element instead, which matches what the app's own Chromium 156 draws on the same pages. A
 headed Chrome 157 resolves the same colours correctly on the live site (checked on 2026-11-14), so this is
 a quirk of headless capture, not of the site.
-
-Figures 1 and 2 are charts of `dist/data/correlations.parquet` as `bun run build` wrote it on 2026-11-14
-(site code and data as at 84ba6f7), rows of dataset `default` and trait `maxLongevityYears`, with the
-definitions of Table 3 above. A one-off TypeScript script read the file with hyparquet, drew each chart as
-SVG and had headless Chrome render it at three times its size; ImageMagick wrote the JPEGs (quality 92).
-The script is not in the repository.
 
 - **Figure 1** stacks, for each scope of Table 3, the tests with p < 0.05 by the furthest control they pass
   in turn (FDR, then contrasts with the same sign, then body mass), as a share of the scope's tests. Each
@@ -221,17 +233,18 @@ The script is not in the repository.
   four greens are one ordinal ramp (#86c27c, #4fa65a, #1f8a3b, #0b3a1c), checked for monotone lightness,
   step gaps and contrast with the white page.
 - **Figure 2** places the 64 codons of `codon:total_pc:*` in scope `all` by Pearson r and contrast r, one
-  panel per third base, filled where the codon passes all three controls. The bases wear the site's
-  nucleotide colours (`--nt-t`, `--nt-c`, `--nt-a`; G one step darker than `--nt-g`, #e09a10, to show on
-  white). As four colours in one scatter they fail a colour-blindness check (A against U), so each panel
-  shows one base and greys the rest.
+  panel per third base, filled where the codon passes all three controls. Only the twenty that pass are
+  labelled, placed so no label overlaps another or a coloured point, with leader lines in the crowded
+  clusters; the legend's markers are drawn in all four colours. The bases wear the site's nucleotide
+  colours (`--nt-t`, `--nt-c`, `--nt-a`; G one step darker than `--nt-g`, #e09a10, to show on white). As
+  four colours in one scatter they fail a colour-blindness check (A against U), so each panel shows one
+  base and greys the rest.
 
 Recomputing Table 3 from the same file for Figure 1 reproduced every count in it. The total row's count of
 scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty `order:`), not 34; since the
 IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
-- Figure 5B shows the site's stale feature count and two raw feature keys until RM19 lands (above).
 - The decisions of the 2026-11-15 review run are listed in `mitoage2.dashboard.html` (To-do tab): the venue
   (NAR Database issue, earliest January 2028, against Database (Oxford)), the canonical URL, the contrast
   test's calibration, strand orientation per record, the licence of MitoAge's own tables, TimeTree's
