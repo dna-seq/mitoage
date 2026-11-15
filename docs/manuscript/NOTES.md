@@ -272,8 +272,10 @@ cited in order.
   (S7.3); the versions and commands of the aligner comparison are not recorded (S8); the audit behind the
   cross-check is unpublished (S11); `aa-pgls`, `motif-pgls` and `rates`, which give every number of the two
   worked-analysis subsections, are not recorded as rerun (S11); the reproduction covers neither the
-  extended-feature tables nor the correlations (S11). The contrast test is described as implemented; the
-  `ape::pic` comparison and the cluster calibration are to be inserted in S10.6 when they report.
+  extended-feature tables nor the correlations (S11). S10.6 now carries the `ape::pic` comparison and
+  the cluster calibration (`docs/PIC_CALIBRATION.md`), the dominating sister pairs that explain the fish
+  scopes, and the sign-flip p value published beside the t test (D10); whether to report the contrast result
+  with body mass partialled out, without it, or both is still the authors' call.
 - **Edited** with manuscript-prose-edit and manuscript-deslop in run `20261115T064112Z-52913208` (not in git):
   claim guard clean against each pre-edit copy; three sentences of the first draft that stated something no
   document records were removed; 7 of 15 "X, not Y" contrasts rewritten, the rest kept as real distinctions.

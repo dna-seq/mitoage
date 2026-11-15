@@ -783,35 +783,90 @@ three contrasts are needed.
 <!-- src: pipeline/lib/stats.ts:197-253 (picCorrelation), 281-349 (picFast, used by the build);
 src/data/index.ts:442-444 (compiled dated tree passed to computeCorrelations) -->
 
-**What it does not do.** The degrees of freedom are not reduced for polytomies, as Purvis and Garland
-(1993) proposed; here that would change about 1% of them. The standardisation is not checked against the
-branch lengths, as Garland, Harvey and Ives (1992) proposed. The number of contrasts behind each test is
-not stored in the correlation table. Two checks of the test are under way and are not reported here: a
-comparison of this implementation with an established one (`ape::pic` in R), and a calibration run on
-the cluster (`pipeline/pic-calibration.ts`) that gives each lifespan test a Brownian-motion null on the
-dated tree, a null from permuting lifespan across the tips, a sign-flip p value and the branch-length
-diagnostic of Garland, Harvey and Ives.
+**Checked against an established implementation.** The same contrasts were computed with `ape::pic`
+(ape 5.8.1, R 4.4.3) for six lifespan tests in each of Chondrichthyes, Mammalia and Rajiformes, after
+pruning the tree to each test's species and resolving its polytomies with `multi2di`. In Rajiformes, which
+has no polytomy, every contrast is identical. In the other two, r and p agree to seven significant digits.
+The few node-level differences all lie inside a resolved polytomy: the two programs pair a polytomy's
+children in different orders, which changes the intermediate contrasts but not their sums of squares and
+cross-products, so r does not change. A regression through the origin in R gives the same p as the t test
+with m − 1 degrees of freedom. One case is outside the comparison: two sister tips both on branches of
+length zero, which this implementation averages and ape cannot handle; none of the 18 tests compared had
+it. The calibration run below also recomputed the contrasts of all 15,904 lifespan tests of the default
+dataset and found them identical to the published table.
 
-<!-- src: docs/manuscript/NOTES.md Q5; docs/manuscript/NOTES.md "Not yet done" -->
+<!-- src: docs/PIC_CALIBRATION.md "Answer" and "How it was checked" 1-2; docs/analyses/pic-calibration/ape/ -->
 
-> AUTHOR: the check against `ape::pic` and the calibration (`docs/PIC_CALIBRATION.md` once its cluster run
-> reports) are in progress. Insert their results here when they are done.
+**Calibration.** Each lifespan test was put through two null distributions on the cluster
+(`pipeline/pic-calibration.ts`, 1,000 replicates each, fixed seeds). With log10 lifespan replaced by
+Brownian motion simulated on the dated tree, the test rejects 4.75–5.30% of tests at p < 0.05 in every one
+of the 32 scopes: under its own model the test is exact, as a correct implementation must be. With log10
+lifespan shuffled across the species of a scope, which removes any relation to the tree and to the
+feature, it rejects 22–33% in the fish scopes and 29.1% in all species, against 9.1% in Mammalia. So the
+test is calibrated under Brownian motion and not under these data.
 
-**What is not known.** In some clades the contrast test rejects far more often than chance would allow:
-in Chondrichthyes 42.8% of 1,368 lifespan tests have a contrast p below 0.05, while 0.1% pass the false
-discovery rate across species; in Rajiformes 38.7% of 191, and in Clupeiformes 35.0% of 200, with none
-passing. We looked for the cause in the tree and did not find it there. Only 12 of the 2,229 contrasts
-are standardised by a variance sum below 1 million years, and none below 0.01; the polytomies cost 75
-degrees of freedom in all. The rejecting contrasts are not biased in sign either (54% positive in
-Chondrichthyes). What the measurements do show is heavy tails: among the rejecting tests, |r| on
-contrasts averages 0.43 in Chondrichthyes and 0.61 in Rajiformes, where |r| across species averages 0.09
-and 0.19. A Student-t p value for a correlation through the origin of a few dozen contrasts dominated by
-outliers does not describe that distribution. The permutation null is part of the calibration now being run; a second control for shared ancestry (a
-phylogenetic regression with Pagel's λ over the same tests) has not been run. Until both are in, the contrast column should not be read in those
-scopes. Supplementary Table S1 gives the share of tests each scope rejects on contrasts.
+<!-- src: docs/PIC_CALIBRATION.md "Answer", "Per scope" (BM null %, Shuffle null %); job 6486136 on haumea
+from commit 0d67d1e -->
 
-<!-- src: docs/manuscript/NOTES.md Q5; docs/manuscript/supplementary_table_S1_scopes.csv
-(pic_rejection_rate_pct) -->
+**Why the fish scopes over-reject.** In each scope that over-rejects, one pair of sister species carries
+most of the variance of the lifespan contrasts. In Chondrichthyes and Rajiformes it is *Dipturus
+trachyderma* (26 years) against *Zearaja nasuta* (9 years), placed about 0.4 million years apart on the
+dated tree: that one contrast holds 55% of the sum of squared lifespan contrasts in Chondrichthyes and 66%
+in Rajiformes. In Clupeiformes it is *Alosa sapidissima* (13 years) against *A. alabamae* (4 years), with
+93%. Any feature that also differs between the two sisters gets a large contrast at that node, the
+correlation through the origin is decided there, and the t test still counts every contrast as
+independent evidence. The median share of the largest single contrast in the cross-product is 0.43 in
+Chondrichthyes, 0.62 in Rajiformes and 0.54 in Clupeiformes, against 0.03 in Mammalia. The branch lengths
+do not standardise the contrasts either: the diagnostic of Garland, Harvey and Ives (1992), the
+correlation between a lifespan contrast's absolute value and its standard deviation, is negative in 30 of
+the 32 scopes (−0.12 in Mammalia, −0.39 in Chondrichthyes, −0.51 in Rajiformes, −0.60 in
+Acipenseriformes), so short branches give contrasts larger than Brownian motion on these lengths allows.
+
+<!-- src: docs/PIC_CALIBRATION.md "Answer" (dominating pairs, top shares, Garland r) and "Per scope" -->
+
+**A second p value: the sign-flip test.** The test kept for every count in the paper is the t test above:
+the maintainer chose to keep it and the published counts (3,008, 896 and 547) rather than replace it
+(decision D10). Both tests are published. For every lifespan row of both datasets, the correlation table
+also carries `pic_signflip_p`: the share of random sign flips of the contrast products whose sum is at
+least as far from zero as the observed one. Up to 9,999 flips are drawn, seeded by dataset, scope, trait
+and feature, and the count stops once 100 flips are at least as extreme (Besag and Clifford, 1991), so
+the smallest possible value is 1/10,000. The test keeps the size of every contrast, so it assumes only that the contrasts are independent and symmetric about zero; the t test also assumes
+them normal with equal variance. That is a weaker assumption, but still one, and the sign-flip test was not itself put through
+the simulations above. In the default dataset it gives 1,253 of the 15,904 lifespan tests below 0.05,
+against 3,008 for the t test, and 533 "Both" against 896. Where the data fit the model the two tests
+agree, and where one node dominates they do not: in the cluster run, Mammalia gives 197 against 224 (Both
+153 against 164), Chondrichthyes 59 against 585 and Rajiformes 4 against 74. Among the correlations in all
+species that pass the false discovery rate, 205 are significant on contrasts with the opposite sign under
+the t test and 50 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,017 of
+13,380 tests below 0.05, and 502 "Both" against 659. Other traits have no sign-flip value.
+
+<!-- src: docs/DECISIONS.md D10; pipeline/steps/correlations.ts:32-33, 176 (SIGN_FLIP_REPS = 9999, seed);
+pipeline/lib/stats.ts:399-427 (signFlipPValue); docs/PIC_CALIBRATION.md "What could be done" 1 (1,253, 533;
+anage_only 1,017 of 13,380, 502 against 659) and "Which manuscript numbers would change" (205 against 50) -->
+
+**Ancestry and body mass together.** No column of the table controls for both. The contrast test controls
+for ancestry and not for mass; the partial correlation controls for mass and not for ancestry; "All three"
+asks both to agree. The calibration run also computed the contrast correlation with log10 body mass
+partialled out, on the species with a mass: among the 4,299 correlations that pass the false discovery
+rate, 393 are significant on it with the same sign (281 of them also pass the partial correlation across
+species), against 896 for the contrast test without mass. It uses the same t test and inherits the same
+problem in the fish scopes. It is a result of the cluster run and has no column in the published table.
+
+<!-- src: docs/PIC_CALIBRATION.md "Body mass: corrected, uncorrected, or both" -->
+
+> AUTHOR: whether the paper reports the contrast result with body mass partialled out, the one without, or > both side by side is a decision for the authors. The calibration report recommends both.
+
+**What is still not done.** The degrees of freedom are not reduced for polytomies, as Purvis and Garland
+(1993) proposed; here that would change about 1% of them. The number of contrasts behind each test is not
+stored in the correlation table. Contrasts that are outliers are not flagged, and the two sister pairs
+that dominate the fish scopes have not been checked for a lifespan error or a misdated split. A second
+control for shared ancestry, a phylogenetic regression with Pagel's λ over the same tests, has not been
+run. Until it is, the contrast column of Chondrichthyes, Rajiformes, Clupeiformes, Acipenseriformes,
+Actinopterygii and all species should be read with its sign-flip p value beside it. Supplementary Table
+S1 gives the share of tests each scope rejects on contrasts.
+
+<!-- src: docs/PIC_CALIBRATION.md "What could be done" 2-4; docs/manuscript/NOTES.md Q5;
+docs/manuscript/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
 
 ### S10.7 How the three controls combine, and what each count counts
 
@@ -841,6 +896,8 @@ scopes they are taken. All are for maximum lifespan in the default dataset:
 | 496 | all species only | q < 0.05, and contrast p < 0.05 of either sign (the plot explorer, Figure 5B) |
 | 291 | all species only | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
 | 237 | all species only | "All three" |
+| 1,253 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, used in no count of the paper) |
+| 533 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
 
 <!-- src: docs/manuscript/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
 come from" and "Figures" (496 vs 291) -->
@@ -931,8 +988,8 @@ after the reproduction and are not part of its comparison. The correlations are 
 independently at all. They are computed during the site build, the reproduction stops before them, and
 the audit does not compare them. So the correlation table, Table 3, Supplementary Table S1, Figures 1 and
 2, and every r, q, contrast and partial value of S10 quoted in the main text rest on the TypeScript code
-of S10 and its tests alone. The comparison with `ape::pic` (S10.6) would check part of that code against
-another implementation. The Abstract's phrase "an independent reproduction of the build" should be read
+of S10 and its tests alone, with one exception: the contrast code has since been checked against
+`ape::pic` and calibrated by simulation (S10.6). The Abstract's phrase "an independent reproduction of the build" should be read
 with this limit.
 
 <!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md "Known gaps" (last item); docs/manuscript/mitoage2.md
@@ -1181,9 +1238,9 @@ The questions raised above, in one place:
 3. **The thresholds of the repeat and motif features** (S7.3): their source, if any.
 4. **The aligner comparison** (S8): the versions and options of FAMSA, Muscle 5 and the iterative MAFFT
    run, and the comparison for the 11 genes not yet rerun.
-5. **The contrast test** (S10.6): the results of the comparison with `ape::pic` and of the calibration,
-   and a decision on a phylogenetic regression over the correlation table for the scopes that
-   over-reject.
+5. **The contrast test** (S10.6): whether to report the contrast result with body mass partialled out,
+   without it, or both; and whether to run a phylogenetic regression over the correlation table and to
+   check the two sister pairs that dominate the fish scopes.
 6. **The audit** (S11): publish its scripts, or describe it as unpublished.
 7. **The reach of the reproduction** (S11): extend it to the two extended-feature tables, and decide
    whether the correlations get an independent check; until then the Abstract's "independent

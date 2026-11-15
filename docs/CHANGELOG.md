@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **Supplementary Methods S10.6 reports the contrast test's checks** (2026-11-15): the match with `ape::pic`,
+  the calibration (exact under Brownian motion in all 32 scopes, 22–33% rejections with lifespan shuffled in
+  the fish scopes), the single sister pairs that dominate those scopes, the Garland diagnostic, the
+  `pic_signflip_p` column beside the t test (1,253 and 533 "Both" against 3,008 and 896; D10 keeps the t test
+  for every count), and the contrast result with body mass partialled out from the cluster run. S10.7 lists
+  the sign-flip counts, S11 and S14 follow. The manuscript's counts are unchanged.
+
 - **`correlations.parquet` carries a sign-flip p value for the contrast test** (2026-11-15). New column
   `pic_signflip_p`, beside `pic_p_value`, on every lifespan row of both datasets (null for other traits, as
   `partial_r` is): the p value of the same contrast correlation from up to 9,999 random sign flips of the
