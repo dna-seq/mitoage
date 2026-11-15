@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **mitoage-pipelines' hypotheses record matches round v0.3** (2026-11-15): its `docs/HYPOTHESES.md` gives the numbers
+  of the build with the EURING birds (H11 at 500e1d2, H1, H2, H7 and H12 at 35ae7ae), and `docs/manuscript/NOTES.md`
+  no longer lists it among what describes the build before.
+
 - **The MCP server is pinned to the patched build** (2026-11-15): `mcp/src/dataset.ts` names Hugging Face revision
   0f4e970 and the SHA-256 of its `mitoage.sqlite`; the server's own download code fetched the file at that revision
   and accepted its hash, and the parrot's ND6 is in it. npm still serves 0.1.0 until an `mcp-v*` tag releases this.

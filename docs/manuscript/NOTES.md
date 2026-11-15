@@ -77,16 +77,15 @@ observed values; the shuffled-lifespan rate in all species is 29.0% (was 29.1%),
 
 Two corrections came out of the rerun: the bird maturity ages are 292 live species (the "296" counted retired
 records), and the S10.6 note on rows the cluster computes alone gave 3,958, which counted rows neither side computes
-(2,132 are the cluster's alone).
+(2,132 are the cluster's alone). mitoage-pipelines' `docs/HYPOTHESES.md`, the record the text cites, gives the
+same numbers: H11 at 500e1d2, H1, H2, H7 and H12 at 35ae7ae (earlier values in parentheses; H12's second round and
+H2's power calculation were not rerun).
 
 **Still from the build before EURING (2,335 species):**
 - the reproduction in mitoage-pipelines (`docs/BUILD2_REPRODUCTION.md`, 5,302,404 identical values) and the Python
   audit's cross-check, which do not read the EURING list: the text says so where it reports them;
 - the Hugging Face mirror of the sources (`longevity-genie/mitoage-build2-sources`), which has neither the EURING PDF
   nor the 16 TimeTree answers fetched for the new birds; Table S2 therefore gives no count of tree answers;
-- `docs/HYPOTHESES.md` of mitoage-pipelines, the record the text cites for H1 to H12, still gives the numbers of the
-  build before (379 birds, six or seven maturity features, no reptile contact result); `results/euring/README.md` there
-  lists every change.
 
 | Numbers | Source |
 |---|---|
