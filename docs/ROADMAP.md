@@ -173,16 +173,17 @@ the measurements do. The port
 project's own result is a caution: its interface screen found no longevity signal. Open: nuclear orthologs
 are a new data source (the maintainer's), and where the code lives (a separate repository is the default).
 
-Run on the cluster on 2026-11-14 and 15 by another agent (Claude Science), not reproduced here; the result
-tables and the cluster paths of the scripts and logs are in `docs/analyses/cluster-2026-11-15/`, the numbers
-in `docs/ANALYSIS_FINDINGS.md` H5 and H9. Complex IV only: 298 COX1-3 residues of PDB 5Z62 touch a nuclear
+Run on the cluster on 2026-11-14 and 15 by another agent (Claude Science), then ported to
+`dna-seq/mitoage-pipelines` as `mitoport contacts`, `burial`, `iface-align` and `iface`, whose rerun reproduces
+it; the first run's tables and the cluster paths are in `docs/analyses/cluster-2026-11-15/`, the numbers in
+`docs/ANALYSIS_FINDINGS.md` H5 and H9. Complex IV only: 298 COX1-3 residues of PDB 5Z62 touch a nuclear
 subunit. The group contrast reproduces (complex IV's nuclear subunits couple with the COX genes at +0.58
 against +0.03 for cytosolic controls), but contact residues do not couple more than burial-matched
 non-contact ones (excess +0.049 against +0.016 for the cytosolic controls, p = 0.43), so the coupling is a whole-protein property,
 not an interface one. Lifespan on the contact-minus-control mismatch, 1,373 species with body mass: slope
 −0.024 log10 years per standard deviation, 95% interval [−0.050, +0.002], a bounded null. **The stop rule is
 reached for the contact-residue branch**: it is not pursued further. Still open: contact maps for complexes I,
-III and V; the cybrid calibration; moving the cluster scripts into `dna-seq/mitoage-pipelines`.
+III and V; the cybrid calibration.
 
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
@@ -202,7 +203,8 @@ data.
 
 The per-residue table it needs exists for complex IV only: `docs/analyses/cluster-2026-11-15/SITES.tsv`, every
 COX1-3 residue of PDB 5Z62 with its MitoAge alignment column, burial in the complex and alone, its nuclear
-contact partners, occupancy and identity to human (a cluster result, not produced by the pipeline). Complexes
+contact partners, occupancy and identity to human (`mitoage mitoport burial` in `dna-seq/mitoage-pipelines`
+writes it; it is not produced by this repository's pipeline). Complexes
 I, III and V have no contact map yet; complex II has no mitochondrial subunit.
 
 ## RM14 — D-loops annotated as a point

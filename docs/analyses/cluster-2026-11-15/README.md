@@ -1,11 +1,13 @@
 # Cluster analyses of 2026-11-14 and 15: mitoport interface, lifespan, structural alignments
 
 Result tables of analyses run on the cluster host `haumea` by another agent (Claude Science), copied here
-on 2026-11-15. **They were not reproduced in this repository**: the tables are the cluster's output files
-byte for byte (renamed to this directory's UPPER_SNAKE rule, SHA-256 below), and the numbers quoted from
-them in `docs/ANALYSIS_FINDINGS.md` (H3, H5, H9, H10) were recomputed from these files, not rerun. The
-scripts, Slurm job files, logs and the cluster's own READMEs stay on the cluster, at the paths below. The
-code is not yet in `dna-seq/mitoage-pipelines`.
+on 2026-11-15: the cluster's output files byte for byte (renamed to this directory's UPPER_SNAKE rule,
+SHA-256 below). The scripts were then ported to `dna-seq/mitoage-pipelines` (commit f2006a9) as the commands
+named in `docs/ANALYSIS_FINDINGS.md` (H3, H5, H9, H10), and rerunning those commands on the cluster on
+2026-11-15 reproduced these tables: byte-identical sites, contacts and chains; the same coupling (on the first
+run's nuclear alignments), lifespan, within-species and structural-alignment tables. That repository's README
+says what was not rerun (folding, the Coevol chains). The original scripts, Slurm job files, logs and the
+cluster's own READMEs stay on the cluster, at the paths below, as the record of the first run.
 
 ## The tables
 
@@ -57,7 +59,9 @@ Recomputed from the files on 2026-11-15 (Python with SciPy, outside the reposito
   log10 years per standard deviation.
 - `STRUCTURAL_MSA.tsv` and `PLDDT.tsv`: median agreement 0.9997 overall and 1.000 in the core; mean pLDDT
   84.8; correlation across genes between disagreement and mean pLDDT −0.03. The folding time (11,949 s for
-  806 structures) is from `struct-fold-6485024.log`; the GPU type (A100) is the other agent's report.
+  806 structures) and the card (one A100 PCIe 40 GB) are from `struct-fold-6485024.log`. The build has 2,290
+  species with all 13 proteins (the hand-off said 2,309), so folding all of them would take about 120
+  GPU-hours on that card (the hand-off said 150).
 - `CHAINS.tsv`: identity to MitoAge's human sequences 0.979 (ND4L) to 1.000.
 
 ## SHA-256 of the cluster files

@@ -4,6 +4,18 @@ Newest first.
 
 ## Unreleased
 
+- **The cluster analyses are reproducible from `dna-seq/mitoage-pipelines`** (2026-11-15, its commit
+  f2006a9). The one-off cluster scripts behind H3's Coevol run, H5's residue-level test, H9 and H10 are now
+  commands there (`download pdb`, `mitoport contacts|burial|iface-align|iface`, `structure within|fold|msa`,
+  `longevity coevol|coevol-read`), with tests, and its `docs/HYPOTHESES.md` carries the same entries as
+  `docs/ANALYSIS_FINDINGS.md` again. Rerun on the cluster against the first run's files: byte-identical
+  contact map, sites, selections, dated tree and Coevol inputs, and the same coupling, lifespan,
+  within-species and structural-alignment tables; on freshly made nuclear alignments MAFFT's two-thread runs
+  differ in 2 of 62 and move one protein's coupling (UQCRQ, +0.565 to +0.572), which changes no group median.
+  Not rerun: the folding and the Coevol chains. Two numbers of the hand-off corrected while checking: the build
+  has 2,290 species with all 13 proteins, not 2,309, and folding them all is about 120 GPU-hours, not 150.
+  The ESS figures of the Coevol entry are now read from the run's own `tracecomp.contdiff`.
+
 - **The cluster analyses of mitoport's interface and of structural alignments, brought in; RM13 closes**
   (2026-11-15). Another agent (Claude Science) ran them on `haumea` on 2026-11-14 and 15 and nothing had
   reached this repository. Their result tables are now in `docs/analyses/cluster-2026-11-15/` (seven TSVs,
@@ -18,7 +30,7 @@ Newest first.
   reproduces, the interface prediction fails: a whole-protein coupling, not compensation at contacts); H9,
   lifespan on the contact mismatch, a bounded null (1,373 species, 95% interval [−0.050, +0.002] log10
   years per SD); H10, the structural-alignment check, agreement with MAFFT at median 0.9997 in 62 mammals
-  and about 150 GPU-hours to fold every species; H3 gains Coevol's numbers, marked provisional because its
+  and about 120 GPU-hours to fold every species; H3 gains Coevol's numbers, marked provisional because its
   chains had not converged. Roadmap: RM13 is done, with the limit that it covered mammals only; RM11
   records the interface result and that its stop rule is reached for the contact-residue branch; RM17
   names `SITES.tsv` as its per-residue table, for complex IV only; RM12 records Coevol as unconverged.

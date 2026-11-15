@@ -12,11 +12,11 @@ result tables are the Hugging Face dataset
 [longevity-genie/mitoage-pipelines](https://huggingface.co/datasets/longevity-genie/mitoage-pipelines); the
 prepared inputs are `mitoage-nuclear-partners`, `mitoage-embeddings` and `mitoage-aligner-variants` there.
 
-**Run elsewhere, not reproduced here**: the residue-level part of H5, H9, H10 and the Coevol numbers in H3
-come from analyses another agent (Claude Science) ran on the cluster host `haumea` on 2026-11-14 and 15.
-Their result tables are in `docs/analyses/cluster-2026-11-15/`, whose README names the cluster paths of the
-scripts and logs. The numbers below were recomputed from those tables; the analyses were not rerun. That
-code is not in `dna-seq/mitoage-pipelines` yet, and its `docs/HYPOTHESES.md` does not have these parts.
+**First run elsewhere**: the residue-level part of H5, H9, H10 and the Coevol run in H3 were first run by
+another agent (Claude Science) on the cluster host `haumea` on 2026-11-14 and 15. Its scripts are now commands
+of `dna-seq/mitoage-pipelines` (commit f2006a9), and rerunning them reproduces the published tables, as
+each entry says; that repository's README lists what was and was not rerun. The tables of the first run are
+kept in `docs/analyses/cluster-2026-11-15/`, with the cluster paths of the original scripts and logs.
 
 **Not done**: the complexes section of the site with nuclear and mitochondrial subunits side by side (RM17);
 the mito-nuclear pairing against lifespan for any complex but IV, and for anything other than its contact
@@ -37,6 +37,8 @@ recorded lifespan, log10 years. Nothing here is peer reviewed.
   codons) and of the two rRNA genes. `mitoage download build`.
 - Nuclear orthologs of respiratory-complex subunits and of control proteins, from NCBI's ortholog sets.
   `mitoage download orthologs`.
+- Solved structures of the human respiratory complexes from RCSB, each file's SHA-256 recorded.
+  `mitoage download pdb`.
 
 ## H0. The alignments do not depend on the aligner
 
@@ -150,11 +152,12 @@ from each end within each order, at most three per family; tips labelled. `mitoa
 (ND3 K = 0.89, p = 0.38; CYTB K = 1.03, p = 0.52); ATP8 appears there only. **No gene shows a difference
 that holds across both draws.** We do not claim the first draw's hits.
 **Provisional, not to be quoted: Coevol** (lifespan as a continuous trait on every branch, on the dated
-tree; inputs by `mitoage longevity coevol-prep`; run on the cluster by another agent, two chains of 106
-mammals, burn-in 200, `/data/uq2347/runs/mitoage/rm12/out/coevol-repo/chain{1,2}.cov`). The chains had not
-mixed when these numbers were read (effective sample size 7 for dN/dS and 15 for the likelihood, between-chain
-discrepancy 0.5 to 0.8, as the other agent reports; ESS above 100 is needed before any of this is quoted), and
-with that caveat: dS against longevity −0.52 and −0.49 (posterior probability of a positive correlation 0 in
+tree; `mitoage longevity coevol-prep`, `longevity coevol --chain 1` and `--chain 2`, `longevity coevol-read`).
+First run on the cluster on 2026-11-14 and 15 by another agent: two chains of 106 mammals (one per family),
+1,100 cycles each, read after a burn-in of 200. The inputs `coevol-prep` writes are byte-identical to that
+run's; the chains themselves were not rerun. They had not mixed when these numbers were read (tracecomp:
+effective sample size 7 for dN/dS and 15 for the likelihood, relative difference between the chains 0.52 and
+0.79; above 100 and small are needed before any of this is quoted), and with that caveat: dS against longevity −0.52 and −0.49 (posterior probability of a positive correlation 0 in
 both chains), dN/dS against longevity +0.45 and +0.44 (0.99); as partial correlations, given the other three
 variables (body mass among them), dN/dS against longevity is +0.28 and +0.32 (0.88 and 0.91) and dS against
 longevity −0.13 and −0.10 (0.07 and 0.14), so the raw dS association went with body mass. The runs need to be
@@ -193,7 +196,8 @@ and not cytochrome b (−0.17). Complex III's nine nuclear subunits against cyto
 against −0.06). On the topology of the tree built from the proteins the same test gave p = 0.0001; the
 direction and size are the same, the dated tree is the one that counts. This reproduces a known phenomenon
 and serves as the method's positive control. Lifespan: H9.
-**Residue level, complex IV only (cluster run, not reproduced here; `SITES.tsv` and `COUPLING.tsv`).** Every
+**Residue level, complex IV only** (`mitoage download pdb 5Z62`, `mitoport contacts`, `mitoport burial`,
+`mitoport iface-align`, `mitoport iface`; into `sites.tsv` and `coupling.tsv`). Every
 residue of COX1, COX2 and COX3 in the human structure 5Z62 was mapped to its column of the MitoAge alignment;
 the three chains match MitoAge's human sequences at identity 1.000. 298 residues touch a nuclear subunit
 (4.5 Å heavy-atom cutoff), and each was matched to a non-contact residue of the same gene by its accessibility
@@ -216,7 +220,11 @@ couple more than its other columns (+0.051 against +0.004, p = 0.0096, one of ma
 so the two distances disagree on the nuclear side and this is not assessed further. **Reading.** The coupling
 is a property of whole proteins that share a complex with mtDNA products, not of the residues that touch: it
 is no evidence of compensation at contacts. Complexes I, III and V have no contact map yet, so this is said
-of complex IV only.
+of complex IV only. **Reproduction.** First run on the cluster on 2026-11-14 by another agent; rerun from this
+code on 2026-11-15: the contact map and `sites.tsv` are byte-identical, and `coupling.tsv` is identical when
+read on that run's nuclear alignments. On freshly made alignments (MAFFT with two threads is not repeatable)
+60 of 62 are identical and one protein's sequence correlations move (UQCRQ, +0.565 to +0.572), which changes
+no group median. The `esm_` columns need the per-residue ESM-2 embeddings, which are not published.
 **Traps met.** IQ-TREE re-places identical sequences unless told `--keep-ident`, which silently changes the
 tree; NCBI's ortholog sets for CYC1, SDHC and SDHD held 21 to 48 sequences of another gene or a broken
 model, filtered by identity to human; a test of nuclear rate against overall mitochondrial rate with one
@@ -315,8 +323,9 @@ repeat, motif and contact-zone number above is computed on records of unknown as
 **Hypothesis.** The port project's question narrowed to mitochondria: species whose COX1-3 residues at the
 contacts with nuclear subunits differ more from the consensus than burial-matched non-contact residues do
 have a different maximum lifespan.
-**Test.** Cluster run by another agent, not reproduced here (`LIFESPAN.tsv`, script `iface.py` on the
-cluster). Per species, the share of H5's 298 contact columns where its residue differs from the most common residue
+**Test.** `mitoage mitoport iface`, into `lifespan.tsv` (with each slope's standard error and 95% interval);
+first run on the cluster on 2026-11-14 by another agent, and the rerun from this code gives the same table.
+Per species, the share of H5's 298 contact columns where its residue differs from the most common residue
 of the column among the species of the set (gaps left out), the same at their 298 matched controls, and the
 difference, each standardised; phylogenetic regression of log10 maximum lifespan on it, log10 adult body mass
 in the model, Pagel's lambda estimated on the null model, the build's dated tree.
@@ -338,8 +347,10 @@ of the cybrid calibration that RM11 proposed first is recorded in this repositor
 
 **Hypothesis.** The 13 proteins are membrane proteins of a few families of folds, and sequence aligners may
 misplace columns that structure would put elsewhere.
-**Test.** Cluster run by another agent, not reproduced here (`WITHIN_SPECIES.tsv`, `CHAINS.tsv`,
-`STRUCTURAL_MSA.tsv`, `PLDDT.tsv`). First, the 13 proteins from solved human structures (ND1-6 and ND4L from
+**Test.** `mitoage download pdb 5XTD 5Z62 8H9S 5XTE 5XTH 5XTI 6ZQN 7AJD`, `structure within`, `structure
+fold` (GPU), `structure msa`; into `within_species.tsv`, `chains.tsv`, `plddt.tsv` and `structural_msa.tsv`.
+First run on the cluster on 2026-11-14 and 15 by another agent; rerun from this code, `within` and `msa` (on
+that run's structures) give the same tables, timings aside; the folding was not rerun. First, the 13 proteins from solved human structures (ND1-6 and ND4L from
 5XTD, COX1-3 from 5Z62, CYTB from 5XTE, ATP6 and ATP8 from 8H9S; identity to MitoAge's human sequences 0.979
 to 1.000), superimposed all against all with US-align. Then predicted structures of the 13 proteins in 62
 mammals (806 structures, ESMFold2, checkpoint `biohub/ESMFold2-Fast`, one sample), aligned by FoldMason and
@@ -354,10 +365,11 @@ normalised by the shorter chain run high for short subunits and are not used.
 proteins, 56 to 62 for ND3, ND4L and ATP8. Disagreement does not follow model confidence (r = −0.03 across
 genes).
 **Cost.** Aligning is trivial (18 s FoldMason, 9 s MAFFT for the 13 genes); folding took 11,949 s for 806
-structures on one GPU (an A100, as the other agent reports), which extrapolates to about 150 GPU-hours for
-the 2,309 species with all 13 proteins (the other agent's count).
+structures on one A100 (40 GB), 14.8 s per structure, which extrapolates to about 120 GPU-hours on that card
+for the 2,290 species of the build with all 13 proteins (a rough figure: proteins of other phyla differ in
+length).
 **Reading.** At the divergence of mammals structure does not move the columns: the sequence alignments stand,
 and H0's soft genes (ND6, ND5) are also where structure and sequence differ most, by little.
 **Limits.** Mammals only (62 species); one prediction per sequence; agreement between two methods is not
-correctness. Distant phyla, where sequence aligners are more likely to err, are not assessed; the other agent
-estimates about one GPU-hour for some 20 species across phyla.
+correctness. Distant phyla, where sequence aligners are more likely to err, are not assessed; at the same rate,
+20 species across phyla would take about one GPU-hour.
