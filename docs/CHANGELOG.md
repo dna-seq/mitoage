@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The reproduction matches the build the manuscript cites** (2026-11-15). mitoage-pipelines aee05c7 applies
+  D17's hand-checked gene annotations (the lists copied as data, the patch and gap rules written in Python) and,
+  from a fresh data folder, matches Hugging Face revision 0f4e970 in all 5,328,887 values, the 28 alignments and the
+  dated tree. Round v0.3 drops its caveat that the reproduction stopped short of the patch.
+
 - **Table 3 and Supplementary Table S1 carry a PGLS column** (2026-11-15, D19): FDR, and p < 0.05 with the same sign for
   the lifespan slope of the phylogenetic regression of D18. Totals: 893 of 4,296; all species 232, mammals 260,
   ray-finned fishes 148, birds 69.

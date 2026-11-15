@@ -1023,15 +1023,15 @@ build 15. The audit scripts are not published.
 Python for readers who want to rebuild without our machines. It was written from the rules as stated, not
 translated line by line from the TypeScript. It reads the published build in one place only, the final
 comparison, so that no value is filled from the source that checks it. Every input has a downloader, and
-the inputs no archive keeps come from the snapshot dataset of S1. From the pinned inputs, all 5,328,755
+the inputs no archive keeps come from the snapshot dataset of S1. From the pinned inputs, all 5,328,887
 values of the seven tables (species, region statistics, codon usage, genome features, lifespan
 observations, changelog and review list), all 28 alignment files and the dated tree come out identical:
-the values compared exactly, the alignments by SHA-256, the tree byte for byte, against the build with the EURING
-birds (Hugging Face revision f75bdc9). The build cited in the main text adds to that one a patch to gene
-annotations (the African grey parrot's ND6, and review flags naming why other species lack a gene), which the
-reproduction does not make yet. The whole sequence takes about six minutes.
+the values compared exactly, the alignments by SHA-256, the tree byte for byte, against the build cited in the
+main text (Hugging Face revision 0f4e970). The hand-checked gene annotations of that build (the African grey
+parrot's ND6, and the flags naming why other species lack a gene) are curated inputs, copied as data; the code
+that applies them is the reproduction's own. The whole sequence takes about six minutes.
 
-<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md (opening, "How far it reproduces", run times total 362 s; at commit bb5d70d) -->
+<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md (opening, "How far it reproduces", run times total 349 s; at commit aee05c7) -->
 
 The reproduction was also run with other inputs, on the build before the EURING birds, to show what moves when a source does. With the
 taxonomy archive of 2026-11-01 instead of the dump of 2026-11-13, four species change, because NCBI

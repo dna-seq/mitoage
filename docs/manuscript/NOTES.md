@@ -113,9 +113,9 @@ The PIC calibration of the three scopes the parrot enters (all species, Aves, Ps
 rates stay within 4.77–5.24% (Psittaciformes 5.15%, was 5.22%) and the shuffled-lifespan rate in all species at 29.0%, so
 S10.6's text is unchanged; its source note names the job.
 
-**Nothing is still from the build before EURING (2,335 species).** The reproduction in mitoage-pipelines reads the EURING list since bb5d70d and matches the build with the
-EURING birds (f75bdc9) in all 5,328,755 values, the 28 alignments and the tree; it does not yet apply D17's gene
-patch, so it does not reproduce 0f4e970, and the text says so. The audit's cross-check covers all 1,422 new species
+**Nothing is still from the build before EURING (2,335 species).** The reproduction in mitoage-pipelines reads the EURING list (since bb5d70d) and applies D17's gene annotations
+(since aee05c7), and matches the build the text cites (0f4e970) in all 5,328,887 values, the 28 alignments and the
+tree. The audit's cross-check covers all 1,422 new species
 (the audit scripts in `data/cache/build2/scripts/`, not in any repository, read the list through `pdftotext`). The
 sources snapshot is at revision a762151 with the 2,250 tree answers; it does not copy the EURING PDF, which the
 Internet Archive keeps and which states no licence.
@@ -136,7 +136,7 @@ Internet Archive keeps and which states no licence.
 | Table 3, the funnel (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
 | Codon third-position pattern (8 U-ending down, 7 C-ending up; UGC no longer passes with the EURING birds) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
 | Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` `results/nd6-patch/` at fbb3798 (run of 2ee27a1 on 0f4e970; `results/euring/` at e1b862b for fb54cec; mammals as first run at da0c112): `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
-| Reproduction: all 5,328,755 values of the seven tables, the 28 alignment files and the dated tree come out identical (against f75bdc9) | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at bb5d70d (origin/main), "How far it reproduces" |
+| Reproduction: all 5,328,887 values of the seven tables, the 28 alignment files and the dated tree come out identical (against 0f4e970) | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at aee05c7 (origin/main), "How far it reproduces" |
 | 485 of the 550 "All three" keep the sign of the correlation across species in the partial correlation (65 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,386 of 2,211 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.027 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
 | Survivors by feature: codons are 54% of the tests and 55% of the 550; in all species 27 of 40 skew, 11 of 16 GC-content and 139 of 741 codon correlations that pass the false discovery rate pass all three controls | same file, the funnel grouped by feature family |

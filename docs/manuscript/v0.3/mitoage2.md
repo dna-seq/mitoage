@@ -252,16 +252,14 @@ remaining six record systematic rules), counted by table, row and field. The two
 A second repository, `dna-seq/mitoage-pipelines` (Python), is written for readers who want to rebuild
 without our machines. It downloads every input with a pinned version, rebuilds build 2 from the release-1
 export independently of the TypeScript pipeline, and compares the result with the published build.
-From the pinned inputs, all 5,328,755 values of its seven tables, its 28 alignment files and its dated
-tree come out identical to the build with the EURING birds, Hugging Face revision f75bdc9 (`docs/BUILD2_REPRODUCTION.md`
-there, at commit bb5d70d). The build cited here differs from that one only by a later patch to gene annotations
-(the African grey parrot's ND6, added by hand, and review flags naming why other species lack a gene), which the
-reproduction does not make yet. Neither the two tables of extended
+From the pinned inputs, all 5,328,887 values of its seven tables, its 28 alignment files and its dated
+tree come out identical to the build cited here, Hugging Face revision 0f4e970 (`docs/BUILD2_REPRODUCTION.md`
+there, at commit aee05c7). Neither the two tables of extended
 features, added to the build afterwards, nor the correlations are part of that comparison: the correlation table and every count drawn from it rest on the TypeScript pipeline, whose contrast computation was checked against R's `ape::pic` (Supplementary Methods S10.6 and S11). `dna-seq/mitoage-pipelines` also holds the analyses that read the build (the worked examples in Results
 among them), each run by one command, with a record of which results reproduce byte for byte on a rerun and
 which do not. Package versions are fixed by the lock files of the two repositories at the commits cited (`bun.lock`, `uv.lock`), and the external programs of the analyses by the analysis repository's `environment.yml`.
 
-> AUTHOR: `docs/BUILD2_REPRODUCTION.md` is on `main` of mitoage-pipelines (commit bb5d70d, checked
+> AUTHOR: `docs/BUILD2_REPRODUCTION.md` is on `main` of mitoage-pipelines (commit aee05c7, checked
 > 2026-11-15), and the paragraph above reports what it found. Still open: extend the comparison to the two
 > extended-feature tables, and cite the repository by a tagged release and Zenodo DOI rather than by commit.
 
