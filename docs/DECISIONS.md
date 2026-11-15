@@ -292,3 +292,19 @@ EURING value and its 26 USGS-sourced birds were flagged provisional (RM5). The l
   lose the provisional flag. The list states no licence; it is cited as Fransson, Kolehmainen, Moss &
   Robinson (2023). Ages are minimum ages; one cell ("11y im", a quail's second record) keeps its whole
   years.
+
+## D16 — The t test keeps the headline; every count gets chance bounds beside it (2026-11-15)
+
+The v0.3 skeptic called the counts "uncalibrated" (`docs/REVIEW_ANALYSES_PLAN.md`, question 1). Offered three
+answers, the maintainer chose "t test + chance bounds".
+
+- **Decided:** Table 3, Supplementary Table S1 and the abstract keep the contrast t test's counts as the
+  headline (D10, D13 unchanged). Every count gets, beside it, the number of passes expected by chance in its
+  scope: an upper bound from shuffled lifespan and a lower bound from Brownian lifespan on the tree (the plan's
+  A1). The sign-flip column stays.
+- **Rejected:** a calibrated count as the headline (the sign-flip count, or the phylogenetic permutation's once
+  run), which would have amended D10 and D13 and taken the all-species "Both" from 292 to 103 and the
+  abstract's "one in five" to about one in eight; and all counts side by side with no headline.
+- **What it costs, and was accepted:** one more column in Table 3 and S1. A count whose upper chance bound
+  reaches half of it is printed but not interpreted, the plan's reading rule fixed before the bounds are
+  computed; the fish scopes are expected to fall there.

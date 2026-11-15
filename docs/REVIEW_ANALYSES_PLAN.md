@@ -99,8 +99,8 @@ Cost estimate, not measured: about 1 s per likelihood on the 2,211 species of th
 | A2 or A3 agrees with the sign-flip count within 10% overall | The sign-flip column is confirmed by an independent null, and the text says so |
 | A2 or A3 differs from both the t test and the sign-flip count | All three are reported; none is promoted without the maintainer |
 
-Which count leads the abstract and Table 3 stays D10's and D13's: the t test, unless the maintainer amends
-it (question 1 below).
+Which count leads the abstract and Table 3 is settled (D16, question 1 below): the t test, as D10 and D13
+have it, with A1's chance bounds beside every count.
 
 ## B. Power: separating "absent within lineages" from "too weak to see"
 
@@ -227,13 +227,9 @@ Each new function gets a test that runs it on real data and is checked by breaki
 
 ## Questions for the maintainer
 
-1. **Which count leads.** D10 and D13 keep the t test as the headline, with the sign-flip count beside it.
-   - (a) Keep that, and add A1's chance bounds beside every count. Costs one more column of Table 3, and no
-     count drops. **Recommended:** it answers "uncalibrated" without "overdropping", in the maintainer's
-     word of D10.
-   - (b) Make a calibrated count the headline (sign-flip, or A2 once run). Amends D10 and D13. All species
-     falls from 292 "Both" to 103, and the abstract's "one in five" becomes about one in eight.
-   - (c) Report all three side by side with no headline. Costs clarity in the abstract.
+1. **Which count leads.** Answered 2026-11-15 (D16): "t test + chance bounds". The t test stays the
+   headline, as D10 and D13 have it, and A1's chance bounds go beside every count. Rejected: a calibrated
+   count as the headline, and all counts side by side with no headline.
 2. **A3: PGLS over the whole table.**
    - (a) Run it. Several CPU-days on haumea, and a new column or supplementary table. **Recommended:** it is
      the one ancestry control that does not rest on the contrast t test, and the Discussion already says it
