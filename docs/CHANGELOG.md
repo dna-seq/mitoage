@@ -4,6 +4,17 @@ Newest first.
 
 ## Unreleased
 
+- **Table 3 and Supplementary Table S1 carry a PGLS column** (2026-11-15, D19): FDR, and p < 0.05 with the same sign for
+  the lifespan slope of the phylogenetic regression of D18. Totals: 893 of 4,296; all species 232, mammals 260,
+  ray-finned fishes 148, birds 69.
+  - **The text:** round v0.3 (working and proposed copies) gains a Results paragraph (the total, 430 with body mass,
+    576 with both controls, rejection rates near 5% where nothing passes the FDR except in skates and herrings), one
+    sentence in Statistics, two in the Discussion, and Supplementary Methods S10.8.
+  - **The numbers:** `docs/manuscript/numbers.ts` counts the column from `docs/analyses/pgls/` and refuses if those
+    tables do not match the build. It regenerated S1, whose other twelve columns are unchanged.
+  - **Corrections:** "Of those 4,295" now reads 4,296. The PGLS README and S10.8 no longer give an unexamined cause for
+    the 30 singular fits with mass, and name the one refused fit without mass.
+
 - **The PIC calibration covers the patched build** (2026-11-15): all species, Aves and Psittaciformes calibrated again
   on revision 0f4e970 (array job 6490100 from f360eea, committed from haumea as 0335977); the other 29 scopes are
   unchanged by the patch. Brownian-motion rates stay in 4.77–5.24% and the shuffled rate in all species at 29.0%, so

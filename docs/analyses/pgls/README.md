@@ -47,8 +47,9 @@ On each test's species that have a place in the dated tree, the feature is the r
   - Too few masses: no fit with mass in Amphibia, Bivalvia, Caudata, Centrarchiformes, Clupeiformes,
     Rajiformes, Scombriformes and Siluriformes, and for 18 tests in Pleuronectiformes. This is the table's
     own minimum of 10 species with a mass.
-  - Singular: 30 fits with mass, where the feature does not vary or is collinear on those species.
-  - One fit without mass, in Bivalvia.
+  - Singular: 30 fits with mass whose least-squares system was singular; their causes were not examined one by one.
+  - One fit without mass, in Bivalvia (GCC in ATP8). Its feature is 0 in all 14 bivalves with a place in the tree; the
+    one nonzero value is in *Cryolaternula elliptica*, which the tree lacks.
 
 ## What the counts show
 
@@ -97,5 +98,5 @@ The plan fixed two rules for A2 and A3 before they ran:
 
 PGLS fits neither. Its total agrees with the t test (893 against 900, under 1%) and not with the sign-flip
 count (535). Its scopes differ from both. The rules did not foresee a match of totals made of different tests,
-so how PGLS enters Table 3 and S1 is the maintainer's call; D18 leaves it to be decided once read. Nothing in
-the manuscript has changed.
+so how PGLS enters Table 3 and S1 was the maintainer's call. D19 decided it: a PGLS column in Table 3 and S1,
+counted by `docs/manuscript/numbers.ts` from these tables.

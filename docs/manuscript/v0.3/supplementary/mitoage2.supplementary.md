@@ -929,7 +929,53 @@ the 900. The pipeline does not write these counts; they were made from the corre
 The script that draws Figure 1 recomputes Table 3 from the same table and refuses to draw if any count
 differs.
 
-**Supplementary Table S1.** Correlations of mtDNA features with log10 maximum lifespan in all 32 scopes of the default dataset (file `supplementary_table_S1_scopes.csv`), with the definitions of Table 3. Columns: the scope; its species, and those with a recorded adult body mass; the number of tests; tests with p < 0.05; with q < 0.05 (FDR); with contrast p < 0.05 of either sign (PIC); FDR and PIC with the same sign (Both); FDR and a sign-flip p < 0.05 on contrasts with the same sign (Both, sign-flip; S10.6); Both and partial p < 0.05 on body mass (All three); the percentage of the scope's tests with contrast p < 0.05; and FDR with p < 0.05 and the same sign on contrasts with body mass partialled out (PIC + mass). A scope with fewer than 10 species of recorded body mass has no partial correlation. The last row sums the 32 overlapping scopes.
+### S10.8 Phylogenetic regression with Pagel's λ
+
+**Model.** For each lifespan test of the correlation table, the feature is the response and log10 maximum lifespan
+the predictor, on the test's species that have a place in the dated tree. A second model adds log10 adult body mass,
+on the species with a recorded weight (at least 10, as for the partial correlation). The residuals have the Brownian
+covariance of the tree pruned to those species and rooted at their most recent common ancestor, with its off-diagonal
+multiplied by Pagel's λ (Pagel 1999).
+
+**How it is fitted.** That covariance is itself the Brownian covariance of a transformed tree:
+- its internal branches are multiplied by λ;
+- a tip branch of length b becomes λb + (1 − λ)d, with d the tip's depth below the ancestor.
+
+So the generalised least squares fit is least squares through the origin on the independent contrasts (Felsenstein
+1985) of the transformed tree. The log determinant of the covariance is the sum of the logs of the contrasts'
+variances and of the root's. Each likelihood therefore takes time linear in the number of species.
+
+λ is estimated by maximum likelihood in [0, 1], with the residual variance profiled out: 21 values first, then a
+golden-section search between the best value's neighbours. The slope of lifespan is tested with the residual variance
+RSS/(n − p), on n − p degrees of freedom. The feature is the response because λ describes the residual of a response,
+as in S12.1 and S12.6. The model is therefore not symmetric in the two traits, unlike the correlations beside it.
+
+**Checks.** The implementation (`pipeline/lib/pgls.ts`) is tested on the build's own data:
+- against a generalised least squares fit computed from the full covariance matrix, at five values of λ;
+- against the contrast tests of S10.6 at λ = 1;
+- for the maximum of the likelihood, on a grid twenty times finer than the search.
+
+With λ fixed at 1 the model is Brownian motion on the tree, and the lifespan slope's p value equals the contrast test's
+(that of S10.6 without mass, that of the test with mass partialled out with it). The run compared the two on all 15,906
+tests and found no difference above 10⁻⁶ relative.
+
+**Run.** On the cluster: Slurm array job 6490080, one task per scope, from commit f360eea of the site repository, on
+the build of Hugging Face revision 0f4e970. Its per-test tables and per-scope summary are in `docs/analyses/pgls/` there.
+
+- **Not fitted:**
+  - Without mass: one test in Bivalvia (GCC in ATP8). Its feature is 0 in all 14 bivalves with a place in the tree;
+    its one nonzero value is in *Cryolaternula elliptica*, which the tree lacks.
+  - With mass: 30 tests whose least-squares system was singular (their causes were not examined one by one); every
+    test of the eight scopes with fewer than 10 species with a weight, as for the partial correlation; and 18 tests in
+    Pleuronectiformes.
+- **λ:** its median over a scope's tests is 0.96 in mammals and 0.98 in all species and in ray-finned fishes. λ is 1
+  in 210 of the 1,398 mammal tests.
+- **Rejection rates:** where no correlation passes the false discovery rate, the regression rejects 5.5% of the lifespan
+  tests in cartilaginous fishes, 4.8% in amphibians and 5.0% in bivalves, but 12.6% in skates and 22.0% in herrings
+  (Rajiformes and Clupeiformes). No null was simulated for the regression, so these are observed rates, not a
+  calibration.
+
+**Supplementary Table S1.** Correlations of mtDNA features with log10 maximum lifespan in all 32 scopes of the default dataset (file `supplementary_table_S1_scopes.csv`), with the definitions of Table 3. Columns: the scope; its species, and those with a recorded adult body mass; the number of tests; tests with p < 0.05; with q < 0.05 (FDR); with contrast p < 0.05 of either sign (PIC); FDR and PIC with the same sign (Both); FDR and a sign-flip p < 0.05 on contrasts with the same sign (Both, sign-flip; S10.6); Both and partial p < 0.05 on body mass (All three); the percentage of the scope's tests with contrast p < 0.05; FDR with p < 0.05 and the same sign on contrasts with body mass partialled out (PIC + mass); and FDR with p < 0.05 and the same sign for the lifespan slope of the phylogenetic regression of S10.8 (PGLS). A scope with fewer than 10 species of recorded body mass has no partial correlation. The last row sums the 32 overlapping scopes.
 
 <!-- src: docs/manuscript/NOTES.md row for Table 3 ("the counts were made in an analysis session, not by the
 pipeline"); docs/manuscript/v0.2/figures/figure-1-controls.ts -->

@@ -351,3 +351,21 @@ presentation choice for v0.3. The maintainer: "Yes, run PGLS".
 - **What it costs, and was accepted:** a model that is not symmetric in feature and lifespan, beside
   correlations that are; and a fourth ancestry count beside PIC, sign-flip and PIC + mass, until the results
   say which belongs in the main text.
+
+## D19 — Table 3 and Supplementary Table S1 carry a PGLS column (2026-11-15)
+
+D18's run (`docs/analyses/pgls/`) gave 893 of the 4,296 FDR-passing correlations passing PGLS with the same sign. That is
+nearly the contrast t test's 900, made of different tests (mammals 260 against 164, all species 232 against 292). The
+plan's reading rules had not foreseen a match of totals made of different tests. Asked how PGLS enters the tables, the
+maintainer: "Add PGLS column".
+
+- **Decided:** Table 3 and S1 end with "PGLS": FDR, and p < 0.05 with the same sign for the lifespan slope. Like PIC +
+  mass, it stands beside the funnel and is not a step of it. The Results report the total, the count with body mass
+  (430), the overlap with "Both" (576) and the rejection rates where nothing passes the FDR. Statistics, the Discussion
+  and Supplementary Methods S10.8 describe it. `docs/manuscript/numbers.ts` counts it from the committed tables.
+- **Unchanged:** the t test stays the headline and the abstract keeps its counts (D10, D13, D16).
+- **Rejected:** PGLS in the supplement only (S10.8 and S1, with nothing in Table 3), which would have hidden that the
+  second control keeps different correlations; and a column with body mass as well, which the maintainer did not ask
+  for (the 430 is in the text).
+- **What it costs, and was accepted:** an eleventh column in Table 3, and a count the site build does not reproduce. It
+  comes from a cluster run, joined to the build by a script that refuses on any mismatch.

@@ -202,7 +202,13 @@ computed on the contrasts with log10 body mass partialled out, on the species wi
 least 10). Its p value comes from the t distribution with m − 2 degrees of freedom, and the Results report it beside the
 funnel. Each contrast correlation with lifespan also carries a second p value, from up to 9,999 random sign
 flips of the contrast products, which does not assume normal contrasts of equal variance; the counts use the
-t test. The contrast test also rejects more than 5% of tests in several scopes when lifespan is shuffled across species (Supplementary Methods S10.6). The test with body mass partialled out has no sign-flip p value. The counts that rest on either are therefore nominal. Supplementary Methods S10.6 gives the contrast
+t test. The contrast test also rejects more than 5% of tests in several scopes when lifespan is shuffled across species (Supplementary Methods S10.6). The test with body mass partialled out has no sign-flip p value. The counts that rest on either are therefore nominal. As a second ancestry control
+that does not rest on contrasts, each lifespan correlation is also fitted as a phylogenetic generalised least squares
+regression of the feature on log10 lifespan, with Pagel's λ (49) estimated by maximum likelihood on the dated tree pruned to
+the test's species, and again with log10 body mass added (at least 10 species with a recorded adult weight). The slope of
+lifespan is tested with the t distribution on n − p degrees of freedom for n species and p coefficients, uncorrected for
+multiple testing. With λ fixed at 1 the regression gives the contrast test's p value, on every test (Supplementary Methods
+S10.8). Supplementary Methods S10.6 gives the contrast
 computation step by step, and S10.7 what each count of the Results requires.
 
 ### Life-history and structural models
@@ -350,11 +356,20 @@ the default dataset, which leaves out retired species and lifespans that are est
 questionable quality, and tested each feature in every scope: all species, and each class and order with
 at least 20 species. Most correlations that pass the false discovery rate fail on contrasts, a pattern consistent with differences among clades. Of the 15,906 correlations tested across all scopes, 5,441 have p < 0.05 before any
 correction, and 4,296 pass a false discovery rate of 5% (q < 0.05, where q is the p value adjusted for the
-false discovery rate). Of those 4,295, 900 are also significant on phylogenetic contrasts with the same
+false discovery rate). Of those 4,296, 900 are also significant on phylogenetic contrasts with the same
 sign, and 550 pass the partial correlation on body mass as well, 485 of them with the same sign (Table 3,
 Figure 1). With the sign-flip p value in place of the contrast t test, which rejects too often in several scopes, 535 pass on contrasts with the same sign (Supplementary Methods S10.6). Controlling for shared ancestry and body mass together, as the correlation of the contrasts with
 log10 body mass partialled out, 393 of the 4,296 remain significant with the same sign, 283 of which also
 pass the partial correlation across species (Table 3, PIC + mass).
+
+Phylogenetic regression with Pagel's λ, an ancestry control that does not rest on the contrast t test, gives nearly
+the same total: 893 of the 4,296 correlations that pass the false discovery rate pass it with the same sign, and 430
+with body mass in the model (Table 3, PGLS). The two controls do not keep the same correlations. 576 pass both, and the
+regression keeps more in mammals (260 against 164) and fewer in all species (232 against 292) and in ray-finned fishes
+(148 against 221). Where no correlation passes the false discovery rate, the regression rejects close to the 5% that
+chance allows: 75 of 1,368 tests in cartilaginous fishes, 67 of 1,386 in amphibians and 66 of 1,330 in bivalves, where
+the contrast test rejects 585, 146 and 90. In skates (Rajiformes, 24 of 191) and herrings (Clupeiformes, 44 of 200) it
+rejects more.
 
 Because the scopes overlap, one relationship can be counted more than once in these totals: a species counts in all species, in its class and in its order, so the same feature is tested on the same species in up to
 three scopes. The totals over the 32 scopes are therefore best read as shares. About one in five of the
@@ -423,21 +438,21 @@ body-mass control cannot be applied to any of them.
 FDR: Benjamini–Hochberg q < 0.05 within scope. The scopes overlap (a species counts in all species, its class and its order), so the total row adds tests, not distinct relationships, and gives no species count. PIC: p < 0.05 on phylogenetically independent contrasts,
 uncorrected. Both: FDR and PIC with the same sign. Both (sign-flip): FDR, and a sign-flip p < 0.05 on contrasts with the same sign; it does not assume normal contrasts of equal variance (Materials and methods). All three: Both, and partial correlation on body mass
 p < 0.05, whatever its sign (it keeps the sign of the correlation across species in 485 of the 550). PIC +
-mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected. PIC + mass is a separate test beside the funnel: it is computed on the species with a recorded body mass only, so a scope can have more tests passing it than passing All three, or even Both.
+mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected. PIC + mass is a separate test beside the funnel: it is computed on the species with a recorded body mass only, so a scope can have more tests passing it than passing All three, or even Both. PGLS: FDR, and p < 0.05 with the same sign for the slope of log10 lifespan in a phylogenetic regression of the feature with Pagel's λ estimated by maximum likelihood, uncorrected; it is a second ancestry control beside the funnel, not a step of it.
 
-| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | Both (sign-flip) | All three | PIC + mass |
-|--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
-| All species | 2,211 | 1,414 | 1,175 | 1,166 | 566 | 292 | 103 | 238 | 81 |
-| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 153 | 139 | 136 |
-| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 99 | 86 | 38 |
-| Aves | 414 | 1,390 | 687 | 601 | 184 | 55 | 34 | 24 | 46 |
-| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 17 | 12 | 12 |
-| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 11 | 4 | 5 |
-| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 24 | 25 | 36 |
-| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 7 | 4 | 5 |
-| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 6 | 7 | 9 |
-| Passeriformes | 146 | 204 | 74 | 28 | 25 | 5 | 4 | 0 | 5 |
-| **All scopes (32)** | | **15,906** | **5,441** | **4,296** | **3,025** | **900** | **535** | **550** | **393** |
+| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | Both (sign-flip) | All three | PIC + mass | PGLS |
+|--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
+| All species | 2,211 | 1,414 | 1,175 | 1,166 | 566 | 292 | 103 | 238 | 81 | 232 |
+| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 153 | 139 | 136 | 260 |
+| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 99 | 86 | 38 | 148 |
+| Aves | 414 | 1,390 | 687 | 601 | 184 | 55 | 34 | 24 | 46 | 69 |
+| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 17 | 12 | 12 | 24 |
+| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 11 | 4 | 5 | 11 |
+| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 24 | 25 | 36 | 37 |
+| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 7 | 4 | 5 | 8 |
+| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 6 | 7 | 9 | 10 |
+| Passeriformes | 146 | 204 | 74 | 28 | 25 | 5 | 4 | 0 | 5 | 4 |
+| **All scopes (32)** | | **15,906** | **5,441** | **4,296** | **3,025** | **900** | **535** | **550** | **393** | **893** |
 
 The ten scopes above are all species, the four largest classes, the four largest mammalian orders and the
 passerine birds. Supplementary Table S1 gives all 32, each with its number of species with a recorded body mass
@@ -460,7 +475,10 @@ or PIC + mass.
 > Since then (D10, `docs/PIC_CALIBRATION.md`) the contrast code matches `ape::pic`, the t test stays, and
 > the table carries a sign-flip p value: with it, 535 of the 4,296 pass "Both" instead of 900. Decided
 > on 2026-11-15 (D13): the t test stays the headline, and the sign-flip count gets its own column here and
-> in Supplementary Table S1.
+> in Supplementary Table S1. PGLS with Pagel's lambda has since run over every lifespan test (D18,
+> `docs/analyses/pgls/`, array job 6490080) and is the last column here and in S1 (D19, the maintainer: "Add
+> PGLS column"). It rejects about 5% in Chondrichthyes, Amphibia and Bivalvia, but not in Rajiformes or
+> Clupeiformes, so the PIC column of those two orders is still not to be read.
 
 > AUTHOR: each figure sits at the end of the section that first cites it, as the tables do, and the
 > figures are numbered in order of citation. Draft 0.1 listed the planned figures as 1 (interface),
@@ -802,7 +820,8 @@ would allow where the test across species finds almost nothing. In the cartilagi
 42.8% of 1,368 lifespan tests reject at contrast p < 0.05 and 0.1% pass the false discovery rate
 (Supplementary Table S1 gives the rejection rate of every scope). The contrast code agrees with R's
 `ape::pic` (51), and the excess arises where one pair of sister lineages dominates a scope's contrasts, so in
-those scopes the contrast column cannot be read at face value. Third, the contrast and body-mass tests are not corrected for multiple testing, and in the funnel they are applied one at
+those scopes the contrast column cannot be read at face value. Phylogenetic regression with Pagel's λ, which does not
+use that test, rejects close to chance in the cartilaginous fishes, though not in skates or herrings. Third, the contrast and body-mass tests are not corrected for multiple testing, and in the funnel they are applied one at
 a time; applied together, as contrasts with body mass partialled out, they keep 393 of the 4,296. The 550 that pass all three controls are candidates from a screen rather than
 established relationships within lineages, and the partial correlation reverses the sign of the
 correlation across species in 65 of them. Fourth, the tree is partly interpolated: 184 of the 2,238 node
@@ -824,9 +843,10 @@ are therefore not assessed here, rather than assessed and found negative.
 
 The next analyses should therefore look where the survivors are, at mammalian base composition and the slow
 life history it follows. They need generation length, which the build does not yet hold; age at maturity is
-its proxy here, and it leaves out the part of the reproductive years that generation length includes. They also need a second model
-of ancestry for the whole table that does not rest on the contrast t test, such as phylogenetic regression with Pagel's λ,
-and records whose strand and sequencing technology are known. A
+its proxy here, and it leaves out the part of the reproductive years that generation length includes. They also need
+records whose strand and sequencing technology are known. A second model of ancestry for the whole table, phylogenetic
+regression with Pagel's λ, keeps about as many correlations as the contrast test but not the same ones, so a
+correlation that one of them alone keeps is a weaker candidate than one both keep. A
 hundred invertebrates, against six in the first release, are a first chance to ask whether these
 relationships extend beyond the vertebrates. They are not yet enough to answer it, because
 only one non-chordate class is large enough to test, and none of its species has a recorded body mass.

@@ -6,11 +6,13 @@
 // and every changed number found in the text. Definitions are those of docs/manuscript/NOTES.md, "Where the
 // numbers come from" (Table 3: FDR q < 0.05; PIC p < 0.05; Both adds the same sign; All three adds partial
 // p < 0.05; PIC + mass is FDR and pic_mass p < 0.05 with the same sign; the sign-flip column is FDR and
-// pic_signflip_p < 0.05 with the same sign). Correlations: dataset `default` unless named, trait
-// maxLongevityYears. The numbers from mitoage-pipelines' analyses and from the screenshots are not here.
+// pic_signflip_p < 0.05 with the same sign; PGLS is FDR and pgls_p < 0.05 with the slope's sign the
+// correlation's, read from docs/analyses/pgls/scopes/ of the repository this script is in, D18 and D19).
+// Correlations: dataset `default` unless named, trait maxLongevityYears. The numbers from mitoage-pipelines'
+// analyses and from the screenshots are not here.
 
 import { parquetReadObjects } from "hyparquet";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 const root = resolve(process.argv.slice(2).find((a) => !a.startsWith("--")) ?? join(import.meta.dir, "../.."));
@@ -112,6 +114,35 @@ const all3 = (r: Row) => both(r) && lt(r.partial_p_value);
 const mass = (r: Row) => fdr(r) && lt(r.pic_mass_p_value) && same(r.pearson_r, r.pic_mass_r);
 const count = (rows: Row[], f: (r: Row) => boolean) => rows.filter(f).length;
 
+// PGLS with Pagel's lambda (docs/analyses/pgls/, D18): computed on the cluster, not by the site build, so it is
+// joined to this build's rows by scope and feature, and refused if the run's correlations are not this build's.
+const pglsDir = join(import.meta.dir, "../analyses/pgls/scopes");
+const pgls = new Map<string, { p: number; slope: number; massP: number; massSlope: number; r: number; q: number }>();
+for (const f of readdirSync(pglsDir).filter((x) => x.endsWith(".tsv")).sort()) {
+  const [head, ...body] = readFileSync(join(pglsDir, f), "utf8").trimEnd().split("\n");
+  const col = new Map(head!.split("\t").map((c, i) => [c, i]));
+  for (const line of body) {
+    const c = line.split("\t");
+    const num = (k: string) => (c[col.get(k)!] === "" ? NaN : Number(c[col.get(k)!]));
+    pgls.set(`${c[0]}|${c[1]}`, { p: num("pgls_p"), slope: num("pgls_slope"), massP: num("pgls_mass_p"), massSlope: num("pgls_mass_slope"), r: num("pearson_r"), q: num("q_value") });
+  }
+}
+{
+  const defRows = corr.filter((r) => r.dataset === "default");
+  let missing = 0, differ = 0;
+  for (const r of defRows) {
+    const g = pgls.get(`${r.scope}|${r.feature_key}`);
+    if (!g) { missing++; continue; }
+    const rel = (a: number, b: number) => Math.abs(a - b) / Math.max(1e-12, Math.abs(b));
+    if (rel(g.r, r.pearson_r) > 1e-6 || (Number.isFinite(g.q) && rel(g.q, r.q_value) > 1e-6)) differ++;
+  }
+  if (missing || differ || pgls.size !== defRows.length)
+    throw new Error(`docs/analyses/pgls does not describe this build: ${missing} rows missing, ${differ} differing, ${pgls.size} PGLS rows against ${defRows.length}`);
+}
+const pg = (r: Row) => pgls.get(`${r.scope}|${r.feature_key}`)!;
+const pglsPass = (r: Row) => fdr(r) && lt(pg(r).p) && same(r.pearson_r, pg(r).slope);
+const pglsMassPass = (r: Row) => fdr(r) && lt(pg(r).massP) && same(r.pearson_r, pg(r).massSlope);
+
 for (const ds of ["default", "anage_only"]) {
   const rows = corr.filter((r) => r.dataset === ds);
   const scopes = [...new Set(rows.map((r) => r.scope as string))].sort();
@@ -124,12 +155,28 @@ for (const ds of ["default", "anage_only"]) {
       massN: Math.max(0, ...s.map((r) => r.partial_n ?? 0)),
     };
     for (const k of Object.keys(tot) as (keyof typeof tot)[]) tot[k] += c[k];
-    if (ds === "default") for (const [k, v] of Object.entries(c)) put(`table3.${sc}.${k}`, v);
+    if (ds === "default") {
+      for (const [k, v] of Object.entries(c)) put(`table3.${sc}.${k}`, v);
+      put(`table3.${sc}.pgls`, count(s, pglsPass));
+    }
   }
   put(`funnel.${ds}.scopes`, scopes.length);
   for (const [k, v] of Object.entries(tot)) put(`funnel.${ds}.${k}`, v);
 }
 
+{
+  const d = corr.filter((r) => r.dataset === "default");
+  put("pgls.default.fdrSameSign", count(d, pglsPass));
+  put("pgls.default.fdrSameSign.mass", count(d, pglsMassPass));
+  put("pgls.default.andBoth", count(d, (r) => pglsPass(r) && both(r)));
+  put("pgls.default.p05", count(d, (r) => lt(pg(r).p)));
+  put("pgls.default.fitted", count(d, (r) => Number.isFinite(pg(r).p)));
+  for (const sc of ["all", "class:Mammalia", "class:Actinopterygii", "class:Aves", "class:Amphibia", "class:Bivalvia", "class:Chondrichthyes", "order:Rajiformes", "order:Clupeiformes"]) {
+    const s = d.filter((r) => r.scope === sc);
+    put(`pgls.${sc}.p05`, count(s, (r) => lt(pg(r).p)));
+    put(`pgls.${sc}.fitted`, count(s, (r) => Number.isFinite(pg(r).p)));
+  }
+}
 for (const ds of ["default", "anage_only"]) put(`signflip.${ds}.p05`, count(corr.filter((r) => r.dataset === ds), (r) => lt(r.pic_signflip_p)));
 put("funnel.anage_only.mass.of", count(corr.filter((r) => r.dataset === "anage_only"), fdr));
 const def = corr.filter((r) => r.dataset === "default");
@@ -211,8 +258,8 @@ put("datasets.all.fdr.anage_only", count(corr.filter((r) => r.dataset === "anage
 if (process.argv.includes("--s1")) {
   const rows = def;
   const scopes = [...new Set(rows.map((r) => r.scope as string))];
-  const lines = ["scope,species,species_with_body_mass,tests,p_lt_0_05,fdr_q_lt_0_05,pic_p_lt_0_05,both_same_sign,both_signflip_same_sign,all_three,pic_rejection_rate_pct,pic_mass_same_sign"];
-  const tot = [0, 0, 0, 0, 0, 0, 0, 0];
+  const lines = ["scope,species,species_with_body_mass,tests,p_lt_0_05,fdr_q_lt_0_05,pic_p_lt_0_05,both_same_sign,both_signflip_same_sign,all_three,pic_rejection_rate_pct,pic_mass_same_sign,pgls_same_sign"];
+  const tot = [0, 0, 0, 0, 0, 0, 0, 0, 0];
   const recs = scopes.map((sc) => {
     const s = rows.filter((r) => r.scope === sc);
     const species = Math.max(...s.map((r) => r.n));
@@ -222,10 +269,12 @@ if (process.argv.includes("--s1")) {
     c.forEach((v, i) => (tot[i]! += v));
     const m = count(s, mass);
     tot[7]! += m;
-    return { species, line: `${sc},${species.toFixed(1)},${massN.toFixed(1)},${c.join(",")},${((100 * pic) / s.length).toFixed(1)},${m}` };
+    const g = count(s, pglsPass);
+    tot[8]! += g;
+    return { species, line: `${sc},${species.toFixed(1)},${massN.toFixed(1)},${c.join(",")},${((100 * pic) / s.length).toFixed(1)},${m},${g}` };
   });
   recs.sort((x, y) => y.species - x.species || (x.line < y.line ? -1 : 1)).forEach((r) => lines.push(r.line));
-  lines.push(`ALL SCOPES (${scopes.length}),,,${tot.slice(0, 5).join(",")},${tot[5]},${tot[6]},,${tot[7]}`);
+  lines.push(`ALL SCOPES (${scopes.length}),,,${tot.slice(0, 5).join(",")},${tot[5]},${tot[6]},,${tot[7]},${tot[8]}`);
   console.log(lines.join("\n"));
   process.exit(0);
 }

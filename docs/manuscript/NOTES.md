@@ -65,6 +65,18 @@ GRAVY row's q is 6.6 × 10⁻⁵⁸ (was 5.5 × 10⁻⁵⁸). Figures 3 and 4 (t
 touched by the patch and were not recaptured. The cluster runs below were repeated on
 revision 0f4e970 (see "Rerun on the patched build").
 
+**The PGLS column (2026-11-15, D18, D19).** Table 3 and Supplementary Table S1 end with a column "PGLS": FDR, and p < 0.05
+with the same sign for the lifespan slope of a phylogenetic regression with Pagel's λ. It is not computed by the site
+build. The source is `docs/analyses/pgls/` (Slurm array job 6490080 from f360eea, on the patched build, whose data are
+byte-identical to 03c0949's).
+- `numbers.ts` reads those tables, joins them to the build's correlation table by scope and feature, and refuses if any
+  row's correlation or q value differs, so a column from another build cannot be printed.
+- Its keys: `table3.<scope>.pgls`, `pgls.default.fdrSameSign` (893), `pgls.default.fdrSameSign.mass` (430),
+  `pgls.default.andBoth` (576), and `pgls.<scope>.p05` and `.fitted` for the rejection rates in the Results and S10.8.
+- The text it adds: a paragraph after PIC + mass in "What the controls change", one sentence in Statistics, two in the
+  Discussion, S10.8 and S1's caption.
+- The same edit corrected "Of those 4,295" to 4,296, which the patched build had left behind.
+
 **Rerun on the build with EURING (2026-11-15):** the worked analyses of mitoage-pipelines (Table 4 and the
 generation-time models, the amino-acid example, the site screen, repeats and motifs, the rate test, H11 and H12) ran
 again in one Slurm job on the build before and after the nine birds (`slurm/manuscript-rerun.sbatch` at 2ee27a1, jobs

@@ -232,7 +232,8 @@ stays "inconclusive". Whether to run it is question 3 below. haumea, `mitoage-pi
 3. **B1 and A2** on haumea, one array job per scope from a commit on `main`. Results come back as their own
    commit, naming the commit they ran from.
 4. **B3** on the laptop, `mitoage-pipelines`, from the tables of `euring-rerun`.
-5. **A3** on haumea (D18), submitted on 2026-11-15; **D1** only if the maintainer says yes.
+5. **A3** on haumea (D18): ran on 2026-11-15 (array job 6490080, `docs/analyses/pgls/`) and is a column of Table 3
+   and S1 (D19). **D1** only if the maintainer says yes.
 6. Results go to `docs/analyses/review/`, with a README naming the commit, the job ids and the cluster
    paths, and into `docs/ANALYSIS_FINDINGS.md`. The manuscript changes in the next round (v0.4): the
    chance bounds in Table 3 and S1, a "Where the correlations went" subsection from C, the table of
