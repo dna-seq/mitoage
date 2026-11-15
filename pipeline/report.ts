@@ -49,17 +49,17 @@ p();
 p("## Species by record status");
 p();
 table(["record_status", "species"], ["original", "updated", "renamed", "retired", "new"].map((k) => [k, species.filter((s) => status(s) === k).length]));
-const sources = ["AnAge", "FishBase", "SeaLifeBase", "USGS_BBL", "MitoAge_build1"];
+const sources = ["AnAge", "FishBase", "SeaLifeBase", "EURING", "USGS_BBL", "MitoAge_build1"];
 p("## New species: class x lifespan source");
 p();
 {
-  const c = crosstab(species.filter((s) => status(s) === "new"), (s) => s.taxonomy.class || "(no class)", (s) => s.lifespan!.source, sources.slice(0, 4));
+  const c = crosstab(species.filter((s) => status(s) === "new"), (s) => s.taxonomy.class || "(no class)", (s) => s.lifespan!.source, sources.slice(0, 5));
   table(c.head, c.body);
 }
 p("## All non-retired species: class x lifespan source");
 p();
 {
-  const c = crosstab(species.filter((s) => status(s) !== "retired"), (s) => s.taxonomy.class || "(no class)", (s) => s.lifespan!.source, sources.slice(0, 4));
+  const c = crosstab(species.filter((s) => status(s) !== "retired"), (s) => s.taxonomy.class || "(no class)", (s) => s.lifespan!.source, sources.slice(0, 5));
   table(c.head, c.body);
 }
 p("## Lifespan source x quality and x record type (non-retired species)");

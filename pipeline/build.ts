@@ -4,7 +4,7 @@
  * Inputs: the MitoAge build 1 CSV export (data/input), the RefSeq records cited by build 1 (cached
  * efetch copies), and the pinned build 2 sources in data/cache/build2/sources (RefSeq mitochondrion
  * release 237, NCBI Taxonomy, AnAge build 15, FishBase and SeaLifeBase v26.06, USGS BBL v2025.1;
- * EURING when present), optionally Open Tree of Life + TimeTree for a dated tree.
+ * EURING), optionally Open Tree of Life + TimeTree for a dated tree.
  * Outputs: src/data/generated/{build-info,taxonomy,phylogeny}.json and public/data/ (parquet
  * downloads, changelog, lifespan observations, review list, the frozen build 1 snapshot).
  * Set MITOAGE_SKIP_TREE=1 to skip the phylogeny; MITOAGE_BUILD_DATE (YYYY-MM-DD) dates the build.
@@ -144,13 +144,9 @@ const anageObs = anageObservations(anage);
 const fishbase = await loadFishBase();
 const sealifebase = await loadSeaLifeBase();
 const usgs = await loadUsgsBbl();
-const euring = loadEuring();
-if (!euring.retrieved) {
-  console.warn(`  ${euring.message}`);
-  notes.push(euring.message);
-}
-const observations = [...anageObs, ...fishbase.observations, ...sealifebase.observations, ...euring.observations, ...usgs];
-console.log(`  AnAge ${anageObs.length}, FishBase ${fishbase.observations.length}, SeaLifeBase ${sealifebase.observations.length}, USGS BBL ${usgs.length}, EURING ${euring.observations.length} observations`);
+const euring = await loadEuring();
+const observations = [...anageObs, ...fishbase.observations, ...sealifebase.observations, ...euring, ...usgs];
+console.log(`  AnAge ${anageObs.length}, FishBase ${fishbase.observations.length}, SeaLifeBase ${sealifebase.observations.length}, USGS BBL ${usgs.length}, EURING ${euring.length} observations`);
 const synonyms = new Map([["FishBase", fishbase.synonyms], ["SeaLifeBase", sealifebase.synonyms]]);
 const nameTaxids = new Set<number>(lineageFor);
 for (const g of cited.values()) if (g.taxid !== null) nameTaxids.add(tax.current(g.taxid));
@@ -170,7 +166,7 @@ const releaseRecords = classifyRelease(release, tax);
 step("Assembling build 2");
 const b2 = await assembleBuild2({
   raw, kept, base: { species: baseSpecies, stats: baseStats, usage: baseUsage, features: baseFeatures, cited, citedText, anageMatch },
-  anage, release, releaseRecords, tax, observations, matches, euringRetrieved: euring.retrieved, buildDate: BUILD_DATE,
+  anage, release, releaseRecords, tax, observations, matches, buildDate: BUILD_DATE,
   fetchWithParts: async (versions) => {
     const { texts, failed } = await fetchGenBank(versions);
     if (failed.length) throw new Error(`efetch (gbwithparts) failed for ${failed.join(", ")}`);
@@ -223,13 +219,13 @@ notes.push(
   `Build 2 (${BUILD_DATE.slice(0, 10)}): ${b2.species.length} species = ${kept.length} from build 1 + ${count((s) => s.provenance!.recordStatus === "new")} new. Record status: ${Object.entries(statusCounts).map(([k, v]) => `${k} ${v}`).join(", ")}. Every value of a build 1 species that changed is in changelog.parquet with its old value and the reason; build 1 itself is frozen in build1/.`,
   `Genome values (region statistics, codon usage, genome features) of every live species are computed from the RefSeq record in ${REFSEQ_RELEASE.version}; for build 1 species that is the same accession.version they cited (or its newer version, or a live successor when the record was suppressed). Retired species keep their build 1 values.`,
   `Base-label bug of build 1: in every MitoAge CSV file the base columns are complement-labelled ("G" holds C on the RefSeq strand, "C" holds G, "A" holds T, "T" holds A). All a/c/g/t here are on the RefSeq strand as deposited; GC% is unaffected, GC and AT skews change sign relative to the old site.`,
-  `Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds EURING (not retrieved) then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).`,
+  `Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds the EURING list of 2023-09-01 then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).`,
   `Class labels follow the build 1 scheme (AnAge build 12-era: Actinopterygii, Reptilia, ...) for every species, so correlation scopes stay comparable with the 2016 paper; AnAge build 15's fish reclassification (Teleostei, ...) is not adopted.`,
 );
 const datasets = (["default", "anage_only"] as const).map((d) => ({
   dataset: d,
   filters: "record_status != retired; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)",
-  lifespanSources: d === "default" ? ["AnAge", "FishBase", "SeaLifeBase", "USGS_BBL"] : ["AnAge"],
+  lifespanSources: d === "default" ? ["AnAge", "FishBase", "SeaLifeBase", "EURING", "USGS_BBL"] : ["AnAge"],
   species: datasetMembers(b2.species, d).length,
 }));
 const buildInfo: BuildInfo = {
@@ -242,8 +238,7 @@ const buildInfo: BuildInfo = {
   correlationDatasets: datasets,
   sources: [
     { name: "MitoAge build 1", version: `Build 1 (${BUILD1_DATE.slice(0, 10)}), full database CSV export (frozen in public/data/build1/)`, url: "https://www.mitoage.info/", license: "Free for all purposes provided MitoAge is cited (Toren et al. 2016, Nucleic Acids Res 44:D1262-D1265)" },
-    ...[REFSEQ_RELEASE, NCBI_TAXONOMY, ANAGE_PINNED, FISHBASE, SEALIFEBASE, USGS_BBL].map((p) => ({ name: p.name, version: `${p.version}; retrieved ${p.retrieved}`, url: p.url, license: p.license })),
-    { name: EURING.name, version: euring.retrieved ? EURING.version : `${EURING.version}: NOT RETRIEVED (euring.org in maintenance on ${EURING.retrieved}); no EURING values used`, url: EURING.url, license: EURING.license },
+    ...[REFSEQ_RELEASE, NCBI_TAXONOMY, ANAGE_PINNED, FISHBASE, SEALIFEBASE, EURING, USGS_BBL].map((p) => ({ name: p.name, version: `${p.version}; retrieved ${p.retrieved}`, url: p.url, license: p.license })),
     { name: "NCBI RefSeq records cited by build 1 (E-utilities efetch, cached)", version: `${cited.size} versioned records`, url: "https://www.ncbi.nlm.nih.gov/refseq/", license: REFSEQ_RELEASE.license },
     ...(dated
       ? [

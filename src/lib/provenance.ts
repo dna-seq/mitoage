@@ -36,7 +36,7 @@ export function lifespanSourceLink(s: Pick<Species, "scientificName" | "lifespan
     case "USGS_BBL":
       return { href: "https://www.pwrc.usgs.gov/BBL/longevity/Longevity_main.cfm", label: "USGS longevity records" };
     case "EURING":
-      return { href: "https://euring.org/data-and-codes/longevity-list", label: "EURING longevity list" };
+      return { href: "https://web.archive.org/web/20261011111048/https://euring.org/files/documents/EURING_longevity_list_20230901.pdf", label: "EURING longevity list (archived copy)" };
     case "MitoAge_build1":
       return null;
   }
@@ -76,7 +76,6 @@ const FLAGS: Record<string, (detail: string) => string> = {
   ncbi_taxid_shared_in_build1: () => "Build 1 held another entry under the same NCBI taxon.",
   anage_name_differs: (d) => `AnAge lists this species as ${d || "another name"}.`,
   rows_not_in_current_record: () => "Some regions come from the record build 1 cited: the current record does not annotate them.",
-  lifespan_provisional_euring_not_retrieved: () => "Provisional: the EURING list could not be retrieved, so the USGS record is used.",
 };
 
 /** A review flag ("kind" or "kind:detail") as a sentence; an unknown kind is shown as written, never dropped. */

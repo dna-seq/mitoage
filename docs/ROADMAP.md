@@ -20,14 +20,6 @@ of new species (1), a third correlation dataset without the quality filter (3), 
 now resolves to another species (c), a nullable maximum lifespan (b). Each answer goes to
 `docs/DECISIONS.md`; a changed default becomes an item.
 
-## RM5 — EURING bird longevity values
-
-**State:** waits until 2026-11-20: whether the EURING list can be retrieved · **Owner:** lead
-
-The list was not retrieved for build 2 (the site was in maintenance), so 26 birds take USGS values and
-are provisional (open questions, item 10). When the file is there: its parser in `pipeline/sources/euring.ts`
-from the real file, the pin, a rebuild.
-
 ## RM6 — The upstream sources, checked weekly
 
 **State:** waits until 2026-11-20: the next check · **Owner:** lead

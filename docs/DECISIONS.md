@@ -272,3 +272,23 @@ Asked how far the rename goes, with the cost of renaming the identifiers named, 
 - **What it costs, and was accepted:** the downloads, the CSV exports and the plot URLs still say skew, documented
   on the About page and in the supplement.
 
+## D15 — The EURING list is read from the Internet Archive's copy (2026-11-15)
+
+euring.org has redirected every page to a maintenance notice since at least 2026-11-13, so build 2 used no
+EURING value and its 26 USGS-sourced birds were flagged provisional (RM5). The list of 2023-09-01 is a PDF
+(`EURING_longevity_list_20230901.pdf`); the Internet Archive holds captures of it from 2023-12-16 to
+2026-10-11, all with one SHA-1 digest. Offered the archived copy, the maintainer chose "Use the snapshot".
+
+- **Decided:** the pinned EURING input is the archive's capture of 2026-10-11, fetched from its raw (`id_`)
+  URL, its SHA-1 checked against the archive's digest and its md5 pinned in `pipeline/sources/pinned.ts`. The
+  PDF is read by `pipeline/lib/pdf-text.ts`, a small reader for spreadsheet-exported PDFs that refuses
+  anything it cannot decode, and parsed by `pipeline/sources/euring.ts` (776 records of 399 species).
+- **Rejected:** waiting for euring.org (RM5's date, 2026-11-20, with no sign the site returns); leaving
+  EURING out of the precedence; reading the PDF with `pdftotext` (a second external program, against the
+  TypeScript-only rule that admits MAFFT alone) or with `pdfjs-dist` (a new dependency).
+- **What it costs, and was accepted:** 9 European birds with a RefSeq mitogenome and no AnAge lifespan join
+  build 2 (2,335 → 2,344 species; `default` correlation dataset 2,202 → 2,211), so every count and
+  correlation of the build moves a little. None of the 26 USGS birds is on the list: their values stay and
+  lose the provisional flag. The list states no licence; it is cited as Fransson, Kolehmainen, Moss &
+  Robinson (2023). Ages are minimum ages; one cell ("11y im", a quail's second record) keeps its whole
+  years.

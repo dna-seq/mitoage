@@ -242,8 +242,9 @@ heavy rounded type (Nunito, self-hosted).
 ## Data sources and citation
 
 Mitochondrial genomes from NCBI RefSeq (build 2: release 237); lifespan and life-history traits from AnAge
-(build 15); where AnAge has no maximum lifespan, FishBase (fish), SeaLifeBase (aquatic invertebrates) and the USGS
-Bird Banding Laboratory (birds). FishBase and SeaLifeBase values are CC BY-NC 4.0. Build 1 is frozen in
+(build 15); where AnAge has no maximum lifespan, FishBase (fish), SeaLifeBase (aquatic invertebrates), and for
+birds the EURING list of European ringing records (read from the Internet Archive's copy) then the USGS Bird Banding
+Laboratory. FishBase and SeaLifeBase values are CC BY-NC 4.0. Build 1 is frozen in
 `public/data/build1/`; every change since is in `public/data/changelog.parquet`. How build 2 was made is in
 `docs/BUILD2_REPORT.md` and `plans/DATA_BUILD2_DECISIONS.md`; an independent rebuild from build 1, with a
 downloader for every source, is in

@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **The EURING bird longevity list is read, from the Internet Archive's copy** (2026-11-15, D15). euring.org
+  shows a maintenance page, so the pinned input is the archive's capture of `EURING_longevity_list_20230901.pdf`
+  (same digest from 2023-12-16 to 2026-10-11, md5 pinned). `pipeline/lib/pdf-text.ts` reads the spreadsheet-exported
+  PDF with `node:zlib` and refuses what it cannot decode; `pipeline/sources/euring.ts` parses 776 records of 399
+  species, tested on the real file and checked by breaking the code each test guards. 9 European birds join build 2
+  (2,344 species, `default` 2,211), all placed in the dated tree; the alignments are rerun with MAFFT v7.526 for
+  2,325 live species. The 26 USGS birds keep their values and lose the `lifespan_provisional_euring_not_retrieved`
+  flag, which no longer exists. RM5 is closed. The manuscript's v0.3 numbers still describe the build without
+  EURING (`docs/manuscript/NOTES.md`).
+
 - **The v0.3 manuscript says what the new website adds over the 2016 one** (2026-11-15, the maintainer: "in the
   manuscript you should somewhere also praise our UI features"). A paragraph closing "The website and interface"
   compares the two sites, from both visited the same day: the 2016 site's fixed tables, no charts, tree or alignments

@@ -1,7 +1,7 @@
 /**
  * Pinned upstream inputs of build 2. Each lives in the download cache (data/cache, not in git)
  * at a fixed path. A pinned input is never silently replaced: if the file is missing the build
- * stops (requirePinned), except EURING, whose absence is recorded loudly (sources/euring.ts).
+ * stops (requirePinned or a pinned md5 check).
  */
 import { existsSync } from "node:fs";
 import { join } from "node:path";
@@ -80,11 +80,15 @@ export const USGS_BBL: PinnedSource = {
 
 export const EURING: PinnedSource = {
   name: "EURING longevity list",
-  version: "list of 2023-09-01",
-  path: "build2/sources/euring/2023-09-01/euring_longevity_2023-09-01.csv",
-  url: "https://euring.org/data-and-codes/longevity-list",
-  license: "not checked (site unavailable when build 2 was assembled)",
-  retrieved: BUILD2_DOWNLOAD_DATE,
+  version: "list of 2023-09-01 (EURING_longevity_list_20230901.pdf, Internet Archive capture of 2026-10-11)",
+  path: "build2/sources/euring/2023-09-01/EURING_longevity_list_20230901.pdf",
+  // euring.org has shown a maintenance page since at least 2026-11-13; the archived copy is the same
+  // file as every capture since 2023-12-16 (one SHA-1 digest), and its md5 is pinned below.
+  url: "https://web.archive.org/web/20261011111048id_/https://euring.org/files/documents/EURING_longevity_list_20230901.pdf",
+  license:
+    "no licence stated on the list or its page (euring.org/data-and-codes/longevity-list-2023); cite Fransson, Kolehmainen, Moss & Robinson (2023) EURING list of longevity records for European birds",
+  retrieved: "2026-11-15",
+  md5: "c82b37efe23fe95b5e2945f894c46496",
 };
 
 export const cacheFile = (p: PinnedSource, ...rest: string[]) => join(CACHE_DIR, p.path, ...rest);

@@ -94,7 +94,6 @@ export interface Build2Inputs {
   tax: NcbiTaxonomy;
   observations: SourceObservation[];
   matches: Map<string, NameMatch>;
-  euringRetrieved: boolean;
   buildDate: string;
   /**
    * Full GenBank text (with sequence) of the given accession.versions, for release records that carry
@@ -554,7 +553,6 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
       ? lifespanOf(lo)
       : { source: "MitoAge_build1", sourceVersion: "MitoAge build 1 (2015-07-01)", sourceRecordId: String(id), quality: null, sampleSize: null, recordType: "compiled", license: BUILD1_LICENSE };
     if (!lo) flag(id, "lifespan_from_build1_only");
-    if (lo?.source === "USGS_BBL" && !inp.euringRetrieved) flag(id, "lifespan_provisional_euring_not_retrieved");
     species.push({
       id, slug: b1.slug, refseq: live ? p.version! : s.refseq, scientificName: name, commonName, taxonomy,
       maxLongevityYears: maxLongevity, mtdnaSizeBp: live ? total.lengthBp : b1.mtdnaSizeBp, nonCodingBp: nonCoding, gcPercent: gcNow,
@@ -613,7 +611,6 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
       traits, legacyId: null, ncbiTaxid: c.rec.taxidCurrent, ncbiSpeciesTaxid: c.t, lifespan: lifespanOf(c.chosen),
       previousScientificNames: [], retiredReason: null, reviewFlags: [], changeKinds: [],
     });
-    if (c.chosen.source === "USGS_BBL" && !inp.euringRetrieved) flag(id, "lifespan_provisional_euring_not_retrieved");
     statusOf.set(id, "new");
     stats.push(...rows.stats);
     usage.push(...rows.usage);

@@ -35,7 +35,7 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 | AnAge | build 15 | build 15, current |
 | FishBase / SeaLifeBase | v26.06 | not checked |
 | USGS BBL | v2025.1 | not checked |
-| EURING | not retrieved | the site answers again (a redirect); the list itself not fetched (RM5) |
+| EURING | not retrieved | the site answers again (a redirect); the list itself not fetched (RM5; read from the Internet Archive's copy on 2026-11-15, D15) |
 
 ### Later on 2026-11-13
 

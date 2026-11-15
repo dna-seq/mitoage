@@ -4,7 +4,6 @@ import type { BuildInfo } from "../../src/data/schema";
 export function buildPublicReadme(info: BuildInfo): string {
   const sources = info.sources.map((s) => `- ${s.name}, ${s.version}: ${s.url} (${s.license})`).join("\n");
   const statuses = Object.entries(info.recordStatusCounts ?? {}).map(([k, v]) => `${k} ${v}`).join(", ");
-  const euringMissing = info.sources.some((s) => s.name.startsWith("EURING") && s.version.includes("NOT RETRIEVED"));
   return `# MitoAge data downloads
 
 Build ${info.build}, generated ${info.generatedAt.slice(0, 10)}, ${info.speciesCount} species (${statuses}).
@@ -14,7 +13,6 @@ DuckDB, pandas/pyarrow, polars, R arrow or hyparquet.
 **Licence of lifespan values.** Rows whose \`lifespan_source\` is \`FishBase\` or \`SeaLifeBase\` carry values
 licensed CC BY-NC 4.0: they may be used for non-commercial purposes only, with attribution (Froese & Pauly,
 FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its \`lifespan_license\`.
-${euringMissing ? "\n**EURING: not retrieved.** The EURING longevity list (2023-09-01), which ranks above the USGS Bird Banding\nLaboratory for birds, could not be downloaded (euring.org was in maintenance). No EURING values are used; bird\nlifespans taken from USGS BBL are provisional (review flag `lifespan_provisional_euring_not_retrieved`).\n" : ""}
 ## Row metadata (every data table)
 - \`added_in_build\` (1 or 2), \`added_at\` (ISO-8601 UTC; build 1 rows: 2015-07-01), \`last_modified_build\` and
   \`last_modified_at\` (null if the row never changed), \`record_status\` (\`original\`, \`updated\`, \`new\`, \`renamed\`,
@@ -29,7 +27,7 @@ ${euringMissing ? "\n**EURING: not retrieved.** The EURING longevity list (2023-
 - \`scientific_name\` (NCBI Taxonomy species name), \`previous_scientific_names\` (names in earlier builds, \`; \`-separated),
   \`common_name\`, \`refseq\` (versioned RefSeq accession), taxonomy \`kingdom\` .. \`genus\`. \`class\` uses the build 1
   scheme for every species (comparable with the 2016 paper).
-- \`max_longevity_years\` and its provenance: \`lifespan_source\` (AnAge, FishBase, SeaLifeBase, USGS_BBL; MitoAge_build1 for
+- \`max_longevity_years\` and its provenance: \`lifespan_source\` (AnAge, FishBase, SeaLifeBase, EURING, USGS_BBL; MitoAge_build1 for
   a retired species with no current value), \`lifespan_source_version\`, \`lifespan_source_record_id\`, \`lifespan_quality\`
   (high, acceptable, questionable, low), \`lifespan_sample_size\` (AnAge), \`lifespan_record_type\` (captive, wild, observed,
   estimated, compiled), \`lifespan_license\`.

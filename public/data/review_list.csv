@@ -8,6 +8,7 @@ refseq_species_excluded_via_build1_link,7957,Carassius auratus,NC_015142.1,,,"Re
 source_name_conflict_secondary,9612,Canis lupus,,AnAge,Canis familiaris,match_method=ncbi_synonym; candidate taxids=9612; not used
 source_name_conflict_secondary,8951,Caracara plancus,,AnAge,Caracara cheriway,match_method=ncbi_synonym; candidate taxids=8951; not used
 source_name_conflict_secondary,132908,Pteropus vampyrus,,AnAge,Pteropus giganteus,match_method=ncbi_synonym; candidate taxids=132908; not used
+source_name_conflict_secondary,8932,Columba livia,,EURING,Columba livia domestica,match_method=ncbi_synonym; candidate taxids=8932; not used
 source_name_conflict_secondary,13575,Istiophorus platypterus,,FishBase,Istiophorus albicans,match_method=ncbi_synonym; candidate taxids=13575; not used
 source_name_conflict_secondary,8022,Oncorhynchus mykiss,,FishBase,Oncorhynchus aguabonita,match_method=ncbi_synonym; candidate taxids=8022; not used
 source_name_conflict_secondary,8020,Oncorhynchus masou,,FishBase,Oncorhynchus formosanus,match_method=ncbi_synonym; candidate taxids=8020; not used
@@ -47,6 +48,7 @@ source_name_unmatched,,,,AnAge,Tropidophis caymanensis,no NCBI scientific name o
 source_name_unmatched,,,,AnAge,Viverra civettina,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Viverra
 source_name_unmatched,,,,AnAge,Wiedomys pyrrhorhinos,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Wiedomys
 source_name_unmatched,,,,AnAge,Zyzomys palatilis,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Zyzomys
+source_name_unmatched,,,,EURING,Oceanodroma leucorhous,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Oceanodroma
 source_name_unmatched,,,,FishBase,Acanthobrama thisbeae,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Acanthobrama
 source_name_unmatched,,,,FishBase,Acanthobrama urmianus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Acanthobrama
 source_name_unmatched,,,,FishBase,Artediellus camchaticus,no NCBI scientific name or synonym; the release has complete mitogenomes in genus Artediellus

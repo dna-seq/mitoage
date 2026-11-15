@@ -91,9 +91,8 @@ and do not enter PIC; nothing is imputed for them.
    export had no feature table: they are derived from the record build 1 cited.
 9. **explorer.json** is 2.7 MB, above the 1.5 MB page-weight target of the explorer (served at
    `/data/explorer.json`, not committed). A site-side split (as for per-gene codons) would fix it.
-10. **Provisional bird lifespans.** 26 birds take USGS BBL values because EURING was not retrieved; when
-    EURING is available, `sources/euring.ts` needs a parser for the real file (none is guessed) and those
-    26 may change.
+10. **Provisional bird lifespans.** No longer a question: D15 reads the EURING list from the Internet
+    Archive's copy. None of the 26 USGS birds is on it, so their values stand; 9 European birds were added.
 11. **Non-commercial values on the site.** 549 species show FishBase/SeaLifeBase values (CC BY-NC 4.0);
     the downloads README says so and every row carries its licence. The site pages do not show the
     licence per species.

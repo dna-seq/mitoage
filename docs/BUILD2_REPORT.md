@@ -7,6 +7,17 @@ tables is in `docs/BUILD2_CROSSCHECK.md` (`bun run pipeline/crosscheck.ts`). Ope
 for every source and a comparison with the published build, is in
 [dna-seq/mitoage-pipelines](https://github.com/dna-seq/mitoage-pipelines), `docs/BUILD2_REPRODUCTION.md`.
 
+## Amendment of 2026-11-15: EURING (D15)
+
+The EURING list of 2023-09-01, not retrieved when this report was written, is now read from the Internet
+Archive's copy of the PDF (md5 c82b37efe23fe95b5e2945f894c46496; 776 records of 399 species). It adds 9
+European birds that have a RefSeq mitogenome and no AnAge lifespan: build 2 has **2,344 species** (1,422 new),
+14,428 changelog rows, 7,541 lifespan observations and 97 review items; the dated tree places 2,314 of them;
+the `default` correlation dataset has 2,211 species (`anage_only` is unchanged at 1,710); the alignments cover
+the 2,325 live species. None of the 26 USGS-sourced birds is on the list: their values stand and they are no
+longer flagged provisional. The rest of this report, its correlation figures included, describes the build
+of 2026-11-13 without EURING.
+
 ## Summary
 
 - **2,335 species** = 922 from build 1 + 1,413 new. Build 1 species: 392 original, 465 updated, 46 renamed,
@@ -68,7 +79,7 @@ Every disagreement has one of these explanations:
 | AnAge | build 15 (2023-07-03), `dataset.zip` md5 7ec4d19f6c8f57b22595a9ffd50ea66b |
 | FishBase / SeaLifeBase | v26.06 parquet (source.coop cboettig/fishbase, files 2026-09-04), CC BY-NC 4.0 |
 | USGS Bird Banding Laboratory | NABBP Longevity Records v2025.1 |
-| EURING longevity list | 2023-09-01 requested: **not retrieved** (euring.org in maintenance); no EURING values used |
+| EURING longevity list | 2023-09-01 requested: **not retrieved** (euring.org in maintenance); no EURING values used. Since 2026-11-15 read from the Internet Archive's copy (D15) |
 | Records cited by build 1 | 922 versioned RefSeq records (cached efetch copies) |
 | Phylogeny | Open Tree of Life synthetic tree (induced subtree, 2,305 species) + TimeTree 5 API |
 
@@ -111,7 +122,7 @@ build and not committed (D3).
 
 ## Not done
 
-- EURING values (site in maintenance); the 26 USGS-sourced birds are provisional.
+- EURING values (site in maintenance); the 26 USGS-sourced birds are provisional. Done on 2026-11-15 (D15).
 - Automatic detection of possible duplicate species: the three pairs come from the audit (default h).
 - Harmonised order/family between build 1 species (AnAge) and new species (NCBI) (open question e).
 - The site does not show the lifespan source, licence or record status of a species on its pages yet; the

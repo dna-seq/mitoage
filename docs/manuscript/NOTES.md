@@ -37,6 +37,12 @@ Every number is from `dna-seq/mitoage` at commit 84ba6f7 (origin/main, 2026-11-1
 correlation numbers (Table 3, the funnel, Figures 1, 2 and 5) are from the table as rebuilt at 1dda8be, with the
 extended features and 32 scopes.
 
+**The build has moved on since (D15, 2026-11-15).** The EURING list is now read from the Internet Archive's copy,
+which adds 9 European birds: 2,344 species (1,422 new), `default` dataset 2,211, lifespan sources of new species
+AnAge 838 / FishBase 475 / SeaLifeBase 74 / EURING 9 / USGS 26. Rounds up to v0.3 describe the build without
+EURING (the supplement says so in S1 and S4); the next round refreshes its numbers, the
+correlation counts included, from the current build.
+
 | Numbers | Source |
 |---|---|
 | 2,335 species, 1,413 new, record statuses (392 / 465 / 46 / 19), retired reasons, 18 successors, 2 new versions, 884 unchanged accessions | `docs/BUILD2_REPORT.md`, Summary and "Species by record status"; `public/data/species.parquet` |
