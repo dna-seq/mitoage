@@ -844,17 +844,31 @@ the t test and 50 under the sign-flip test. In the AnAge-only dataset the sign-f
 pipeline/lib/stats.ts:399-427 (signFlipPValue); docs/PIC_CALIBRATION.md "What could be done" 1 (1,253, 533;
 anage_only 1,017 of 13,380, 502 against 659) and "Which manuscript numbers would change" (205 against 50) -->
 
-**Ancestry and body mass together.** No column of the table controls for both. The contrast test controls
-for ancestry and not for mass; the partial correlation controls for mass and not for ancestry; "All three"
-asks both to agree. The calibration run also computed the contrast correlation with log10 body mass
-partialled out, on the species with a mass: among the 4,299 correlations that pass the false discovery
-rate, 393 are significant on it with the same sign (281 of them also pass the partial correlation across
-species), against 896 for the contrast test without mass. It uses the same t test and inherits the same
-problem in the fish scopes. It is a result of the cluster run and has no column in the published table.
+**Ancestry and body mass together.** The contrast test controls for ancestry and not for mass; the
+partial correlation of S10.5 controls for mass and not for ancestry; "All three" asks both to agree, each
+on its own. Lifespan and body mass are correlated across animals, so "does this feature track lifespan"
+and "does it track lifespan beyond body size" are different questions, and the maintainer chose to report
+both answers side by side. Every lifespan row of the correlation table therefore also carries
+`pic_mass_r` and `pic_mass_p_value`. The three traits (feature, log10 lifespan and log10 adult weight) are
+carried through the contrast recursion above on the species of the scope that have all three, and the
+lifespan contrast correlation is computed with the mass contrasts partialled out, through the origin:
+(r_xy − r_xz r_yz) / √((1 − r_xz²)(1 − r_yz²)), each r a correlation through the origin of two contrast
+vectors. Its p value is two-tailed, from the t distribution with m − 2 degrees of freedom. As for the
+partial correlation across species, a scope needs at least 10 species with a weight. Among the 4,299
+correlations of the default dataset that pass the false discovery rate, 393 are significant on it with the
+same sign (Table 3, PIC + mass), against 896 for the contrast test without mass; 281 of the 393 also pass
+the partial correlation across species. In the AnAge-only dataset the same count is 374 of 4,068. The
+values reproduce the cluster run's to the precision it printed (largest difference in r 5 × 10⁻⁹, all
+11,946 rows that both compute), and the counts are the same. The test uses the t distribution and has
+the same problem in the fish scopes as the contrast test without mass, so its sign-flip p value is not
+computed.
 
-<!-- src: docs/PIC_CALIBRATION.md "Body mass: corrected, uncorrected, or both" -->
-
-> AUTHOR: whether the paper reports the contrast result with body mass partialled out, the one without, or > both side by side is a decision for the authors. The calibration report recommends both.
+<!-- src: pipeline/lib/stats.ts (picContrasts with z, partialContrastCorrelation); pipeline/steps/correlations.ts
+(picMassR, MIN_PAIRS); pipeline/tests/stats.test.ts "contrasts with body mass partialled out"; counts and the
+comparison with docs/analyses/pic-calibration/scopes/*.tsv (mass_r, mass_p) from dist/data/correlations.parquet
+of the site build on 2026-11-15; the cluster run also computed rows of scopes with 4 to 9 species with a mass
+(3,958 rows), none of which passed; docs/PIC_CALIBRATION.md "Body mass: corrected, uncorrected, or both";
+the maintainer's call "Both, side by side", 2026-11-15 -->
 
 **What is still not done.** The degrees of freedom are not reduced for polytomies, as Purvis and Garland
 (1993) proposed; here that would change about 1% of them. The number of contrasts behind each test is not
@@ -870,8 +884,9 @@ docs/manuscript/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
 
 ### S10.7 How the three controls combine, and what each count counts
 
-The three controls are applied separately. The contrasts are not adjusted for body mass, and the partial
-correlation is not adjusted for shared ancestry. The records give no reason for not combining them. A
+The three controls of the funnel are applied separately. The contrasts are not adjusted for body mass,
+and the partial correlation is not adjusted for shared ancestry; the records give no reason for not
+combining them. A fourth test combines them and is reported beside the funnel (S10.6, PIC + mass). A
 test "passes all three" when its q value is below 0.05; its contrast p value is below 0.05 and its
 contrast r has the same sign as its r across species; and its partial-correlation p value is below 0.05,
 whatever the sign of the partial correlation. Neither the contrast nor the partial p value is corrected
@@ -898,6 +913,7 @@ scopes they are taken. All are for maximum lifespan in the default dataset:
 | 237 | all species only | "All three" |
 | 1,253 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, used in no count of the paper) |
 | 533 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
+| 393 | all 32, summed | q < 0.05, and p < 0.05 with the same sign on contrasts with body mass partialled out ("PIC + mass" in Table 3) |
 
 <!-- src: docs/manuscript/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
 come from" and "Figures" (496 vs 291) -->
@@ -1238,9 +1254,9 @@ The questions raised above, in one place:
 3. **The thresholds of the repeat and motif features** (S7.3): their source, if any.
 4. **The aligner comparison** (S8): the versions and options of FAMSA, Muscle 5 and the iterative MAFFT
    run, and the comparison for the 11 genes not yet rerun.
-5. **The contrast test** (S10.6): whether to report the contrast result with body mass partialled out,
-   without it, or both; and whether to run a phylogenetic regression over the correlation table and to
-   check the two sister pairs that dominate the fish scopes.
+5. **The contrast test** (S10.6): whether to run a phylogenetic regression over the correlation table,
+   and to check the two sister pairs that dominate the fish scopes for a lifespan error or a misdated
+   split.
 6. **The audit** (S11): publish its scripts, or describe it as unpublished.
 7. **The reach of the reproduction** (S11): extend it to the two extended-feature tables, and decide
    whether the correlations get an independent check; until then the Abstract's "independent

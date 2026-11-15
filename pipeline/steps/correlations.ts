@@ -9,6 +9,7 @@ import {
   contrastCorrelation,
   hashString,
   picContrasts,
+  partialContrastCorrelation,
   signFlipPValue,
   spearman,
 } from "../lib/stats";
@@ -174,6 +175,25 @@ export function computeCorrelations(
             row.picR = pic.r;
             row.picPValue = pic.p;
             if (trait === "maxLongevityYears") row.picSignFlipP = signFlipPValue(cx, cy, SIGN_FLIP_REPS, hashString(`${dataset}|${scope.key}|${trait}|${d.key}`), SIGN_FLIP_STOP_HITS);
+          }
+          if (trait === "maxLongevityYears") {
+            // Ancestry and body mass together: the contrasts of the species that also have a mass, with
+            // log10 mass partialled out. The same minimum of species as the partial correlation across species.
+            row.picMassR = null;
+            row.picMassPValue = null;
+            if (pz.length >= MIN_PAIRS) {
+              const za = new Float64Array(nSpecies).fill(NaN);
+              for (const i of scope.members) {
+                const z = logWeight[i];
+                if (z !== null && z !== undefined) za[i] = z;
+              }
+              const m3 = picContrasts(tree, xa, ya, za);
+              const pm = partialContrastCorrelation(m3.cx, m3.cy, m3.cz);
+              if (pm && Number.isFinite(pm.r)) {
+                row.picMassR = pm.r;
+                row.picMassPValue = pm.p;
+              }
+            }
           }
         }
         block.push(row);

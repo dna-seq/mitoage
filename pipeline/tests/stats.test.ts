@@ -11,6 +11,7 @@ import {
   partialCorrelation,
   pearson,
   contrastCorrelation,
+  partialContrastCorrelation,
   picContrasts,
   picCorrelation,
   picFast,
@@ -169,6 +170,73 @@ describe("sign-flip p value of contrasts", () => {
     expect(signFlipPValue([1, 2], [1, 2], 99, 1)).toBeNull();
     expect(signFlipPValue([1, 2, 3], [0, 0, 0], 99, 1)).toBeNull();
     expect(signFlipPValue([], [], 99, 1)).toBeNull();
+  });
+});
+
+describe("contrasts with body mass partialled out", () => {
+  // A tree with a polytomy and a zero-length pair, so the recursion's every branch is used.
+  const tree: PhyloNode = {
+    length: 0,
+    children: [
+      { length: 2, children: [
+        { length: 1, children: [], leaf: 1 },
+        { length: 1.5, children: [], leaf: 2 },
+        { length: 0.5, children: [], leaf: 3 },
+      ] },
+      { length: 1, children: [
+        { length: 0, children: [], leaf: 4 },
+        { length: 0, children: [], leaf: 5 },
+        { length: 3, children: [], leaf: 6 },
+      ] },
+      { length: 4, children: [
+        { length: 1, children: [], leaf: 7 },
+        { length: 2, children: [
+          { length: 0.7, children: [], leaf: 8 },
+          { length: 1.2, children: [], leaf: 9 },
+        ] },
+      ] },
+      { length: 2.5, children: [], leaf: 10 },
+    ],
+  };
+  const t = compileTree(tree, (leaf) => leaf - 1);
+  const xs = [0.3, 1.1, -0.4, 2.0, 0.9, -1.3, 0.2, 1.7, -0.8, 0.5];
+  const ys = [1.0, 0.2, 0.7, 1.9, -0.6, -0.9, 0.8, 1.2, 0.1, -0.3];
+  const zs = [2.1, 1.4, 0.9, 3.3, 2.8, 0.2, 1.5, 2.9, 0.4, 1.1];
+  const dot = (a: ArrayLike<number>, b: ArrayLike<number>) => Array.from(a).reduce((s, v, i) => s + v * b[i]!, 0);
+
+  test("x and y contrasts are the two-trait ones when every species has a mass", () => {
+    const two = picContrasts(t, xs, ys);
+    const three = picContrasts(t, xs, ys, zs);
+    expect(Array.from(three.cx)).toEqual(Array.from(two.cx));
+    expect(Array.from(three.cy)).toEqual(Array.from(two.cy));
+    expect(three.cz.length).toBe(two.cx.length);
+  });
+  test("a species without a mass drops out of all three, as if its feature were missing", () => {
+    const zMissing = zs.map((v, i) => (i === 7 ? NaN : v));
+    const xMissing = xs.map((v, i) => (i === 7 ? NaN : v));
+    const three = picContrasts(t, xs, ys, zMissing);
+    const two = picContrasts(t, xMissing, ys);
+    expect(Array.from(three.cx)).toEqual(Array.from(two.cx));
+    expect(Array.from(three.cy)).toEqual(Array.from(two.cy));
+    // The mass contrasts are the mass's own two-trait contrasts on the same species.
+    expect(Array.from(three.cz)).toEqual(Array.from(picContrasts(t, zMissing, ys).cx));
+  });
+  test("equals the correlation through the origin of the residuals on the mass contrasts", () => {
+    const { cx, cy, cz } = picContrasts(t, xs, ys, zs);
+    const bx = dot(cx, cz) / dot(cz, cz);
+    const by = dot(cy, cz) / dot(cz, cz);
+    const rx = Array.from(cx, (v, i) => v - bx * cz[i]!);
+    const ry = Array.from(cy, (v, i) => v - by * cz[i]!);
+    const want = dot(rx, ry) / Math.sqrt(dot(rx, rx) * dot(ry, ry));
+    const got = partialContrastCorrelation(cx, cy, cz)!;
+    expect(got.r).toBeCloseTo(want, 12);
+    const df = cx.length - 2;
+    expect(got.p).toBeCloseTo(tTestTwoTailed(want * Math.sqrt(df / (1 - want * want)), df), 12);
+    expect(got.contrasts).toBe(cx.length);
+  });
+  test("no value with fewer than four contrasts or a mass that does not vary", () => {
+    expect(partialContrastCorrelation([1, 2, 3], [1, 0, 2], [0.5, 1, 1])).toBeNull();
+    expect(partialContrastCorrelation([1, 2, 3, 4], [1, 0, 2, 1], [0, 0, 0, 0])).toBeNull();
   });
 });
 

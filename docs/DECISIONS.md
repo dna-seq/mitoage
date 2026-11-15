@@ -205,3 +205,21 @@ manuscript's PIC, Both and All-three counts (3,008, 896, 547) stay as they are.*
 - **Both are published (2026-11-15):** asked whether the pipeline can choose the test, the maintainer chose to
   carry both: "2" (a `pic_signflip_p` column beside `pic_p_value`, so the methods can say both were run). The
   t test stays the one the counts above use; `pic_signflip_p` is there for every lifespan row to be read beside it.
+
+## D11 — Lifespan with and without body mass, reported side by side (2026-11-15)
+
+`docs/PIC_CALIBRATION.md` asked whether the paper should report the contrast result with body mass partialled
+out, the one without it, or both; its recommendation was both. Asked which, the maintainer answered: "Both,
+side by side".
+
+- **Decided:** every lifespan row of `correlations.parquet` carries `pic_mass_r` and `pic_mass_p_value`, the
+  contrast correlation with log10 adult weight partialled out (`partialContrastCorrelation` in
+  `pipeline/lib/stats.ts`, df = m − 2, at least 10 species with a weight, as for `partial_r`). Table 3 and
+  Supplementary Table S1 gain a column "PIC + mass" beside the funnel (393 of 4,299 in the default dataset);
+  the funnel's counts (896, 547) and D10 are unchanged.
+- **Rejected:** reporting only the mass-corrected result, which would hide that most of the signal is shared
+  with body size; and only the uncorrected one, which would overstate what is specific to lifespan (the
+  calibration report's reasons).
+- **What it costs, and was accepted:** a fourth count beside the three controls, and two more columns in the
+  table. The combined test uses the t test and inherits the over-rejection of the fish scopes (D10); it gets
+  no sign-flip p value.

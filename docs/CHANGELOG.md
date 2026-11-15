@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Lifespan with and without body mass, side by side** (D11, 2026-11-15): `correlations.parquet` carries
+  `pic_mass_r` and `pic_mass_p_value` on every lifespan row of both datasets, the contrast correlation with
+  log10 adult weight partialled out (`partialContrastCorrelation`; `picContrasts` now carries an optional third
+  trait through the same recursion). It reproduces the cluster run's `mass_r` to 5 × 10⁻⁹ in all 11,946 rows both
+  compute. Table 3 and Supplementary Table S1 gain a "PIC + mass" column (393 of the 4,299 FDR-passing
+  correlations in `default`, 374 of 4,068 in `anage_only`); the Results, Methods and Discussion say so, and
+  Methods now also names the sign-flip p value. The funnel (896, 547) is unchanged. Four new tests, each checked
+  by breaking the code it guards (mass not carried through the weighted mean, a missing mass ignored, the
+  partial formula, df m − 1). Supplementary Methods S10.6, S10.7 and S14 follow.
+
 - **Supplementary Methods S10.6 reports the contrast test's checks** (2026-11-15): the match with `ape::pic`,
   the calibration (exact under Brownian motion in all 32 scopes, 22–33% rejections with lifespan shuffled in
   the fish scopes), the single sister pairs that dominate those scopes, the Garland diagnostic, the

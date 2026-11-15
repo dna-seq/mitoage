@@ -52,7 +52,8 @@ extended features and 32 scopes.
 | The MCP server's paragraph (Data access and versioning) and its sentence in Data availability | `mcp/` and `mcp/README.md`; D8 in `docs/DECISIONS.md`. Its verdict uses the Table 3 definitions below, so the server and the paper count the same rows |
 
 Definitions used for Table 3: "FDR" is `q_value < 0.05`; "PIC" is `pic_p_value < 0.05`; "Both" adds
-`sign(pearson_r) == sign(pic_r)` to both; "All three" adds `partial_p_value < 0.05`. The repository rule
+`sign(pearson_r) == sign(pic_r)` to both; "All three" adds `partial_p_value < 0.05`; "PIC + mass" (D11) is
+`q_value < 0.05`, `pic_mass_p_value < 0.05` and `sign(pic_mass_r) == sign(pearson_r)`, beside the funnel. The repository rule
 "a number shown on the site is one the pipeline computed" does not cover these counts. If the paper
 keeps Table 3, the pipeline's report should emit it, so the manuscript can cite the report instead.
 
@@ -275,7 +276,8 @@ cited in order.
   extended-feature tables nor the correlations (S11). S10.6 now carries the `ape::pic` comparison and
   the cluster calibration (`docs/PIC_CALIBRATION.md`), the dominating sister pairs that explain the fish
   scopes, and the sign-flip p value published beside the t test (D10); whether to report the contrast result
-  with body mass partialled out, without it, or both is still the authors' call.
+  with body mass partialled out is reported beside the uncorrected one (D11): Table 3's "PIC + mass" column,
+  393 of 4,299.
 - **Edited** with manuscript-prose-edit and manuscript-deslop in run `20261115T064112Z-52913208` (not in git):
   claim guard clean against each pre-edit copy; three sentences of the first draft that stated something no
   document records were removed; 7 of 15 "X, not Y" contrasts rewritten, the rest kept as real distinctions.

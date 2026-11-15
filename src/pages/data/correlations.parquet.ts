@@ -31,6 +31,9 @@ export const GET: APIRoute = () => {
     { name: "pic_p_value", type: "DOUBLE", data: cs.map((c) => n(c.picPValue)) },
     // Lifespan rows only, like partial_r: the contrast test without the t test's normality (docs/PIC_CALIBRATION.md).
     { name: "pic_signflip_p", type: "DOUBLE", data: cs.map((c) => n(c.picSignFlipP)) },
+    // Lifespan rows only: the contrast correlation with log10 body mass partialled out (ancestry and mass together).
+    { name: "pic_mass_r", type: "DOUBLE", data: cs.map((c) => n(c.picMassR)) },
+    { name: "pic_mass_p_value", type: "DOUBLE", data: cs.map((c) => n(c.picMassPValue)) },
   ]);
   return new Response(buf, { headers: { "Content-Type": "application/vnd.apache.parquet" } });
 };

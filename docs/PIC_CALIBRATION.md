@@ -159,6 +159,12 @@ both. Reporting both, side by side, is the honest option; reporting only the mas
 that most of the signal is shared with size, and only the uncorrected one would overstate what is specific
 to lifespan. That is a decision for the authors.
 
+**Decided (D11, 2026-11-15): both, side by side.** The site build writes `pic_mass_r` and `pic_mass_p_value`
+for every lifespan row (at least 10 species with a weight, as for `partial_r`), and Table 3 has a column "PIC +
+mass": 393 of 4,299 in `default`, the cluster run's count; the values agree with `mass_r` and `mass_p` above to
+the printed precision in all 11,946 rows both compute (the cluster run also filled 3,958 rows of scopes with 4
+to 9 masses, none of which passes).
+
 ## What could be done
 
 **Decided (D10, 2026-11-15):** the maintainer keeps the t test and the published counts ("we should not

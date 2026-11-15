@@ -281,16 +281,31 @@ export function compileTree(tree: PhyloNode, indexOfLeaf: (leaf: number) => numb
 /**
  * The standardised contrasts of x and y on a compiled tree (NaN marks a missing value), in post-order.
  * Same recursion as picCorrelation: polytomies resolved by sequential pairing, two daughters at
- * distance zero averaged without a contrast.
+ * distance zero averaged without a contrast. With `z`, a third trait is carried through the same
+ * recursion on the species where all three are known, and its contrasts are returned as `cz`.
  */
-export function picContrasts(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<number>): { cx: Float64Array; cy: Float64Array } {
+export function picContrasts(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<number>): { cx: Float64Array; cy: Float64Array };
+export function picContrasts(
+  t: CompiledTree,
+  x: ArrayLike<number>,
+  y: ArrayLike<number>,
+  z: ArrayLike<number>,
+): { cx: Float64Array; cy: Float64Array; cz: Float64Array };
+export function picContrasts(
+  t: CompiledTree,
+  x: ArrayLike<number>,
+  y: ArrayLike<number>,
+  z?: ArrayLike<number>,
+): { cx: Float64Array; cy: Float64Array; cz?: Float64Array } {
   const n = t.children.length;
   const has = new Uint8Array(n);
   const vx = new Float64Array(n);
   const vy = new Float64Array(n);
+  const vz = new Float64Array(n);
   const extra = new Float64Array(n);
   const cx: number[] = [];
   const cy: number[] = [];
+  const cz: number[] = [];
   for (let i = 0; i < n; i++) {
     const li = t.leafIndex[i]!;
     const kids = t.children[i]!;
@@ -298,22 +313,26 @@ export function picContrasts(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike
       if (li < 0) continue;
       const a = x[li]!;
       const b = y[li]!;
-      if (Number.isNaN(a) || Number.isNaN(b)) continue;
+      const c = z ? z[li]! : 0;
+      if (Number.isNaN(a) || Number.isNaN(b) || Number.isNaN(c)) continue;
       has[i] = 1;
       vx[i] = a;
       vy[i] = b;
+      vz[i] = c;
       extra[i] = t.length[i]!;
       continue;
     }
     let first = true;
     let ax = 0;
     let ay = 0;
+    let az = 0;
     let av = 0;
     for (const k of kids) {
       if (!has[k]) continue;
       if (first) {
         ax = vx[k]!;
         ay = vy[k]!;
+        az = vz[k]!;
         av = extra[k]!;
         first = false;
         continue;
@@ -323,23 +342,60 @@ export function picContrasts(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike
       if (sum <= 0) {
         ax = (ax + vx[k]!) / 2;
         ay = (ay + vy[k]!) / 2;
+        az = (az + vz[k]!) / 2;
         av = 0;
         continue;
       }
       const sd = Math.sqrt(sum);
       cx.push((ax - vx[k]!) / sd);
       cy.push((ay - vy[k]!) / sd);
+      if (z) cz.push((az - vz[k]!) / sd);
       ax = (ax * v2 + vx[k]! * av) / sum;
       ay = (ay * v2 + vy[k]! * av) / sum;
+      az = (az * v2 + vz[k]! * av) / sum;
       av = (av * v2) / sum;
     }
     if (first) continue;
     has[i] = 1;
     vx[i] = ax;
     vy[i] = ay;
+    vz[i] = az;
     extra[i] = av + t.length[i]!;
   }
-  return { cx: Float64Array.from(cx), cy: Float64Array.from(cy) };
+  const out: { cx: Float64Array; cy: Float64Array; cz?: Float64Array } = { cx: Float64Array.from(cx), cy: Float64Array.from(cy) };
+  if (z) out.cz = Float64Array.from(cz);
+  return out;
+}
+
+/**
+ * Partial correlation through the origin of contrasts cx and cy with cz partialled out: the contrast
+ * correlation of a feature with lifespan given body mass, so that ancestry and mass are controlled together
+ * (docs/PIC_CALIBRATION.md, "Body mass"). Two-tailed t test with df = m - 2. Null when there are fewer than
+ * four contrasts, a trait does not vary, or cz explains cx or cy entirely.
+ */
+export function partialContrastCorrelation(
+  cx: ArrayLike<number>,
+  cy: ArrayLike<number>,
+  cz: ArrayLike<number>,
+): { r: number; p: number; contrasts: number } | null {
+  const m = cx.length;
+  if (m < 4) return null;
+  let sxy = 0, sxz = 0, syz = 0, sxx = 0, syy = 0, szz = 0;
+  for (let i = 0; i < m; i++) {
+    const a = cx[i]!, b = cy[i]!, c = cz[i]!;
+    sxy += a * b; sxz += a * c; syz += b * c;
+    sxx += a * a; syy += b * b; szz += c * c;
+  }
+  if (sxx === 0 || syy === 0 || szz === 0) return null;
+  const rxy = sxy / Math.sqrt(sxx * syy);
+  const rxz = sxz / Math.sqrt(sxx * szz);
+  const ryz = syz / Math.sqrt(syy * szz);
+  const den = (1 - rxz * rxz) * (1 - ryz * ryz);
+  if (!(den > 0)) return null;
+  const r = (rxy - rxz * ryz) / Math.sqrt(den);
+  const df = m - 2;
+  const p = Math.abs(r) >= 1 ? 0 : tTestTwoTailed(r * Math.sqrt(df / (1 - r * r)), df);
+  return { r, p, contrasts: m };
 }
 
 /** Correlation through the origin of two contrast vectors, with its t-test p value (df = m - 1). */

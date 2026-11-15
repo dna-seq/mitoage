@@ -238,6 +238,13 @@ export interface Correlation {
    */
   picSignFlipP?: number | null;
   /**
+   * Optional, only for trait "maxLongevityYears": the contrast correlation with log10 adult weight
+   * partialled out (through the origin, on the species with a weight), so ancestry and body mass are
+   * controlled together, and its t-test p value (df = contrasts - 2). Null below 10 species with a weight.
+   */
+  picMassR?: number | null;
+  picMassPValue?: number | null;
+  /**
    * Optional (added by the pipeline), only for trait "maxLongevityYears": partial correlation of the
    * feature with log10 lifespan controlling for log10 adult weight, its p-value and sample size.
    */
