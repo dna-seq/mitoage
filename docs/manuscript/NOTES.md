@@ -345,6 +345,47 @@ C/(C+T) tested once in place of sixteen codons.
 
 `mitoage2.proposed.md` was set equal to `mitoage2.md` again; it had missed the D11 commit (58e145f).
 
+## Regular NAR article, and what the assessment changed (2026-11-15)
+
+**The venue.** The authors set aside eLife (no journal impact factor, and a Reviewed Preprint is not an acceptance;
+an accepted paper with an impact factor is needed for a PhD defence). The fourth journal selection (run
+`20261115T001950Z-ea39ab48`, `stage-report.4.md`; the dashboard's Journals tab) recommends a presubmission inquiry to
+Nucleic Acids Research for a regular article, then MBE (Resources), then Life Science Alliance; the venue decision is
+still the co-authors' to confirm. The eLife-only edits (impact statement, Table 4 against release 1, eLife's
+supplementary-file wording) are kept on the local branch `elife-pass-wip` of the session's worktree, not on main.
+
+**NAR's rules applied** (from the journal selection's reading of NAR's author guide on 2026-11-15; the page was
+behind a bot check when re-read): Materials and methods before the Results; an abstract of one paragraph of at most 200
+words, without references, figure citations or URLs (allowed only in the Database and Web Server issues). Not yet
+checked for regular articles: a graphical abstract, a length limit, key points.
+
+**What the research findings assessment changed** (mitoage-pipelines 3f09aa7, 50cad7f, 858974b, c1fae4c;
+`docs/HYPOTHESES.md` there, H11 and H12; each number below re-read from the files named):
+
+| Number in the text | Source |
+| --- | --- |
+| All species: of the 27 skew correlations passing all three controls, 4 keep sign-flip p < 0.05, 1 holds with mass partialled out of the contrasts; GC content 9 and 6 of 11; U/C codons 13 and 6 of 16 | `docs/analyses/pic-calibration/scopes/all.tsv` (`signflip_p`, `mass_r`, `mass_p`), joined with the all-three set from `dist/data/correlations.parquet` (dataset `default`, scope `all`) |
+| Whole-genome AT skew with mass partialled out of the contrasts r = 0.04, p = 0.10 (sign-flip p = 0.011) | same file, `atSkew:total_mtDNA`. The assessment's "sign-flip p = 0.06, r = 0.02, p = 0.54" is the protein-coding AT skew (`atSkew:total_pc`), not the whole-genome one the paper quotes |
+| Shuffled-lifespan rejection 29% in all species, 9% in mammals | same folder, mean `perm_reject` of `all.tsv` (0.291) and `class_Mammalia.tsv` (0.091) |
+| Mammals: whole-genome GC sign-flip p = 0.0001, with mass in the contrasts r = 0.15, p = 2.3 x 10^-4; U at fourfold sites holds both | `class_Mammalia.tsv`, `gc:total_mtDNA`, `ff:total_pc:U` (C at fourfold sites does not hold with mass, p = 0.067, so it is not claimed) |
+| GC vs gestation on contrasts r = 0.18, p = 1.8 x 10^-5, n = 564; lifespan 0.17 | `dist/data/correlations.parquet`, `gc:total_mtDNA`, scope `class:Mammalia`, traits `gestationDays`, `maxLongevityYears` |
+| 573 / 544 / 484 of 625 live mammals with gestation, female maturity, birth weight | `public/data/species.csv` |
+| H11: 32 / 27 / 24 / 3 of 43 on 439 mammals; Table 4; GC +0.28 SD per SD, q = 8 x 10^-5; birds 107-175 species; 72% of 296 bird maturity ages whole years | mitoage-pipelines `docs/analyses/h11/generation_time.female.tsv` (tree `pagel`) and H11 |
+| H12: contact mismatch mammals -0.007 [-0.029, +0.015] q = 0.83, birds -0.014 [-0.037, +0.009] q = 0.24; GRAVY ND5 q = 0.013, ND6 q = 0.024 | `results/h12/structure_pgls.tsv` and H12 |
+| Ref. 45, Kulaga et al. 2021: in 41 mammals, mtDNA GC (from MitoAge 1) and gestation the most impactful traits for maximum lifespan | the paper's full text (PMC7865694), checked 2026-11-15 |
+| Ref. 46, Revell 2009, phylogenetic PCA | PubMed 19663993 |
+
+**Waiting on the authors.** Whether Table 3 shows the sign-flip count (533 "Both" against 896; D10 keeps the t test);
+whether to add H11 and H12 to the Supplementary Methods (S12 has no entry for them; the Methods point to
+mitoage-pipelines instead); the general statement that lifespan, maturity, gestation and birth weight evolve together
+carries no citation.
+
+**Checked** in run `20261115T125217Z-6d955b96` (14 change records): every number and citation of the base text is
+still there (the Abstract's "106 invertebrates" stays in the Results); claim guard exit 0; smell check passes (em
+dashes of the figure-supplement names and the "you" of notes to the authors kept on purpose); reader metrics:
+sentences over 35 words 17.7% -> 20.8%, mostly in the new Methods subsection. Length: prose outside Materials and
+methods 5,587 words (4,357 before the assessment's results and before D11 and D14), Methods 2,647; abstract 200 words.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

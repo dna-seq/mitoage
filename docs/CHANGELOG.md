@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript is set for a regular Nucleic Acids Research article, and reports what survives the stricter
+  tests** (2026-11-15). Materials and methods moves back before the Results and the abstract is one paragraph of 200
+  words without the URL, as NAR asks. The all-species skews and codon usage, which pass the three controls one at a
+  time, do not survive ancestry and body mass together or the sign-flip test; mammalian base composition does, and a
+  new Results subsection and Table 4 show it following the slow life history as a whole (H11), not in birds. The
+  structural tests of H12 (complex IV contacts, hydropathy) join the retested relationships; Kulaga et al. 2021 and
+  Revell 2009 are cited. `docs/manuscript/NOTES.md` gives the source of each new number.
+
 - **The manuscript states two limits the review raised (D14)** (2026-11-15): the relative-rate test's
   uncorrected Nei–Gojobori counts may bias it towards the null (Discussion), and estimated AnAge ages of wild
   animals stay in the default dataset while FishBase growth-study ages leave (Materials and methods). No
