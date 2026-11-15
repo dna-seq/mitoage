@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The title page names the corresponding author's email and HEALES's city** (2026-11-15, the v0.3 run's decision
+  JA-8): round v0.3 now reads "\* Corresponding author: robi.tacutu@gmail.com.", as the maintainer gave it, and
+  affiliation 4 reads "HEALES (Healthy Life Extension Society), Brussels, Belgium", from heales.org's contact page
+  ("Heales vzw – asbl, 18 rue Jules Delhaizestraat, 1080 Brussels"; the page names no country).
+
 - **Table 3 shows the sign-flip count beside the t test** (2026-11-15, D13): a "Both (sign-flip)" column in Table 3
   and Supplementary Table S1 of round v0.3 (533 of 4,299 over 32 scopes), from the published correlation table;
   the t-test counts stay the headline, as D10 decided.

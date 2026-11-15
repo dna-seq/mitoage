@@ -17,9 +17,9 @@ manuscript text.*
 1. Institute for Biostatistics and Informatics in Medicine and Ageing Research, Rostock University Medical Center, Rostock, Germany
 2. Institute of Biochemistry of the Romanian Academy, Bucharest, Romania
 3. ROGEN Consortium, the Romanian genomics project, Bucharest, Romania
-4. HEALES (Healthy Life Extension Society)
+4. HEALES (Healthy Life Extension Society), Brussels, Belgium
 
-† These authors contributed equally. \* Corresponding author.
+† These authors contributed equally. \* Corresponding author: robi.tacutu@gmail.com.
 
 ## Abstract
 
