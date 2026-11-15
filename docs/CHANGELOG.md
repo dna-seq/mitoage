@@ -4,6 +4,9 @@ Newest first.
 
 ## Unreleased
 
+- **A MitoAge collection on Hugging Face** (2026-11-15): [longevity-genie/mitoage](https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5)
+  gathers the build and the six datasets of the analyses, each with a one-line note; the README links it.
+
 - **The per-residue embeddings and the predicted structures are on Hugging Face** (2026-11-15), so the ESM
   side of H5's interface test and H10's structural check rerun from public data: the per-residue ESM-2 650M
   embeddings of both partners (7.7 GB) in `longevity-genie/mitoage-embeddings` at fc70053, the 806 ESMFold2

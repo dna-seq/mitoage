@@ -46,7 +46,9 @@ answer.
   and holds the research analyses that read the build (longevity in the alignments, mtDNA-encoded peptides,
   mito-nuclear pairing).
 - [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) on Hugging Face: the
-  published build (tables, gene alignments and the frozen build 1), packaged by `bun run hf`.
+  published build (tables, gene alignments and the frozen build 1), packaged by `bun run hf`. It and the
+  datasets of the analyses (build 2's source snapshots, nuclear partners, embeddings, aligner variants,
+  predicted structures, result tables) are gathered in the [MitoAge collection](https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5).
 
 ## MCP server (experimental)
 
