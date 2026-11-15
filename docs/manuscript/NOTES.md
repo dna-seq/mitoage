@@ -9,11 +9,13 @@ and lists the questions only the authors can answer.
   Database content and interface, Data sources and curation, Data calculation, Availability, Conclusion.
   The draft keeps its voice and its opening references (numbered as in 2016 so the two lists can be
   compared), and adds a Materials and methods section, because what is new in build 2 is mostly method:
-  pinned sources, re-verification, a dated tree, three controls, two reproductions.
+  pinned sources, re-verification, a dated tree, three controls, two reproductions. Restructured on
+  2026-11-15 for the reprioritized venues: Introduction, Results, Discussion, Materials and methods (see
+  "Restructure" below).
 - **The story.** One argument runs through it: the sources drift, the 2016 correlations were counted
   without controls for shared ancestry, and most do not survive one; what survives is concentrated in the
-  strand asymmetry and the codon usage it shapes. The abstract, the Results and the Conclusion all carry
-  that argument; the website is described after it, not before.
+  strand asymmetry and the codon usage it shapes. The abstract, the Results and the Discussion all carry
+  that argument; the website is described after it, as the last two subsections of the Results.
 - **Claim ceiling.** The draft does not claim that any mtDNA feature causes or predicts lifespan. The
   codon finding is phrased as "the direction expected from" the heavy-strand A>G signature, not as
   evidence for it.
@@ -276,6 +278,49 @@ cited in order.
   claim guard clean against each pre-edit copy; three sentences of the first draft that stated something no
   document records were removed; 7 of 15 "X, not Y" contrasts rewritten, the rest kept as real distinctions.
 
+## Restructure for the reprioritized venues (2026-11-15)
+
+The maintainer asked whether the reprioritized journals need a Discussion and allow more text, that "skews"
+be explained where it first appears, and that the text read "as a thinking flow ... hypothesis driven" rather
+than as statements one after another.
+
+- **What the venues ask.** The third journal selection (run `20261115T001950Z-ea39ab48`, `stage-report.3.md`)
+  ranks eLife Tools and Resources, Frontiers in Aging and Life Science Alliance first, then Molecular Biology
+  and Evolution (Resources). eLife: "Introduction; Results; Discussion; Materials and Methods", no maximum,
+  but it suggests at most 5,000 words of main text "excluding the Materials and methods, References, and Figure
+  legends", abstract 150 to 200 words; it allows Methods after the Introduction. MBE: the same order, abstract
+  250, no limit, the order may change. Life Science Alliance: no body limit, abstract at most 175. Frontiers:
+  Introduction, Materials and Methods, Results, Discussion, at most 12,000 words. Database (Oxford): the
+  Frontiers order plus a Conclusion. A Discussion is expected everywhere; the Conclusion is Database's alone, so
+  none was added. Materials and methods follows the Discussion, the order the top three of the ladder bar
+  Frontiers share (decided with the coordinating session); Frontiers would move it back.
+- **What changed.** The Conclusion became a Discussion that carries the interpretation, the caveats taken
+  out of the Results paragraphs (contrast power and calibration, the uncorrected and one-at-a-time tests, the
+  interpolated node ages, strand orientation, sequencing technology, the invertebrates), the published claims
+  retested (refs 16, 18, 30, 31, 33, 34) and what comes next; the thesis line is kept word for word. The
+  Introduction ends in the two questions and how each was tested; each Results subsection now runs from the
+  question to the test, the finding and what it means for the next step, with "we" where the authors acted.
+  The skews are defined in the Abstract and the Introduction; contrasts, scopes, q, the default dataset,
+  retired species, the major arc and dN/dS where the Results first use them; the four survivor counts get a
+  reading guide (896 and 547 are summed over overlapping scopes and read as shares, about one in five and one
+  in eight of the 4,299; 291 is all species alone; 496 is the explorer's count without the sign rule). The
+  website and data access became the last Results subsections. Methods moved whole, unchanged but for one
+  "below" made "in Results".
+- **New in the text, from documents already in the repository:** "66 of them" (547 − 481, the partial
+  correlation's sign reversals, from the table above); the contrast code's agreement with `ape::pic` and the
+  excess where one sister pair dominates (`docs/PIC_CALIBRATION.md`, D10); the Chondrichthyes rejection rate
+  (42.8% of 1,368), moved from the `> AUTHOR:` note into the Discussion.
+- **Checked** in run `20261115T065503Z-3539a7e9` (not in git; 17 change records, `runs.py apply`). Every
+  number and citation of the base is still in the text. Claim guard (`--revision`): exit 0; it lists the new
+  sentences, all reviewed, and "for the first time" was removed. Smell check (`--check`, em dashes kept as
+  eLife's figure-supplement names): passes; declarative chains (C16) 9 → 3, all three in the affiliations.
+  Reader metrics: "we" 0.02 → 0.36 per 100 words, acronyms 1.82 → 1.51; sentences over 35 words 12% → 16%,
+  mostly the statistics sentences of the Results.
+- **Length.** Prose of the main text without Methods, tables, legends and notes: 3,107 → about 4,350 words
+  (eLife suggests at most 5,000); the Discussion is about 870 words against the Conclusion's 229; Methods
+  unchanged at about 2,070. The whole file: 9,283 → about 10,650 words. Abstract about 230 words: within
+  MBE's 250, above eLife's usual 200 and Life Science Alliance's 175.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
@@ -290,7 +335,7 @@ cited in order.
   The venue comes first: a second journal selection that keeps the results and allows rolling submission
   recommends a bioRxiv preprint now, then eLife (Tools and Resources), Molecular Biology and Evolution
   (Resources) or Database (Oxford); NAR's Database issue (January 2028, results cut) is the slow option. The
-  draft still carries NAR's layout.
+  draft now follows eLife's order (see "Restructure" above).
 - A second, independent panel read the revised paper for eLife: three major and three minor revisions, against
   five and one this morning (for NAR, so not like for like). What persists needs the authors: the contrast
   test's calibration (it rejects about 40% of tests in fish scopes, more than the uncontrolled test, which

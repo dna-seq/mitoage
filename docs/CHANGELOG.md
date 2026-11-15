@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript has a Discussion and reads as a line of reasoning** (2026-11-15). For the reprioritized
+  venues (eLife, Life Science Alliance and MBE share Introduction, Results, Discussion, Materials and methods),
+  the Conclusion became a Discussion that carries the caveats taken out of the Results, the published claims
+  retested and what comes next; Materials and methods moved after it, unchanged; the Introduction and each
+  Results subsection run from the question to the test, the finding and what it means. The skews, contrasts,
+  scopes and the four survivor counts are explained where first met. No number or citation was dropped
+  (`docs/manuscript/mitoage2.md`, `mitoage2.proposed.md`; `docs/manuscript/NOTES.md`, "Restructure").
+
 - **The contrast t test stays the published PIC test** (2026-11-15, D10): the maintainer keeps
   `pic_p_value` and the counts 3,008 / 896 / 547 rather than the sign-flip test's 1,255 / 531 / 336, with
   the fish scopes' known excess recorded as the accepted cost.
