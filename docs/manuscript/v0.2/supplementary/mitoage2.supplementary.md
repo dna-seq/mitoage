@@ -37,7 +37,7 @@ We therefore fixed one version of each input and recorded it with a checksum whe
 **Supplementary Table S2.** Pinned upstream versions of MitoAge build 2.
 
 | Input | Version read by build 2 | Checksum or identifier recorded |
-|---|---|---|
+|----------------------|--------------------------------------------|----------------------------------|
 | RefSeq mitochondrion | release 237, `mitochondrion.1.genomic.gbff.gz`, file of 2026-09-03 | md5 4491799651740f49c8f6a011cf9a96e5 |
 | NCBI Taxonomy | `new_taxdump` of 2026-11-13 (Last-Modified 2026-11-13T00:42:20Z) | md5 91f95787dd7c7cfd7042ab7610f2b4b2 |
 | AnAge | build 15 (2023-07-03), `dataset.zip` | md5 7ec4d19f6c8f57b22595a9ffd50ea66b |
@@ -197,7 +197,7 @@ an AnAge maximum longevity takes it, whatever any other source says. Only where 
 second source fill it, and which one depends on the animal's group, read from its RefSeq lineage:
 
 | Group (from the lineage) | Sources in order |
-|---|---|
+|----------------------------------------|------------------------------------------------------------|
 | Birds (lineage includes Aves) | AnAge, then EURING, then USGS Bird Banding Laboratory |
 | Fishes (Actinopterygii, Chondrichthyes, Cyclostomata, Dipnomorpha or Actinistia) | AnAge, then FishBase |
 | Invertebrates (lineage does not include Vertebrata) | AnAge, then SeaLifeBase, only for species SeaLifeBase marks as living in fresh, brackish or salt water |
@@ -231,7 +231,7 @@ low). The scale is AnAge's own data-quality grade; for the other sources we mapp
 records onto it. The mapping is the following, field by field:
 
 | Source | Field read | Record type | Quality |
-|---|---|---|---|
+|--------------|------------------------------|--------------------------|--------------------------|
 | AnAge build 15 | Maximum longevity (yrs) | wild if the specimen origin is "wild", captive if "captivity", otherwise observed | AnAge's data quality as given (high, acceptable, questionable or low) |
 | FishBase, SeaLifeBase | `popchar.tmax` (reported maximum age of a population) | observed | questionable when `tmaxQuality` is −1, otherwise acceptable |
 | FishBase, SeaLifeBase | `species.LongevityWild` | wild | acceptable |
@@ -260,7 +260,7 @@ retired (S6) and keeps its 2015 value, flagged, because the data contract has no
 Among the 2,316 live species the chosen values distribute as follows:
 
 | Source | Acceptable | High | Low | Questionable | Captive | Wild | Observed | Estimated |
-|---|--:|--:|--:|--:|--:|--:|--:|--:|
+|----------------|----------:|----------:|----------:|----------:|----------:|----------:|----------:|----------:|
 | AnAge | 1,615 | 95 | 0 | 31 | 854 | 833 | 54 | 0 |
 | FishBase | 405 | 0 | 36 | 34 | 33 | 200 | 206 | 36 |
 | SeaLifeBase | 61 | 0 | 13 | 0 | 0 | 43 | 18 | 13 |
@@ -899,7 +899,7 @@ The main text quotes several counts that look alike and differ in what they requ
 scopes they are taken. All are for maximum lifespan in the default dataset:
 
 | Count | Scopes | What it counts |
-|--:|---|---|
+|-----------:|----------------------|------------------------------------------------------------------|
 | 15,904 | all 32, summed | lifespan tests |
 | 5,439 | all 32, summed | tests with p < 0.05 across species |
 | 4,299 | all 32, summed | tests with q < 0.05 |

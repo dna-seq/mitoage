@@ -297,7 +297,7 @@ extend beyond them, which the controls below take up.
 **Table 1.** Live species per taxon in MitoAge release 1 and MitoAge 2.
 
 | Taxon | Release 1 | MitoAge 2 | of which new |
-|---|--:|--:|--:|
+|----------------------------------------------|-------------:|-------------:|-------------:|
 | Mammals (Mammalia) | 390 | 625 | 237 |
 | Birds (Aves) | 152 | 418 | 271 |
 | Reptiles (Reptilia) | 94 | 129 | 42 |
@@ -334,7 +334,7 @@ compared value by value only through the changelog, which gives the cause of eac
 **Table 2.** The 922 species of release 1 in MitoAge 2, by record status.
 
 | Status | Meaning | Species |
-|---|---|--:|
+|----------------|------------------------------------------------------------------|---------:|
 | Original | No value changed | 392 |
 | Updated | At least one value updated or corrected (new record version or successor, re-annotation, AnAge revision, release-1 value disagreeing with its record, systematic rule) | 465 |
 | Renamed | Accepted name changed in NCBI Taxonomy; previous names kept | 46 |
@@ -432,7 +432,7 @@ p < 0.05, whatever its sign (it keeps the sign of the correlation across species
 mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected.
 
 | Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three | PIC + mass |
-|---|--:|--:|--:|--:|--:|--:|--:|--:|
+|----------------------|---------:|--------:|---------:|--------:|--------:|--------:|---------:|---------:|
 | All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 237 | 80 |
 | Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 139 | 136 |
 | Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 86 | 38 |
@@ -537,7 +537,7 @@ phylogenetic regressions with Pagel's λ. Each row uses the mammals of the defau
 a place in the tree and the trait; "+ mass" adds log10 body mass to the model.
 
 | Trait (mammals) | Lifespan alone | Trait alone | Lifespan + mass | Trait + mass |
-|---|--:|--:|--:|--:|
+|------------------------|----------------:|----------------:|----------------:|----------------:|
 | Age at maturity (527) | 20 | 12 | 11 | 1 |
 | Gestation (557) | 9 | 21 | 6 | 17 |
 | Birth weight (470) | 18 | 23 | 5 | 19 |
