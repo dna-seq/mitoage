@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 of the manuscript, revised by a full improve run** (2026-11-15, run `20261115T132217Z-c1672440`,
+  not in git). `docs/manuscript/v0.3/` is opened from v0.2 (which is with the co-authors) and carries 186 recorded
+  edits: the review stages' corrections, prose edit, deslop, story and adaptation to NAR. Two errors of the earlier
+  text are corrected on the code (the rate test does correct for multiple hits; its genetic code is the one the
+  three species share), the all-species survivors are stated exactly (5 and 1 of 27 skews, 6 of 16 codons), three
+  supplement citations get their right authors, and H11 and H12 get Supplementary Methods S12.6 and S12.7.
+  `mitoage2.proposed.md` is the run's corrected version; the authors' decisions are in its dashboard
+  (`docs/manuscript/NOTES.md`, "Round v0.3").
+
 - **The MitoAge 2 manuscript is kept in rounds** (2026-11-15): the manuscript, its figures with their scripts and
   the Supplementary Methods move into `docs/manuscript/v0.2/`, the folder the manuscript-skills plugin releases to
   the co-authors' Google Drive folder (`rounds.py`); the next round is a copy of it. `docs/manuscript/NOTES.md`

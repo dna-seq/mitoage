@@ -1,0 +1,21 @@
+# Co-authors' comments on this round, kept by manuscript-coauthors (comments.py).
+# status: open | addressed | partly | declined | not-on-point. now: the next round's passage that
+# answers it, verbatim. why: what was done and why, or why not. next: what could still be done.
+# gap: whether the run that produced this round had caught it (caught | partly | missed | introduced),
+# with that run's findings or applied edits, miss_reason, owner (the skill whose remit covers it) and
+# note; gap_run names the run (comments.py gaps).
+round: '0.2'
+master: supplementary/mitoage2.supplementary.md
+sources:
+- doc: https://docs.google.com/document/d/1j8diaJaFrEZKHvymHeM-3AzpLa-C4ro6xXto1V-AsX4/edit
+  file: 2. Supplementary Methods- MitoAge 2 (v0.2).docx
+  pulled: '2026-11-15T13:24:29Z'
+  items: 0
+  new: 0
+- doc: https://docs.google.com/document/d/1aHxswLh_FHkjnTPBeKF5kL5GTHqecuG8FXeS73HXioE/edit
+  file: 1. MitoAge 2- a re-verified, phylogeny-aware database of mitochondrial DNA features and animal longevity
+    (v0.2).docx
+  pulled: '2026-11-15T13:24:33Z'
+  items: 0
+  new: 0
+items: []

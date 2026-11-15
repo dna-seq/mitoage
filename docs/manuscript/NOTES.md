@@ -397,6 +397,39 @@ dashes of the figure-supplement names and the "you" of notes to the authors kept
 sentences over 35 words 17.7% -> 20.8%, mostly in the new Methods subsection. Length: prose outside Materials and
 methods 5,587 words (4,357 before the assessment's results and before D11 and D14), Methods 2,647; abstract 200 words.
 
+## Round v0.3: the improve run of 2026-11-15
+
+Round v0.2 went to the co-authors as Google Docs on 2026-11-15, so this run worked on a new round, v0.3, opened
+from v0.2 with `rounds.py open` (base 6f196ed). Run `20261115T132217Z-c1672440` under `data/cache/manuscript-reviews/`
+(not in git); its summary is `manuscript-improve/run-summary.md` there, and the dashboard, the Word review and the
+changes workbook sit beside `v0.3/mitoage2.md` (git-excluded). `v0.3/mitoage2.proposed.md` is the run's corrected
+version: the working copy plus one proposal (DS-C1, the Introduction's "orders of magnitude" for composition).
+
+- **Applied** (186 recorded edits, edits: apply): the review stages' corrections (79 applied, 10 merged, 3 held),
+  then prose edit, deslop, story and journal adaptation for NAR, then the coordinator's fixes after the checks.
+  Corrected on the evidence: the rate test does correct dN and dS for multiple hits (Jukes–Cantor, `rates.py`
+  137–154; the D14 sentence above was wrong, and so was "each species' own code": the code shared by the three
+  species, or code 2); 6 of the 16 U/C codons do hold with ancestry and body mass together; 5 (not 4) of the 27
+  skews keep a sign-flip p < 0.05 in the published table (4 was the cluster calibration run's count); three
+  supplement citations named the wrong authors ("Toren et al. 2021" is Pabis 2021).
+- **Numbers re-read from the fresh build** (`bun run build` of 6f196ed, `dist/data/correlations.parquet` with
+  `pic_signflip_p`, `pic_mass_r`, `pic_mass_p_value`): 15,904 / 4,299 / 3,008 / 896 / 547 / 393 (281 also passing
+  the partial) and 533 by the sign-flip test. The main checkout's `dist/` is an older build without those columns.
+- **Panel** (six referees, six readers, Claude and Codex; the Claude seats ran as subagents because the Claude CLI
+  hit its weekly limit, so they carried the authors' setup): for NAR, the Claude referees give major revision,
+  reject (skeptic) and major revision; the Codex referees minor, major and minor. For MBE: major, major, minor;
+  minor, major, minor. Readers: skimmer bookmark / bookmark, potential user try it / try it, informed outsider
+  bookmark / bookmark. The comparison with run dac824e9 is in the run summary.
+- **Checks** on the corrected version: claim guard, smell check and section roles pass (`requested-claims.yaml`
+  lists what each widened claim answers); two independent re-checks on Codex (74 of 126 problems fixed at the
+  first; the last five fixes after the second were not re-read). Running text 10,674 → 11,402 words; Abstract 196.
+- **Waiting on the authors:** the To-do tab's 81 items, chief among them TimeTree's terms on redistribution, a
+  calibrated contrast test beyond D10, NAR's graphical abstract, Figure 4, Figure 1 with the 393, the plot
+  explorer's count of reversed contrasts, funding, conflicts, five-year availability, the data licence, Zenodo DOIs
+  and a deposit of the current correlation table, reference renumbering.
+- **The v0.2 Docs:** no comments yet (`v0.2/comments.yaml`, empty). The sync found two "edits" that are a
+  conversion loss in the Docs ("`> AUTHOR:`" shown as "AUTHOR:`"), not carried.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
