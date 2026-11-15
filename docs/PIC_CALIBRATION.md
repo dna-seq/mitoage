@@ -164,8 +164,15 @@ to lifespan. That is a decision for the authors.
 **Decided (D10, 2026-11-15):** the maintainer keeps the t test and the published counts ("we should not
 overdrop tings"). The options below stay on file; each would change published numbers.
 
-1. Report the sign-flip p value next to, or instead of, `pic_p_value` (computed in the site build with
-   fewer flips, about 999, to keep the build fast; the numbers above used 9,999).
+1. Report the sign-flip p value next to, or instead of, `pic_p_value`. **Done, next to it:** the site
+   build writes `pic_signflip_p` into `correlations.parquet` for every lifespan row (trait
+   `maxLongevityYears`, both datasets), from `signFlipPValue` in `pipeline/lib/stats.ts`: up to 9,999 flips,
+   stopping once 100 flips are at least as extreme (Besag & Clifford 1991), seeded by dataset, scope, trait
+   and feature. Over the 15,904 lifespan tests of `default` it gives 1,253 below 0.05, against 1,255 from the
+   cluster run's fixed 9,999 flips above, and 533 "Both" against 531: the difference is Monte Carlo noise at
+   the boundary. In `anage_only`: 1,017 of 13,380, and 502 "Both" against 659 for the t test. The site build
+   takes about 40 s longer. Other traits
+   get no value (null), as for `partial_r`, because flipping every trait would add minutes to each build.
 2. Flag or drop contrasts whose standardised value is an outlier (|studentised residual| > 3, Jones & Purvis
    1997), and check the dominating sister pairs (*Dipturus trachyderma* / *Zearaja nasuta*; *Alosa
    sapidissima* / *A. alabamae*) for a lifespan error or a misdated split.

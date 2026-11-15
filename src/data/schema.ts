@@ -229,7 +229,14 @@ export interface Correlation {
   qValue: number;
   /** Phylogenetically independent contrasts correlation, when a dated tree is available. */
   picR: number | null;
+  /** Two-tailed t test of picR, df = contrasts - 1. */
   picPValue: number | null;
+  /**
+   * Optional, only for trait "maxLongevityYears" (like partialR): sign-flip p value of picR, from up to
+   * SIGN_FLIP_REPS random sign flips of the contrast products with a sequential stop. It does not assume
+   * normal contrasts of equal variance (docs/PIC_CALIBRATION.md). Null where picR is.
+   */
+  picSignFlipP?: number | null;
   /**
    * Optional (added by the pipeline), only for trait "maxLongevityYears": partial correlation of the
    * feature with log10 lifespan controlling for log10 adult weight, its p-value and sample size.

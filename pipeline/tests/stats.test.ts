@@ -10,8 +10,11 @@ import {
   gcPercent,
   partialCorrelation,
   pearson,
+  contrastCorrelation,
+  picContrasts,
   picCorrelation,
   picFast,
+  signFlipPValue,
   rank,
   skew,
   spearman,
@@ -100,6 +103,72 @@ describe("phylogenetic independent contrasts", () => {
     const fast = picFast(compileTree(tree, (leaf) => leaf - 1), xs, ys);
     expect(fast?.r).toBeCloseTo(slow!.r, 12);
     expect(fast?.p).toBeCloseTo(slow!.p, 12);
+  });
+});
+
+describe("sign-flip p value of contrasts", () => {
+  // A ladder tree of 12 leaves: (((((1,2),3),4)...),12), unit branches, so 11 contrasts.
+  const ladder = (k: number): PhyloNode => {
+    let node: PhyloNode = { length: 1, children: [], leaf: 1 };
+    for (let i = 2; i <= k; i++) node = { length: 1, children: [node, { length: 1, children: [], leaf: i }] };
+    return { ...node, length: 0 };
+  };
+  const t = compileTree(ladder(12), (leaf) => leaf - 1);
+  const xs = [0.3, 1.1, -0.4, 2.0, 0.9, -1.3, 0.2, 1.7, -0.8, 0.5, 1.4, -0.1];
+  const ys = [1.0, 0.2, 0.7, 1.9, -0.6, -0.9, 0.8, 1.2, 0.1, -0.3, 2.2, 0.4];
+  /** The exact sign-flip p value: every one of the 2^m sign patterns, counted. */
+  const exact = (cx: Float64Array, cy: Float64Array) => {
+    const m = cx.length;
+    const prod = Array.from(cx, (v, i) => v * cy[i]!);
+    const obs = Math.abs(prod.reduce((a, b) => a + b, 0));
+    let hits = 0;
+    for (let mask = 0; mask < 1 << m; mask++) {
+      let s = 0;
+      for (let i = 0; i < m; i++) s += mask & (1 << i) ? prod[i]! : -prod[i]!;
+      if (Math.abs(s) >= obs * (1 - 1e-12)) hits++;
+    }
+    return hits / (1 << m);
+  };
+  test("agrees with exact enumeration of all sign patterns", () => {
+    const { cx, cy } = picContrasts(t, xs, ys);
+    expect(cx.length).toBe(11);
+    const want = exact(cx, cy);
+    const got = signFlipPValue(cx, cy, 40000, 7)!;
+    // Monte Carlo standard error at 40,000 flips is at most 0.0025.
+    expect(Math.abs(got - want)).toBeLessThan(0.01);
+  });
+  test("the contrasts are the ones picFast correlates", () => {
+    const { cx, cy } = picContrasts(t, xs, ys);
+    const fast = picFast(t, xs, ys)!;
+    const viaContrasts = contrastCorrelation(cx, cy)!;
+    expect(viaContrasts.r).toBe(fast.r);
+    expect(viaContrasts.contrasts).toBe(fast.contrasts);
+  });
+  test("one shared contrast does not pass for many: t test rejects, sign flips do not", () => {
+    const m = 30;
+    const cx = new Float64Array(m);
+    const cy = new Float64Array(m);
+    for (let i = 1; i < m; i++) {
+      cx[i] = Math.sin(i * 1.7) * 0.3;
+      cy[i] = Math.cos(i * 2.3) * 0.3;
+    }
+    cx[0] = 5;
+    cy[0] = 5;
+    expect(contrastCorrelation(cx, cy)!.p).toBeLessThan(1e-6);
+    expect(signFlipPValue(cx, cy, 9999, 1)!).toBeGreaterThan(0.4);
+  });
+  test("depends on the sizes of the products, not on their signs or order", () => {
+    const { cx, cy } = picContrasts(t, xs, ys);
+    const p = signFlipPValue(cx, cy, 9999, 42)!;
+    expect(signFlipPValue(cx, cy, 9999, 42)).toBe(p);
+    expect(signFlipPValue(cx, cy.map((v) => -v), 9999, 42)).toBe(p);
+    expect(p).toBeGreaterThan(0);
+    expect(p).toBeLessThanOrEqual(1);
+  });
+  test("no p value without three contrasts or with a constant trait", () => {
+    expect(signFlipPValue([1, 2], [1, 2], 99, 1)).toBeNull();
+    expect(signFlipPValue([1, 2, 3], [0, 0, 0], 99, 1)).toBeNull();
+    expect(signFlipPValue([], [], 99, 1)).toBeNull();
   });
 });
 

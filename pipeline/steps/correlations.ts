@@ -6,7 +6,10 @@ import {
   correlationPValue,
   partialCorrelation,
   pearson,
-  picFast,
+  contrastCorrelation,
+  hashString,
+  picContrasts,
+  signFlipPValue,
   spearman,
 } from "../lib/stats";
 
@@ -26,6 +29,10 @@ export const TRAIT_KEYS: TraitKey[] = [
 
 export const MIN_SCOPE_SPECIES = 20;
 export const MIN_PAIRS = 10;
+/** Sign flips behind pic_signflip_p (docs/PIC_CALIBRATION.md); its smallest possible value is 1 / (reps + 1). */
+export const SIGN_FLIP_REPS = 9999;
+/** Sequential stop (Besag & Clifford 1991): flipping ends once this many flips are at least as extreme. */
+export const SIGN_FLIP_STOP_HITS = 100;
 
 export function traitValue(s: Species, key: TraitKey): number | null {
   return key === "maxLongevityYears" ? s.maxLongevityYears : s.traits[key];
@@ -161,10 +168,12 @@ export function computeCorrelations(
             xa[i] = x;
             ya[i] = y;
           }
-          const pic = picFast(tree, xa, ya);
+          const { cx, cy } = picContrasts(tree, xa, ya);
+          const pic = contrastCorrelation(cx, cy);
           if (pic && Number.isFinite(pic.r)) {
             row.picR = pic.r;
             row.picPValue = pic.p;
+            if (trait === "maxLongevityYears") row.picSignFlipP = signFlipPValue(cx, cy, SIGN_FLIP_REPS, hashString(`${dataset}|${scope.key}|${trait}|${d.key}`), SIGN_FLIP_STOP_HITS);
           }
         }
         block.push(row);

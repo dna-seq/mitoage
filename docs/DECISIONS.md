@@ -202,3 +202,6 @@ manuscript's PIC, Both and All-three counts (3,008, 896, 547) stay as they are.*
   correlations significant on contrasts with the opposite sign, 50 remain under the sign-flip test. Both
   referee panels raised the calibration; the report and its per-test sign-flip p values
   (`docs/analyses/pic-calibration/`) are the answer kept on file.
+- **Both are published (2026-11-15):** asked whether the pipeline can choose the test, the maintainer chose to
+  carry both: "2" (a `pic_signflip_p` column beside `pic_p_value`, so the methods can say both were run). The
+  t test stays the one the counts above use; `pic_signflip_p` is there for every lifespan row to be read beside it.

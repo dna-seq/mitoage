@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **`correlations.parquet` carries a sign-flip p value for the contrast test** (2026-11-15). New column
+  `pic_signflip_p`, beside `pic_p_value`, on every lifespan row of both datasets (null for other traits, as
+  `partial_r` is): the p value of the same contrast correlation from up to 9,999 random sign flips of the
+  contrast products, with a sequential stop (Besag & Clifford 1991). It does not assume normal contrasts of
+  equal variance, which the fish scopes violate (`docs/PIC_CALIBRATION.md`). `default`: 1,253 of 15,904
+  lifespan tests below 0.05 against 3,008 for the t test, and 533 "Both" against 896; the t test remains the
+  published test (D10). The site build takes about 40 s longer. Existing
+  columns are unchanged; the SQLite copy picks the column up at the next `bun run sqlite`. Code:
+  `picContrasts`, `contrastCorrelation` and `signFlipPValue` in `pipeline/lib/stats.ts` (`picFast` now
+  calls the first two), tested against exact enumeration of every sign pattern.
 - **The manuscript has a Discussion and reads as a line of reasoning** (2026-11-15). For the reprioritized
   venues (eLife, Life Science Alliance and MBE share Introduction, Results, Discussion, Materials and methods),
   the Conclusion became a Discussion that carries the caveats taken out of the Results, the published claims

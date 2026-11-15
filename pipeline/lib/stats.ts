@@ -278,17 +278,19 @@ export function compileTree(tree: PhyloNode, indexOfLeaf: (leaf: number) => numb
   return { children, length: Float64Array.from(length), leafIndex: Int32Array.from(leafIndex), root };
 }
 
-/** Same result as picCorrelation, on a compiled tree with NaN marking missing values. */
-export function picFast(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<number>): { r: number; p: number; contrasts: number } | null {
+/**
+ * The standardised contrasts of x and y on a compiled tree (NaN marks a missing value), in post-order.
+ * Same recursion as picCorrelation: polytomies resolved by sequential pairing, two daughters at
+ * distance zero averaged without a contrast.
+ */
+export function picContrasts(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<number>): { cx: Float64Array; cy: Float64Array } {
   const n = t.children.length;
   const has = new Uint8Array(n);
   const vx = new Float64Array(n);
   const vy = new Float64Array(n);
   const extra = new Float64Array(n);
-  let sxy = 0;
-  let sxx = 0;
-  let syy = 0;
-  let m = 0;
+  const cx: number[] = [];
+  const cy: number[] = [];
   for (let i = 0; i < n; i++) {
     const li = t.leafIndex[i]!;
     const kids = t.children[i]!;
@@ -325,12 +327,8 @@ export function picFast(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<numb
         continue;
       }
       const sd = Math.sqrt(sum);
-      const cx = (ax - vx[k]!) / sd;
-      const cy = (ay - vy[k]!) / sd;
-      sxy += cx * cy;
-      sxx += cx * cx;
-      syy += cy * cy;
-      m++;
+      cx.push((ax - vx[k]!) / sd);
+      cy.push((ay - vy[k]!) / sd);
       ax = (ax * v2 + vx[k]! * av) / sum;
       ay = (ay * v2 + vy[k]! * av) / sum;
       av = (av * v2) / sum;
@@ -341,9 +339,89 @@ export function picFast(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<numb
     vy[i] = ay;
     extra[i] = av + t.length[i]!;
   }
+  return { cx: Float64Array.from(cx), cy: Float64Array.from(cy) };
+}
+
+/** Correlation through the origin of two contrast vectors, with its t-test p value (df = m - 1). */
+export function contrastCorrelation(cx: ArrayLike<number>, cy: ArrayLike<number>): { r: number; p: number; contrasts: number } | null {
+  const m = cx.length;
+  let sxy = 0;
+  let sxx = 0;
+  let syy = 0;
+  for (let i = 0; i < m; i++) {
+    sxy += cx[i]! * cy[i]!;
+    sxx += cx[i]! * cx[i]!;
+    syy += cy[i]! * cy[i]!;
+  }
   if (m < 3 || sxx === 0 || syy === 0) return null;
   const r = sxy / Math.sqrt(sxx * syy);
   const df = m - 1;
   const p = Math.abs(r) >= 1 ? 0 : tTestTwoTailed(r * Math.sqrt(df / (1 - r * r)), df);
   return { r, p, contrasts: m };
+}
+
+/** Same result as picCorrelation, on a compiled tree with NaN marking missing values. */
+export function picFast(t: CompiledTree, x: ArrayLike<number>, y: ArrayLike<number>): { r: number; p: number; contrasts: number } | null {
+  const { cx, cy } = picContrasts(t, x, y);
+  return contrastCorrelation(cx, cy);
+}
+
+/** A 32-bit generator (mulberry32): deterministic from its seed. */
+export function mulberry32(seed: number): () => number {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return (t ^ (t >>> 14)) >>> 0;
+  };
+}
+
+/** FNV-1a hash of a string, to seed a generator from what a test is (not from the order tests run in). */
+export function hashString(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) h = Math.imul(h ^ s.charCodeAt(i), 16777619);
+  return h >>> 0;
+}
+
+/**
+ * Two-sided sign-flip p value of the correlation through the origin of two contrast vectors: the signs
+ * of the products cx*cy are flipped at random `reps` times, and p = (1 + flips at least as extreme) /
+ * (reps + 1). Unlike the t test it does not assume the contrasts are normal with equal variance: it keeps
+ * every contrast's size, so one node where both traits change a lot cannot pass for many independent
+ * ones. Null when there are fewer than three contrasts or a trait does not vary.
+ *
+ * With `stopAfterHits` it stops sequentially (Besag & Clifford 1991): once that many flips are at least
+ * as extreme, p = hits / flips done. A large p is then settled in a few hundred flips and only small ones
+ * use all `reps`; the p value stays valid (never below its level under the null more often than allowed).
+ */
+export function signFlipPValue(cx: ArrayLike<number>, cy: ArrayLike<number>, reps: number, seed: number, stopAfterHits = Infinity): number | null {
+  const m = cx.length;
+  if (m < 3) return null;
+  const prod = new Float64Array(m);
+  let obs = 0;
+  let sxx = 0;
+  let syy = 0;
+  for (let i = 0; i < m; i++) {
+    prod[i] = cx[i]! * cy[i]!;
+    obs += prod[i]!;
+    sxx += cx[i]! * cx[i]!;
+    syy += cy[i]! * cy[i]!;
+  }
+  if (sxx === 0 || syy === 0) return null;
+  const thr = Math.abs(obs) * (1 - 1e-12);
+  const next = mulberry32(seed);
+  let hits = 0;
+  for (let r = 0; r < reps; r++) {
+    let s = 0;
+    let bits = 0;
+    for (let i = 0; i < m; i++) {
+      if ((i & 31) === 0) bits = next();
+      s += bits & 1 ? prod[i]! : -prod[i]!;
+      bits >>>= 1;
+    }
+    if (Math.abs(s) >= thr && ++hits >= stopAfterHits) return hits / (r + 1);
+  }
+  return (hits + 1) / (reps + 1);
 }

@@ -29,6 +29,8 @@ export const GET: APIRoute = () => {
     { name: "partial_n", type: "INT32", data: cs.map((c) => c.partialN ?? null) },
     { name: "pic_r", type: "DOUBLE", data: cs.map((c) => n(c.picR)) },
     { name: "pic_p_value", type: "DOUBLE", data: cs.map((c) => n(c.picPValue)) },
+    // Lifespan rows only, like partial_r: the contrast test without the t test's normality (docs/PIC_CALIBRATION.md).
+    { name: "pic_signflip_p", type: "DOUBLE", data: cs.map((c) => n(c.picSignFlipP)) },
   ]);
   return new Response(buf, { headers: { "Content-Type": "application/vnd.apache.parquet" } });
 };
