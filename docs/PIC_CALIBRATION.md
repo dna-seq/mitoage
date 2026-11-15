@@ -37,6 +37,13 @@ across species in the same scopes.
 
 ## How it was checked
 
+**Since the gene-annotation patch (2026-11-15):** the three scopes the African grey parrot's ND6 enters (all species,
+Aves, Psittaciformes) were calibrated again on the patched build, Hugging Face revision 0f4e970, from `f360eea` (Slurm
+array job 6490100, `/data/uq2347/runs/mitoage/nd6-pic/`, committed from haumea as 0335977); their rows of the tables
+below and of the summary are from that run, and the other 29 scopes keep the run of 6489844 described next, whose
+observed values the patch does not change. The ranges stated in the answer hold: Brownian motion 4.77–5.24% (the
+parrots 5.15%, was 5.22%), the shuffled lifespan 29.0% in all species (unchanged) and 11.1% in Aves.
+
 The first runs were made from commit `0d67d1e` on `main`, on haumea (`/data/uq2347/runs/mitoage/pic-check/`), on the
 build before the nine EURING birds (D15). The calibration (2 below) was rerun on the build with them, from `fb54cec`
 (Slurm array job 6489844, `/data/uq2347/runs/mitoage/pic-euring/`), and the scope TSVs, the summary and the tables and
@@ -85,10 +92,10 @@ test, as the species sets of a scope's tests differ little).
 
 | Scope | Tests | p < 0.05 | FDR | PIC | BM null % | Shuffle null % | Sign-flip | PIC + mass | Top share | Garland r |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| all | 1414 | 1175 | 1166 | 565 | 4.96 | 29.0 | 169 | 180 | 0.05 | -0.21 |
+| all | 1414 | 1175 | 1166 | 566 | 4.96 | 29.0 | 168 | 180 | 0.05 | -0.21 |
 | class:Mammalia | 1398 | 954 | 918 | 224 | 4.95 | 9.1 | 198 | 202 | 0.03 | -0.12 |
 | class:Actinopterygii | 1402 | 832 | 769 | 546 | 5.04 | 30.5 | 148 | 141 | 0.08 | -0.33 |
-| class:Aves | 1390 | 684 | 601 | 184 | 4.99 | 11.1 | 83 | 190 | 0.06 | -0.34 |
+| class:Aves | 1390 | 687 | 601 | 184 | 4.99 | 11.1 | 86 | 190 | 0.06 | -0.34 |
 | class:Reptilia | 1403 | 405 | 231 | 94 | 4.93 | 9.0 | 78 | 88 | 0.10 | -0.22 |
 | order:Primates | 204 | 128 | 118 | 12 | 4.80 | 6.5 | 14 | 9 | 0.07 | -0.13 |
 | class:Bivalvia | 1331 | 111 | 0 | 90 | 4.91 | 7.3 | 74 | 0 | 0.19 | -0.32 |
@@ -100,7 +107,7 @@ test, as the species sets of a scope's tests differ little).
 | class:Chondrichthyes | 1368 | 67 | 2 | 585 | 5.24 | 32.7 | 59 | 250 | 0.43 | -0.39 |
 | order:Cypriniformes | 200 | 67 | 45 | 14 | 4.93 | 7.2 | 20 | 19 | 0.08 | -0.31 |
 | order:Acipenseriformes | 197 | 63 | 43 | 78 | 4.96 | 21.5 | 51 | 17 | 0.42 | -0.60 |
-| order:Psittaciformes | 202 | 56 | 35 | 19 | 5.22 | 7.2 | 18 | 10 | 0.15 | -0.39 |
+| order:Psittaciformes | 202 | 58 | 36 | 20 | 5.15 | 7.4 | 17 | 11 | 0.15 | -0.39 |
 | order:Siluriformes | 197 | 56 | 16 | 23 | 4.81 | 8.1 | 25 | 10 | 0.20 | -0.02 |
 | order:Pleuronectiformes | 203 | 53 | 11 | 10 | 4.96 | 4.2 | 15 | 12 | 0.20 | -0.44 |
 | order:Cetacea | 198 | 52 | 12 | 6 | 4.96 | 6.6 | 10 | 3 | 0.17 | 0.13 |

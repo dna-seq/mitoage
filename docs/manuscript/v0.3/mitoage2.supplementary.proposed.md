@@ -807,7 +807,9 @@ feature, it rejects 22–33% in the fish scopes and 29.0% in all species, agains
 test is calibrated under Brownian motion. Because a shuffled trait has no relation to the tree, the shuffle does not estimate the test's false-positive rate for the observed traits; it shows how far the test departs from its nominal level when a trait does not evolve along the tree.
 
 <!-- src: docs/PIC_CALIBRATION.md "Answer", "Per scope" (BM null %, Shuffle null %); job 6489844 on haumea
-from commit fb54cec (the build with the EURING birds); the first run, job 6486136 from 0d67d1e, gave 4.75–5.30%,
+from commit fb54cec (the build with the EURING birds), with all species, Aves and Psittaciformes calibrated again on
+the build with the parrot's ND6 (job 6490100 from f360eea, revision 0f4e970: the same 4.77–5.24% and 29.0%); the
+first run, job 6486136 from 0d67d1e, gave 4.75–5.30%,
 29.1% and 9.1% -->
 
 **Why the fish scopes over-reject.** In the cartilaginous fishes (Chondrichthyes and its order Rajiformes) and in Clupeiformes, one pair of sister species carries

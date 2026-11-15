@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The PIC calibration covers the patched build** (2026-11-15): all species, Aves and Psittaciformes calibrated again
+  on revision 0f4e970 (array job 6490100 from f360eea, committed from haumea as 0335977); the other 29 scopes are
+  unchanged by the patch. Brownian-motion rates stay in 4.77–5.24% and the shuffled rate in all species at 29.0%, so
+  round v0.3's S10.6 keeps its numbers; `docs/PIC_CALIBRATION.md` gives the three rows and the run.
+
 - **The reproduction, the audit and the sources snapshot cover the EURING birds** (2026-11-15). mitoage-pipelines
   (bb5d70d) reads the EURING PDF with its own parser and, from a fresh data folder, matches the build with the
   EURING birds (Hugging Face f75bdc9) in all 5,328,755 values, the 28 alignments and the dated tree; it does not

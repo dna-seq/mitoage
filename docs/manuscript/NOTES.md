@@ -96,6 +96,10 @@ and reptiles, and every mammal, fish and reptile row of H8 and H12, so the repti
 above. The mammal column screen differs only in its ND6 rows, whose column indices the realignment renumbered (344 rows,
 results identical). Bird COX2 hydropathy passes under the gene's own composition (q = 0.045, was 0.056) and with mass
 only, not under the primary model (q = 0.085); the text, which reports the primary model, is unchanged there.
+The PIC calibration of the three scopes the parrot enters (all species, Aves, Psittaciformes) ran again on revision
+0f4e970 (array job 6490100 from f360eea, committed from haumea as 0335977; `docs/PIC_CALIBRATION.md`): the Brownian-motion
+rates stay within 4.77–5.24% (Psittaciformes 5.15%, was 5.22%) and the shuffled-lifespan rate in all species at 29.0%, so
+S10.6's text is unchanged; its source note names the job.
 
 **Nothing is still from the build before EURING (2,335 species).** The reproduction in mitoage-pipelines reads the EURING list since bb5d70d and matches the build with the
 EURING birds (f75bdc9) in all 5,328,755 values, the 28 alignments and the tree; it does not yet apply D17's gene
