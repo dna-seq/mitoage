@@ -253,7 +253,7 @@ pin rather than split the repository across two versions, so both move together 
 
 ## RM22 — Calibrated counts, power and a like-for-like comparison with release 1
 
-**State:** open; PGLS submitted on haumea (D18); A1 can start from the EURING calibration (b6c6ec6); one question to the maintainer · **Owner:** lead
+**State:** open; PGLS done (D18, `docs/analyses/pgls/`), how it enters Table 3 is open; A1 can start from the EURING calibration (b6c6ec6); one question to the maintainer · **Owner:** lead
 
 The v0.3 skeptic's verdict: the counts come from an uncalibrated test, the negative reading has no power
 estimate, and the question the paper poses (how much of the loss drift causes) is not answered. The plan is in

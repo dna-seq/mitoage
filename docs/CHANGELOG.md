@@ -4,6 +4,17 @@ Newest first.
 
 ## Unreleased
 
+- **PGLS over every lifespan test, from haumea** (2026-11-15, D18, RM22): array job 6490080 from f360eea, tables in
+  `docs/analyses/pgls/`. At λ = 1 it reproduces the table's contrast p value on all 15,906 tests.
+  - **Totals:** 893 of the 4,296 FDR-passing correlations pass PGLS with the same sign (the contrast t test's
+    "Both": 900); 430 pass with body mass in the model (PIC + mass: 393).
+  - **Different tests behind the totals:** mammals 260 against 164, all species 232 against 292, ray-finned
+    fishes 148 against 221.
+  - **Null scopes:** where nothing passes the FDR across species, PGLS rejects about 5% (Chondrichthyes 75 of
+    1,368, against 585 for the contrast t test), except Rajiformes (12.6%) and Clupeiformes (22%).
+
+  How it enters Table 3 is the maintainer's to decide; the manuscript is unchanged.
+
 - **The published cybrids against our contact scores** (2026-11-15, RM11, H16): `docs/ANALYSIS_FINDINGS.md` gains
   H16. Its code, measurement table and result tables are in `dna-seq/mitoage-pipelines` at 0b1c5e8 (`mitoport
   cybrid`, `results/h16/`). The ROADMAP's RM11 no longer lists the calibration as open and names the interface
