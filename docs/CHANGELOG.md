@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Build 2 uploaded to Hugging Face with `mitoage.sqlite`, and the MCP server pinned to it** (D9):
+  dataset revision `c525adbff8c12b19981fdada7f1615c2559b7140`,
+  the file 113,618,944 bytes, SHA-256 `b4f7dd75f5b11321ef8131c669d179ba928023ae4a71fd880dabd842ad11363f`,
+  checked against the hub's own LFS digest. `mcp/src/dataset.ts` names all three, so `npx mitoage-mcp`
+  now downloads and runs with nothing set; verified from an empty cache, which fetched the file,
+  matched the digest and answered. `cacheDir` follows `XDG_CACHE_HOME` only when it is absolute: a
+  relative value would put 114 MB under whatever directory the client started the server in, and
+  whether a copy was cached would depend on the working directory rather than on the pin.
+
 - **An experimental MCP server, `mcp/`, published as `mitoage-mcp`** (D8): the build as tools for a
   language-model agent, over stdio. `bun run sqlite` writes `out/hf/mitoage.sqlite` (114 MB, one table
   per download plus the correlations, each table checked against the parquet it came from by row count

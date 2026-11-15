@@ -239,15 +239,17 @@ two orders in the species table (Balaenidae, Delphinidae and Monodontidae appear
 and Cetacea), so a taxon page or a per-order statistic splits them. Which source gives which, and the rule
 that makes them one, are not looked at yet.
 
-## RM20 — Pin the MCP server to the uploaded build and release it
+## RM20 — Release mitoage-mcp to npm
 
-**State:** open; blocked on the upload · **Owner:** maintainer
+**State:** open; the upload and the pin are done (D9), the tag is not · **Owner:** maintainer
 
-`mcp/src/dataset.ts` has `revision: null`, so the server starts only with `MITOAGE_DB` or
-`MITOAGE_REVISION` set, and the release workflow refuses to publish. After `bun run hf` and
-`bun run sqlite`, upload `out/hf/` (D6; the folder now holds `mitoage.sqlite` too), then put the
-dataset's commit SHA and the file's SHA-256 into `dataset.ts`, and tag `mcp-v0.1.0`. The npm name
-`mitoage-mcp` was free on 2026-11-15 and is not reserved; `NPM_TOKEN` has to be a repository secret.
+Build 2 is on Hugging Face at revision `c525adbff8c12b19981fdada7f1615c2559b7140` with
+`mitoage.sqlite`, and `mcp/src/dataset.ts` names that revision and the file's SHA-256, so the server
+runs with nothing set. What is left is the release itself: add `NPM_TOKEN` as a repository secret, then
+`git tag mcp-v0.1.0 && git push origin mcp-v0.1.0`. The workflow checks that the tag matches the
+version and that the revision is a full commit SHA before it publishes. The npm name `mitoage-mcp` was
+free on 2026-11-15 and is not reserved. Once it is published, add it to the manuscript's numbered
+references beside 40-42, which was left out while the URL would have 404ed.
 
 ## RM21 — `deploy.yml` is two majors behind on `actions/checkout`
 

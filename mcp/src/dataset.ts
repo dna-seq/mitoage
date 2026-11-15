@@ -23,10 +23,10 @@ export interface DatasetPin {
 
 export const DATASET: DatasetPin = {
   repo: "longevity-genie/mitoage",
-  revision: null,
+  revision: "c525adbff8c12b19981fdada7f1615c2559b7140",
   file: "mitoage.sqlite",
-  sha256: null,
-  build: null,
+  sha256: "b4f7dd75f5b11321ef8131c669d179ba928023ae4a71fd880dabd842ad11363f",
+  build: "2 (2026-11-13)",
 };
 
 export const downloadUrl = (pin: DatasetPin, revision: string): string =>

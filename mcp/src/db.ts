@@ -11,13 +11,20 @@ import { createHash } from "node:crypto";
 import { createWriteStream, existsSync, mkdirSync, renameSync, rmSync, statSync } from "node:fs";
 import { once } from "node:events";
 import { homedir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { DATASET, downloadUrl, type DatasetPin } from "./dataset.js";
 
-/** Where a downloaded database is kept: one folder per revision, so two pins never collide. */
+/**
+ * Where a downloaded database is kept: one folder per revision, so two pins never collide.
+ *
+ * `XDG_CACHE_HOME` is honoured only when it is absolute. A relative value would put the download
+ * under whatever directory the client happened to start the server in, and whether a copy is already
+ * cached would depend on the working directory rather than on the pin.
+ */
 export function cacheDir(pin: DatasetPin, revision: string, env: NodeJS.ProcessEnv = process.env): string {
-  const base = env["XDG_CACHE_HOME"] ?? join(env["HOME"] ?? homedir(), ".cache");
+  const configured = env["XDG_CACHE_HOME"];
+  const base = configured !== undefined && configured !== "" && isAbsolute(configured) ? configured : join(env["HOME"] ?? homedir(), ".cache");
   return join(base, "mitoage-mcp", revision, pin.repo.replace("/", "_"));
 }
 

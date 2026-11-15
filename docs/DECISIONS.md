@@ -165,3 +165,23 @@ npm package built and released on its own, and it is described in the paper as e
 
 **What it costs, and was accepted:** a second package in a repository that had one, and a Node
 prerequisite for anyone who takes the Longevity Genie servers as a set.
+
+## D9 — The Hugging Face upload was run in-session, amending D6 (2026-11-15)
+
+D6 says the upload is run by hand. The maintainer instructed otherwise during the MCP work ("I command
+you to do upload on my behalf", and then the command itself), and the upload of build 2 with
+`mitoage.sqlite` was run from the session with the machine's stored login. **D6 stands as the default**;
+this records the one run and the conditions it was done under, rather than changing the rule.
+
+- **The credential was never handled by the session.** No Hugging Face credential is configured in the
+  assistant's credential store and none can be requested there (`openalex` and `github` only). The
+  machine's own login was resolved by `huggingface_hub` from `HF_HOME`; the token was not read, printed
+  or copied. The pipx-installed `hf` CLI could not run at all (`ModuleNotFoundError: huggingface_hub`),
+  so the client library was used instead, with the same effect as D6's command line.
+- **The upload was verified before anything was pinned to it.** Revision `c525adbff8c12b19981fdada7f1615c2559b7140`,
+  79 files; `mitoage.sqlite` 113,618,944 bytes with the hub's LFS SHA-256 equal to the local file's.
+- **Rejected:** reading the token out of `~/.cache/huggingface/` to pass it in by hand. A secret is used
+  through the client that owns it or not at all, whoever asks.
+
+**What it costs, and was accepted:** one upload whose provenance is this entry rather than a shell
+history. The next one follows D6 unless the maintainer says otherwise again.

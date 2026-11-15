@@ -11,12 +11,12 @@
 import { expect, test } from "bun:test";
 import { mkdtempSync, readFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { isAbsolute, join } from "node:path";
 import { DatabaseSync } from "node:sqlite";
 import { readParquet, type Row as ParquetRow } from "../../pipeline/lib/parquet";
 import { writeBuildInfo, writeTable } from "../../pipeline/sqlite";
 import type { BuildInfo } from "../../src/data/schema";
-import { resolveDatabase } from "../src/db.js";
+import { cacheDir, resolveDatabase } from "../src/db.js";
 import {
   buildFacts,
   correlation,
@@ -223,6 +223,19 @@ test("build_info names the build and counts every table the database holds", () 
   expect(facts.tables.find((t) => t.table === "species")!.rows).toBe(species.length);
   expect(facts.tables.find((t) => t.table === "region_stats")!.rows).toBe(regions.length);
   expect(facts.sources.length).toBe((BUILD_INFO.sources ?? []).length);
+});
+
+test("the cache is an absolute folder, and a relative XDG_CACHE_HOME is not followed", () => {
+  const pin = { repo: "longevity-genie/mitoage", revision: null, file: "mitoage.sqlite", sha256: null, build: null };
+  const rev = "c525adbff8c12b19981fdada7f1615c2559b7140";
+  const absolute = cacheDir(pin, rev, { HOME: "/home/someone", XDG_CACHE_HOME: "/var/cache/mine" } as NodeJS.ProcessEnv);
+  expect(absolute).toBe(`/var/cache/mine/mitoage-mcp/${rev}/longevity-genie_mitoage`);
+  // A relative value would put 114 MB wherever the client started the server, so it is ignored.
+  const relative = cacheDir(pin, rev, { HOME: "/home/someone", XDG_CACHE_HOME: "./.cache" } as NodeJS.ProcessEnv);
+  expect(relative).toBe(`/home/someone/.cache/mitoage-mcp/${rev}/longevity-genie_mitoage`);
+  expect(isAbsolute(relative)).toBe(true);
+  const unset = cacheDir(pin, rev, { HOME: "/home/someone" } as NodeJS.ProcessEnv);
+  expect(unset).toBe(relative);
 });
 
 test("without a pin and without MITOAGE_DB the server refuses, and says what to set", async () => {
