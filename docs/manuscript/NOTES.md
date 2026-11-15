@@ -40,25 +40,30 @@ per line, so two builds can be compared with `diff`; on the build before EURING 
 text then printed. `--s1` writes Supplementary Table S1. Figures 1 and 2 were redrawn and Figures 3 to 5 recaptured
 from that build.
 
-Data availability and reference 40 pin the build with the EURING list as Hugging Face revision
+Until the gene-annotation patch, Data availability and reference 40 pinned the build with the EURING list as Hugging Face revision
 f75bdc9b812d7845d2ccb24a49643d88d00d57b5 (2026-11-15): its eight data files have the same SHA-256 as `public/data/` at
 725da08, and a site build of main after it reproduces Table 3 (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550 / 393, and 535
 by the sign-flip test). The correlation code is unchanged between 725da08 and that build.
 
-**The gene-annotation patch moves a few of them** (2026-11-15, after fb54cec; `docs/CHANGELOG.md`). The African grey
-parrot gains its ND6, which its record leaves unannotated, so the ND6 features gain one bird. `numbers.ts` on the
-build with the patch, against fb54cec, changes these and nothing else. Round v0.3 pins revision f75bdc9 (above), which
-has no patch, so its printed values stay right for the build it cites; they differ from main's build from here on:
+**Since the gene-annotation patch (2026-11-15), the round cites the patched build:** `dna-seq/mitoage` at 03c0949,
+Hugging Face revision 0f4e970554b2fe0265e718321f422347293dde17 (D17; its files checked one by one against the local
+copies). The patch adds the African grey parrot's ND6, which its record leaves unannotated, and flags every other missing
+gene with its reason; the maintainer: "Move v0.3 now". `numbers.ts` on the patched build, against fb54cec, changes these
+and nothing else, and the text, Table 3, Supplementary Table S1 and Figure 1 now print the new values:
 - funnel, default dataset: p < 0.05 5,436 → 5,441, FDR 4,295 → 4,296, PIC 3,023 → 3,025. Both (900), All three (550),
   PIC + mass (393) and the sign-flip "Both" (535) are unchanged;
-- funnel, AnAge-only dataset: p < 0.05 4,960 → 4,964, FDR 4,068 → 4,069, Both 659 → 658, sign-flip 502 → 501;
-- Table 3 rows: all species PIC 565 → 566; Aves p < 0.05 684 → 687; Psittaciformes 56 / 35 / 19 → 58 / 36 / 20;
+- funnel, AnAge-only dataset: FDR 4,068 → 4,069, Both 659 → 658, sign-flip 1,017 → 1,016 tests and 502 → 501 "Both";
+  sign-flip in the default dataset 1,269 → 1,267;
+- Table 3 rows: all species PIC 565 → 566; Aves p < 0.05 684 → 687; S1's Psittaciformes 56 / 35 / 19 → 58 / 36 / 20;
 - all-species FDR correlations significant on contrasts with the opposite sign: 202 → 203 under the t test and
-  49 → 48 under the sign-flip test (keys `all.fdr.picOppositeSign.t` and `.flip`);
-- species in canonical orientation 2,205 → 2,206 (non-canonical 16 → 15), major arc defined 1,915 → 1,916;
-  changelog rows 14,428 → 14,429 (corrections 1,639 → 1,640);
-- the PIC calibration run on haumea from fb54cec (b6c6ec6) predates the patch; of its scopes, all species, Aves and
-  Psittaciformes gain the parrot's ND6.
+  49 → 48 under the sign-flip test (S10.6);
+- canonical orientation 2,205 → 2,206 (non-canonical 16 → 15), major arc defined 1,915 → 1,916 (S3);
+  changelog rows 14,428 → 14,429 (corrections 1,639 → 1,640).
+Figure 2 was redrawn and shows the same nineteen codons. Figure 5 was recaptured from the site build of 03c0949: its panel B
+counts 495 features with q < 0.05 and contrast p < 0.05 of either sign (was 494; the text and S10.7 follow), and the
+GRAVY row's q is 6.6 × 10⁻⁵⁸ (was 5.5 × 10⁻⁵⁸). Figures 3 and 4 (the species list and tree, COX1 in mammals) are not
+touched by the patch and were not recaptured. The cluster runs below were repeated on
+revision 0f4e970 (see "Rerun on the patched build").
 
 **Rerun on the build with EURING (2026-11-15):** the worked analyses of mitoage-pipelines (Table 4 and the
 generation-time models, the amino-acid example, the site screen, repeats and motifs, the rate test, H11 and H12) ran
@@ -81,6 +86,17 @@ records), and the S10.6 note on rows the cluster computes alone gave 3,958, whic
 same numbers: H11 at 500e1d2, H1, H2, H7 and H12 at 35ae7ae (earlier values in parentheses; H12's second round and
 H2's power calculation were not rerun).
 
+**Rerun on the patched build (2026-11-15):** the same job on revision 0f4e970 (`slurm/manuscript-rerun.sbatch`,
+code of 2ee27a1, Slurm job 6490079; tables, log and the comparison with `results/euring/` in `results/nd6-patch/` of
+mitoage-pipelines at fbb3798). Its inputs equal `public/data/` at 03c0949 byte for byte. With all 13 proteins the parrot
+enters every bird set: birds 381 → 382 (H1, H12), the rate test 1,371 → 1,372 species and 339 → 340 cherries (24.1%
+saturated, was 24.2%), the bird column screen 2,738 → 2,742 tests. The same tests pass everywhere; H12's bird contact
+result is −0.016 (−0.039 to +0.007, q = 0.17), was −0.015 (q = 0.20). Byte-identical: H11's tables, H1 in mammals, fishes
+and reptiles, and every mammal, fish and reptile row of H8 and H12, so the reptile contact result (q = 0.046) stands as
+above. The mammal column screen differs only in its ND6 rows, whose column indices the realignment renumbered (344 rows,
+results identical). Bird COX2 hydropathy passes under the gene's own composition (q = 0.045, was 0.056) and with mass
+only, not under the primary model (q = 0.085); the text, which reports the primary model, is unchanged there.
+
 **Still from the build before EURING (2,335 species):**
 - the reproduction in mitoage-pipelines (`docs/BUILD2_REPRODUCTION.md`, 5,302,404 identical values) and the Python
   audit's cross-check, which do not read the EURING list: the text says so where it reports them;
@@ -102,7 +118,7 @@ H2's power calculation were not rerun).
 | 192 tests, cross-check (1,413 = 1,413; 99.0% of 3,325 keys) | `docs/BUILD2_REPORT.md`, "Commands" and "Cross-check with the audit" |
 | Table 3, the funnel (15,906 / 5,436 / 4,295 / 3,023 / 900 / 550), AnAge-only (4,068 / 659), every r and p in "What the controls change" | `dist/data/correlations.parquet` rebuilt 2026-11-15 after the empty-order scope was dropped from `buildScopes` (IC-8), trait `maxLongevityYears`, dataset `default`; the counts were made in an analysis session, not by the pipeline (IC-15 asks the build report to emit them). The earlier funnel (13,947 / 4,851 / 3,854 / 2,577 / 770 / 472) was computed before the repeat, motif, fourfold and hydropathy features joined the feature catalogue at e3d99b2 and so shared the Benjamini-Hochberg pool; it is reproducible from the rebuilt table by restricting to the classic feature families. |
 | Codon third-position pattern (8 U-ending down, 7 C-ending up; UGC no longer passes with the EURING birds) | same file: scope `all`, features `codon:total_pc:*` with q < 0.05, PIC p < 0.05 with the same sign, and partial p < 0.05 |
-| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` `results/euring/` at e1b862b (run of 2ee27a1 on fb54cec; mammals as first run at da0c112): `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
+| Example (threonine, cysteine, methionine, the site screen) | `dna-seq/mitoage-pipelines` `results/nd6-patch/` at fbb3798 (run of 2ee27a1 on 0f4e970; `results/euring/` at e1b862b for fb54cec; mammals as first run at da0c112): `aa_pgls.<Class>.tsv` from `mitoage longevity aa-pgls` (H1, method `pgls`, model `mass+composition`; the mixed-model count from method `mixed`), H2 from `pgls.Mammalia.tsv`; `docs/HYPOTHESES.md` |
 | Reproduction: all 5,302,404 values of the seven tables, the 28 alignment files and the dated tree come out identical | `dna-seq/mitoage-pipelines`, `docs/BUILD2_REPRODUCTION.md` at 3550281 (origin/main), "How far it reproduces" |
 | 485 of the 550 "All three" keep the sign of the correlation across species in the partial correlation (65 reverse); the partial is positive for UGG and GGG | `dist/data/correlations.parquet` as above: `sign(partial_r) == sign(pearson_r)` among the "All three" rows |
 | Partial-correlation sample 1,386 of 2,211 (235 of 827 ray-finned fishes); whole-genome GC within classes, r and partial r (Mammalia 0.47 / 0.40, Actinopterygii 0.034 / −0.14 with p = 0.04, Aves 0.027 / 0.05, Reptilia 0.006 / −0.01) | same file: `partial_n`, feature `gc:total_mtDNA`, scope `all` and the class scopes |
@@ -125,7 +141,8 @@ keeps Table 3, the pipeline's report should emit it, so the manuscript can cite 
 Every number in this subsection was first computed from mitoage-pipelines main at 22cb140, run on build 2's species
 table, the dated tree and the quality filter, with the motif features from this repository's pipeline, merged into
 main at e3d99b2. Each is unchanged on the build with the EURING birds (`results/euring/` at e1b862b, where the bird
-rows of the motif table move and none passes; the rate test's cherries come from 1,371 species instead of 1,369).
+rows of the motif table move and none passes; the rate test's cherries come from 1,371 species instead of 1,369) and on
+the patched build (`results/nd6-patch/` at fbb3798: 340 cherries from 1,372 species, the same four tests pass).
 
 | Number in the draft | Where it comes from |
 | --- | --- |
@@ -134,7 +151,7 @@ rows of the motif table move and none passes; the rate test's cherries come from
 | p = 0.67 and p = 0.45 after the controls | same rows, column `p` (phylogenetic GLS with body mass and fourfold composition, Pagel's lambda) |
 | 132 tests in four classes, none passes; smallest q = 0.16 | `motif_pgls.tsv` row count, `q` column |
 | contact-zone inverted pairs, mammals, r = -0.18 (p = 8 x 10^-6, n = 602), p = 0.03 after controls | same table, `contact_zone_inverted_pairs` |
-| 339 sister pairs | `rate_contrasts.tsv`, rows with `gene == CONCAT` |
+| 340 sister pairs (339 before the parrot's ND6) | `rate_contrasts.tsv`, rows with `gene == CONCAT` |
 | mammals p = 0.02, q = 0.15 | `rates.tsv`, class Mammalia, gene CONCAT, normalisation `dS_mass_adj`, `includes_saturated` false |
 | four of 655 single-gene tests pass and disagree in sign | `rates.tsv`: 655 rows, 4 with q < 0.05 (ND6 all species -0.219; Mammalia ND5 +0.220; Aves CYTB -0.021; Mammalia ND2 dN -0.017) |
 | one record states a sequencing technology; 1,773 name a source INSDC accession | `assembly_provenance.tsv` from the haumea run of 2026-11-14 (`/data/uq2347/runs/mitoage/gaps/motifs/`) |

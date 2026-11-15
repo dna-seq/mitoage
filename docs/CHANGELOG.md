@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 cites the patched build** (2026-11-15, the maintainer: "Move v0.3 now"): Hugging Face revision 0f4e970,
+  `dna-seq/mitoage` 03c0949, in the opening note, Data availability and reference 40. Materials and methods say how a
+  missing protein gene is handled (flagged with its reason; the parrot's ND6 added). The numbers that move: the funnel
+  5,441 / 4,296 / 3,025 (900, 550, 393, 535 unchanged), Table 3's all-species PIC 566 and Aves p < 0.05 687, the
+  AnAge-only and sign-flip counts, S3's orientation and major-arc counts, the changelog's 14,429 rows, Figure 5B's 495;
+  Supplementary Table S1 rewritten (`numbers.ts --s1`), Figures 1 and 2 redrawn and Figure 5 recaptured. The
+  mitoage-pipelines analyses ran again on the patched build (haumea job 6490079, code of 2ee27a1; `results/nd6-patch/`
+  at fbb3798 there): birds 382, 340 cherries from 1,372 species, the bird contact result −0.016 (q = 0.17); the same tests
+  pass and H11 is byte-identical. `docs/manuscript/NOTES.md` lists every change.
+
 - **PGLS over every lifespan test, from haumea** (2026-11-15, D18, RM22): array job 6490080 from f360eea, tables in
   `docs/analyses/pgls/`. At λ = 1 it reproduces the table's contrast p value on all 15,906 tests.
   - **Totals:** 893 of the 4,296 FDR-passing correlations pass PGLS with the same sign (the contrast t test's

@@ -306,7 +306,7 @@ We chose to report every count on the strand as deposited, and not to convert al
 strand. The reason is that the heavy strand cannot be identified from every record. RefSeq does not fix
 which strand is deposited. We call a record's orientation canonical when it is a chordate record with all
 13 protein genes, every copy of ND6 on the minus strand and every other protein gene on the plus strand;
-the plus strand is then the light strand. Of the 2,344 species, 2,205 have canonical records, 16 are
+the plus strand is then the light strand. Of the 2,344 species, 2,206 have canonical records, 15 are
 chordates with another layout, 104 are not chordates, for which this heavy and light notation is not
 defined, and 19 have no record. A heavy-strand convention would have needed a guess for 120 of them.
 
@@ -391,7 +391,7 @@ Systematic corrections are logged once, as rules, instead of once per affected r
 base labels (S5), the counting of genes annotated in pieces over their annotated pieces only (the ND3 of
 birds and turtles carries an untranslated frameshift nucleotide that the 2015 counts included), the
 regions release 1 lacked although the records it cited annotate them, and the exclusion of the 923rd
-species. The changelog has 14,428 rows (main text).
+species. The changelog has 14,429 rows (main text).
 
 **Renames and status.** Names follow NCBI only. The NCBI name of a species replaces its release-1 name
 when the change is a genus transfer, a change of spelling or gender of the epithet, or both, and the old
@@ -505,9 +505,9 @@ tRNA-Asn (the light-strand origin lies between tRNA-Asn and tRNA-Cys) forward al
 base before the first control region downstream of CYTB, the control region excluded. It is defined
 only for canonical records with single copies of tRNA-Asn, COX1 and CYTB that do not span the origin and
 that come in the circular order tRNA-Asn, COX1, CYTB, control region; otherwise it is left empty. It is
-defined for 1,915 of the 2,344 species. Its length is a feature of its own.
+defined for 1,916 of the 2,344 species. Its length is a feature of its own.
 
-<!-- src: pipeline/steps/extended.ts:115-154 (majorArc); public/data/README.md "Data notes" (1,915 of 2,344) -->
+<!-- src: pipeline/steps/extended.ts:115-154 (majorArc); public/data/README.md "Data notes" (1,916 of 2,344) -->
 
 **Deletion contact zones.** Most human mitochondrial deletions are flanked by repeats with one arm in
 each of two regions, given in human work as roughly 6 to 9 kb and 13 to 16 kb. Kilobase coordinates do
@@ -834,13 +834,13 @@ least as far from zero as the observed one. Up to 9,999 flips are drawn, seeded 
 and feature, and the count stops once 100 flips are at least as extreme (Besag and Clifford, 1991), so
 the smallest possible value is 1/10,000. The test keeps the size of every contrast, so it assumes only that the contrasts are independent and symmetric about zero; the t test also assumes
 them normal with equal variance. That is a weaker assumption, but still one, and the sign-flip test was not itself put through
-the simulations above. In the default dataset it gives 1,269 of the 15,906 lifespan tests below 0.05,
-against 3,023 for the t test, and 535 "Both" against 900. Where the data fit the model the two tests
+the simulations above. In the default dataset it gives 1,267 of the 15,906 lifespan tests below 0.05,
+against 3,025 for the t test, and 535 "Both" against 900. Where the data fit the model the two tests
 agree, and where one node dominates they do not: in the cluster run, Mammalia gives 198 against 224 (Both
 154 against 164), Chondrichthyes 59 against 585 and Rajiformes 4 against 74. Among the correlations in all
-species that pass the false discovery rate, 202 are significant on contrasts with the opposite sign under
-the t test and 49 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,017 of
-13,380 tests below 0.05, and 502 "Both" against 659. Other traits have no sign-flip value.
+species that pass the false discovery rate, 203 are significant on contrasts with the opposite sign under
+the t test and 48 under the sign-flip test. In the AnAge-only dataset the sign-flip test gives 1,016 of
+13,380 tests below 0.05, and 501 "Both" against 658. Other traits have no sign-flip value.
 
 <!-- src: docs/DECISIONS.md D10; pipeline/steps/correlations.ts:32-33, 176 (SIGN_FLIP_REPS = 9999, seed);
 pipeline/lib/stats.ts:399-427 (signFlipPValue); docs/PIC_CALIBRATION.md "What could be done" 1 (1,253, 533;
@@ -856,10 +856,10 @@ carried through the contrast recursion above on the species of the scope that ha
 lifespan contrast correlation is computed with the mass contrasts partialled out, through the origin:
 (r_xy − r_xz r_yz) / √((1 − r_xz²)(1 − r_yz²)), each r a correlation through the origin of two contrast
 vectors. Its p value is two-tailed, from the t distribution with m − 2 degrees of freedom. As for the
-partial correlation across species, a scope needs at least 10 species with a weight. Among the 4,295
+partial correlation across species, a scope needs at least 10 species with a weight. Among the 4,296
 correlations of the default dataset that pass the false discovery rate, 393 are significant on it with the
 same sign (Table 3, PIC + mass), against 900 for the contrast test without mass; 283 of the 393 also pass
-the partial correlation across species. In the AnAge-only dataset the same count is 374 of 4,068. The
+the partial correlation across species. In the AnAge-only dataset the same count is 374 of 4,069. The
 values reproduce the cluster run's to the precision it printed (largest difference in r 5 × 10⁻⁹, all
 11,948 rows that both compute), and the counts are the same. The test uses the t distribution and has
 the same problem in the fish scopes as the contrast test without mass, so its sign-flip p value is not
@@ -904,24 +904,24 @@ scopes they are taken. All are for maximum lifespan in the default dataset:
 | Count | Scopes | What it counts |
 |-----------:|----------------------|------------------------------------------------------------------|
 | 15,906 | all 32, summed | lifespan tests |
-| 5,436 | all 32, summed | tests with p < 0.05 across species |
-| 4,295 | all 32, summed | tests with q < 0.05 |
-| 3,023 | all 32, summed | tests with contrast p < 0.05, of either sign, whether or not they pass the false discovery rate |
+| 5,441 | all 32, summed | tests with p < 0.05 across species |
+| 4,296 | all 32, summed | tests with q < 0.05 |
+| 3,025 | all 32, summed | tests with contrast p < 0.05, of either sign, whether or not they pass the false discovery rate |
 | 900 | all 32, summed | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
 | 550 | all 32, summed | the 900, and partial p < 0.05 of either sign ("All three") |
 | 485 | all 32, summed | of the 550, those whose partial correlation keeps the sign of r |
 | 1,166 | all species only | q < 0.05 |
-| 494 | all species only | q < 0.05, and contrast p < 0.05 of either sign (the plot explorer, Figure 5B) |
+| 495 | all species only | q < 0.05, and contrast p < 0.05 of either sign (the plot explorer, Figure 5B) |
 | 292 | all species only | q < 0.05, and contrast p < 0.05 with the same sign ("Both" in Table 3) |
 | 238 | all species only | "All three" |
-| 1,269 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, reported beside the t-test counts, which the funnel and Table 3 use) |
+| 1,267 | all 32, summed | sign-flip p < 0.05 (`pic_signflip_p`; published beside the t test, reported beside the t-test counts, which the funnel and Table 3 use) |
 | 535 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
 | 393 | all 32, summed | q < 0.05, and p < 0.05 with the same sign on contrasts with body mass partialled out ("PIC + mass" in Table 3) |
 
 <!-- src: docs/manuscript/v0.2/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
 come from" and "Figures" (496 vs 291) -->
 
-So 900 and 292 apply the same rule, to 32 overlapping scopes and to one; 494 and 292 apply different
+So 900 and 292 apply the same rule, to 32 overlapping scopes and to one; 495 and 292 apply different
 rules to the same scope, the explorer not requiring the same sign; and 550 adds the body-mass control to
 the 900. The pipeline does not write these counts; they were made from the correlation table in an analysis session.
 The script that draws Figure 1 recomputes Table 3 from the same table and refuses to draw if any count
@@ -1042,7 +1042,7 @@ protein evolution. All four are in `mitoage-pipelines`, each run by one command,
 design. They use the species of the default dataset (S10.1) that have a body mass and a tip in the dated
 tree. They use the dated tree of S9 and never a tree built from the genes. Most models that test
 lifespan include body mass and base composition at fourfold-degenerate sites, the latter as a measure
-of mutational pressure; each section below names the covariates of its own models. The amino-acid regression and the column screen were first run from `mitoage-pipelines` at commit da0c112 on dataset revision 6efa0959, and the repeat, motif and rate analyses at commit 22cb140. Two further analyses reported in the main text, of the slow life history (S12.6) and of the proteins' structural features (S12.7), were run later from commit 858974b; in the first, composition is the response rather than a covariate. All six were rerun together on 2026-11-15 from commit 2ee27a1 (`slurm/manuscript-rerun.sbatch`, Slurm job 6489877) on the build with the nine EURING birds, and the numbers reported here are from that run (`results/euring/` of the analysis repository, which lists every change against the build before).
+of mutational pressure; each section below names the covariates of its own models. The amino-acid regression and the column screen were first run from `mitoage-pipelines` at commit da0c112 on dataset revision 6efa0959, and the repeat, motif and rate analyses at commit 22cb140. Two further analyses reported in the main text, of the slow life history (S12.6) and of the proteins' structural features (S12.7), were run later from commit 858974b; in the first, composition is the response rather than a covariate. All six were rerun together on 2026-11-15 from commit 2ee27a1 (`slurm/manuscript-rerun.sbatch`, Slurm job 6489877) on the build with the nine EURING birds, and again (job 6490079) on that build with the parrot's ND6 (Hugging Face revision 0f4e970); the numbers reported here are from the second run (`results/nd6-patch/` of the analysis repository, which lists every change against the first, and `results/euring/`, which lists the first run's against the build before).
 
 <!-- src: docs/ANALYSIS_FINDINGS.md H1 (hypothesis, test), H2 ("Fixed before any result"); mitoage-pipelines
 docs/PIPELINE.md ("Every model that tests lifespan carries body mass and base composition at fourfold-degenerate
@@ -1079,7 +1079,7 @@ values are Benjamini–Hochberg over the 20 amino acids, within class and model.
 src/mitoage_pipelines/longevity/pgls.py (shared_path_covariance, V, nll, gls) -->
 
 **Species.** In mammals: 625 with all 13 proteins and a lifespan, 615 in the default dataset, 612 with a
-body mass and 604 in the tree. Birds, ray-finned fishes and reptiles were tested the same way (381, 235
+body mass and 604 in the tree. Birds, ray-finned fishes and reptiles were tested the same way (382, 235
 and 97 species).
 
 **Why a tree, and not the earlier mixed model.** The first version of this test used random intercepts
@@ -1192,9 +1192,9 @@ saturation filter.
 <!-- src: mitoage-pipelines src/mitoage_pipelines/longevity/rates.py (docstring, MIN_CODONS 30, MIN_CONTRASTS 12,
 NORMALISATIONS, cherries, outgroup_for, test_contrasts, q grouping); docs/ANALYSIS_FINDINGS.md H7 -->
 
-**Species and limits.** The default dataset gives 1,371 species with a tip in the tree and 339 cherries.
-dS exceeds 1 in 24.2% of the concatenated pairs. A cherry gives one contrast, so the test uses 339 of
-the 1,371 species. Nei–Gojobori counting suits close pairs and is strained at the divergences a quarter
+**Species and limits.** The default dataset gives 1,372 species with a tip in the tree and 340 cherries.
+dS exceeds 1 in 24.1% of the concatenated pairs. A cherry gives one contrast, so the test uses 340 of
+the 1,372 species. Nei–Gojobori counting suits close pairs and is strained at the divergences a quarter
 of these cherries reach, which is why saturated pairs are flagged and kept.
 
 ### S12.5 Analyses run and not reported in the main text
@@ -1237,7 +1237,8 @@ birds lifespan loads against the other three traits on the first component beyon
 
 **Run.** `mitoage longevity generation-time`, Slurm job 6489877 on the cluster (`slurm/manuscript-rerun.sbatch`),
 from commit 2ee27a1, on the build with the EURING birds (`public/data/` and the dated tree of dna-seq/mitoage at
-fb54cec, the data of Hugging Face revision f75bdc9). The tables (`generation_time.female.tsv`, `generation_time.female.classes.tsv`)
+fb54cec, the data of Hugging Face revision f75bdc9); the same job on the build with the parrot's ND6 (job 6490079,
+revision 0f4e970, `results/nd6-patch/`) gives byte-identical tables. The tables (`generation_time.female.tsv`, `generation_time.female.classes.tsv`)
 and the job log are in `results/euring/` of the analysis repository. The mammal tables are byte-identical to those of
 the first run on the build before the EURING birds (job 6487335 from 858974b, `docs/analyses/h11/`), which a second
 run reproduced byte for byte; in birds the maturity set grows from 281 to 282.
@@ -1266,12 +1267,13 @@ reported for comparison. q is Benjamini–Hochberg within class, family and mode
 written down before the first run; while the tests were being written, a failing test printed three q values of the
 mass-only model for the bird contacts, and nothing was changed after that.
 
-**Species.** Mammals 604, birds 381, ray-finned fishes 235 and reptiles 97; a class with fewer than 25 species would
+**Species.** Mammals 604, birds 382, ray-finned fishes 235 and reptiles 97; a class with fewer than 25 species would
 not be assessed.
 
-**Run.** `mitoage longevity structure-pgls`, Slurm job 6489877 on the cluster, from commit 2ee27a1, on the build
-with the EURING birds (dna-seq/mitoage at fb54cec). The table (`structure_pgls.tsv`) and the job log are in
-`results/euring/` of the analysis repository. The same job on the build before the EURING birds (job 6489876)
+**Run.** `mitoage longevity structure-pgls`, Slurm job 6490079 on the cluster, from commit 2ee27a1, on the build
+with the EURING birds and the parrot's ND6 (dna-seq/mitoage at 03c0949, Hugging Face revision 0f4e970). The table
+(`structure_pgls.tsv`) and the job log are in `results/nd6-patch/` of the analysis repository; against the EURING build
+alone (job 6489877, `results/euring/`) only the bird rows move (contact minus control −0.015 then, q = 0.20). The same job on the build before the EURING birds (job 6489876)
 reproduced the first run's table (job 6487327 from 858974b, `results/h12/`, which a second run reproduced byte for
 byte); against it, the mammal and fish rows are unchanged and the bird and reptile rows move.
 

@@ -1,8 +1,8 @@
 scope,species,species_with_body_mass,tests,p_lt_0_05,fdr_q_lt_0_05,pic_p_lt_0_05,both_same_sign,both_signflip_same_sign,all_three,pic_rejection_rate_pct,pic_mass_same_sign
-all,2211.0,1386.0,1414,1175,1166,565,292,103,238,40.0,81
+all,2211.0,1386.0,1414,1175,1166,566,292,103,238,40.0,81
 class:Actinopterygii,827.0,235.0,1402,832,769,546,221,99,86,38.9,38
 class:Mammalia,615.0,612.0,1398,954,918,224,164,153,139,16.0,136
-class:Aves,414.0,387.0,1390,684,601,184,55,34,24,13.2,46
+class:Aves,414.0,387.0,1390,687,601,184,55,34,24,13.2,46
 order:Perciformes,208.0,77.0,205,91,81,12,6,4,3,5.9,3
 order:Passeriformes,146.0,133.0,204,74,28,25,5,4,0,12.3,5
 order:Artiodactyla,134.0,134.0,204,92,76,27,9,7,4,13.2,5
@@ -16,7 +16,7 @@ order:Squamata,60.0,46.0,205,26,0,6,0,0,0,2.9,0
 order:Charadriiformes,51.0,46.0,199,44,21,3,1,3,1,1.5,1
 order:Testudines,49.0,35.0,205,13,0,11,0,0,0,5.4,0
 class:Amphibia,44.0,7.0,1386,37,0,146,0,0,0,10.5,0
-order:Psittaciformes,44.0,44.0,202,56,35,19,13,13,5,9.4,5
+order:Psittaciformes,44.0,44.0,202,58,36,20,13,13,5,9.9,5
 order:Chiroptera,43.0,43.0,202,20,0,26,0,0,0,12.9,0
 order:Clupeiformes,38.0,8.0,200,19,0,70,0,0,0,35.0,0
 class:Bivalvia,35.0,0.0,1331,111,0,90,0,0,0,6.8,0
@@ -31,4 +31,4 @@ order:Centrarchiformes,22.0,8.0,198,41,0,15,0,0,0,7.6,0
 order:Acipenseriformes,21.0,13.0,197,63,43,78,42,35,2,39.6,5
 order:Rajiformes,21.0,6.0,191,10,0,74,0,0,0,38.7,0
 order:Scombriformes,21.0,4.0,201,21,0,13,0,0,0,6.5,0
-ALL SCOPES (32),,,15906,5436,4295,3023,900,535,550,,393
+ALL SCOPES (32),,,15906,5441,4296,3025,900,535,550,,393

@@ -4,7 +4,7 @@
 (the fourth journal selection; a presubmission inquiry asks the editors whether they take it outside the
 Database issue), then Molecular Biology and Evolution (Resources). The sections follow NAR's order:
 Introduction, Materials and methods, Results, Discussion. Every number
-is from MitoAge build 2 with the EURING bird records, as committed in `dna-seq/mitoage` at 725da08 (Hugging Face revision f75bdc9; the correlations from the site build of that commit), from its report
+is from MitoAge build 2 with the EURING bird records and the annotation patch, as committed in `dna-seq/mitoage` at 03c0949 (Hugging Face revision 0f4e970; the correlations from the site build of that commit), from its report
 (`docs/BUILD2_REPORT.md`) or from the correlation table its site build writes
 (`dist/data/correlations.parquet`); `docs/manuscript/NOTES.md` gives the source of each number and the
 questions only the authors can answer. Lines starting `> AUTHOR:` are notes to the authors, not
@@ -27,7 +27,7 @@ Do the reported links between mitochondrial DNA and animal lifespan hold up? Mit
 comparisons possible for 922 species. We rebuilt it as MitoAge 2: 2,325 species, 106 of them invertebrates,
 every value re-derived from pinned sources, with gene alignments and a dated tree. The sources had moved: half
 of the original species changed at least one value, each change logged with its cause. We tested every
-correlation against shared ancestry and body size. Of 4,295 lifespan correlations that pass the false
+correlation against shared ancestry and body size. Of 4,296 lifespan correlations that pass the false
 discovery rate, one in five keeps its sign and significance between sister lineages, and 393 survive ancestry
 and body mass controlled together. Published relationships retested on the dated tree, among them inverted
 repeats, slower protein evolution and fewer cysteines in long-lived species, are not detected. One signal
@@ -134,7 +134,7 @@ aggregates of all protein-coding, rRNA and tRNA genes, MitoAge 2 reports the len
 base, the GC content and the GC/AT balance of the strand: the GC balance (G−C)/(G+C) and the AT balance (A−T)/(A+T), often called the GC and AT skews. It also reports the non-coding length of the genome, codon usage for each protein-coding gene and their total, and amino-acid usage translated with the genetic code each RefSeq record specifies. Codon usage counts complete codons only, in gene sense, each codon as a percentage of all codons. Annotated
 features are given with start, end and strand, with names made consistent across
 records (COI, CO1 and COX1, for example) and the two leucine and two serine tRNAs told apart by codon
-family. The extended features are the base composition of fourfold-degenerate sites (in gene sense and, for records
+family. A protein gene a record does not annotate is not filled in from a relative: each of the 26 species that lack one of the 13 carries a review flag with the reason (the gene is not in the record's sequence, or the record marks it as frameshifted; ATP8 is not annotated in 18 bivalves and is lost in nematodes). The one exception is the ND6 of the African grey parrot, intact in its record's sequence between tRNA-Pro and tRNA-Glu but not annotated, which the build adds and records in the changelog. The extended features are the base composition of fourfold-degenerate sites (in gene sense and, for records
 with the vertebrate layout, on the heavy strand), and the hydropathy (GRAVY) of each encoded protein. They also
 include perfect direct, inverted and mirror repeats of at least 10 bases over the whole genome and the major arc, which runs between the two replication origins.
 Further features are the repeat pairs bridging the two spans that flank most human mitochondrial deletions (47) and the number of
@@ -169,7 +169,7 @@ agree (Supplementary Methods S6).
 
 ### Alignments
 
-Each of the 13 proteins, as RefSeq translates it, is aligned across all live species with MAFFT v7.526
+Each of the 13 proteins, as RefSeq translates it (and the parrot's ND6 as the build translates it), is aligned across all live species with MAFFT v7.526
 (FFT-NS-2) (32), and the codon alignment it implies is written alongside. The two rRNA genes are aligned
 as nucleotides the same way. A summary file gives, for each alignment, its size, how many columns are well
 occupied or conserved, and its checksum. These are alignments made by one fast method across very distant
@@ -230,7 +230,7 @@ log10 maximum lifespan regressed on each standardised feature, log10 body mass a
 fourfold-degenerate sites, with Pagel's λ (`mitoage longevity structure-pgls`). The 298 residues of cytochrome c oxidase subunits 1 to 3 at contacts with its nuclear-encoded subunits were taken from the
 structure 5Z62 (52). The first structural feature is the share of them where a species' residue differs from the class's most common one.
 The others are the same share at 298 control residues matched for burial, the difference between the two shares, and the hydropathy (GRAVY) of each of the 13 proteins and of all 13 together. Both analyses ran
-on build 2 with the nine EURING birds from `dna-seq/mitoage-pipelines` at commit 2ee27a1; their
+on build 2 with the nine EURING birds and the annotation patch from `dna-seq/mitoage-pipelines` at commit 2ee27a1; their
 records are entries H11 and H12 of its `docs/HYPOTHESES.md`, and Supplementary Methods S12.6 and S12.7 describe them.
 
 ### Reproducibility
@@ -322,8 +322,8 @@ frameshifted ND3 genes.
 The lifespans moved as well: AnAge build 15 gives a different maximum lifespan for 59 species, many of them
 crocodilians and primates with longer captive records, and none for one (*Andrias davidianus*, now
 retired). Release 1 also lacked 320 regions (263 of them D-loops) that the records it cited annotate; build 2
-computes them from the sequence. The changelog has 14,428 rows: 5,689 additions of the new species, 6,994
-value updates, 1,639 corrections, 87 renames and 19 retirements. Release 1 and build 2 can therefore be
+computes them from the sequence. The changelog has 14,429 rows: 5,689 additions of the new species, 6,994
+value updates, 1,640 corrections, 87 renames and 19 retirements. Release 1 and build 2 can therefore be
 compared value by value only through the changelog, which gives the cause of each difference.
 
 **Table 2.** The 922 species of release 1 in MitoAge 2, by record status.
@@ -346,12 +346,12 @@ every correlation of an mtDNA feature with maximum lifespan through the three co
 discovery rate, phylogenetically independent contrasts and the partial correlation on body mass. We used
 the default dataset, which leaves out retired species and lifespans that are estimated or of low or
 questionable quality, and tested each feature in every scope: all species, and each class and order with
-at least 20 species. Most correlations that pass the false discovery rate fail on contrasts, a pattern consistent with differences among clades. Of the 15,906 correlations tested across all scopes, 5,436 have p < 0.05 before any
-correction, and 4,295 pass a false discovery rate of 5% (q < 0.05, where q is the p value adjusted for the
+at least 20 species. Most correlations that pass the false discovery rate fail on contrasts, a pattern consistent with differences among clades. Of the 15,906 correlations tested across all scopes, 5,441 have p < 0.05 before any
+correction, and 4,296 pass a false discovery rate of 5% (q < 0.05, where q is the p value adjusted for the
 false discovery rate). Of those 4,295, 900 are also significant on phylogenetic contrasts with the same
 sign, and 550 pass the partial correlation on body mass as well, 485 of them with the same sign (Table 3,
 Figure 1). With the sign-flip p value in place of the contrast t test, which rejects too often in several scopes, 535 pass on contrasts with the same sign (Supplementary Methods S10.6). Controlling for shared ancestry and body mass together, as the correlation of the contrasts with
-log10 body mass partialled out, 393 of the 4,295 remain significant with the same sign, 283 of which also
+log10 body mass partialled out, 393 of the 4,296 remain significant with the same sign, 283 of which also
 pass the partial correlation across species (Table 3, PIC + mass).
 
 Because the scopes overlap, one relationship can be counted more than once in these totals: a species counts in all species, in its class and in its order, so the same feature is tested on the same species in up to
@@ -361,8 +361,8 @@ three controls (550), and 485 of these keep the sign of the correlation across s
 contrasts with the same sign.
 
 Because the default dataset adds lifespans from sources other than AnAge, we repeated the count on the
-AnAge-only dataset, the one comparable with the first release. It gives the same picture (4,068 pass the
-false discovery rate, 659 also on contrasts), and over all features in all species the correlations of the
+AnAge-only dataset, the one comparable with the first release. It gives the same picture (4,069 pass the
+false discovery rate, 658 also on contrasts), and over all features in all species the correlations of the
 two datasets agree at r = 0.977. In both datasets most correlations that pass the false discovery rate fail
 on contrasts, so the new lifespan sources do not change the result.
 
@@ -425,17 +425,17 @@ mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass par
 
 | Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | Both (sign-flip) | All three | PIC + mass |
 |--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
-| All species | 2,211 | 1,414 | 1,175 | 1,166 | 565 | 292 | 103 | 238 | 81 |
+| All species | 2,211 | 1,414 | 1,175 | 1,166 | 566 | 292 | 103 | 238 | 81 |
 | Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 153 | 139 | 136 |
 | Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 99 | 86 | 38 |
-| Aves | 414 | 1,390 | 684 | 601 | 184 | 55 | 34 | 24 | 46 |
+| Aves | 414 | 1,390 | 687 | 601 | 184 | 55 | 34 | 24 | 46 |
 | Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 17 | 12 | 12 |
 | Primates | 112 | 204 | 128 | 118 | 12 | 8 | 11 | 4 | 5 |
 | Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 24 | 25 | 36 |
 | Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 7 | 4 | 5 |
 | Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 6 | 7 | 9 |
 | Passeriformes | 146 | 204 | 74 | 28 | 25 | 5 | 4 | 0 | 5 |
-| **All scopes (32)** | | **15,906** | **5,436** | **4,295** | **3,023** | **900** | **535** | **550** | **393** |
+| **All scopes (32)** | | **15,906** | **5,441** | **4,296** | **3,025** | **900** | **535** | **550** | **393** |
 
 The ten scopes above are all species, the four largest classes, the four largest mammalian orders and the
 passerine birds. Supplementary Table S1 gives all 32, each with its number of species with a recorded body mass
@@ -456,7 +456,7 @@ or PIC + mass.
 > it is run, the PIC column should not be read in those scopes. The empty-order scope is gone: the
 > pipeline no longer forms a scope from species with no name at a rank, so the table has 32 scopes.
 > Since then (D10, `docs/PIC_CALIBRATION.md`) the contrast code matches `ape::pic`, the t test stays, and
-> the table carries a sign-flip p value: with it, 535 of the 4,295 pass "Both" instead of 900. Decided
+> the table carries a sign-flip p value: with it, 535 of the 4,296 pass "Both" instead of 900. Decided
 > on 2026-11-15 (D13): the t test stays the headline, and the sign-flip count gets its own column here and
 > in Supplementary Table S1.
 
@@ -479,7 +479,7 @@ feature, with p < 0.05, split by how far each gets through the controls in turn:
 (FDR; Benjamini–Hochberg q < 0.05 within the scope), phylogenetically independent contrasts (p < 0.05, with the
 sign of the correlation across species) and the partial correlation on body mass (p < 0.05, of either sign). The column on
 the right gives how many of the correlations that pass the false discovery rate pass all three; across all
-32 scopes, 550 of 4,295 do.
+32 scopes, 550 of 4,296 do.
 
 ![Figure 2. Codon usage against lifespan, raw and on contrasts](figures/FIGURE_2_CODONS.jpg)
 
@@ -551,7 +551,7 @@ acid of the 20 passed a 5% false discovery rate: threonine rose by 0.15 percenta
 lifespan (p = 0.03, q = 0.12), cysteine fell by 0.021 (p = 0.05, q = 0.15) and methionine did not change
 (p = 0.94). The answer depends on how shared ancestry is modelled: random intercepts of order and family in
 place of the tree, on the same species, gave seven amino acids at q < 0.05, cysteine and threonine among
-them. Birds (381), ray-finned fishes (235) and reptiles (97) showed nothing at q < 0.05.
+them. Birds (382), ray-finned fishes (235) and reptiles (97) showed nothing at q < 0.05.
 
 If single residues differed with lifespan, the alignments could show them, so we also screened single
 alignment columns on the dated tree. The screen found two columns at q < 0.05 in mammals and none in birds.
@@ -559,9 +559,10 @@ One is a substitution found almost only in the marsupials (24 of its 28 carriers
 (q = 0.049). Without a replication, neither is reported here as associated with lifespan (Supplementary
 Methods S12.2).
 
-> AUTHOR: rerun of 2026-11-15 in mitoage-pipelines at 2ee27a1 on the build with the EURING birds (Slurm job
-> 6489877, `slurm/manuscript-rerun.sbatch`; tables `aa_pgls.<Class>.tsv` and `pgls.<Class>.tsv` in `results/euring/`;
-> build and dated tree of dna-seq/mitoage at fb54cec). The mammal results are those of the run of 2026-11-14 at
+> AUTHOR: rerun of 2026-11-15 in mitoage-pipelines at 2ee27a1 on the build with the EURING birds and the parrot's ND6
+> (Slurm job 6490079, `slurm/manuscript-rerun.sbatch`; tables `aa_pgls.<Class>.tsv` and `pgls.<Class>.tsv` in
+> `results/nd6-patch/`; build of dna-seq/mitoage at 03c0949, Hugging Face revision 0f4e970; against the EURING build
+> alone, `results/euring/`, only the bird rows and the renumbered ND6 columns change). The mammal results are those of the run of 2026-11-14 at
 > da0c112, unchanged; the column screen moved with the realignment (5,262 tests, the same two columns pass). The
 > earlier mixed-model numbers (622 mammals, 10 of them with questionable lifespans) were replaced on 2026-11-14. Whether a database
 > update should carry a worked example at all, or only point to the repository, is still yours (NOTES.md, Q6).
@@ -592,7 +593,7 @@ If mismatch between the two genomes at the contacts of their proteins mattered f
 contacts of cytochrome c oxidase might diverge with it. We therefore measured their divergence from each class's most common residue, against residues
 matched for burial (Materials and methods). This divergence does not follow lifespan in mammals, birds or ray-finned fishes. In mammals the slope of the
 contact-specific divergence is −0.007 log10 years per standard deviation (95% interval −0.029 to +0.015,
-q = 0.83, 604 species) and in birds −0.015 (−0.037 to +0.008, q = 0.20, 381 species); nothing passes in
+q = 0.83, 604 species) and in birds −0.016 (−0.039 to +0.007, q = 0.17, 382 species); nothing passes in
 ray-finned fishes (235). In reptiles it passes narrowly, −0.11 (−0.21 to −0.010, q = 0.046, 97 species), but on
 the alignment made before the nine EURING birds were added it gave q = 0.052 on the same 97 reptiles. A result
 that crosses the threshold when birds join the alignment rests on the alignment, and we do not claim it. Of the hydropathy of the 13 proteins and of their total, two pass
@@ -605,18 +606,19 @@ birds (16). How to normalise a rate divides the literature (48), so we used the 
 that choice (`mitoage longevity rates`). Two species sharing a parent in the dated tree have had the same
 time since they split, so the difference in their distances to a common outgroup, the nearest in the tree,
 is a rate contrast needing no correction for divergence time. Each rate contrast is regressed through the
-origin on the lifespan contrast. There are 339 such pairs. Their nonsynonymous and synonymous
+origin on the lifespan contrast. There are 340 such pairs. Their nonsynonymous and synonymous
 distances, dN and dS, are Nei–Gojobori counts (50) in the mitochondrial code the three species share, or code 2 where they differ. Over these pairs, no normalisation gives an
 association between lifespan and rate on the concatenated 13 genes, in mammals (p = 0.02, q = 0.15),
 birds, ray-finned fishes or all species together. The normalisations tried are the raw difference, the
 difference per million years, the dN/dS ratio and the difference with body mass in the model. Four of 655
-single-gene tests pass a 5% false discovery rate and disagree in sign. The synonymous distances are corrected for multiple hits (Jukes–Cantor), yet dS exceeds 1 in 24.2% of the pairs (Supplementary Methods S12.4).
+single-gene tests pass a 5% false discovery rate and disagree in sign. The synonymous distances are corrected for multiple hits (Jukes–Cantor), yet dS exceeds 1 in 24.1% of the pairs (Supplementary Methods S12.4).
 
 > AUTHOR: runs of 2026-11-14 in mitoage-pipelines at 22cb140 (`mitoage longevity rates` and
 > `mitoage longevity motif-pgls`, tables `rates.tsv`, `rate_contrasts.tsv` and `motif_pgls.tsv`; H7 and H8 in
 > `docs/ANALYSIS_FINDINGS.md`, mitoage-pipelines main at 22cb140), rerun on 2026-11-15 at 2ee27a1 on the build
 > with the EURING birds and its motif features for all 2,344 species (Slurm job 6489877; `results/euring/` of
-> mitoage-pipelines, with the structural models of H12). Every number in this subsection is the same on both builds
+> mitoage-pipelines, with the structural models of H12), and again on the build with the parrot's ND6 (job 6490079,
+> `results/nd6-patch/`), which adds one bird cherry (340) and one bird (382). Every number in this subsection is the same on both builds
 > except the bird and reptile structural results given in the text. Whether the paper should carry this subsection at all, or leave it to the analysis
 > repository as Q6 asks of the amino-acid example, is yours (NOTES.md, Q11).
 
@@ -716,7 +718,7 @@ least-squares line. The panel on the right gives the statistics the pipeline com
 leaves out estimated and low-quality lifespans: q = 2.4 × 10⁻³³, r on phylogenetically independent
 contrasts 0.17 (p = 4.4 × 10⁻⁵) and partial r on body mass 0.40 (n = 612). (**B**) The first five of the mtDNA features
 ranked by the absolute value of Spearman's ρ with maximum lifespan across all species, each with its ρ, its q (from Pearson's r), its
-r on contrasts and its partial r on body mass. Of the 1,414 features, 1,166 have q < 0.05 and 494 of
+r on contrasts and its partial r on body mass. Of the 1,414 features, 1,166 have q < 0.05 and 495 of
 those have a contrast p < 0.05 (of either sign; Table 3 counts the 292 with the same sign).
 
 ### Data access and versioning
@@ -768,7 +770,7 @@ lifespan in mammals was reported to hold on contrasts over a taxonomy with equal
 contrasts along the dated tree, and with body mass and base composition in the model, it does not. The
 slower evolution of the mitochondrial proteins in long-lived mammals and birds (16) does not appear in the
 relative-rate test under any of the four normalisations tried. The test's dN and dS are Nei–Gojobori counts with the Jukes–Cantor correction for multiple hits. Even so, they saturate over the
-distance from a sister pair to its outgroup (dS exceeds 1 in 24.2% of the pairs; Supplementary Methods S12.4) and compress the rate contrasts towards zero, so the test may be
+distance from a sister pair to its outgroup (dS exceeds 1 in 24.1% of the pairs; Supplementary Methods S12.4) and compress the rate contrasts towards zero, so the test may be
 biased towards the null. Galtier et al. found the slower rate with a model that lets rates vary across sites, and explained earlier
 opposite results by distance-based methods that do not (16); the distances used here do not either. For amino-acid content the answer depends on the model of ancestry: cysteine (30),
 methionine (31) and threonine (33) pass no false discovery rate on the dated tree, but cysteine and threonine
@@ -799,7 +801,7 @@ would allow where the test across species finds almost nothing. In the cartilagi
 (Supplementary Table S1 gives the rejection rate of every scope). The contrast code agrees with R's
 `ape::pic` (51), and the excess arises where one pair of sister lineages dominates a scope's contrasts, so in
 those scopes the contrast column cannot be read at face value. Third, the contrast and body-mass tests are not corrected for multiple testing, and in the funnel they are applied one at
-a time; applied together, as contrasts with body mass partialled out, they keep 393 of the 4,295. The 550 that pass all three controls are candidates from a screen rather than
+a time; applied together, as contrasts with body mass partialled out, they keep 393 of the 4,296. The 550 that pass all three controls are candidates from a screen rather than
 established relationships within lineages, and the partial correlation reverses the sign of the
 correlation across species in 65 of them. Fourth, the tree is partly interpolated: 184 of the 2,238 node
 ages are placed midway between their parent and their oldest child rather than taken from TimeTree.
@@ -861,9 +863,9 @@ supervision.
 ## Data availability
 
 The website is at [www.mitoage.info](https://www.mitoage.info), with the downloads under `/data/`; until that
-address, which still serves the 2016 site, moves to MitoAge 2, the site is at https://just-dna.life/mitoage/. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2, with the EURING bird records, is its revision f75bdc9b812d7845d2ccb24a49643d88d00d57b5. The site and its
+address, which still serves the 2016 site, moves to MitoAge 2, the site is at https://just-dna.life/mitoage/. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2, with the EURING bird records and the annotation patch, is its revision 0f4e970554b2fe0265e718321f422347293dde17. The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
-analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their code under the MIT licence; the data in them keep the terms given below. Build 2 was made by `dna-seq/mitoage` at commit 725da087120f535cb87bc5fde189c7c5f35fe436, and its correlation table by the site build of the same commit. The build and
+analyses at https://github.com/dna-seq/mitoage-pipelines (42), both with their code under the MIT licence; the data in them keep the terms given below. Build 2 was made by `dna-seq/mitoage` at commit 03c09498564c17d1445bc4c18c70d0e710d471db, and its correlation table by the site build of the same commit. The build and
 the datasets of the analyses (snapshots of build 2's sources, the nuclear partners, ESM-2 embeddings, the
 alignments by other aligners, predicted structures and the result tables) are gathered in the Hugging Face
 collection MitoAge, https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5 (44).
@@ -958,7 +960,7 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
     https://www.pwrc.usgs.gov/BBL/Bander_Portal/login/Longevity.php [data set]
 39. Open Tree of Life. Open Tree of Life synthetic tree, version opentree16.1.
     https://files.opentreeoflife.org/synthesis/opentree16.1/ [data set]
-40. MitoAge build 2. Hugging Face dataset `longevity-genie/mitoage`, revision f75bdc9b812d7845d2ccb24a49643d88d00d57b5.
+40. MitoAge build 2. Hugging Face dataset `longevity-genie/mitoage`, revision 0f4e970554b2fe0265e718321f422347293dde17.
     https://huggingface.co/datasets/longevity-genie/mitoage [data set]
 41. dna-seq/mitoage: the MitoAge 2 site and data pipeline. https://github.com/dna-seq/mitoage [software]
 42. dna-seq/mitoage-pipelines: the independent reproduction of MitoAge build 2 and its analyses.
