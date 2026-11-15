@@ -110,9 +110,8 @@ When a species has several complete records, the most recently updated one is ke
 Between records of the same date, one at least 75% of the median length of its class is preferred, then the higher version (Supplementary Methods S2).
 
 AnAge is always the first lifespan source. Where AnAge has no value, fishes take their lifespan from
-FishBase, aquatic invertebrates from SeaLifeBase, and birds from the EURING longevity list and then the
-USGS records. EURING could not be retrieved for build 2, so all 26 of its secondary bird lifespans come from
-the USGS records. Static one-off compilations were not used, because they are not maintained. Source records
+FishBase, aquatic invertebrates from SeaLifeBase, and birds from the USGS ringing records (26 species).
+Static one-off compilations were not used, because they are not maintained. Source records
 are matched to NCBI species by taxon identifier, then by accepted name with synonym resolution. A record
 that cannot be matched to one species without guessing goes to a review list and is left out of the
 build (Supplementary Methods S3). Every value from every source is kept in a long-format table, with its record type (captive, wild,
@@ -127,9 +126,6 @@ asymmetrically: AnAge ages of wild animals that were estimated rather than obser
 dataset, among them the Greenland shark (392 years) and two tubeworms (300 and 250 years), which enter the
 all-species analyses at the extreme of the trait, while FishBase ages from growth studies are left out. Supplementary Methods S4 gives the mapping
 field by field.
-
-> AUTHOR: the EURING list could not be retrieved (euring.org was in maintenance on 2026-11-13), so the
-> 26 bird lifespans taken from the USGS list are provisional and no EURING value is used.
 
 ### Mitochondrial features
 

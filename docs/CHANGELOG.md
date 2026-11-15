@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The v0.3 manuscript no longer talks about EURING** (2026-11-15). Its Materials and methods said birds take
+  EURING then USGS values and that EURING could not be retrieved, and an author note repeated it; no EURING value
+  is used, so the text now says the 26 birds take USGS ringing records, and the note is gone from `mitoage2.md`
+  and `mitoage2.proposed.md`. The supplement (S1, S4) still records the source as not retrieved; RM5 stays open.
+
 - **A new abstract for round v0.3** (2026-11-15, the maintainer): it opens with the question, names what the
   rebuild found (half of the original species changed, one in five correlations survives contrasts, published
   relationships not detected, the mammalian GC signal of the slow life history) and no longer mentions strand
