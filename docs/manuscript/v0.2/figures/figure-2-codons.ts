@@ -1,6 +1,6 @@
 // Figure 2 of the MitoAge 2 manuscript: codon usage against maximum lifespan, across species and on contrasts.
 //
-//   bun docs/manuscript/figures/figure-2-codons.ts              # needs dist/ from `bun run build`
+//   bun docs/manuscript/v0.2/figures/figure-2-codons.ts              # needs dist/ from `bun run build`
 //
 // Reads dist/data/correlations.parquet (dataset `default`, trait `maxLongevityYears`, scope `all`), takes the
 // 64 codons of `codon:total_pc:*` and places each by its Pearson r with log10 maximum lifespan across species
@@ -21,7 +21,7 @@ import { mkdtempSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-const root = resolve(import.meta.dir, "../../..");
+const root = resolve(import.meta.dir, "../../../..");
 const parquetPath = join(root, "dist/data/correlations.parquet");
 const outPath = join(import.meta.dir, "FIGURE_2_CODONS.jpg");
 const fontPath = join(root, "node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2");

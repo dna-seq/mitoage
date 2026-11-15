@@ -18,7 +18,7 @@ export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 export function originArg(script: string): string {
   const origin = (process.argv[2] ?? "").replace(/\/$/, "");
   if (!/^http:\/\/(localhost|127\.0\.0\.1):\d+$/.test(origin)) {
-    console.error(`usage: bun docs/manuscript/figures/${script} http://localhost:<port of bun run preview>`);
+    console.error(`usage: bun docs/manuscript/v0.2/figures/${script} http://localhost:<port of bun run preview>`);
     process.exit(1);
   }
   return origin;

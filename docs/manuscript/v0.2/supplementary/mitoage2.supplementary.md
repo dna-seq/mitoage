@@ -880,7 +880,7 @@ Actinopterygii and all species should be read with its sign-flip p value beside 
 S1 gives the share of tests each scope rejects on contrasts.
 
 <!-- src: docs/PIC_CALIBRATION.md "What could be done" 2-4; docs/manuscript/NOTES.md Q5;
-docs/manuscript/supplementary/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
+docs/manuscript/v0.2/supplementary/supplementary_table_S1_scopes.csv (pic_rejection_rate_pct) -->
 
 ### S10.7 How the three controls combine, and what each count counts
 
@@ -915,7 +915,7 @@ scopes they are taken. All are for maximum lifespan in the default dataset:
 | 533 | all 32, summed | q < 0.05, and sign-flip p < 0.05 with the same sign |
 | 393 | all 32, summed | q < 0.05, and p < 0.05 with the same sign on contrasts with body mass partialled out ("PIC + mass" in Table 3) |
 
-<!-- src: docs/manuscript/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
+<!-- src: docs/manuscript/v0.2/mitoage2.md Table 3 and Figure 5 legend; docs/manuscript/NOTES.md "Where the numbers
 come from" and "Figures" (496 vs 291) -->
 
 So 896 and 291 apply the same rule, to 32 overlapping scopes and to one; 496 and 291 apply different
@@ -925,7 +925,7 @@ The script that draws Figure 1 recomputes Table 3 from the same table and refuse
 differs.
 
 <!-- src: docs/manuscript/NOTES.md row for Table 3 ("the counts were made in an analysis session, not by the
-pipeline"); docs/manuscript/figures/figure-1-controls.ts -->
+pipeline"); docs/manuscript/v0.2/figures/figure-1-controls.ts -->
 
 ## S11. Reproducibility: what was checked, and what was not
 
@@ -1008,7 +1008,7 @@ of S10 and its tests alone, with one exception: the contrast code has since been
 `ape::pic` and calibrated by simulation (S10.6). The Abstract's phrase "an independent reproduction of the build" should be read
 with this limit.
 
-<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md "Known gaps" (last item); docs/manuscript/mitoage2.md
+<!-- src: mitoage-pipelines docs/BUILD2_REPRODUCTION.md "Known gaps" (last item); docs/manuscript/v0.2/mitoage2.md
 "Reproducibility" -->
 
 **The analyses.** The worked analyses of S12 are commands of `mitoage-pipelines`, and its README records

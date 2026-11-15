@@ -29,13 +29,15 @@ Build 2 (2026-11-13), captured on 2026-11-14.
 
 ## Manuscript
 
-[`docs/manuscript/mitoage2.md`](docs/manuscript/mitoage2.md) is draft 0.1 of the MitoAge 2 paper, an update
-article for the Nucleic Acids Research Database issue: what changed since the 2016 release, the controls
-for body mass and shared ancestry, and the website. Its figures are in
-[`docs/manuscript/figures/`](docs/manuscript/figures/): Figures 3, 4 and 5 are screenshots of this site,
-Figures 1 and 2 charts of the correlation table the site build writes. [`docs/manuscript/NOTES.md`](docs/manuscript/NOTES.md) gives the
-source of every number in it, how the screenshots were taken, and the questions only the authors can
-answer.
+The MitoAge 2 paper is kept in rounds, one folder per version shared with the co-authors on Google Drive:
+[`docs/manuscript/v0.2/mitoage2.md`](docs/manuscript/v0.2/mitoage2.md) is the current round, restructured for
+Nucleic Acids Research as a regular research article: what changed since the 2016 release, the controls for
+body mass and shared ancestry, the analyses, and the website. Its figures and the scripts that draw or capture
+them are in [`docs/manuscript/v0.2/figures/`](docs/manuscript/v0.2/figures/) (Figures 1 and 2 are charts of the
+correlation table the site build writes; Figures 3, 4 and 5 are screenshots of this site), and its Supplementary
+Methods and tables in [`docs/manuscript/v0.2/supplementary/`](docs/manuscript/v0.2/supplementary/).
+[`docs/manuscript/NOTES.md`](docs/manuscript/NOTES.md) gives the source of every number, how the figures are
+made, and the questions only the authors can answer.
 
 ## Related repositories
 

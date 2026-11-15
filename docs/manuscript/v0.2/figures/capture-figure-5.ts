@@ -2,7 +2,7 @@
 //
 //   bun run build                                                     # if dist/ is not current
 //   env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port 4349
-//   bun docs/manuscript/figures/capture-figure-5.ts http://localhost:4349
+//   bun docs/manuscript/v0.2/figures/capture-figure-5.ts http://localhost:4349
 //
 // The argument is the preview's origin as its log prints it (the port it actually took). Headless Google
 // Chrome is driven over the DevTools protocol (cdp.ts, with its colour workaround), light theme, device scale 3.

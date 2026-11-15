@@ -3,6 +3,12 @@
 Companion to `mitoage2.md` (draft 0.1, 2026-11-14). It says where every number in the draft comes from
 and lists the questions only the authors can answer.
 
+**Rounds.** From 2026-11-15 the manuscript is kept in rounds, one folder per version released to the
+co-authors' Google Drive folder by the manuscript-skills plugin (`rounds.py`): `v0.2/` holds the manuscript,
+its figures with their scripts, and the Supplementary Methods and tables. The next round is a copy of it
+(`rounds.py open 0.3`), so each released version stays as it was sent. This file stays above the rounds. Paths
+below written as `figures/` or `supplementary/` are inside the current round's folder.
+
 ## How the draft is built
 
 - **Model.** The 2016 paper (Toren et al., NAR 44:D1262) is a short Database-issue article: Introduction,
@@ -176,11 +182,11 @@ JPEGs are overwritten in place. Redrawn and recaptured on 2026-11-15 for print s
 the page 178 mm, text at least 6 pt and images at least 300 dpi as printed.
 
 ```
-bun docs/manuscript/figures/figure-1-controls.ts        # Figure 1
-bun docs/manuscript/figures/figure-2-codons.ts          # Figure 2
+bun docs/manuscript/v0.2/figures/figure-1-controls.ts        # Figure 1
+bun docs/manuscript/v0.2/figures/figure-2-codons.ts          # Figure 2
 env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port 4349   # read the port it took from its log
-bun docs/manuscript/figures/capture-figures-3-4.ts http://localhost:4349            # Figure 3, its supplement 1, Figure 4
-bun docs/manuscript/figures/capture-figure-5.ts http://localhost:4349               # Figure 5
+bun docs/manuscript/v0.2/figures/capture-figures-3-4.ts http://localhost:4349            # Figure 3, its supplement 1, Figure 4
+bun docs/manuscript/v0.2/figures/capture-figure-5.ts http://localhost:4349               # Figure 5
 ```
 
 | Figure | Script | Printed width | Image | Smallest text as printed |

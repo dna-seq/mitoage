@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **The MitoAge 2 manuscript is kept in rounds** (2026-11-15): the manuscript, its figures with their scripts and
+  the Supplementary Methods move into `docs/manuscript/v0.2/`, the folder the manuscript-skills plugin releases to
+  the co-authors' Google Drive folder (`rounds.py`); the next round is a copy of it. `docs/manuscript/NOTES.md`
+  stays above the rounds. The figure scripts find the build one level deeper and redraw Figures 1 and 2 byte for
+  byte; the README's manuscript section describes the current round.
+
 - **The manuscript is set for a regular Nucleic Acids Research article, and reports what survives the stricter
   tests** (2026-11-15). Materials and methods moves back before the Results and the abstract is one paragraph of 200
   words without the URL, as NAR asks. The all-species skews and codon usage, which pass the three controls one at a

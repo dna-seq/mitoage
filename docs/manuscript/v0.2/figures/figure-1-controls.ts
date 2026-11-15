@@ -1,6 +1,6 @@
 // Figure 1 of the MitoAge 2 manuscript: what the three controls leave of the lifespan correlations, by scope.
 //
-//   bun docs/manuscript/figures/figure-1-controls.ts            # needs dist/ from `bun run build`
+//   bun docs/manuscript/v0.2/figures/figure-1-controls.ts            # needs dist/ from `bun run build`
 //
 // Reads dist/data/correlations.parquet (dataset `default`, trait `maxLongevityYears`), counts each scope
 // with the definitions of Table 3 (docs/manuscript/NOTES.md, "Where the numbers come from"), checks every
@@ -17,7 +17,7 @@ import { mkdtempSync, writeFileSync, readFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-const root = resolve(import.meta.dir, "../../..");
+const root = resolve(import.meta.dir, "../../../..");
 const parquetPath = join(root, "dist/data/correlations.parquet");
 const outPath = join(import.meta.dir, "FIGURE_1_CONTROLS.jpg");
 const fontPath = join(root, "node_modules/@fontsource-variable/nunito/files/nunito-latin-wght-normal.woff2");
