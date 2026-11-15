@@ -606,8 +606,11 @@ The website is at https://just-dna.life/mitoage/, with the downloads under `/dat
 https://www.mitoage.info once that address, which still serves the 2016 site, is redirected. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
 c525adbff8c12b19981fdada7f1615c2559b7140. The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
-analyses at https://github.com/dna-seq/mitoage-pipelines (42), both under the MIT licence. The
-experimental MCP server is in `mcp/` of the site repository and is to be released as the npm package
+analyses at https://github.com/dna-seq/mitoage-pipelines (42), both under the MIT licence. The build and
+the datasets of the analyses (snapshots of build 2's sources, the nuclear partners, ESM-2 embeddings, the
+alignments by other aligners, predicted structures and the result tables) are gathered in the Hugging Face
+collection MitoAge, https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5 (44).
+The experimental MCP server is in `mcp/` of the site repository and is to be released as the npm package
 `mitoage-mcp`. Lifespan values from
 FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial use only) and are marked as such in the downloads.
 AnAge data are under the Creative Commons Attribution 3.0 licence of the Human Ageing Genomic Resources (37),
@@ -697,9 +700,14 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
 42. dna-seq/mitoage-pipelines: the independent reproduction of MitoAge build 2 and its analyses. [software]
 43. Schoch CL, Ciufo S, Domrachev M et al. NCBI Taxonomy: a comprehensive update on curation, resources and
     tools. Database (Oxford). 2020;2020:baaa062. https://doi.org/10.1093/database/baaa062
+44. MitoAge. Hugging Face collection `longevity-genie/mitoage`: the build and the datasets of its analyses.
+    https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5 [data set]
 
 > AUTHOR: references 19, 21 and 24–36 are new and need checking (a reference-check pass is suggested).
 > The data and software citations 38–42 are placed but have no version-level DOI yet: mint the Zenodo
 > DOIs for both repositories and the dataset at revision (RP-5) and add them here; 39 takes the Open Tree
 > of Life release DOI. Reference 37 is cited beside 24 because AnAge build 15 postdates the 2018 paper
-> (RF-5).
+> (RF-5). Reference 44 is a Hugging Face collection, which has neither a DOI nor revisions of its own: it
+> lists the datasets. Pin each dataset the text relies on by its own revision: build 2 is pinned above; the
+> embeddings (`longevity-genie/mitoage-embeddings` fc70053) and the predicted structures
+> (`longevity-genie/mitoage-structures` 8e5cfdc) wherever the Supplementary Methods cite them.

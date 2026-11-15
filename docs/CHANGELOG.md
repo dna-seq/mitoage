@@ -4,6 +4,9 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript's Data availability names the Hugging Face collection** (2026-11-15), after the two GitHub
+  repositories, as reference 44 (`docs/manuscript/mitoage2.md`).
+
 - **A MitoAge collection on Hugging Face** (2026-11-15): [longevity-genie/mitoage](https://huggingface.co/collections/longevity-genie/mitoage-6af952ac7256661d479577a5)
   gathers the build and the six datasets of the analyses, each with a one-line note; the README links it.
 
