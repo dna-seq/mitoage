@@ -185,3 +185,20 @@ this records the one run and the conditions it was done under, rather than chang
 
 **What it costs, and was accepted:** one upload whose provenance is this entry rather than a shell
 history. The next one follows D6 unless the maintainer says otherwise again.
+
+## D10 — The contrast t test stays the published PIC test (2026-11-15)
+
+`docs/PIC_CALIBRATION.md` found the contrast code correct (it matches R `ape::pic`) and its t test exact
+under Brownian motion, but over-rejecting where one sister pair dominates a scope's contrasts. Told that a
+sign-flip test would give 531 of 4,299 "Both" instead of 896, the maintainer: "than keep it, we should not
+overdrop tings". **`pic_p_value` stays the t test with m − 1 degrees of freedom, and the table's and the
+manuscript's PIC, Both and All-three counts (3,008, 896, 547) stay as they are.**
+
+- **Rejected:** replacing `pic_p_value` by the sign-flip p value (PIC 1,255, Both 531, All three 336). It
+  drops results in Mammalia too (Both 164 to 153), where the two tests agree on calibration.
+- **What it costs, and was accepted:** the fish scopes' contrast rejections (Chondrichthyes 585 of 1,368,
+  Rajiformes 74 of 191, Clupeiformes 70 of 200, Actinopterygii 546 of 1,402) are known to include chance: with
+  lifespan shuffled across species the same test rejects 22–33% there. Of the 205 FDR-passing all-species
+  correlations significant on contrasts with the opposite sign, 50 remain under the sign-flip test. Both
+  referee panels raised the calibration; the report and its per-test sign-flip p values
+  (`docs/analyses/pic-calibration/`) are the answer kept on file.

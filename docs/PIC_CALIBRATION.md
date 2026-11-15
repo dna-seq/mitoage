@@ -161,7 +161,8 @@ to lifespan. That is a decision for the authors.
 
 ## What could be done
 
-Each changes published numbers, so each is the maintainer's call; none is implemented.
+**Decided (D10, 2026-11-15):** the maintainer keeps the t test and the published counts ("we should not
+overdrop tings"). The options below stay on file; each would change published numbers.
 
 1. Report the sign-flip p value next to, or instead of, `pic_p_value` (computed in the site build with
    fewer flips, about 999, to keep the build fast; the numbers above used 9,999).

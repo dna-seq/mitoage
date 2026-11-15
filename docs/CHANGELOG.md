@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The contrast t test stays the published PIC test** (2026-11-15, D10): the maintainer keeps
+  `pic_p_value` and the counts 3,008 / 896 / 547 rather than the sign-flip test's 1,255 / 531 / 336, with
+  the fish scopes' known excess recorded as the accepted cost.
+
 - **The contrast (PIC) test is checked: the code is right, its p values are not calibrated on these data**
   (2026-11-15, `docs/PIC_CALIBRATION.md`). `pipeline/pic-calibration.ts`, run on haumea from commit 0d67d1e
   (Slurm jobs 6486136 and 6486181), reproduces R `ape::pic` (same contrasts, same r and p) and every
