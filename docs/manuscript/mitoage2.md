@@ -32,7 +32,7 @@ phylogenetically independent contrasts along a dated tree; every lifespan correl
 partial correlation on body mass where recorded. Most lifespan correlations that pass the false discovery rate do not keep their sign and significance
 on contrasts: summed over 32 overlapping taxonomic scopes, 896 of 4,299 do. MitoAge 2 also provides alignments
 of the 13 protein-coding and 2 rRNA genes, an independent reproduction of the build and open Parquet
-downloads at https://www.mitoage.info.
+downloads at https://just-dna.life/mitoage/.
 
 > AUTHOR: about 200 words, the NAR limit.
 
@@ -525,7 +525,9 @@ table can be downloaded as Parquet (readable by DuckDB, pandas, polars and R arr
 review list is in CSV and the alignments in gzipped FASTA. A README written by the pipeline describes every column, lists the pinned version of each source
 and notes every known difference from release 1. Release 1 is kept, frozen, beside the current
 build. Each build is dated and mirrored, with its alignments and the frozen release 1, as the Hugging Face dataset
-`longevity-genie/mitoage`; each is intended to receive a Zenodo DOI.
+`longevity-genie/mitoage`; each is intended to receive a Zenodo DOI. MitoAge 2 is maintained by its authors,
+who rebuild it and fix reported errors as the need arises rather than on a fixed schedule; errors are reported
+as issues at https://github.com/dna-seq/mitoage/issues.
 
 > AUTHOR: Zenodo DOIs are planned, not minted.
 
@@ -566,6 +568,13 @@ a recorded body mass.
 
 Supplementary data is available at NAR online.
 
+## Author contributions
+
+Anton Kulaga: conceptualization, methodology, software, data curation, formal analysis, visualization,
+writing (original draft). Dmitri Toren: validation (human checking of the AI-assisted analyses and text),
+writing (review and editing). Nikolay Usanov: software (infrastructure and deployment). Robi Tacutu:
+supervision.
+
 ## Conflict of interest
 
 > AUTHOR: to be completed.
@@ -576,8 +585,8 @@ Supplementary data is available at NAR online.
 
 ## Data availability
 
-The website is at https://www.mitoage.info and https://just-dna.life/mitoage/, with the downloads under
-`/data/`. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
+The website is at https://just-dna.life/mitoage/, with the downloads under `/data/`; it will also answer at
+https://www.mitoage.info once that address, which still serves the 2016 site, is redirected. The build is mirrored as the Hugging Face dataset `longevity-genie/mitoage` (40); build 2 is its revision
 c525adbff8c12b19981fdada7f1615c2559b7140. The site and its
 data pipeline are at https://github.com/dna-seq/mitoage (41), and the independent reproduction and the
 analyses at https://github.com/dna-seq/mitoage-pipelines (42), both under the MIT licence. The

@@ -245,6 +245,14 @@ scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty 
 IC-8 fix the empty scope is gone and the table holds 32.
 
 ## Not yet done
+- Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
+  www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
+  GitHub issues. D11, Author contributions in CRediT roles (A.K. most of the work, N.U. infrastructure, D.T.
+  human validation of the AI-assisted work and editing before submission, R.T. supervision). D13, post on
+  bioRxiv now; before posting, the AI-use statement (D9), the competing-interests and funding statements,
+  and a copy without the draft header and the `> AUTHOR:` notes are needed. D1, the venue, is being
+  re-evaluated for a December 2026 submission, publication by spring 2027, all analyses kept and no venue
+  harsh on AI use.
 - The decisions of the 2026-11-15 runs are in `mitoage2.dashboard.html` (To-do tab, 18 decisions; the run that
   revised the paper has its own dashboard, `mitoage2.revision-run.dashboard.html`; both files stay out of git).
   The venue comes first: a second journal selection that keeps the results and allows rolling submission
