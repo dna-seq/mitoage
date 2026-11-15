@@ -429,6 +429,9 @@ version: the working copy plus one proposal (DS-C1, the Introduction's "orders o
   and a deposit of the current correlation table, reference renumbering.
 - **Decided after the run:** dashboard decision D1 (TimeTree's terms on redistribution): "Leave the text as it is"
   (docs/DECISIONS.md, D12); nothing changed.
+- **Decided after the run:** dashboard decision D2 (the contrast test beyond D10): "Add a sign-flip column to Table
+  3" (D13). Table 3 and Supplementary Table S1 carry "Both (sign-flip)", read from `dist/data/correlations.parquet`
+  of main's build (`pic_signflip_p` < 0.05 and FDR, same sign): 533 in all, 106 all species, 153 mammals.
 - **The v0.2 Docs:** no comments yet (`v0.2/comments.yaml`, empty). The sync found two "edits" that are a
   conversion loss in the Docs ("`> AUTHOR:`" shown as "AUTHOR:`"), not carried.
 

@@ -239,3 +239,18 @@ maintainer chose "Leave the text as it is".
   openly licensed source (new analysis).
 - **What it costs, and was accepted:** the redistribution stays outside TimeTree's stated terms, and a referee or
   TimeTree may raise it; "Free public resource" remains in the build's source list.
+
+## D13 — The sign-flip count gets its own column in Table 3, amending D10's presentation (2026-11-15)
+
+The v0.3 run's referees (SW-1 to SW-3, SK-1, SK-8, CH-1, SKX-1; dashboard decision D2) asked how far to go beyond D10,
+since the contrast t test over-rejects with lifespan shuffled (29% in all species, 22-33% in the fish scopes) and the
+sign-flip count stood only in sentences. The maintainer chose "Add a sign-flip column to Table 3".
+
+- **Decided:** Table 3 and Supplementary Table S1 gain "Both (sign-flip)" beside "Both": FDR, and `pic_signflip_p`
+  < 0.05 with the same sign (533 of 4,299 over the 32 scopes; all species 106, mammals 153), read from the published
+  `correlations.parquet` of main's build. The t-test counts stay the headline (896, 547), as D10 decided; Figure 1
+  is unchanged.
+- **Rejected:** keeping the count in sentences only; making the sign-flip test the headline (reversing D10, with no
+  sign-flip version of the 393); recomputing every test as phylogenetic regression with Pagel's lambda on the cluster.
+- **What it costs, and was accepted:** a tenth column in Table 3. In a few small scopes the sign-flip count exceeds
+  the t-test one (Primates 11 against 8), since the two p values differ in both directions.

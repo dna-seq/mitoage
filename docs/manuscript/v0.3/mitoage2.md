@@ -420,23 +420,23 @@ body-mass control cannot be applied to any of them.
 
 **Table 3.** Correlations of mtDNA features with log10 maximum lifespan in the default dataset, by scope.
 FDR: Benjamini–Hochberg q < 0.05 within scope. The scopes overlap (a species counts in all species, its class and its order), so the total row adds tests, not distinct relationships, and gives no species count. PIC: p < 0.05 on phylogenetically independent contrasts,
-uncorrected. Both: FDR and PIC with the same sign. All three: Both, and partial correlation on body mass
+uncorrected. Both: FDR and PIC with the same sign. Both (sign-flip): FDR, and a sign-flip p < 0.05 on contrasts with the same sign; it does not assume normal contrasts of equal variance (Materials and methods). All three: Both, and partial correlation on body mass
 p < 0.05, whatever its sign (it keeps the sign of the correlation across species in 481 of the 547). PIC +
 mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected. PIC + mass is a separate test beside the funnel: it is computed on the species with a recorded body mass only, so a scope can have more tests passing it than passing All three, or even Both.
 
-| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three | PIC + mass |
-|--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|
-| All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 237 | 80 |
-| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 139 | 136 |
-| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 86 | 38 |
-| Aves | 405 | 1,390 | 688 | 590 | 181 | 49 | 22 | 45 |
-| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 12 | 12 |
-| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 4 | 5 |
-| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 25 | 36 |
-| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 4 | 5 |
-| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 7 | 9 |
-| Passeriformes | 140 | 204 | 72 | 41 | 28 | 8 | 0 | 7 |
-| **All scopes (32)** | | **15,904** | **5,439** | **4,299** | **3,008** | **896** | **547** | **393** |
+| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | Both (sign-flip) | All three | PIC + mass |
+|--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
+| All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 106 | 237 | 80 |
+| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 153 | 139 | 136 |
+| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 99 | 86 | 38 |
+| Aves | 405 | 1,390 | 688 | 590 | 181 | 49 | 28 | 22 | 45 |
+| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 17 | 12 | 12 |
+| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 11 | 4 | 5 |
+| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 24 | 25 | 36 |
+| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 7 | 4 | 5 |
+| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 6 | 7 | 9 |
+| Passeriformes | 140 | 204 | 72 | 41 | 28 | 8 | 5 | 0 | 7 |
+| **All scopes (32)** | | **15,904** | **5,439** | **4,299** | **3,008** | **896** | **533** | **547** | **393** |
 
 The ten scopes above are all species, the four largest classes, the four largest mammalian orders and the
 passerine birds. Supplementary Table S1 gives all 32, each with its number of species with a recorded body mass
@@ -457,9 +457,9 @@ or PIC + mass.
 > it is run, the PIC column should not be read in those scopes. The empty-order scope is gone: the
 > pipeline no longer forms a scope from species with no name at a rank, so the table has 32 scopes.
 > Since then (D10, `docs/PIC_CALIBRATION.md`) the contrast code matches `ape::pic`, the t test stays, and
-> the table carries a sign-flip p value: with it, 533 of the 4,299 pass "Both" instead of 896. How
-> prominently to show that count (a column here, a sentence, or the Supplementary Methods only) is yours;
-> the Results now report the sign-flip test for the all-species and mammalian survivors only.
+> the table carries a sign-flip p value: with it, 533 of the 4,299 pass "Both" instead of 896. Decided
+> on 2026-11-15 (D13): the t test stays the headline, and the sign-flip count gets its own column here and
+> in Supplementary Table S1.
 
 > AUTHOR: each figure sits at the end of the section that first cites it, as the tables do, and the
 > figures are numbered in order of citation. Draft 0.1 listed the planned figures as 1 (interface),

@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **Table 3 shows the sign-flip count beside the t test** (2026-11-15, D13): a "Both (sign-flip)" column in Table 3
+  and Supplementary Table S1 of round v0.3 (533 of 4,299 over 32 scopes), from the published correlation table;
+  the t-test counts stay the headline, as D10 decided.
+
 - **TimeTree's redistribution terms: left as they are, by the maintainer's choice** (2026-11-15, D12). The
   conflict the v0.3 run found (PF-1) is recorded with the alternatives set aside; nothing changed in the manuscript
   or the published files.
