@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **TimeTree's redistribution terms: left as they are, by the maintainer's choice** (2026-11-15, D12). The
+  conflict the v0.3 run found (PF-1) is recorded with the alternatives set aside; nothing changed in the manuscript
+  or the published files.
+
 - **Round v0.3 of the manuscript, revised by a full improve run** (2026-11-15, run `20261115T132217Z-c1672440`,
   not in git). `docs/manuscript/v0.3/` is opened from v0.2 (which is with the co-authors) and carries 186 recorded
   edits: the review stages' corrections, prose edit, deslop, story and adaptation to NAR. Two errors of the earlier

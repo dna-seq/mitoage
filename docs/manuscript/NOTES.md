@@ -427,6 +427,8 @@ version: the working copy plus one proposal (DS-C1, the Introduction's "orders o
   calibrated contrast test beyond D10, NAR's graphical abstract, Figure 4, Figure 1 with the 393, the plot
   explorer's count of reversed contrasts, funding, conflicts, five-year availability, the data licence, Zenodo DOIs
   and a deposit of the current correlation table, reference renumbering.
+- **Decided after the run:** dashboard decision D1 (TimeTree's terms on redistribution): "Leave the text as it is"
+  (docs/DECISIONS.md, D12); nothing changed.
 - **The v0.2 Docs:** no comments yet (`v0.2/comments.yaml`, empty). The sync found two "edits" that are a
   conversion loss in the Docs ("`> AUTHOR:`" shown as "AUTHOR:`"), not carried.
 

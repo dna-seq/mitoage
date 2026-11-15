@@ -223,3 +223,19 @@ side by side".
 - **What it costs, and was accepted:** a fourth count beside the three controls, and two more columns in the
   table. The combined test uses the t test and inherits the over-rejection of the fish scopes (D10); it gets
   no sign-flip p value.
+
+## D12 — TimeTree's ages and answers stay published as they are, for now (2026-11-15)
+
+The run `20261115T132217Z-c1672440` (policy fit, finding PF-1; dashboard decision D1) found that the timetree.org
+footer, read 2026-11-15, says redistribution of TimeTree data and its transformations is not permitted and that the
+data are open for personal research and teaching use. MitoAge 2 publishes the raw TimeTree answers (Hugging Face
+`longevity-genie/mitoage-build2-sources`) and the dated tree built with them (`src/data/generated/phylogeny.json`),
+and `pipeline/build.ts:251` and the downloads' README call TimeTree a "Free public resource". Asked to choose, the
+maintainer chose "Leave the text as it is".
+
+- **Decided:** no change now to the manuscript, the published files or the licence text; the conflict stays open.
+- **Rejected:** withdrawing the answers and the node ages and publishing a fetch command, with a request to TimeTree
+  for permission (the recommendation); asking TimeTree while keeping the files public; re-dating the tree from an
+  openly licensed source (new analysis).
+- **What it costs, and was accepted:** the redistribution stays outside TimeTree's stated terms, and a referee or
+  TimeTree may raise it; "Free public resource" remains in the build's source list.
