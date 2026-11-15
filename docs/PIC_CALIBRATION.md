@@ -192,7 +192,12 @@ On haumea, from a checkout pulled from `main`:
 
 ```sh
 mkdir -p out/pic-calibration/logs && sbatch --array=1-32 pipeline/pic-calibration.sbatch
+bun run pipeline/pic-calibration.ts summary out/pic-calibration > docs/analyses/pic-calibration/summary.tsv
 ```
+
+`summary` makes the per-scope table above from the scope TSVs. On the first run's TSVs it gives the summary that run
+committed, except Bivalvia's Brownian-motion share (5.21 against 5.20): one Bivalvia test has no replicate, and the
+first summary counted it as a share of 0, where `summary` leaves it out of the mean.
 
 The ape comparison needs R with ape (`micromamba create -n mitoage-r -c conda-forge r-base=4.4 r-ape`); the R
 script is not in the repository (TypeScript only), so it is reproduced here. Its inputs come from

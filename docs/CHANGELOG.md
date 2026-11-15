@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **The PIC calibration's per-scope table is made by code** (2026-11-15). `bun run pipeline/pic-calibration.ts summary
+  <dir>` writes `docs/analyses/pic-calibration/summary.tsv` from the scope TSVs of a cluster run; on the first run it
+  reproduces the committed table except one rounding (Bivalvia's Brownian-motion share, 5.21 against 5.20, from a test
+  without replicates that the first summary counted as 0). Tested on rows of the real run
+  (`pipeline/tests/pic-summary.test.ts`), each test checked to fail when the code it guards is broken.
+
 - **A plan for the analyses the v0.3 skeptic asked for** (2026-11-15, `docs/REVIEW_ANALYSES_PLAN.md`, RM22).
   The analyses are calibrated counts (chance bounds from the PIC calibration, a phylogenetic permutation, PGLS
   over the table), power (simulation on the tree per scope, bounded against inconclusive losses, the retests'

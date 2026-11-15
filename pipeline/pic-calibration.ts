@@ -6,6 +6,7 @@
  *   bun run pipeline/pic-calibration.ts scopes                       # list the scopes, one per line
  *   bun run pipeline/pic-calibration.ts calibrate <scope> <out.tsv>  # one scope's lifespan tests
  *   bun run pipeline/pic-calibration.ts export <dir> <scope> <feature>...   # inputs of the ape::pic check
+ *   bun run pipeline/pic-calibration.ts summary <dir>                # per-scope counts of the scope TSVs in <dir>
  *
  * For each lifespan test (dataset "default", trait maxLongevityYears) `calibrate` reports, besides the
  * published r and p:
@@ -22,7 +23,7 @@
  *     through the origin on the contrasts of all three, df = m - 2), on the species with a mass.
  * The null replicates call the library's picFast, the code the site build runs.
  */
-import { writeFileSync, mkdirSync } from "node:fs";
+import { mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { type CompiledTree, type PhyloNode, picFast, tTestTwoTailed } from "./lib/stats";
 import { computeCorrelations, log10OrNull } from "./steps/correlations";
@@ -350,6 +351,60 @@ function exportInputs(dir: string, scopeKey: string, features: string[]) {
   console.log(`wrote ${dir}: tree, ${features.length} features of ${scopeKey}`);
 }
 
+// ---------------------------------------------------------------- per-scope counts
+
+/**
+ * The per-scope counts of docs/PIC_CALIBRATION.md ("Per scope") from the TSVs `calibrate` wrote, one per scope, in
+ * `dir`. "both" is q < 0.05 and the contrast test at p < 0.05 with the sign of the correlation across species,
+ * "opposite" the same with the other sign; garland_r is the scope's last test's (the species sets of a scope's tests
+ * differ little); mass_tests counts the tests with at least four contrasts on the species with a mass (two degrees of freedom), and the null
+ * shares are averaged over the tests that have one. Rows sorted by the count at p < 0.05 across species, largest first, then by scope.
+ */
+export function summarise(dir: string): string {
+  const header = ["scope", "tests", "p<.05", "fdr", "pic_t", "both_t", "opposite_t", "bm_null_pct", "perm_null_pct", "pic_signflip", "both_signflip", "opposite_signflip", "pic_mass", "both_pic_mass", "mass_tests", "garland_r", "median_top_share"];
+  const files = readdirSync(dir).filter((f) => f.endsWith(".tsv")).sort();
+  if (files.length === 0) throw new Error(`no scope TSVs in ${dir}`);
+  const num = (s: string | undefined) => (s === undefined || s === "" ? NaN : Number(s));
+  const out: { scope: string; atP: number; cells: (string | number)[] }[] = [];
+  for (const f of files) {
+    const [head, ...body] = readFileSync(join(dir, f), "utf8").trimEnd().split("\n");
+    const col = new Map(head!.split("\t").map((c, i) => [c, i] as const));
+    const need = ["scope", "pearson_r", "mass_m", "p_value", "q_value", "pic_r", "pic_p_value", "signflip_p", "bm_reject", "perm_reject", "mass_r", "mass_p", "lifespan_abs_contrast_vs_sd_r", "max_share_of_cross_product"];
+    for (const c of need) if (!col.has(c)) throw new Error(`${f}: no column ${c}`);
+    const rows = body.map((l) => l.split("\t"));
+    if (rows.length === 0) throw new Error(`${f}: no tests`);
+    const g = (r: string[], c: string) => num(r[col.get(c)!]);
+    const scope = rows[0]![col.get("scope")!]!;
+    const fdr = (r: string[]) => g(r, "q_value") < 0.05;
+    const same = (r: string[], rc: string) => Math.sign(g(r, rc)) === Math.sign(g(r, "pearson_r"));
+    const count = (pred: (r: string[]) => boolean) => rows.filter(pred).length;
+    const sig = (pc: string) => (r: string[]) => g(r, pc) < 0.05;
+    const mean = (c: string) => {
+      const v = rows.map((r) => g(r, c)).filter(Number.isFinite);
+      return v.length ? v.reduce((s, x) => s + x, 0) / v.length : NaN;
+    };
+    const shares = rows.map((r) => g(r, "max_share_of_cross_product")).filter(Number.isFinite).sort((a, b) => a - b);
+    const mid = shares.length >> 1;
+    const median = shares.length === 0 ? NaN : shares.length % 2 ? shares[mid]! : (shares[mid - 1]! + shares[mid]!) / 2;
+    const fixed = (v: number, d: number) => (Number.isFinite(v) ? v.toFixed(d) : "");
+    const atP = count((r) => g(r, "p_value") < 0.05);
+    out.push({
+      scope,
+      atP,
+      cells: [
+        scope, rows.length, atP, count(fdr),
+        count(sig("pic_p_value")), count((r) => fdr(r) && sig("pic_p_value")(r) && same(r, "pic_r")), count((r) => fdr(r) && sig("pic_p_value")(r) && !same(r, "pic_r")),
+        fixed(100 * mean("bm_reject"), 2), fixed(100 * mean("perm_reject"), 1),
+        count(sig("signflip_p")), count((r) => fdr(r) && sig("signflip_p")(r) && same(r, "pic_r")), count((r) => fdr(r) && sig("signflip_p")(r) && !same(r, "pic_r")),
+        count(sig("mass_p")), count((r) => fdr(r) && sig("mass_p")(r) && same(r, "mass_r")), count((r) => g(r, "mass_m") >= 4),
+        fixed(g(rows[rows.length - 1]!, "lifespan_abs_contrast_vs_sd_r"), 2), fixed(median, 2),
+      ],
+    });
+  }
+  out.sort((a, b) => b.atP - a.atP || (a.scope < b.scope ? -1 : a.scope > b.scope ? 1 : 0));
+  return `${[header.join("\t"), ...out.map((o) => o.cells.join("\t"))].join("\n")}\n`;
+}
+
 if (import.meta.main) {
   const [cmd, ...args] = process.argv.slice(2);
   if (cmd === "scopes") {
@@ -359,8 +414,9 @@ if (import.meta.main) {
     for (const s of d.scopes) if (counts.get(s.key)) console.log(s.key);
   } else if (cmd === "calibrate" && args.length === 2) calibrate(args[0]!, args[1]!);
   else if (cmd === "export" && args.length >= 3) exportInputs(args[0]!, args[1]!, args.slice(2));
+  else if (cmd === "summary" && args.length === 1) process.stdout.write(summarise(args[0]!));
   else {
-    console.error("usage: bun run pipeline/pic-calibration.ts scopes | calibrate <scope> <out.tsv> | export <dir> <scope> <feature>...");
+    console.error("usage: bun run pipeline/pic-calibration.ts scopes | calibrate <scope> <out.tsv> | export <dir> <scope> <feature>... | summary <dir of scope TSVs>");
     process.exitCode = 2;
   }
 }
