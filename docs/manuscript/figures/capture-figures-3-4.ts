@@ -1,4 +1,5 @@
-// Figures 3 and 4 of the MitoAge 2 manuscript: the interface and the COX1 alignment, captured from the built site.
+// Figures 3 and 4 of the MitoAge 2 manuscript and Figure 3—figure supplement 1: the interface and the COX1
+// alignment, captured from the built site.
 //
 //   bun run build                                                     # if dist/ is not current
 //   env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port 4349
@@ -24,10 +25,11 @@
 //      without the selectors, the search and the download cards. Viewport 660 px, so that the grid is at
 //      least 560 px wide and the viewer keeps its full species names.
 //
-// Figure 3 is laid out for the page width (178 mm): A above C in the left column, B above D in the right,
-// each column 86 mm. Figure 4 is laid out for one column (86 mm). ImageMagick labels the panels and writes
-// FIGURE_3_INTERFACE.jpg and FIGURE_4_ALIGNMENT.jpg (quality 90). The script prints, for each panel, the
-// smallest text in it and the size that text prints at.
+// Figure 3 (decision D7) is panel A across the page (178 mm) with panel B centred under it, as wide as a
+// total height of 218 mm allows. Figure 3—figure supplement 1 is C beside D, relabelled A and B, each in a
+// column of 86 mm across the page. Figure 4 is one column (86 mm). ImageMagick labels the panels and writes
+// FIGURE_3_INTERFACE.jpg, FIGURE_3_SUPPLEMENT_1.jpg and FIGURE_4_ALIGNMENT.jpg (quality 90). The script
+// prints, for each panel, the smallest text in it and the size that text prints at.
 
 import { openChrome, originArg, magick, size, printedPt, sleep, join, type Rect } from "./cdp.ts";
 
@@ -42,7 +44,9 @@ const PAGE_MM = 178;
 const DPI = 450; // the composed figures, as printed
 const colPx = Math.round((COLUMN_MM / 25.4) * DPI);
 const gutterPx = Math.round(((PAGE_MM - 2 * COLUMN_MM) / 25.4) * DPI);
+const MAX_HEIGHT_MM = 218; // Figure 3, as printed
 const out3 = join(import.meta.dir, "FIGURE_3_INTERFACE.jpg");
+const out3s = join(import.meta.dir, "FIGURE_3_SUPPLEMENT_1.jpg");
 const out4 = join(import.meta.dir, "FIGURE_4_ALIGNMENT.jpg");
 
 type Panel = { letter: string; file: string; cssWidth: number; smallest: { px: number; text: string }; note?: string };
@@ -201,38 +205,59 @@ try {
   await c.close();
 
   // ------------------------------------------------------------------------------------------- composing
-  // Each panel to the column width, its letter above it, on the page background.
-  const placed = (p: Panel, name: string) => {
-    const scaled = join(w, `${name}-col.png`);
-    magick([p.file, "-resize", `${colPx - 2 * 18}x`, "-bordercolor", BG, "-border", "18x0", scaled]);
-    if (!p.letter) return scaled;
+  // A panel scaled to a width, its letter above it, on the page background; returns the file and the width
+  // in mm the panel's own image prints at.
+  const pagePx = Math.round((PAGE_MM / 25.4) * DPI);
+  const MARGIN = 18;
+  const placed = (p: Panel, name: string, widthPx: number, letter = p.letter) => {
+    const scaled = join(w, `${name}-w.png`);
+    magick([p.file, "-resize", `${widthPx - 2 * MARGIN}x`, "-bordercolor", BG, "-border", `${MARGIN}x0`, scaled]);
+    const mm = ((widthPx - 2 * MARGIN) / DPI) * 25.4;
+    if (!letter) return { file: scaled, mm };
     const labelled = join(w, `${name}-lab.png`);
-    magick(["-background", BG, "-fill", INK, "-font", FONT, "-pointsize", "96", "(", "-size", `${colPx}x150`, "xc:" + BG, "-gravity", "west",
-      "-annotate", "+18+0", p.letter, ")", scaled, "-append", labelled]);
-    return labelled;
+    magick(["-background", BG, "-fill", INK, "-font", FONT, "-pointsize", "96", "(", "-size", `${widthPx}x150`, "xc:" + BG, "-gravity", "west",
+      "-annotate", `+${MARGIN}+0`, letter, ")", scaled, "-append", labelled]);
+    return { file: labelled, mm };
   };
-  const spacer = (h: number) => {
-    const f = join(w, `spacer-${h}.png`);
-    magick(["-size", `${colPx}x${h}`, `xc:${BG}`, f]);
-    return f;
-  };
-  const left = join(w, "left.png");
-  const right = join(w, "right.png");
-  magick(["-background", BG, placed(panels.A, "a"), spacer(40), placed(panels.C, "c"), "-append", left]);
-  magick(["-background", BG, placed(panels.B, "b"), spacer(40), placed(panels.D, "d"), "-append", right]);
-  magick(["-background", BG, left, "(", "-size", `${gutterPx}x1`, `xc:${BG}`, ")", right, "-gravity", "north", "+append",
+  const printed: Record<string, number> = {}; // mm each panel prints at
+
+  // Figure 3: A across the page; B under it, centred, as wide as the height budget allows.
+  const a3 = placed(panels.A, "a", pagePx);
+  printed.A = a3.mm;
+  const budgetPx = Math.round((MAX_HEIGHT_MM / 25.4) * DPI);
+  const bImg = size(panels.B.file);
+  const room = budgetPx - size(a3.file).h - 40 - 150 - 48; // spacer, B's letter strip, top and bottom border
+  const bWidth = Math.min(pagePx, Math.floor((room * bImg.w) / bImg.h) + 2 * MARGIN);
+  const b3 = placed(panels.B, "b", bWidth);
+  printed.B = b3.mm;
+  magick(["-background", BG, a3.file, "(", "-size", `${pagePx}x40`, `xc:${BG}`, ")",
+    "(", b3.file, "-gravity", "center", "-extent", `${pagePx}x${size(b3.file).h}`, ")", "-gravity", "northwest", "-append",
     "-bordercolor", BG, "-border", "0x24", "-quality", "90", out3]);
-  magick([placed(panels.F4, "f4"), "-background", BG, "-bordercolor", BG, "-border", "0x24", "-quality", "90", out4]);
+
+  // Figure 3—figure supplement 1: C beside D, each in a column of 86 mm, relabelled A and B.
+  const c3 = placed(panels.C, "c", colPx, "A");
+  const d3 = placed(panels.D, "d", colPx, "B");
+  printed.C = c3.mm;
+  printed.D = d3.mm;
+  magick(["-background", BG, c3.file, "(", "-size", `${gutterPx}x1`, `xc:${BG}`, ")", d3.file, "-gravity", "north", "+append",
+    "-bordercolor", BG, "-border", "0x24", "-quality", "90", out3s]);
+
+  // Figure 4: one column.
+  const f4 = placed(panels.F4, "f4", colPx);
+  printed.F4 = f4.mm;
+  magick([f4.file, "-background", BG, "-bordercolor", BG, "-border", "0x24", "-quality", "90", out4]);
 
   const report = (file: string, mm: number) => {
     const s = size(file);
     return `${s.w} x ${s.h} px; at ${mm} mm wide ${((mm * s.h) / s.w).toFixed(0)} mm tall, ${(s.w / (mm / 25.4)).toFixed(0)} dpi`;
   };
   console.log(`wrote ${out3}: ${report(out3, PAGE_MM)}`);
+  console.log(`wrote ${out3s}: ${report(out3s, PAGE_MM)}`);
   console.log(`wrote ${out4}: ${report(out4, COLUMN_MM)}`);
+  const names: Record<string, string> = { A: "Figure 3A", B: "Figure 3B", C: "supplement A (Regions)", D: "supplement B (genome map)", F4: "Figure 4" };
   for (const [k, p] of Object.entries(panels)) {
-    const pt = printedPt(p.smallest.px, p.cssWidth, COLUMN_MM - (2 * 18 * 25.4) / DPI);
-    console.log(`smallest text, ${k === "F4" ? "Figure 4" : `panel 3${k}`}: ${p.smallest.px.toFixed(1)} CSS px ("${p.smallest.text}") in a cut ${Math.round(p.cssWidth)} px wide, ${pt.toFixed(1)} pt in a ${COLUMN_MM} mm column`);
+    const pt = printedPt(p.smallest.px, p.cssWidth, printed[k]);
+    console.log(`smallest text, ${names[k]}: ${p.smallest.px.toFixed(1)} CSS px ("${p.smallest.text}") in a cut ${Math.round(p.cssWidth)} px wide, printed ${printed[k].toFixed(0)} mm wide: ${pt.toFixed(1)} pt`);
   }
   console.log(`panels in ${w}`);
 } catch (e) {

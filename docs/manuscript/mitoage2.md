@@ -376,9 +376,8 @@ has no partial correlation, so none of its tests passes all three.
 > correlation table the build writes; Figures 3, 4 and 5 are screenshots of the build 2 site. On 2026-11-15
 > every figure was redrawn or retaken for print by the scripts in `figures/` (NOTES.md, "Figures"), the
 > screenshots from a build of `main` after roadmap RM19, and every legend number was checked against them.
-> Still yours: the screenshots' smallest text prints at 2.4 to 6 pt (Figure 3A smallest, and Figure 3 is
-> taller than a page), so Figure 3 needs splitting or some panels moved to a supplement (eLife allows
-> figure supplements).
+> Figure 3 was split on 2026-11-15 (decision D7): its Compare chart and genome map are now Figure 3—figure
+> supplement 1. The smallest printed text is 3.4 to 6 pt across the screenshots (the tree and the genome map).
 
 ![Figure 1. What the controls leave of the lifespan correlations](figures/FIGURE_1_CONTROLS.jpg)
 
@@ -471,7 +470,7 @@ therefore not assessed here, rather than assessed and found negative.
 The menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
 
 - **Species.** A sortable, filterable list of all species in two views, genome features and life
-  history (Figure 3A), with a page per species and its circular genome map (Figure 3D). The filtered rows
+  history (Figure 3A), with a page per species and its circular genome map (Figure 3—figure supplement 1B). The filtered rows
   download as CSV and their mitogenomes as one FASTA file, which the browser fetches from NCBI by versioned accession; MitoAge
   does not store the mitogenomes themselves.
 - **Tree.** A zoomable radial tree of the species on the dated phylogeny (Figure 3B), with a page per
@@ -480,7 +479,7 @@ The menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure
   across species, its correlations with lifespan, and its alignment with lifespan shown beside the rows
   (Figure 4).
 - **Compare.** The comparative statistics of the original site (summary statistics and r with log10 lifespan,
-  by region or by child taxon, and codon usage), each table with a chart of its rows (Figure 3C). Two to six species can be set side by side.
+  by region or by child taxon, and codon usage), each table with a chart of its rows (Figure 3—figure supplement 1A). Two to six species can be set side by side.
 - **Plot explorer**, under Compare. Any two mtDNA features, or a feature against a life-history trait, for all species or
   one taxon, with the strongest correlations listed with their false discovery rate, partial and contrast
   statistics (Figure 5).
@@ -501,9 +500,13 @@ links to the original site's data in the literature keep working.
 the ocean quahog (*Arctica islandica*, 507 years) and the Greenland shark (*Somniosus microcephalus*,
 392 years) lead the 2,335 species the list holds, the 19 retired ones included. The rows shown, after any filter, download as CSV and their mitogenomes
 as one FASTA file. (**B**) The radial tree of all species by taxonomic rank, coloured by class, with each
-species' maximum lifespan on a log scale in the outer ring; any clade zooms into view. (**C**) Compare,
+species' maximum lifespan on a log scale in the outer ring; any clade zooms into view.
+
+![Figure 3—figure supplement 1. Two further views of the interface](figures/FIGURE_3_SUPPLEMENT_1.jpg)
+
+**Figure 3—figure supplement 1.** Two further views of the interface. (**A**) Compare,
 class Mammalia: Pearson's r of the GC content of each region with log10 maximum lifespan and its 95%
-confidence interval, computed by the page for 5 or more species and not corrected for multiple testing or shared ancestry. (**D**) The
+confidence interval, computed by the page for 5 or more species and not corrected for multiple testing or shared ancestry. (**B**) The
 circular genome map of the bowhead whale (*Balaena mysticetus*, NC_005268.1, 16,390 bp): genes on the
 two strands in the outer and inner rings, and in the middle ring the GC content of each gene against that
 of the whole genome.
@@ -516,7 +519,8 @@ whales. Residues are coloured by the class of their side chain; the bar above ea
 the rows on show that carry its most common residue, and each species' maximum lifespan is drawn beside its
 row. The alignment (MAFFT v7.526, FFT-NS-2) covers 2,316 species in 679 columns; columns where more than
 half of the rows on show have a gap are hidden (514 of 679 remain; the panel shows the first 20 rows and 24 of
-those columns).
+those columns). Sorted by lifespan, each column puts the residues of long- and short-lived species side by side;
+the screen of single alignment columns on the dated tree (Results) tests such differences systematically.
 
 ![Figure 5. The plot explorer](figures/FIGURE_5_PLOT_EXPLORER.jpg)
 

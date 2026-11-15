@@ -174,7 +174,7 @@ the page 178 mm, text at least 6 pt and images at least 300 dpi as printed.
 bun docs/manuscript/figures/figure-1-controls.ts        # Figure 1
 bun docs/manuscript/figures/figure-2-codons.ts          # Figure 2
 env SITE_URL=https://just-dna.life BASE_PATH=/mitoage bun run preview --port 4349   # read the port it took from its log
-bun docs/manuscript/figures/capture-figures-3-4.ts http://localhost:4349            # Figures 3 and 4
+bun docs/manuscript/figures/capture-figures-3-4.ts http://localhost:4349            # Figure 3, its supplement 1, Figure 4
 bun docs/manuscript/figures/capture-figure-5.ts http://localhost:4349               # Figure 5
 ```
 
@@ -182,13 +182,15 @@ bun docs/manuscript/figures/capture-figure-5.ts http://localhost:4349           
 |---|---|---|---|---|
 | 1 | `figure-1-controls.ts` | 178 mm | 3,000 × 2,568 px, 428 dpi | 7.6 pt |
 | 2 | `figure-2-codons.ts` | 178 mm (158 mm tall) | 3,000 × 2,670 px, 428 dpi | 7.1 pt |
-| 3 | `capture-figures-3-4.ts` | 178 mm, 2 × 2 in columns of 86 mm (242 mm tall) | 3,154 × 4,285 px, 450 dpi | A 2.4 pt, B 4.3 pt, C 5.9 pt, D 3.4 pt |
+| 3 | `capture-figures-3-4.ts` | 178 mm: A across the page, B centred under it, 73 mm wide (218 mm tall) | 3,154 × 3,861 px, 450 dpi | A 5.0 pt, B 3.7 pt |
+| 3—figure supplement 1 | `capture-figures-3-4.ts` | 178 mm: A (Regions) beside B (genome map), 86 mm each (160 mm tall) | 3,154 × 2,837 px, 450 dpi | A 6.0 pt, B 3.4 pt |
 | 4 | `capture-figures-3-4.ts` | 86 mm (95 mm tall) | 1,524 × 1,678 px, 450 dpi | 4.3 pt |
 | 5 | `capture-figure-5.ts` | 178 mm, A above B (207 mm tall) | 3,600 × 4,181 px, 514 dpi | A 5.3 pt, B 6.0 pt |
 
 The screenshots cannot reach 6 pt by cropping alone: the site's smallest text is 8.4 to 13 CSS px, and the
 narrowest layout that keeps a panel whole is 520 to 1,300 px wide. 3A needs 1,360 px before the table
-stops scrolling sideways; the genome map (3D) draws its scale at 8.4 px; the alignment viewer cuts species
+stops scrolling sideways, so it is set across the page (decision D7: Figure 3 keeps A and B, and the Regions
+chart and the genome map moved to Figure 3—figure supplement 1); the genome map draws its scale at 8.4 px; the alignment viewer cuts species
 names when its grid is under 560 px. Each script prints the smallest text of each panel and its printed size.
 
 - `figure-1-controls.ts` and `figure-2-codons.ts` read `dist/data/correlations.parquet` with hyparquet
@@ -205,8 +207,8 @@ names when its grid is under 560 px. Each script prints the smallest text of eac
 |---|---|---|---|
 | 3A | `/species/` | 1,360 px | sorted by maximum lifespan, longest first; toolbar with the two download buttons, the count and the first eight rows |
 | 3B | `/tree/` | 600 px | as it opens (by rank, lifespan ring); the tree and its legend, without the taxon card and the controls |
-| 3C | `/compare/class/mammalia/?chart=r` | 560 px | the Regions card's title, chart, key and note, without the selectors |
-| 3D | `/species/balaena-mysticetus/` | 640 px | the Genome map card's title, map, legend and keys, without the help card |
+| 3—S1 A (was 3C) | `/compare/class/mammalia/?chart=r` | 560 px | the Regions card's title, chart, key and note, without the selectors |
+| 3—S1 B (was 3D) | `/species/balaena-mysticetus/` | 640 px | the Genome map card's title, map, legend and keys, without the help card |
 | 4 | `/genes/cox1/` | 660 px | Alignment card, class Mammalia, longest-lived first; title, count line, the first 20 rows (24 columns) and the colour key |
 | 5A | `/compare/plot/?x=maxLongevityYears&y=gc:total_mtDNA&scope=class:Mammalia&fit=1&highlight=homo-sapiens,balaena-mysticetus,heterocephalus-glaber,mus-musculus` | 1,280 px | the plot card down to its class legend, beside the corrected statistics; without the hint, the switch, the buttons and the live statistics |
 | 5B | the same page | 1,150 px | Strongest correlations as it opens (maximum lifespan, all species): the title, the summary line and the first five rows |
@@ -264,4 +266,5 @@ IC-8 fix the empty scope is gone and the table holds 32.
   test's calibration (it rejects about 40% of tests in fish scopes, more than the uncontrolled test, which
   suggests checking the contrast code against an established implementation), strand orientation per record,
   a second ancestry model, and the Abstract's "independent reproduction", which does not cover the correlations.
-- Figure 3 cannot be printed legibly as one figure (panel A at 2.4 pt): split it or move panels to a supplement.
+- Figure 3 is split (D7): A and B stay, the Regions chart and the genome map are Figure 3—figure supplement 1. Its
+  smallest text still prints under 6 pt (3B 3.7 pt, the genome map 3.4 pt; "Figures" above).
