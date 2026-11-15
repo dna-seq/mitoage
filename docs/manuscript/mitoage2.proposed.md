@@ -165,7 +165,9 @@ at least 20 species. Of the 15,904 correlations tested across all scopes, 5,439 
 correction, and 4,299 pass a false discovery rate of 5% (q < 0.05, where q is the p value adjusted for the
 false discovery rate). Of those 4,299, 896 are also significant on phylogenetic contrasts with the same
 sign, and 547 pass the partial correlation on body mass as well, 481 of them with the same sign (Table 3,
-Figure 1). Most correlations that pass the false discovery rate therefore fail on contrasts, a pattern
+Figure 1). Controlling for shared ancestry and body mass together, as the correlation of the contrasts with
+log10 body mass partialled out, 393 of the 4,299 remain significant with the same sign, 281 of which also
+pass the partial correlation across species (Table 3, PIC + mass). Most correlations that pass the false discovery rate therefore fail on contrasts, a pattern
 consistent with differences among clades.
 
 These counts are numbers of tests, and one relationship can be counted more than once. The scopes overlap, because a species counts in
@@ -222,26 +224,27 @@ body-mass control cannot be applied to any of them.
 **Table 3.** Correlations of mtDNA features with log10 maximum lifespan in the default dataset, by scope.
 FDR: Benjamini–Hochberg q < 0.05 within scope. The scopes overlap (a species counts in all species, its class and its order), so the total row adds tests, not distinct relationships. PIC: p < 0.05 on phylogenetically independent contrasts,
 uncorrected. Both: FDR and PIC with the same sign. All three: Both, and partial correlation on body mass
-p < 0.05, whatever its sign (it keeps the sign of the correlation across species in 481 of the 547).
+p < 0.05, whatever its sign (it keeps the sign of the correlation across species in 481 of the 547). PIC +
+mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected.
 
-| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three |
-|---|--:|--:|--:|--:|--:|--:|--:|
-| All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 237 |
-| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 139 |
-| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 86 |
-| Aves | 405 | 1,390 | 688 | 590 | 181 | 49 | 22 |
-| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 12 |
-| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 4 |
-| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 25 |
-| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 4 |
-| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 7 |
-| Passeriformes | 140 | 204 | 72 | 41 | 28 | 8 | 0 |
-| **All scopes (32)** | | **15,904** | **5,439** | **4,299** | **3,008** | **896** | **547** |
+| Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | All three | PIC + mass |
+|---|--:|--:|--:|--:|--:|--:|--:|--:|
+| All species | 2,202 | 1,414 | 1,179 | 1,168 | 565 | 291 | 237 | 80 |
+| Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 139 | 136 |
+| Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 86 | 38 |
+| Aves | 405 | 1,390 | 688 | 590 | 181 | 49 | 22 | 45 |
+| Reptilia | 126 | 1,403 | 405 | 231 | 94 | 21 | 12 | 12 |
+| Primates | 112 | 204 | 128 | 118 | 12 | 8 | 4 | 5 |
+| Carnivora | 123 | 205 | 88 | 72 | 53 | 35 | 25 | 36 |
+| Artiodactyla | 134 | 204 | 92 | 76 | 27 | 9 | 4 | 5 |
+| Rodentia | 87 | 204 | 77 | 50 | 23 | 9 | 7 | 9 |
+| Passeriformes | 140 | 204 | 72 | 41 | 28 | 8 | 0 | 7 |
+| **All scopes (32)** | | **15,904** | **5,439** | **4,299** | **3,008** | **896** | **547** | **393** |
 
 The ten scopes above are all species, the four largest classes, the four largest mammalian orders and the
 passerine birds. Supplementary Table S1 gives all 32, each with its number of species with a recorded body mass
-and the share of its tests that the contrast test rejects. A scope with fewer than 10 species of recorded body mass
-has no partial correlation, so none of its tests passes all three.
+and the share of its tests that the contrast test rejects. A scope with fewer than 10 species of recorded body mass has no partial correlation, so none of its tests passes all three
+or PIC + mass.
 
 > AUTHOR: one check before this table is final (NOTES.md, Q5). In some clades the contrast tests
 > reject far more often than chance with no raw signal at all: Chondrichthyes 42.8% of 1,368 lifespan
@@ -474,7 +477,9 @@ The published relationships we retested point the same way. The correlation of i
 lifespan in mammals was reported to hold on contrasts over a taxonomy with equal branch lengths (18); on
 contrasts along the dated tree, and with body mass and base composition in the model, it does not. The
 slower evolution of the mitochondrial proteins in long-lived mammals and birds (16) does not appear in the
-relative-rate test under any of the four normalisations tried. For amino-acid content the answer depends on the model of ancestry: cysteine (30),
+relative-rate test under any of the four normalisations tried. Its dN and dS are Nei–Gojobori counts, not corrected for multiple hits; such counts saturate over the
+distance from a sister pair to its outgroup and compress the rate contrasts towards zero, so the test may be
+biased towards the null. For amino-acid content the answer depends on the model of ancestry: cysteine (30),
 methionine (31) and threonine (33) pass no false discovery rate on the dated tree, but cysteine and threonine
 do with random intercepts of order and family, a model that ignores the branch lengths. On the dated tree
 the result agrees with the earlier finding that in mammals cysteine shows no detectable effect of longevity
@@ -493,8 +498,8 @@ would allow where the test across species finds almost nothing. In the cartilagi
 42.8% of 1,368 lifespan tests reject at contrast p < 0.05 and 0.1% pass the false discovery rate
 (Supplementary Table S1 gives the rejection rate of every scope). The contrast code agrees with R's
 `ape::pic`, and the excess arises where one pair of sister lineages dominates a scope's contrasts, so in
-those scopes the contrast column cannot be read at face value. Third, the contrast and body-mass tests are not corrected for multiple testing, and they are applied one at
-a time. The 547 that pass all three controls are candidates from a screen rather than
+those scopes the contrast column cannot be read at face value. Third, the contrast and body-mass tests are not corrected for multiple testing, and in the funnel they are applied one at
+a time; applied together, as contrasts with body mass partialled out, they keep 393 of the 4,299. The 547 that pass all three controls are candidates from a screen rather than
 established relationships within lineages, and the partial correlation reverses the sign of the
 correlation across species in 66 of them. Fourth, the tree is partly interpolated: 184 of the 2,229 node
 ages are placed midway between their parent and their oldest child rather than taken from TimeTree.
@@ -554,7 +559,10 @@ flags them as questionable, wild and captive longevities are acceptable, and age
 low. Ringing records are acceptable; each records the oldest recaptured wild individual and usually
 underestimates the maximum. AnAge values
 are typed by the origin of the specimen, so its ages of wild animals count as wild whatever the method of
-ageing; "estimated" marks a FishBase value from a growth study. Supplementary Methods S4 gives the mapping
+ageing; "estimated" marks a FishBase value from a growth study. The two sources are therefore treated
+asymmetrically: AnAge ages of wild animals that were estimated rather than observed stay in the default
+dataset, among them the Greenland shark (392 years) and two tubeworms (300 and 250 years), which enter the
+all-species analyses at the extreme of the trait, while FishBase ages from growth studies are left out. Supplementary Methods S4 gives the mapping
 field by field.
 
 > AUTHOR: the EURING list could not be retrieved (euring.org was in maintenance on 2026-11-13), so the
@@ -628,9 +636,13 @@ and a correlation needs at least 10 species with both values.
 For maximum lifespan, a Pearson partial correlation on log10 adult weight separates lifespan from body size, in the
 species with a recorded adult weight (1,384 of the 2,202 in all species; 235 of the 827 ray-finned fishes). Each correlation is also computed on
 phylogenetically independent contrasts (23) along the dated tree, as the correlation of the standardised contrasts through the origin, with polytomies resolved into
-zero-length branches. Where two branches both have zero length, their values are averaged and give no contrast. The three
-controls are applied one at a time: the contrasts are not adjusted for body mass, and the partial
-correlation is not adjusted for shared ancestry. The contrast p value comes from the t distribution with m − 1 degrees of freedom for m contrasts, the
+zero-length branches. Where two branches both have zero length, their values are averaged and give no contrast. The three controls of Table 3's funnel are applied one at a time: the contrasts are not adjusted for body mass, and the partial
+correlation is not adjusted for shared ancestry. To control for both together, each lifespan correlation is also
+computed on the contrasts with log10 body mass partialled out, on the species with a recorded adult weight (at
+least 10), with its p value from the t distribution with m − 2 degrees of freedom; Table 3 reports it beside the
+funnel. Each contrast correlation with lifespan also carries a second p value, from up to 9,999 random sign
+flips of the contrast products, which does not assume normal contrasts of equal variance; the counts use the
+t test. The contrast p value comes from the t distribution with m − 1 degrees of freedom for m contrasts, the
 partial-correlation p value with n − 3 for n species. Neither is corrected for multiple testing, so the counts
 that also pass them rest on a nominal 5% level at those steps. Supplementary Methods S10.6 gives the contrast
 computation step by step, and S10.7 what each count of the Results requires.

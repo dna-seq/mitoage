@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The manuscript states two limits the review raised (D14)** (2026-11-15): the relative-rate test's
+  uncorrected Nei–Gojobori counts may bias it towards the null (Discussion), and estimated AnAge ages of wild
+  animals stay in the default dataset while FishBase growth-study ages leave (Materials and methods). No
+  analysis was rerun. `mitoage2.proposed.md` again equals `mitoage2.md`.
+
 - **The manuscript's supplementary material has its own folder** (2026-11-15): `docs/manuscript/supplementary/`
   holds the Supplementary Methods (`mitoage2.supplementary.md`), Supplementary Table S1
   (`supplementary_table_S1_scopes.csv`) and the supplementary figures (`supplementary/figures/`, now Figure

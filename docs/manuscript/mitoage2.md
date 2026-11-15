@@ -477,7 +477,9 @@ The published relationships we retested point the same way. The correlation of i
 lifespan in mammals was reported to hold on contrasts over a taxonomy with equal branch lengths (18); on
 contrasts along the dated tree, and with body mass and base composition in the model, it does not. The
 slower evolution of the mitochondrial proteins in long-lived mammals and birds (16) does not appear in the
-relative-rate test under any of the four normalisations tried. For amino-acid content the answer depends on the model of ancestry: cysteine (30),
+relative-rate test under any of the four normalisations tried. Its dN and dS are Nei–Gojobori counts, not corrected for multiple hits; such counts saturate over the
+distance from a sister pair to its outgroup and compress the rate contrasts towards zero, so the test may be
+biased towards the null. For amino-acid content the answer depends on the model of ancestry: cysteine (30),
 methionine (31) and threonine (33) pass no false discovery rate on the dated tree, but cysteine and threonine
 do with random intercepts of order and family, a model that ignores the branch lengths. On the dated tree
 the result agrees with the earlier finding that in mammals cysteine shows no detectable effect of longevity
@@ -557,7 +559,10 @@ flags them as questionable, wild and captive longevities are acceptable, and age
 low. Ringing records are acceptable; each records the oldest recaptured wild individual and usually
 underestimates the maximum. AnAge values
 are typed by the origin of the specimen, so its ages of wild animals count as wild whatever the method of
-ageing; "estimated" marks a FishBase value from a growth study. Supplementary Methods S4 gives the mapping
+ageing; "estimated" marks a FishBase value from a growth study. The two sources are therefore treated
+asymmetrically: AnAge ages of wild animals that were estimated rather than observed stay in the default
+dataset, among them the Greenland shark (392 years) and two tubeworms (300 and 250 years), which enter the
+all-species analyses at the extreme of the trait, while FishBase ages from growth studies are left out. Supplementary Methods S4 gives the mapping
 field by field.
 
 > AUTHOR: the EURING list could not be retrieved (euring.org was in maintenance on 2026-11-13), so the

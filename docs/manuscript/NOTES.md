@@ -327,6 +327,24 @@ than as statements one after another.
   unchanged at about 2,070. The whole file: 9,283 → about 10,650 words. Abstract about 230 words: within
   MBE's 250, above eLife's usual 200 and Life Science Alliance's 175.
 
+## D14 answered: two limits stated, no new analysis (2026-11-15)
+
+Decision D14 of run `20261115T054110Z-dac824e9` (optional sensitivity analyses; findings PR-9 and PR-13). The
+authors chose to state both limits rather than rerun:
+- **The rate test (PR-9).** The Discussion now says the relative-rate test's dN and dS are Nei–Gojobori counts
+  not corrected for multiple hits, which saturate over the distance from a sister pair to its outgroup, so the
+  test may be biased towards the null.
+- **Estimated AnAge ages (PR-13).** Materials and methods, "Inclusion and lifespan precedence", now says the two
+  sources are treated asymmetrically: AnAge ages of wild animals that were estimated stay in the default dataset,
+  among them the Greenland shark (392 years) and the tubeworms *Seepiophila jonesi* (300) and *Lamellibrachia
+  luymesi* (250), all AnAge, wild, quality acceptable in `public/data/species.csv`, while FishBase growth-study
+  ages leave.
+Not run, and still open if a referee asks: rate contrasts on corrected distances or unsaturated triplets, the
+all-species counts without the estimated AnAge ages, age at maturity as a covariate, and third-position
+C/(C+T) tested once in place of sixteen codons.
+
+`mitoage2.proposed.md` was set equal to `mitoage2.md` again; it had missed the D11 commit (58e145f).
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
