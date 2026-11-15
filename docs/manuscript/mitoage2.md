@@ -216,6 +216,18 @@ which do not.
 > 2026-11-15), and the paragraph above reports what it found. Still open: extend the comparison to the two
 > extended-feature tables, and cite the repository by a tagged release and Zenodo DOI rather than by commit.
 
+### Use of AI tools
+
+The data pipeline, the analyses and this manuscript were developed with AI agents. Claude Code and Claude
+Science (Anthropic), running Claude Opus 5.5 at high and extra-high reasoning effort, wrote most of the code
+and drafted most of the text. The authors' own manuscript-skills plugin for Claude Code was used to check the
+manuscript's quality and find its weak points, through simulated referees and readers, reference and
+reporting checks and edits the authors reviewed. Codex (OpenAI), running GPT-6.1-Sol at high reasoning
+effort, served as a reviewer and reader independent of Claude and reproduced code. Every number in the paper
+is computed by the pipeline from pinned sources, and the build was cross-checked against an independent Python
+reproduction (see Reproducibility). The authors checked the analyses and the text, and take full
+responsibility for the content.
+
 ## Results
 
 ### Database content
@@ -567,6 +579,11 @@ a recorded body mass.
 ## Supplementary data
 
 Supplementary data is available at NAR online.
+
+## Acknowledgements
+
+AI agents assisted with the code, the analyses and the writing of MitoAge 2, as described in Materials and
+methods, "Use of AI tools".
 
 ## Author contributions
 
