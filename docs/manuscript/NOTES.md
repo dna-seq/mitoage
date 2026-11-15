@@ -246,6 +246,36 @@ Recomputing Table 3 from the same file for Figure 1 reproduced every count in it
 scopes was wrong in draft 0.1: the table held 33 scopes (32 named and the empty `order:`), not 34; since the
 IC-8 fix the empty scope is gone and the table holds 32.
 
+## Supplementary Methods
+
+`mitoage2.supplementary.md` (added 2026-11-15) is the long form of the Methods: sections S1 to S14, each the
+flow of decisions behind one step (what was done, why, the alternative not taken, what it assumes, what is not
+known), for a reader who will not open the code. The main text points to them ("Supplementary Methods S4") from
+each Methods subsection, the two worked-analysis subsections and the MCP paragraph; it is otherwise unchanged.
+Table 4 (the pinned versions) moved there as Supplementary Table S2 (D7), so the main text's tables are 1 to 3,
+cited in order.
+
+- **Where its facts come from.** Each rule cites its file, and where it matters the line, in a hidden
+  `<!-- src: -->` comment: the pipeline code (`pipeline/`, `src/data/index.ts`), `docs/BUILD2_REPORT.md`,
+  `BUILD2_CROSSCHECK.md`, `BUILD2_OPEN_QUESTIONS.md`, `ANALYSIS_FINDINGS.md`, `DECISIONS.md`,
+  `plans/DATA_BUILD2_DECISIONS.md`, and in mitoage-pipelines (f2006a9) `docs/BUILD2_REPRODUCTION.md`, the README and
+  the analysis code. Where no document records a reason for a choice, the text says so instead of supplying one.
+- **Checked while writing.** The seven tables and 28 alignment files have the same SHA-256 in Hugging Face
+  revisions 653afe2a (the reproduction's), 6efa0959 (the analyses') and c525adbf (the paper's); the two
+  extended-feature tables exist only in c525adbf and equal `public/data/`. The strand diagnosis (0 of 18,030
+  region rows match with release 1's labels, 17,677 after swapping) is from the first pipeline run's build
+  notes (`plans/handoffs/HANDOFF_mitoage-next-site_2026-11-12.md`).
+- **Found while writing, and asked in the supplement** (S14 lists them): the record-choice rule orders by date
+  before length, against the default's wording (S2); the repeat and motif thresholds have no recorded source
+  (S7.3); the versions and commands of the aligner comparison are not recorded (S8); the audit behind the
+  cross-check is unpublished (S11); `aa-pgls`, `motif-pgls` and `rates`, which give every number of the two
+  worked-analysis subsections, are not recorded as rerun (S11); the reproduction covers neither the
+  extended-feature tables nor the correlations (S11). The contrast test is described as implemented; the
+  `ape::pic` comparison and the cluster calibration are to be inserted in S10.6 when they report.
+- **Edited** with manuscript-prose-edit and manuscript-deslop in run `20261115T064112Z-52913208` (not in git):
+  claim guard clean against each pre-edit copy; three sentences of the first draft that stated something no
+  document records were removed; 7 of 15 "X, not Y" contrasts rewritten, the rest kept as real distinctions.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Supplementary Methods for the manuscript** (2026-11-15): `docs/manuscript/mitoage2.supplementary.md`,
+  sections S1 to S14, the build and the worked analyses as a flow of decisions with their reasons, rejected
+  alternatives, assumptions and unknowns, each rule sourced to its file in a hidden comment. It defines every
+  feature family precisely enough to recompute, gives the contrast computation step by step, says what each
+  count of the Results requires (15,904 / 4,299 / 896 / 547 against 496 and 291), and sets out what the build's
+  three checks cover: the independent reproduction covers neither the extended-feature tables nor the
+  correlations. The manuscript points to its sections from Methods, the worked analyses and the MCP paragraph,
+  and Table 4 moves there as Supplementary Table S2 (decision D7). Prose-edited and deslopped; S14 lists what
+  the authors must still supply. `docs/manuscript/NOTES.md` has a section on it.
+
 - **The manuscript's Data availability names the Hugging Face collection** (2026-11-15), after the two GitHub
   repositories, as reference 44 (`docs/manuscript/mitoage2.md`).
 
