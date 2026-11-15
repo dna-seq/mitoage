@@ -23,7 +23,8 @@ cluster's own READMEs stay on the cluster, at the paths below, as the record of 
 
 Not copied: `/data/uq2347/runs/mitoage/mitoport/structure/out/5Z62.contacts.tsv` (1,245 atom-level contact
 pairs, from which `SITES.tsv` is built; 298 distinct residues touch a nuclear subunit, 494 touch any other
-chain), the 806 predicted structures (61 MB, `/data/uq2347/runs/mitoage/struct/pdbs/<GENE>/<species>.pdb`),
+chain), the 806 predicted structures (150 MB, `/data/uq2347/runs/mitoage/struct/pdbs/<GENE>/<species>.pdb`;
+published since on Hugging Face as `longevity-genie/mitoage-structures`, revision 8e5cfdc),
 and the provisional Coevol runs (`/data/uq2347/runs/mitoage/rm12/out/coevol-repo/chain1.cov`,
 `chain2.cov`; their numbers are in H3, marked provisional).
 

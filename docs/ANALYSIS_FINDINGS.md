@@ -224,7 +224,8 @@ of complex IV only. **Reproduction.** First run on the cluster on 2026-11-14 by 
 code on 2026-11-15: the contact map and `sites.tsv` are byte-identical, and `coupling.tsv` is identical when
 read on that run's nuclear alignments. On freshly made alignments (MAFFT with two threads is not repeatable)
 60 of 62 are identical and one protein's sequence correlations move (UQCRQ, +0.565 to +0.572), which changes
-no group median. The `esm_` columns need the per-residue ESM-2 embeddings, which are not published.
+no group median. The `esm_` columns read the per-residue ESM-2 embeddings (`mitoage download prepared
+--topic residues`).
 **Traps met.** IQ-TREE re-places identical sequences unless told `--keep-ident`, which silently changes the
 tree; NCBI's ortholog sets for CYC1, SDHC and SDHD held 21 to 48 sequences of another gene or a broken
 model, filtered by identity to human; a test of nuclear rate against overall mitochondrial rate with one
@@ -350,7 +351,8 @@ misplace columns that structure would put elsewhere.
 **Test.** `mitoage download pdb 5XTD 5Z62 8H9S 5XTE 5XTH 5XTI 6ZQN 7AJD`, `structure within`, `structure
 fold` (GPU), `structure msa`; into `within_species.tsv`, `chains.tsv`, `plddt.tsv` and `structural_msa.tsv`.
 First run on the cluster on 2026-11-14 and 15 by another agent; rerun from this code, `within` and `msa` (on
-that run's structures) give the same tables, timings aside; the folding was not rerun. First, the 13 proteins from solved human structures (ND1-6 and ND4L from
+that run's structures) give the same tables, timings aside; the folding was not rerun, and its 806 structures
+are published (`mitoage download prepared --topic structures`). First, the 13 proteins from solved human structures (ND1-6 and ND4L from
 5XTD, COX1-3 from 5Z62, CYTB from 5XTE, ATP6 and ATP8 from 8H9S; identity to MitoAge's human sequences 0.979
 to 1.000), superimposed all against all with US-align. Then predicted structures of the 13 proteins in 62
 mammals (806 structures, ESMFold2, checkpoint `biohub/ESMFold2-Fast`, one sample), aligned by FoldMason and

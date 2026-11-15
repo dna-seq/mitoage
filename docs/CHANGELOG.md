@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **The per-residue embeddings and the predicted structures are on Hugging Face** (2026-11-15), so the ESM
+  side of H5's interface test and H10's structural check rerun from public data: the per-residue ESM-2 650M
+  embeddings of both partners (7.7 GB) in `longevity-genie/mitoage-embeddings` at fc70053, the 806 ESMFold2
+  structures (150 MB) in the new `longevity-genie/mitoage-structures` at 8e5cfdc, both the files the published
+  runs read (the residues' SHA-256 on the hub equal the cluster's; the structures download byte-identical).
+  `dna-seq/mitoage-pipelines` (aa2e3ed) fetches them with `download prepared --topic residues` and `--topic
+  structures`. `docs/ANALYSIS_FINDINGS.md` says so in H5 and H10.
+
 - **A second journal selection and a second, independent panel on the revised manuscript** (2026-11-15,
   runs `20261115T001950Z-ea39ab48` and `20261115T054110Z-dac824e9`, not in git). The selection drops NAR's
   annual Database issue as the first choice (next open issue January 2028, results cut) for a bioRxiv preprint
