@@ -9,6 +9,11 @@ its figures with their scripts, and the Supplementary Methods and tables. The ne
 (`rounds.py open 0.3`), so each released version stays as it was sent. This file stays above the rounds. Paths
 below written as `figures/` or `supplementary/` are inside the current round's folder.
 
+**Releasing a round.** `rounds.py push 0.2 --go` (run from the plugin's manuscript-coauthors folder with
+`--project docs/manuscript/v0.2`) builds each Doc with `bun ../build-docx.ts FILE` from the round folder:
+pandoc (on PATH, or `$PANDOC`; `uv run --with pypandoc-binary` provides one), then every table's columns widened
+to a Google Doc's 6.5-inch text width, because pandoc lays tables out for 5.5 inches and Google Docs keeps that.
+
 ## How the draft is built
 
 - **Model.** The 2016 paper (Toren et al., NAR 44:D1262) is a short Database-issue article: Introduction,
