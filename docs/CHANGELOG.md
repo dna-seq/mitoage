@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3's peptides section reports H15 on the cited build** (2026-11-15). The Results subsection and
+  Supplementary Methods S12.8 now cover nine published peptides (humanin, SHLP1-6, MOTS-c, MTALTND4, MTALTCO1,
+  MENTSH; references 58 and 59 checked against PubMed by title) on build 0f4e970 (mitoage-pipelines H15, haumea job
+  6490249, tables at 72b3eb2): SHLP6, humanin and MOTS-c are kept widely, but no frame is kept beyond open windows
+  of its gene, only MENTSH in birds beyond its host's synonymous codons, and the decisive null could not run (under
+  20 reading-frame windows per gene). Supplementary Table S3 follows: build 0f4e970, the refreshed Hugging Face
+  datasets (mitoage-pipelines 126d237 with the complex IV contact map, mitoage-nuclear-partners 7deb2e0), and rows
+  for the record audit (H13) and the peptide tables. Documents only.
 - **The reproduction matches the build the manuscript cites** (2026-11-15). mitoage-pipelines aee05c7 applies
   D17's hand-checked gene annotations (the lists copied as data, the patch and gap rules written in Python) and,
   from a fresh data folder, matches Hugging Face revision 0f4e970 in all 5,328,887 values, the 28 alignments and the

@@ -643,27 +643,37 @@ single-gene tests pass a 5% false discovery rate and disagree in sign. The synon
 ### Peptides encoded inside mtDNA
 
 Short peptides are reported to be translated from open reading frames inside mitochondrial genes: humanin
-(54) and the six small humanin-like peptides (55) inside the 16S rRNA gene, MOTS-c inside the 12S rRNA gene
-(56), and MTALTND4 in an alternative reading frame of ND4 (57). Almost all of the evidence for them comes from
-human cells. The alignments let us ask whether their reading frames exist beyond human. For four of them we
-found the published sequence in the human row, carried its columns over to every species, and asked whether
-the frame keeps its start codon and has no stop codon before 90% of its length. The null is the set of other
-windows of the same length in the same gene that are open in human (Supplementary Methods S12.8). In mammals
-the humanin frame is open in 558 of 624 species (89%) but keeps its ATG start in 464 (74%). SHLP6 is open in
-548 of 621 mammals (88%) and keeps its start codon in 2,189 of 2,191 vertebrates that have the region. Neither
-is kept more widely than chance would give: 10% and 14% of random 16S windows that are open in human are kept
-at least as widely. The MOTS-c frame is open in 54% of mammals, no more than a random open window of 12S
-(median 56%). The MTALTND4 frame is open in 21% of mammals (131 of 625), and every one of 68 random open
-windows of ND4 in the same frame is kept at least as widely. A frame that stays open is not evidence that it
-is translated, and the nuclear copies of these regions, which humanin is known to have, are out of reach of
-these data. Whether keeping a frame follows lifespan is not tested here.
+(54) and the six small humanin-like peptides, SHLP1 to SHLP6 (55), in the 16S rRNA gene; MOTS-c in the 12S
+rRNA gene (56); and MTALTND4, MTALTCO1 and MENTSH in other reading frames of ND4, COX1 and ND2 (57-59). Almost
+all of the evidence for them comes from human cells. The alignments let us ask whether their reading frames
+exist beyond human. For each of the nine we placed the published sequence in the human row, carried its
+columns over to every species, and asked whether the frame is open (no stop codon before 90% of its length)
+and keeps a start codon, reading it as its authors do (Supplementary Methods S12.8). Three frames are kept
+widely. SHLP6 is open with its start in 547 of 624 mammals and in 2,052 of the 2,285 species on the tree; it
+was kept at the root of the vertebrates and changed state 82 times, against about 225 times when the same
+states are shuffled over the tips. Humanin is open in 557 of 624 mammals (89%) but keeps its ATG start in only
+463 (74%). MOTS-c is open in 331 of 624 mammals (53%). The frames in other reading frames of protein genes are
+kept far less: MTALTND4 in 125 mammals, MENTSH in 32 and MTALTCO1 in 18 species in all.
 
-> AUTHOR: pilot run of `mitoage peptides pilot` (mitoage-pipelines; table `output/peptides/summary.txt` of
-> the Hugging Face dataset `longevity-genie/mitoage-pipelines` at b9be61a; H4 in `docs/ANALYSIS_FINDINGS.md`).
-> A run over the whole build with the full catalogue (SHLP1–6, MTALTCO1, MENTSH) and the null of the host
-> gene's synonymous codons shuffled, which H4 lists as not done, is under way on the cluster; its numbers
-> will replace these. The earlier text of H4 said SHLP6 keeps its start "in every vertebrate"; the table gives
-> 2,189 of 2,191.
+Being kept does not by itself show that a frame is conserved for its own sake, because the host gene is
+conserved anyway. Against windows of the same length in the same gene that are open in human, no frame is
+kept more widely than chance in any class (smallest q = 0.61). Against the host gene's synonymous codons
+shuffled, which keeps the protein exactly, one frame of the three in protein genes is kept more often than
+expected, MENTSH in birds (12 of 102 families, against 4% expected; q = 0.03). The test fixed in advance as the
+decisive one, against windows of the gene that are themselves reading frames with a start, could not be run:
+the host genes hold fewer than 20 such windows for every peptide. On the evidence here, none of these frames is
+conserved beyond what its host gene gives it. A kept frame is in any case not evidence of translation, and
+nuclear copies of these regions, which humanin is known to have, are out of reach of these data. Whether
+keeping a frame follows lifespan was a secondary question; one of the 26 fits with enough species passes, humanin
+in reptiles, and it is not repeated in mammals.
+
+> AUTHOR: H15 of `docs/HYPOTHESES.md` in mitoage-pipelines (`mitoage peptides ...`, fixed before the results at
+> af54126), run on haumea as job 6490249 on build 0f4e970 with the dated tree of dna-seq/mitoage 03c0949;
+> tables in `results/job4-peptides/0f4e970/` (72b3eb2). The run on c525adb (job 6490085) gives the same answers.
+> The frames of SHLP1 to SHLP5, on the other strand of the 16S gene, move with that gene's alignment between the
+> two builds (1 to 46 species each), so their counts depend on the alignment. Left out: MASL and SHMOOSE, which
+> lie in the D-loop and over a tRNA gene that the build does not align. The scan of every reading frame of 20
+> codons or more (RM16's fourth question) was not run.
 
 ### The website and interface
 
@@ -1018,6 +1028,11 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
 57. Kienzle L, Bettinazzi S, Choquette T et al. A small protein coded within the mitochondrial canonical gene
     nd4 regulates mitochondrial bioenergetics. BMC Biol. 2023;21:111.
     https://doi.org/10.1186/s12915-023-01609-y
+58. Robitaille F, Campbell A, Ben Hadj A et al. MTALTCO1: a 259 amino-acid long mtDNA-encoded alternative
+    protein that challenges conventional understandings of mitochondrial genomics. Philos Trans R Soc Lond B
+    Biol Sci. 2026;381(1947). https://doi.org/10.1098/rstb.2025.0078
+59. Yen K, Ramirez R, Miller B et al. MENTSH: a novel mitochondrial microprotein linked to a SNP associated with
+    type 2 diabetes. Theranostics. 2026;16:8180-8194. https://doi.org/10.7150/thno.134637
 
 > AUTHOR: references 19, 21 and 24–36 are new and need checking (a reference-check pass is suggested).
 > The data and software citations 38–42 are placed but have no version-level DOI yet: mint the Zenodo

@@ -536,6 +536,14 @@ peptide run with the synonymous-codon null, the contact maps of complexes I, III
 records were running on haumea when this was written; their numbers, and a refreshed `mitoage-pipelines` dataset,
 replace the pilot's and the two GitHub rows.
 
+Replaced the same day: the peptides section and S12.8 now read H15 of mitoage-pipelines on build 0f4e970 (job
+6490249, `results/job4-peptides/0f4e970/` at 72b3eb2): `kept.tsv` (open, start, kept per class), `nulls.tsv`
+(window and shuffle p and q at family level), `tree.tsv` (group `all`, published reading: SHLP6 2,285 tips, 2,052
+kept, 67 losses, 15 gains, permuted mean 224.9; MTALTCO1 own code, 18 kept), `pgls.tsv` (26 tested fits, 18 not
+assessed; humanin in reptiles q = 0.0386). References 58 (Robitaille 2026, PMID 41923604) and 59 (Yen 2026, PMID
+42559346) were checked by title in PubMed. Table S3's revisions are the Hugging Face `sha` values read after the
+refresh by another session (mitoage-pipelines 126d237, mitoage-nuclear-partners 7deb2e0, mitoage 0f4e970).
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

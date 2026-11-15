@@ -1254,7 +1254,7 @@ mitochondrial genes in long-lived against short-lived lineages (HyPhy RELAX, whi
 between draws or between runs; and Coevol, whose chains had not converged); the co-evolution of mitochondrial
 and nuclear subunits of the respiratory complexes, whose per-residue ESM-2 embeddings are published as
 `longevity-genie/mitoage-embeddings` (revision fc70053). They are described, with their failures, in `docs/ANALYSIS_FINDINGS.md` of
-the site repository and `docs/HYPOTHESES.md` of the analysis repository. Mismatch at the contacts of complex IV, first tested in mammals and in all species pooled (H9), is not among them: the main text reports it class by class (H12, S12.7). The peptides encoded inside mtDNA (H4) are not among them either: the main text reports them, and S12.8 describes the test.
+the site repository and `docs/HYPOTHESES.md` of the analysis repository. Mismatch at the contacts of complex IV, first tested in mammals and in all species pooled (H9), is not among them: the main text reports it class by class (H12, S12.7). The peptides encoded inside mtDNA (H4, H15) are not among them either: the main text reports them, and S12.8 describes the test.
 
 <!-- src: docs/ANALYSIS_FINDINGS.md H3, H5, H6, H9 -->
 
@@ -1336,43 +1336,89 @@ tested.
 
 <!-- src: mitoage-pipelines docs/HYPOTHESES.md H12; results/euring/structure_pgls.tsv and comparison.txt at e1b862b -->
 
-### S12.8 Peptides encoded inside mtDNA (H4)
+### S12.8 Peptides encoded inside mtDNA (H4, H15)
 
-**What was asked.** Whether the reading frames of four published mitochondrial-derived peptides are kept beyond
-human: humanin (main text reference 54) and SHLP6 (55) inside the 16S rRNA gene, MOTS-c inside the 12S rRNA gene
-(56), and MTALTND4 in the +3 frame of ND4 (57). Which peptide is translated, and from which copy, is a question
-these data cannot reach: a kept frame is a necessary condition for a conserved peptide, not evidence of one.
+**What was asked.** Whether the reading frames of nine published mitochondrial-derived peptides are kept beyond
+human, and kept more than their host gene's own conservation makes them: humanin (main text reference 54) and
+SHLP1-6 (55) in the 16S rRNA gene, MOTS-c (56) in the 12S rRNA gene, and three frames inside protein genes,
+MTALTND4 in ND4 (57), MTALTCO1 in COX1 (58) and MENTSH in ND2 (59). Which peptide is translated, and from which
+copy, is a question these data cannot reach: a kept frame is a necessary condition for a conserved peptide, not
+evidence of one.
 
-**How.** `mitoage peptides pilot` (analysis repository). Each peptide's published sequence was located in the human
-row of the build's alignment: the rRNA genes as nucleotides, ND4 as codons. Its columns were carried over to every
-species, and the window was read as the pilot reads it: with the standard code for the three rRNA peptides, and
-with the vertebrate mitochondrial code, AGA and AGG read as arginine, for MTALTND4. A frame is open in a species
-when the window is present and has no stop codon before 90% of its length; its ATG start is counted apart. The null is every other window of the
-same length in the same gene (and, for ND4, the same frame) that is open in human (300 windows of 16S or 12S; 68
-of ND4). The share of null windows kept at least as widely across mammals as the peptide is the reported p.
+**How.** `mitoage peptides` (analysis repository, H15; written and committed before any result, at af54126).
+Every sequence and placement is taken from the primary paper, and a peptide is refused unless the human record
+(NC_012920) reads it exactly once, followed by a stop. Its columns are carried over to every species of the
+build's alignment, and the frame is read as its authors read it: the standard code for humanin, the SHLPs and
+MOTS-c; the species' own mitochondrial code with AGA and AGG as arginine for MTALTND4 and MTALTCO1; the own code
+with AGG as a stop for MENTSH. A frame is *open* in a species when it has no stop codon before 90% of its length,
+and *kept* when it is open and begins with a start codon (ATG under the standard code; any start codon of the
+species' code for the three protein-gene frames). Three nulls were fixed in advance, each read at the level of
+one species per family, since related species inherit their frames:
+- *Windows that are reading frames* (decisive): other windows of the same length in the same gene, strand and
+  frame that are open reading frames with a start in human. Needs 20 such windows; no host gene has them for any
+  peptide (0 to 9), so this null was not run, and the criterion was not relaxed after the fact.
+- *Open windows* (H4's null): other windows of the same length that are merely open in human.
+- *Shuffles*, 1,000 per species, seed 20261115: for the protein-gene frames, the host gene's codons permuted
+  among synonymous positions under the species' code, which keeps the protein and the codon counts exactly
+  (decisive for those frames); for the rRNA frames, a dinucleotide-preserving shuffle of the window, which keeps
+  composition but not the rRNA's structure (context only, fixed so in advance).
+Losses and gains are counted by parsimony on the dated tree, against the same states permuted over the tips.
+The secondary lifespan fits use H12's model (log10 maximum lifespan on the frame kept, with log10 body mass and
+fourfold composition, Pagel's lambda on the dated tree, q within the family).
 
-**Supplementary Table S12.8.** Mammals; the other classes are in the analysis repository's table.
+**Supplementary Table S12.8.** Mammals and birds, build 0f4e970. Open, Start and Kept are species counts; window
+p is the open-window null; shuffle p (q) is synonymous for the protein-gene frames and dinucleotide for the rRNA
+frames, at one species per family (floor 0.001). The other classes are in the analysis repository's `kept.tsv`
+and `nulls.tsv`.
 
-| Peptide (host, length) | Species with the region | Open ≥ 90% | ATG start | Open and ATG | Null median open | Share of null ≥ observed |
-|---|---|---|---|---|---|---|
-| Humanin (16S, 24 codons) | 624 | 558 (89%) | 464 (74%) | 413 | 0.30 | 0.10 |
-| SHLP6 (16S, 20 codons) | 621 | 548 (88%) | 621 | 548 | 0.38 | 0.14 |
-| MOTS-c (12S, 16 codons) | 622 | 333 (54%) | 568 | 298 | 0.56 | 0.55 |
-| MTALTND4 (ND4 +3, 99 codons) | 625 | 131 (21%) | 523 | 112 | 0.33 | 1.00 |
+| Peptide | Class | With region | Open | Start | Kept | Window p | Shuffle p (q) |
+|---|---|---|---|---|---|---|---|
+| Humanin | Mammals | 624 | 557 | 463 | 412 | 0.098 | ≤0.001 (0.002) |
+| Humanin | Birds | 427 | 390 | 366 | 341 | 0.165 | ≤0.001 (0.002) |
+| SHLP1 | Mammals | 624 | 403 | 53 | 48 | 0.154 | ≤0.001 (0.002) |
+| SHLP1 | Birds | 427 | 173 | 29 | 5 | 0.515 | 0.128 (0.183) |
+| SHLP2 | Mammals | 624 | 83 | 575 | 77 | 0.821 | ≤0.001 (0.002) |
+| SHLP2 | Birds | 427 | 103 | 4 | 2 | 0.705 | 0.008 (0.017) |
+| SHLP3 | Mammals | 624 | 72 | 45 | 8 | 0.258 | 0.009 (0.018) |
+| SHLP3 | Birds | 427 | 106 | 7 | 3 | 0.226 | 0.037 (0.062) |
+| SHLP4 | Mammals | 624 | 108 | 601 | 98 | 0.626 | ≤0.001 (0.002) |
+| SHLP4 | Birds | 427 | 94 | 4 | 0 | 0.726 | 1.000 (1.000) |
+| SHLP5 | Mammals | 624 | 288 | 39 | 34 | 0.321 | 0.016 (0.030) |
+| SHLP5 | Birds | 427 | 211 | 0 | 0 | 0.424 | 1.000 (1.000) |
+| SHLP6 | Mammals | 624 | 547 | 620 | 547 | 0.135 | ≤0.001 (0.002) |
+| SHLP6 | Birds | 427 | 414 | 426 | 414 | 0.108 | ≤0.001 (0.002) |
+| MOTS-c | Mammals | 624 | 331 | 566 | 296 | 0.535 | ≤0.001 (0.002) |
+| MOTS-c | Birds | 427 | 350 | 343 | 280 | 0.231 | ≤0.001 (0.002) |
+| MTALTND4 | Mammals | 625 | 131 | 573 | 125 | 1.000 | 0.844 (1.000) |
+| MTALTND4 | Birds | 427 | 161 | 387 | 135 | 1.000 | 0.099 (0.742) |
+| MTALTCO1 | Mammals | 625 | 18 | 386 | 13 | n.a. | 0.338 (1.000) |
+| MTALTCO1 | Birds | 427 | 59 | 20 | 3 | n.a. | 0.998 (1.000) |
+| MENTSH | Mammals | 625 | 441 | 34 | 32 | 0.291 | 0.964 (1.000) |
+| MENTSH | Birds | 427 | 346 | 39 | 37 | 0.410 | 0.002 (0.030) |
 
-SHLP6 keeps its ATG in 2,189 of the 2,191 vertebrates that have the region (890 of 891 ray-finned fishes, 417 of
-418 birds, all mammals, reptiles, cartilaginous fishes and amphibians in the build). Outside the vertebrates the
-windows do not line up with the human sequence (median identity to human 0.13 to 0.38 in bivalves and
-malacostracans), and the counts there are not read. MTALTCO1 could not be placed in the human row and is not
-tested.
+**Results.** No frame is kept more widely than open windows of its gene, in any class (smallest p 0.0099, every
+q ≥ 0.61). Of the three protein-gene frames, only MENTSH in birds is kept beyond its host's synonymous codons
+(12 of 102 families against 4.0% expected). Humanin, SHLP6 and MOTS-c are more open than a dinucleotide shuffle
+of their windows predicts in most classes, which, as fixed in advance, says only that they are more open than
+their composition would make them, not that they are conserved for their own sake. SHLP6 is kept at the root:
+its start codon is present in 2,196 of the 2,203 vertebrates that have the region, and on the tree it changes
+state 82 times (67 losses, 15 gains) among 2,285 species, against 225 changes on average with the states
+permuted over the tips. Humanin changes 257 times (206 losses), MOTS-c 258 times. The protein-gene frames are
+lost at the root and regained many times: MTALTND4 19 losses and 263 gains, MENTSH 4 and 113, MTALTCO1 0 and 14;
+MTALTCO1 is kept in 18 species, at 41% to 54% residue identity to human, and in no other great ape. Read as
+published, every frame's states are clustered on the tree (p ≤ 0.001). Of the 26 lifespan fits
+with at least 25 species and 5 kept and 5 lost, one passes q < 0.05: humanin in reptiles (+0.194 log10 years
+where it is kept, 95% interval 0.053 to 0.336, q = 0.039, 23 kept and 73 lost), not repeated in mammals.
 
-**Limits.** Nuclear copies of these regions (humanin has several) are not in the build. The rRNA peptides are read
-with the standard code only; which code applies depends on where they are translated, which is not settled.
-The null of the host gene's synonymous codons shuffled, and the whole catalogue (SHLP1–5, MTALTCO1, MENTSH), are the
-subject of a run that was in progress when this round was written. Whether keeping a frame follows lifespan was
-not tested.
+**Limits.** Nuclear copies of these regions (humanin has several) are not in the build. The SHLP1-5 frames lie on
+the other strand of the 16S gene, and their states move with that gene's alignment (1 to 46 species each between
+builds c525adb and 0f4e970); their counts depend on the alignment. MASL (D-loop) and SHMOOSE (over a tRNA gene)
+lie in regions the build does not align and are not tested. Outside the vertebrates the windows do not line up
+with the human sequence, and those classes are not read. The run is H15 in the analysis repository: Slurm job
+6490249 on build 0f4e970 with the dated tree of the site at 03c0949, 60 tests passing, 19 of 19 deliberate code
+breaks caught, and every table identical on a rerun; the run on c525adb (job 6490085) gives the same answers.
 
-<!-- src: mitoage-pipelines `peptides pilot`; Hugging Face longevity-genie/mitoage-pipelines b9be61a, output/peptides/summary.txt -->
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H4, H15; results/job4-peptides/0f4e970/ at 72b3eb2 -->
 
 ## S13. The MCP server
 
@@ -1466,7 +1512,7 @@ repositories only, so far. Supplementary Table S3 lists them.
 | The structural against the sequence alignments of the 13 proteins in 62 mammals, and the superposition of the human chains | GitHub `dna-seq/mitoage`, `docs/analyses/cluster-2026-11-15/` | 094aa57 |
 | The audit of every record: strand orientation, gene order, genetic code, near-identical pairs and records nearest to another order or class (H13) | GitHub `dna-seq/mitoage-pipelines`, `results/job3-audit/` | aa97d25 |
 | The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | Hugging Face `longevity-genie/mitoage-pipelines`: `output/longevity/structure_pgls.tsv`, `output/mitoport/partners.tsv`, `output/structure/embed_cox.parquet`; GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 126d237; 7692a55 |
-| The reading frames of the peptides encoded inside mtDNA, per species (S12.8) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/peptides/` | 126d237 |
+| The reading frames of the nine peptides encoded inside mtDNA, per species, with their nulls, tree changes and lifespan fits (S12.8, H15) | GitHub `dna-seq/mitoage-pipelines`, `results/job4-peptides/0f4e970/` | 72b3eb2 |
 | The other result tables of the worked analyses (aligner agreement, the column screen, RELAX, rate covariation, co-embedding, composition) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/` | 126d237 |
 
 Lifespan values from FishBase and SeaLifeBase keep their CC BY-NC 4.0 terms in every download that carries them
