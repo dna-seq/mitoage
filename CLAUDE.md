@@ -228,3 +228,7 @@ machine and this project that reading the code does not reveal.
   (permutation nulls, model fits over many features, folding, MCMC) runs on the cluster host `haumea` (user
   `uq2347`): pull the repository there first, submit the work as Slurm jobs, then commit and push the results
   from there, so the run, its job files and its outputs come from one commit anyone can rerun.
+- 2026-11-15, the maintainer, on the line above: "we push local stuff to the main and cluster pulls from main,
+  not "from here"". The cluster never runs code that is not on `main`: commit and push the script and its job
+  file to `main` first, then `git pull` on haumea and submit. The results come back to `main` as their own commit,
+  which names the commit they ran from.
