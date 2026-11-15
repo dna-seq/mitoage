@@ -317,10 +317,10 @@ answers, the maintainer chose "t test + chance bounds".
   reaches half of it is printed but not interpreted, the plan's reading rule fixed before the bounds are
   computed; the fish scopes are expected to fall there.
 
-## D17 — A second in-session Hugging Face upload, on the maintainer's instruction, amending D6 once more (2026-11-15)
+## D17 — A third in-session Hugging Face upload, on the maintainer's instruction, amending D6 once more (2026-11-15)
 
 After the gene-annotation patch (03c0949), the maintainer: "upload on my behalf you have my hf key". The build was
-packaged (`bun run hf`, `bun run sqlite`) and uploaded from the session as under D9: `huggingface_hub` resolved the
+packaged on the laptop (`bun run hf`, `bun run sqlite`) and uploaded from the session as under D9 (after f75bdc9, the second): `huggingface_hub` resolved the
 machine's stored login itself, and the token was not read, printed or copied.
 
 - **Done:** revision `0f4e970554b2fe0265e718321f422347293dde17` of `longevity-genie/mitoage`, the 78 files of
