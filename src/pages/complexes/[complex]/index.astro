@@ -8,6 +8,7 @@ import BaseLayout from "~/layouts/BaseLayout.astro";
 import { contactMatrix, contactsWith, summariseGene } from "~/lib/complexes";
 import { fmtInt, fmtPct } from "~/lib/format";
 import { breadcrumbLd } from "~/lib/seo";
+import { href } from "~/lib/url";
 import { geneUrl } from "~/lib/urls";
 import type { Complex } from "../../../../pipeline/complexes";
 
@@ -272,8 +273,8 @@ const GROUP_LABEL = { contact: "touches a nuclear subunit", control: "as buried,
                 how exposed they are in the assembled complex, so that contact and burial are not confused.
               </li>
               <li>
-                Nuclear subunits are named here but their sequences across species are not part of MitoAge's build:
-                they exist for about 180 mammals with an annotated nuclear genome.
+                How the nuclear subunits change across species together with the mitochondrial ones is on the
+                <a href={href("/coevolution/")}>coevolution page</a>.
               </li>
             </>
           )
