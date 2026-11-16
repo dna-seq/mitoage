@@ -259,7 +259,7 @@ retired (S6) and keeps its 2015 value, flagged, because the data contract has no
 Among the 2,325 live species the chosen values distribute as follows:
 
 | Source | Acceptable | High | Low | Questionable | Captive | Wild | Observed | Estimated |
-|----------------|----------:|----------:|----------:|----------:|----------:|----------:|----------:|----------:|
+|--------------------|----------------:|---------:|---------:|-------------------:|-------------:|---------:|--------------:|---------------:|
 | AnAge | 1,615 | 95 | 0 | 31 | 854 | 833 | 54 | 0 |
 | FishBase | 405 | 0 | 36 | 34 | 33 | 200 | 206 | 36 |
 | SeaLifeBase | 61 | 0 | 13 | 0 | 0 | 43 | 18 | 13 |
@@ -829,7 +829,7 @@ Acipenseriformes), so short branches give contrasts larger than Brownian motion 
 <!-- src: docs/PIC_CALIBRATION.md "Answer" (dominating pairs, top shares, Garland r) and "Per scope" -->
 
 **A second p value: the sign-flip test.** The test behind Table 3 and every count of the funnel is the t test above, with the sign-flip counts reported beside it:
-we chose to keep it and the published counts (3,023, 900 and 550) rather than replace it. Both tests
+we chose to keep it and the published counts (3,025, 900 and 550) rather than replace it. Both tests
 are published. For every lifespan row of both datasets, the correlation table
 also carries `pic_signflip_p`: the share of random sign flips of the contrast products whose sum is at
 least as far from zero as the observed one. Up to 9,999 flips are drawn, seeded by dataset, scope, trait

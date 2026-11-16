@@ -38,6 +38,37 @@ export function widenTables(documentXml: string, width = TEXT_WIDTH_TWIPS): { xm
   return { xml, tables };
 }
 
+/** Table text in half-points: 9 pt, so Table 3's ten columns fit the 6.5-inch text width without breaking a word. */
+export const TABLE_TEXT_HALF_POINTS = 18;
+
+// Elements that follow w:sz and w:szCs inside w:rPr (ECMA-376 order): the size goes before the first of them.
+const AFTER_SIZE = /<w:(highlight|u|effect|bdr|shd|fitText|vertAlign|rtl|cs|em|lang|eastAsianLayout|specVanish|oMath)\b/;
+
+function sized(rPr: string, size: number): string {
+  const inner = rPr.replace(/<w:sz(?:Cs)?\b[^>]*\/>/g, "");
+  const tag = `<w:sz w:val="${size}" /><w:szCs w:val="${size}" />`;
+  const at = inner.search(AFTER_SIZE);
+  return at < 0 ? `${inner}${tag}` : `${inner.slice(0, at)}${tag}${inner.slice(at)}`;
+}
+
+/** Set the size of every run inside a table (and of each table paragraph's mark), leaving text outside tables alone. */
+export function shrinkTableText(documentXml: string, size = TABLE_TEXT_HALF_POINTS): { xml: string; runs: number } {
+  let runs = 0;
+  const xml = documentXml.replace(/<w:tbl>[\s\S]*?<\/w:tbl>/g, (table) =>
+    table
+      .replace(/<w:r>(?:<w:rPr>([\s\S]*?)<\/w:rPr>)?/g, (_whole, rPr: string | undefined) => {
+        runs += 1;
+        return `<w:r><w:rPr>${sized(rPr ?? "", size)}</w:rPr>`;
+      })
+      .replace(/<w:pPr>([\s\S]*?)<\/w:pPr>/g, (_whole, pPr: string) => {
+        const mark = /<w:rPr>([\s\S]*?)<\/w:rPr>/.exec(pPr);
+        const next = mark ? pPr.replace(mark[0], `<w:rPr>${sized(mark[1]!, size)}</w:rPr>`) : `${pPr}<w:rPr>${sized("", size)}</w:rPr>`;
+        return `<w:pPr>${next}</w:pPr>`;
+      }),
+  );
+  return { xml, runs };
+}
+
 function main(): void {
   const file = process.argv[2];
   if (!file || extname(file) !== ".md") {
@@ -54,10 +85,11 @@ function main(): void {
   try {
     run(["unzip", "-q", "-o", out, "word/document.xml", "-d", work]);
     const path = join(work, "word", "document.xml");
-    const { xml, tables } = widenTables(readFileSync(path, "utf8"));
+    const { xml: wide, tables } = widenTables(readFileSync(path, "utf8"));
+    const { xml, runs } = shrinkTableText(wide);
     writeFileSync(path, xml);
     run(["zip", "-q", out, "word/document.xml"], work);
-    console.log(`wrote ${out}: ${tables} table(s) widened to ${TEXT_WIDTH_TWIPS} twips`);
+    console.log(`wrote ${out}: ${tables} table(s) widened to ${TEXT_WIDTH_TWIPS} twips, ${runs} table runs at ${TABLE_TEXT_HALF_POINTS / 2} pt`);
   } finally {
     rmSync(work, { recursive: true, force: true });
   }

@@ -348,7 +348,7 @@ compared value by value only through the changelog, which gives the cause of eac
 **Table 2.** The 922 species of release 1 in MitoAge 2, by record status.
 
 | Status | Meaning | Species |
-|----------------|------------------------------------------------------------------|---------:|
+|----------------|--------------------------------------------------------------|-------------:|
 | Original | No value changed | 392 |
 | Updated | At least one value updated or corrected (new record version or successor, re-annotation, AnAge revision, release-1 value disagreeing with its record, systematic rule) | 465 |
 | Renamed | Accepted name changed in NCBI Taxonomy; previous names kept | 46 |
@@ -452,7 +452,7 @@ p < 0.05, whatever its sign (it keeps the sign of the correlation across species
 mass: FDR, and p < 0.05 with the same sign on contrasts with log10 body mass partialled out, uncorrected. PIC + mass is a separate test beside the funnel: it is computed on the species with a recorded body mass only, so a scope can have more tests passing it than passing All three, or even Both. PGLS: FDR, and p < 0.05 with the same sign for the slope of log10 lifespan in a phylogenetic regression of the feature with Pagel's λ estimated by maximum likelihood, uncorrected; it is a second ancestry control beside the funnel, not a step of it.
 
 | Scope | Species | Tests | p < 0.05 | FDR | PIC | Both | Both (sign-flip) | All three | PIC + mass | PGLS |
-|--------------------|----------:|----------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|--------:|
+|----------------------|-------------:|-------------:|------------:|------------:|------------:|---------:|---------------:|----------:|----------:|---------:|
 | All species | 2,211 | 1,414 | 1,175 | 1,166 | 566 | 292 | 103 | 238 | 81 | 232 |
 | Mammalia | 615 | 1,398 | 954 | 918 | 224 | 164 | 153 | 139 | 136 | 260 |
 | Actinopterygii | 827 | 1,402 | 832 | 769 | 546 | 221 | 99 | 86 | 38 | 148 |
