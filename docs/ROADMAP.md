@@ -101,7 +101,7 @@ literature. Reported in `#mitoalignments`; nothing goes on the site before the m
 
 ## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
 
-**State:** unattended: the blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
+**State:** waits until 2026-11-18: the cluster is at its CPU cap (the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
 
 The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
 can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
@@ -124,7 +124,7 @@ Reported in `#mitoage`; nothing goes on the site before the maintainer has seen 
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** unattended: left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
+**State:** waits until 2026-11-18: the cluster is at its CPU cap and the maintainer said on 2026-11-16 to wait ("so far we are hitting cpu capp on the cluster"). Left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
