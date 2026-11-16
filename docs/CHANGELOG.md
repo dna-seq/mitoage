@@ -11,6 +11,9 @@ Newest first.
   says so with the counts. Ensembl was not used: the field is the submitter's, in the INSDC record, and Ensembl's
   mitochondrial sequences are copies of those records.
 - **A Complexes section** (RM17, D21): `/complexes/` lists the four respiratory complexes with their mitochondrial subunits, and the page of complex IV shows which residues of COX1, COX2 and COX3 touch which of its eleven nuclear subunits in the solved human structure (298 of 1,000), a bar per residue along each subunit (where it sits, and how widely the human residue is kept across species), and the residues of every pair. Complexes I, III and V list their subunits and say that no contact map has been read. The data is `bun run complexes`, from the per-residue table made in `dna-seq/mitoage-pipelines`. No 3D viewer and no nuclear sequences on the site yet.
+  The section is reached from the genes page, the coevolution page and the footer, not from the top menu: an eighth
+  menu item squeezes the search box to three letters at 1,280 px. Checked at 375, 768, 1,024, 1,152, 1,280 and 1,440 px
+  with no horizontal scroll.
 - **Manuscript round v0.4 opened, with the H14 coevolution text and H20 on temperature** (2026-11-16). Round v0.3 had
   gone to the co-authors from 5b2ac14 before the H14 text was pushed (58b2d97), so the maintainer chose "Open v0.4
   with it": v0.4 is a copy of the repository's v0.3 with H14, and v0.3's two masters are back as released. v0.4 adds

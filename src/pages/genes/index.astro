@@ -15,6 +15,7 @@ import { featureAngles } from "~/lib/genome/layout";
 import { mapDataFor, QUICK_MAP_SPECIES, referenceSpecies } from "~/lib/genome/mapData";
 import { FEATURE_COLOR, featureFullName, featureSymbol, trnaLetter } from "~/lib/genome/names";
 import { breadcrumbLd, type JsonLd } from "~/lib/seo";
+import { href } from "~/lib/url";
 import { absoluteUrl, geneUrl } from "~/lib/urls";
 
 const species = getAllSpecies();
@@ -85,7 +86,8 @@ const kinds = [
     <h1 class="hero__title">Genes of the mitochondrial genome</h1>
     <p class="hero__lede">
       Animal mtDNA is a small circle with 37 genes and one control region. Pick a gene to compare its length, base
-      composition and codon usage across {fmtInt(species.length)} species, and to see how it relates to lifespan.
+      composition and codon usage across {fmtInt(species.length)} species, and to see how it relates to lifespan. The 13 proteins work inside four
+      <a href={href("/complexes/")}>respiratory complexes</a>, beside subunits encoded in the nucleus.
     </p>
     <Fragment slot="aside">
       <ul class="genes-kinds" role="list" aria-label="Genes in the human mitochondrial genome">
