@@ -112,6 +112,18 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - Next: lifespan as a continuous trait on all branches (Coevol or the like), one gene first for the time;
   then step 5 (convergence), then RM16 steps 2 and 4.
 
+### 2026-11-16, after two days without quota
+
+- The seat's account ran out of its weekly window on the morning of 2026-11-14 and came back on the 16th.
+  In between, other sessions of the maintainer carried the work much further, in both repositories: the
+  manuscript (rounds to v0.3), hypotheses H7 to H16 in `dna-seq/mitoage-pipelines` (Coevol, structure
+  alignments, contact maps for all complexes, the peptides on the whole build, the cybrids), PGLS for the
+  site's own table, the EURING birds, an MCP server. Read `docs/HYPOTHESES.md` there and this
+  repository's changelog before picking anything up: most of what these notes call "next" is done.
+- Left to this seat: the complexes section of the site (RM17), the convergence step (RM12), the blind
+  scan for peptides (RM16), seats in `mitoage-pipelines` (the maintainer asked; the seat's design was put
+  to him on 2026-11-14 and not answered).
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).

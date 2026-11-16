@@ -51,7 +51,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** unattended (steps 1 to 4 ran on 2026-11-13; a continuous-trait model runs until about 2026-11-15; step 5 after it); the code is published in `dna-seq/mitoage-pipelines` · **Owner:** lead
+**State:** unattended: only step 5 (convergence tests) is left. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 of `docs/HYPOTHESES.md` in `dna-seq/mitoage-pipelines`; H7: lifespan does not predict the substitution rate) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
@@ -101,7 +101,7 @@ literature. Reported in `#mitoalignments`; nothing goes on the site before the m
 
 ## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
 
-**State:** unattended (the pilot ran with the maintainer present) · **Owner:** lead
+**State:** unattended: the blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
 
 The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
 can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
@@ -142,7 +142,7 @@ Until it is done, H8's conclusion is "not assessed", not "no effect of assembly 
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** urgent (the maintainer, 2026-11-13: "start this research ... and report in the mitoport topic"); its code lives in `dna-seq/mitoage-pipelines` (the maintainer created it on 2026-11-14 and asked for a reproducible project there, with downloaders, for reviewers of a future manuscript) · **Owner:** lead
+**State:** unattended: left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
@@ -186,7 +186,7 @@ complexes (FoldX or Rosetta), on haumea, scored against the same table.
 
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
-**State:** after RM11 (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); its design goes to him in screenshots before it is live · **Owner:** lead
+**State:** urgent (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); complex IV first, from the per-residue table named below; its design goes to him in screenshots before it is live · **Owner:** lead
 
 The maintainer: "can we extend mitoage website with page on interactions with complexes and provide
 complexes for all those species in comparative way?" Proposed to him: a page per complex (I, III, IV, V)
@@ -246,7 +246,7 @@ references beside 40-42, which was left out while the URL would have 404ed.
 
 ## RM21 — `deploy.yml` is two majors behind on `actions/checkout`
 
-**State:** open · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 It pins `actions/checkout@v4`; v7.0.1 is current. `mcp-release.yml` was written to match the existing
 pin rather than split the repository across two versions, so both move together when this is done.
