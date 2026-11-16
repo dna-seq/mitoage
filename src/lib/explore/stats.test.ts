@@ -16,6 +16,7 @@ import {
   rank,
   spearman,
   strengthWord,
+  relationshipHeadline,
   tTwoTailed,
 } from "./stats";
 
@@ -123,6 +124,34 @@ describe("regression and summary", () => {
     expect(strengthWord(0.42)).toBe("moderate");
     expect(strengthWord(-0.8)).toBe("strong");
     expect(strengthWord(Number.NaN)).toBe("no clear");
+  });
+
+  describe("the sentence above the live statistics", () => {
+    const h = (n: number, rho: number, p: number, r: number) =>
+      relationshipHeadline({ n, spearmanRho: rho, spearmanP: p, pearsonR: r }, "GC content", "lifespan", "mammals");
+
+    test("names Spearman, the statistic it follows", () => {
+      expect(h(600, -0.4, 1e-9, -0.1).text).toStartWith("By rank (Spearman), species with a higher GC content tend to have a lower lifespan");
+      expect(h(600, 0.4, 1e-9, 0.1).text).toContain("a higher lifespan");
+      expect(h(600, -0.4, 1e-9, -0.1).title).toBe("Moderate negative correlation");
+      expect(h(12, 0.6, 0.2, 0.5).title).toBe("Strong positive correlation, not significant");
+    });
+
+    test("says when Pearson finds what the ranks do not (the plot of RM15: r = -0.20, rho = -0.015)", () => {
+      const x = h(2300, -0.015, 0.47, -0.2);
+      expect(x.title).toBe("No clear relationship by rank");
+      expect(x.text).toContain("Pearson's r is larger (-0.20)");
+    });
+
+    test("says nothing of Pearson where both are small, or where rho itself is not small", () => {
+      expect(h(2300, -0.015, 0.47, 0.05)).toEqual({ title: "No clear relationship", text: "By rank (Spearman), lifespan barely changes with GC content in mammals." });
+      expect(h(2300, -0.2, 1e-20, -0.6).text).not.toContain("Pearson");
+    });
+
+    test("a rho that is not a number is no clear relationship, and fewer than three species is said first", () => {
+      expect(h(50, Number.NaN, Number.NaN, Number.NaN).title).toBe("No clear relationship");
+      expect(h(2, 1, 0, 1).title).toBe("Not enough species");
+    });
   });
 });
 

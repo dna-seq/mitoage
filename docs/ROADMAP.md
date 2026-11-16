@@ -214,9 +214,8 @@ the next data build, which runs where the pipeline's inputs are (RM7).
 
 From the reading of 2026-11-13 (20 pages, a desktop's width in light and a phone's in dark, no script error
 on any): the hero's decorative stars show through the translucent buttons and chips and cross their text
-(the taxon pages' "Compare mtDNA", the gene list's counts on a phone); on the plot, the sentence of the
-live statistics says "No clear relationship" where Pearson r is -0.20 with p = 8e-23 and Spearman is -0.015,
-so which statistic the sentence follows should be said. Not read: the old addresses kept for links from
+(the taxon pages' "Compare mtDNA", the gene list's counts on a phone). The plot's sentence was done on
+2026-11-16 (changelog). Not read: the old addresses kept for links from
 the 2015 site (`/browse/`, `/view/`, `/stats-for/`, `/export-section/`).
 
 Seen in the data on the same day, during the site-by-site analysis (RM12): whale families are filed under

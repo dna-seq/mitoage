@@ -15,7 +15,7 @@ import { fmtInt, fmtLifespan, fmtNum } from "~/lib/format";
 import { type Column, type Dataset, loadColumnByKey, loadCorr, loadDataset, scopeFilter, scopeLabel } from "~/lib/explore/client";
 import { fmtP, fmtR, labelPhrase } from "~/lib/explore/format";
 import { DEFAULT_X, DEFAULT_Y, MAX_HIGHLIGHTS, parseState, serializeState } from "~/lib/explore/state";
-import { describePairs, strengthWord } from "~/lib/explore/stats";
+import { describePairs, relationshipHeadline } from "~/lib/explore/stats";
 import { axisTitle, FEATURE_KEYS, getVariable, type Variable } from "~/lib/explore/variables";
 import { type CorrIndex, corrRow } from "~/lib/explore/wire";
 import type { ScatterPoint } from "~/lib/scatterTypes";
@@ -294,20 +294,7 @@ export default function Explorer(props: Props) {
   const headline = createMemo(() => {
     const s = stats();
     if (!s) return null;
-    if (s.n < 3) return { title: "Not enough species", text: "Fewer than three species have both values here." };
-    const rho = s.spearmanRho;
-    const word = strengthWord(rho);
-    const sig = s.spearmanP < 0.05;
-    if (word === "no clear" || !Number.isFinite(rho))
-      return {
-        title: "No clear relationship",
-        text: `${phrase(yVar())[0]?.toUpperCase()}${phrase(yVar()).slice(1)} barely changes with ${phrase(xVar())} in ${scopeText()}.`,
-      };
-    const dir = rho > 0 ? "positive" : "negative";
-    return {
-      title: `${word[0]?.toUpperCase()}${word.slice(1)} ${dir} correlation${sig ? "" : ", not significant"}`,
-      text: `Species with a higher ${phrase(xVar())} tend to have a ${rho > 0 ? "higher" : "lower"} ${phrase(yVar())}.`,
-    };
+    return relationshipHeadline(s, phrase(xVar()), phrase(yVar()), scopeText());
   });
 
   const transformNote = () => {

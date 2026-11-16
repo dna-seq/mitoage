@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **The plot's sentence says which statistic it follows** (2026-11-16, RM15). The sentence above the live
+  statistics on `/compare/plot/` followed Spearman's rho without saying so, and read "No clear relationship" beside
+  a Pearson r of -0.20 with p = 8e-23. It now opens "By rank (Spearman)", and where rho shows nothing while
+  Pearson's r does, the title is "No clear relationship by rank" and the text gives r and says a straight line finds
+  a trend the species' order does not. The wording is `relationshipHeadline()` in `src/lib/explore/stats.ts`, with
+  tests; each of three deliberate breaks fails one.
 - **Both workflows check out with `actions/checkout@v7`** (2026-11-16, RM21, done), from v4. Read in its release
   notes: v5 moves to Node 24 (GitHub's hosted runners have it), v6 keeps the credentials in a separate file, v7
   refuses fork pull requests under `pull_request_target` and `workflow_run`; neither workflow uses those triggers.

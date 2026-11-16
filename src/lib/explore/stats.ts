@@ -216,6 +216,38 @@ export function strengthWord(r: number): "no clear" | "weak" | "moderate" | "str
   return "strong";
 }
 
+/**
+ * The sentence above the live statistics. It follows Spearman's rho (ranks), and says so; where rho shows
+ * no clear relationship while Pearson's r does not, it says that the two disagree instead of leaving the
+ * reader with "no clear relationship" beside a small p value.
+ */
+export function relationshipHeadline(
+  s: { n: number; spearmanRho: number; spearmanP: number; pearsonR: number },
+  x: string,
+  y: string,
+  scope: string,
+): { title: string; text: string } {
+  if (s.n < 3) return { title: "Not enough species", text: "Fewer than three species have both values here." };
+  const rho = s.spearmanRho;
+  const word = strengthWord(rho);
+  if (word === "no clear") {
+    const linear = strengthWord(s.pearsonR) !== "no clear";
+    return {
+      title: linear ? "No clear relationship by rank" : "No clear relationship",
+      text:
+        `By rank (Spearman), ${y} barely changes with ${x} in ${scope}.` +
+        (linear
+          ? ` Pearson's r is larger (${s.pearsonR.toFixed(2)}): a straight line through the values finds a trend that the species' order does not, as a few species far from the rest can produce.`
+          : ""),
+    };
+  }
+  const dir = rho > 0 ? "positive" : "negative";
+  return {
+    title: `${word[0]!.toUpperCase()}${word.slice(1)} ${dir} correlation${s.spearmanP < 0.05 ? "" : ", not significant"}`,
+    text: `By rank (Spearman), species with a higher ${x} tend to have a ${rho > 0 ? "higher" : "lower"} ${y}.`,
+  };
+}
+
 // ---------------------------------------------------------------- intervals and multiple testing
 
 /**
