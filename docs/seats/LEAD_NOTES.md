@@ -141,3 +141,11 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).
 - The seat's picture: asked in the chat's avatars topic, since this machine cannot draw one.
 - The laptop's join line, from the secretary, to seat the lead there.
+
+## 2026-11-16, evening
+
+- RM15 closed (1f233ae). RM24 is new: families under two orders, cause found (kept species follow AnAge, new
+  ones the NCBI lineage, `pipeline/steps/build2.ts`), waiting on desk #43; a fix is a rerun of `bun run data`.
+- Lesson: a `pkill -f` pattern also matches the shell that runs it when the same words stand earlier in that
+  command line (the preview's own start line). Start the preview and stop it in separate commands.
+- Open on the desk: #41, #42, #43, #32 to #35. Waiting: RM12 step 5 (look 2026-11-17), RM11 and RM16 (2026-11-18).
