@@ -399,6 +399,8 @@ maintainer chose the recommendation in each:
   builds, revisions or slugs; which build the tables were computed on stays in `public/data/mitoport/README.md` and
   `mitoport.json`, for whoever reuses them, and a species the slug join loses is reported as a warning of the site
   build, not to the visitor. **Rejected, now:** the note on the page and in each species section, as first chosen.
+  The hypothesis labels went next, asked as a question with that note in mind ("Yes, remove them"): the page names
+  each analysis by what it measures, and `mitoport.json` keeps which hypothesis each table belongs to.
 - **Going live:** the maintainer sees phone and desktop screenshots before the push (RM17's line for a complexes
   section). **Rejected:** pushing as soon as the checks pass.
 

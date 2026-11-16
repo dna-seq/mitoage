@@ -66,7 +66,7 @@ const FORMATS: Record<string, string> = {
 // The coevolution tables (D20) describe themselves in their manifest; they come from another build.
 const mitoport = getMitoport().manifest;
 const MITOPORT_DESCRIPTIONS = new Map<string, string>([
-  ...mitoport.files.map((f): [string, string] => [`mitoport/${f.file}`, `${f.hypothesis}. ${f.description}`]),
+  ...mitoport.files.map((f): [string, string] => [`mitoport/${f.file}`, f.description]),
   ["mitoport/mitoport.json", "Where each coevolution table comes from: the Hugging Face revision, source path, SHA-256 and columns."],
   ["mitoport/README.md", "What the coevolution tables hold and where they come from."],
 ]);

@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The coevolution page no longer labels its analyses H5, H6, H9 and H12** (2026-11-16, D20 amended). The maintainer,
+  asked whether the hypothesis labels linking to mitoage-pipelines' record should go the way of the build note: "Yes,
+  remove them". The lifespan and protein sections name each analysis by what it measures, the lifespan table's rows
+  say "Contact mismatch" and "Pair discordance", and the downloads on `/coevolution/` and `/data/` drop the label
+  before each file's description. `mitoport.json` keeps each file's hypothesis.
 - **The cybrids scored by co-evolved pairs and by ESM-2** (2026-11-16, RM11, H17): `docs/ANALYSIS_FINDINGS.md` gains
   H17, the same text as `dna-seq/mitoage-pipelines` at ffdb2d6 (`mitoport cybrid-coev`, `cybrid-esm`,
   `cybrid-readout`; `results/h17/`). Neither score beats divergence; RM11 says so and keeps the interface energy open.

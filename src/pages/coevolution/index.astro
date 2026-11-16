@@ -18,7 +18,7 @@ import { href } from "~/lib/url";
 import { speciesUrl } from "~/lib/urls";
 import { statSync } from "node:fs";
 import { join } from "node:path";
-import { MITOPORT_HYPOTHESES, mitoportTreeUrl } from "../../../pipeline/sources/mitoport";
+import { mitoportTreeUrl } from "../../../pipeline/sources/mitoport";
 
 const m = getMitoport();
 const { manifest: man, verdict } = m;
@@ -28,7 +28,6 @@ if (!verdict.holds) {
 
 const pipelinesUrl = mitoportTreeUrl(man.dataset, man.revision, "output/mitoport");
 const partnersUrl = mitoportTreeUrl(man.nuclearPartners.dataset, man.nuclearPartners.revision);
-const hyp = (h: string) => `${MITOPORT_HYPOTHESES}#${h.toLowerCase()}`;
 
 // Species joined by slug. Which build the tables were computed on is for the maintainer, not the visitor
 // (mitoport.json and its README say it), so a species the join loses is said here, at build time, once.
@@ -111,19 +110,19 @@ const speciesByClass = m.classes.map((c) => ({
       </p>
       <div class="prose mp-prose">
         <p>
-          <strong>Mismatch at complex IV's contacts (<a href={hyp("H9")}>H9</a>).</strong> Per species, how often its COX1-3
+          <strong>Mismatch at complex IV's contacts.</strong> Per species, how often its COX1-3
           residues at the {fmtInt(m.contactResidues)} contacts with nuclear subunits differ from the consensus, minus the same at burial-matched
           non-contact residues, against log10 maximum lifespan with body mass and the dated tree. All {fmtInt(verdict.intervals)} slopes
           have 95% intervals that include zero.
         </p>
         <p>
-          <strong>Discordance of the contact pairs (<a href={hyp("H12")}>H12</a>).</strong> Per species, the share of
+          <strong>Discordance of the contact pairs.</strong> Per species, the share of
           mito-nuclear contact pairs where exactly one side differs from its class's consensus: one side changed, its partner
           did not. {fmtInt(verdict.testedFits)} fits in {fmtInt(testedClasses)} classes, {fmtInt(models)} models each; the smallest q is
           {" "}{fmtFixed(verdict.smallestQ, 3)}, and none is below 0.05.{notAssessed ? ` Not assessed: ${notAssessed}.` : ""}
         </p>
         <p>
-          The same record (H12) found mitochondrial-side mismatch in reptiles passing narrowly on one alignment and not on
+          The same analysis found mitochondrial-side mismatch in reptiles passing narrowly on one alignment and not on
           another with the same 97 species, so it is not read as a finding.
         </p>
       </div>
@@ -136,7 +135,7 @@ const speciesByClass = m.classes.map((c) => ({
           <tbody>
             {h9.map((r: Rec) => (
               <tr>
-                <td>Contact mismatch (H9)</td>
+                <td>Contact mismatch</td>
                 <td>{setLabel(String(r["set"]))}</td>
                 <td class="num">{fmtInt(n(r["species"]))}</td>
                 <td class="num">{fmtSigned(n(r["slope_log10_years"]), 3)}</td>
@@ -146,7 +145,7 @@ const speciesByClass = m.classes.map((c) => ({
             ))}
             {h12.map((r: Rec) => (
               <tr>
-                <td>Pair discordance (H12)</td>
+                <td>Pair discordance</td>
                 <td>{classLabel(String(r["class"]))}</td>
                 <td class="num">{fmtInt(n(r["n"]))}</td>
                 <td class="num">{fmtSigned(n(r["slope_per_sd"]), 3)}</td>
@@ -158,8 +157,8 @@ const speciesByClass = m.classes.map((c) => ({
         </table>
       </div>
       <p class="mp-small muted">
-        Slopes are log10 years of maximum lifespan per standard deviation of the measure. H9: log10 body mass in the model,
-        no multiple-testing correction (one test per set). H12: body mass and fourfold base composition in the model, q by
+        Slopes are log10 years of maximum lifespan per standard deviation of the measure. Contact mismatch: log10 body mass in the model,
+        no multiple-testing correction (one test per set). Pair discordance: body mass and fourfold base composition in the model, q by
         Benjamini-Hochberg within class; the mass-only model and the contact and control terms alone are
         in{" "}<a href={href("/data/mitoport/partners.parquet")}>partners.parquet</a>.
       </p>
@@ -173,17 +172,17 @@ const speciesByClass = m.classes.map((c) => ({
       </p>
       <div class="prose mp-prose">
         <p>
-          <strong>Rate</strong> (<a href={hyp("H5")}>H5</a>): over the branches of the dated tree of 62 mammals, the
+          <strong>Rate</strong>: over the branches of the dated tree of 62 mammals, the
           correlation of a protein's rate (relative to the cytosolic controls) with the rate of a complex's mitochondrial
-          subunits. <strong>Embedding</strong> (<a href={hyp("H6")}>H6</a>): over pairs of mammals, the partial correlation of
+          subunits. <strong>Embedding</strong>: over pairs of mammals, the partial correlation of
           the distance between their ESM-2 protein embeddings with the same for a complex's mitochondrial subunits, time on the
-          tree partialled out. <strong>Coupling at contacts</strong> (H5): the same over pairs, by differing residues, between
+          tree partialled out. <strong>Coupling at contacts</strong>: the same over pairs, by differing residues, between
           the protein's interface and COX1-3's contact residues; the <strong>excess</strong> is that minus the coupling with
           burial-matched residues that touch nothing.
         </p>
         <p>
           Complex IV's nuclear subunits follow the COX genes far more than the cytosolic controls do. Their contact residues,
-          though, couple no more than burial-matched residues that touch nothing, beyond what the controls show (H5: p = 0.43):
+          though, couple no more than burial-matched residues that touch nothing, beyond what the controls show (p = 0.43):
           the coupling belongs to whole proteins that share a complex with mtDNA products, not to the residues that touch.
           Single correlations are not tested; the analyses compare groups of proteins, as in the medians below.
         </p>
@@ -283,7 +282,7 @@ const speciesByClass = m.classes.map((c) => ({
               <span class="data-files__ext">parquet</span>
               <span class="row-link__main">
                 {f.file}
-                <span class="row-link__sub">{f.hypothesis}. {f.description} {fmtInt(f.rows)} rows.</span>
+                <span class="row-link__sub">{f.description} {fmtInt(f.rows)} rows.</span>
               </span>
               <span class="data-files__size">{fmtBytes(f.size)}</span>
               <Icon name="download" class="row-link__chev" />
