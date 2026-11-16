@@ -5,10 +5,13 @@ owner. A done item leaves this file; `docs/CHANGELOG.md` says what landed.
 
 ## RM2 — Bring the explorer's payload under its page-weight target
 
-**State:** unattended · **Owner:** lead
+**State:** blocked: desk #44 (if nobody answers, the file stays one piece) · **Owner:** lead
 
-`/data/explorer.json` is 2.7 MB with build 2, against 1.5 MB (open questions, item 9). Split it on the
-site's side, as the per-gene codon tables are.
+`/data/explorer.json` is 2.7 MB with build 2, against 1.5 MB (open questions, item 9); the check in
+`pipeline/validate.ts` counts the unpacked bytes. Measured on 2026-11-17: the site serves it gzip-compressed and a
+browser downloads 0.8 MB. Of the 2.7 MB, 2.35 MB are the values of 165 features, about 14 to 18 kB each. The question
+on the desk is what the target limits: the download (met; change the check, close this) or the unpacked file (split
+the values by region, on the site's side, as the extended features and the per-gene codon tables already are).
 
 ## RM4 — The build 2 defaults, put to the maintainer
 

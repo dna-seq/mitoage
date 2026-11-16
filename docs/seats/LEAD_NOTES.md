@@ -149,3 +149,17 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - Lesson: a `pkill -f` pattern also matches the shell that runs it when the same words stand earlier in that
   command line (the preview's own start line). Start the preview and stop it in separate commands.
 - Open on the desk: #41, #42, #43, #32 to #35. Waiting: RM12 step 5 (look 2026-11-17), RM11 and RM16 (2026-11-18).
+
+## 2026-11-17, night
+
+- RM12 step 5 is H26 in `dna-seq/mitoage-pipelines` (entry 32adcfb before its code, code f9a914a). Its run
+  folder is a fresh clone of main on the data disk, under the runs folder's `h26/clone`, with the pinned build
+  and tree linked in. First job submitted (trait, pairs, selection inputs); the 46 RELAX and aBSREL tasks are
+  held while the account is at its CPU cap, and the maintainer was asked whether to queue them anyway.
+- I saw three readings of H26's pair test before the registered run (a status check that printed too much);
+  the entry says so. Check a readout's printed columns before running it on real data.
+- That repository's leak gate refuses the cluster's host name, the Slurm account and absolute paths: job files
+  take the account on the command line and HyPhy from `$HYPHY` or PATH.
+- RM8: the rule by sequence is done (`bun run duplicates`, 12 pairs); the rule by names waits on the raw inputs.
+- RM2: the payload is 0.8 MB as downloaded; desk #44 asks what the target measures.
+- Desk, open: #32 to #35, #41, #42, #43, #44.
