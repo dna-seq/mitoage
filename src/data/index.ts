@@ -14,6 +14,7 @@ import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { type Row, readParquet } from "../../pipeline/lib/parquet";
+import type { ComplexesFile } from "../../pipeline/complexes";
 import { type PhyloNode, compileTree } from "../../pipeline/lib/stats";
 import { computeCorrelations } from "../../pipeline/steps/correlations";
 import { buildFeatureDefs, buildFeatureValues } from "../../pipeline/steps/features";
@@ -432,6 +433,10 @@ export function getFeatureValues(featureKey: string): Record<number, number | nu
 }
 
 /** The dated tree used for PIC (null when the build has none: PIC values are then unknown). */
+/** The respiratory complexes: chains of the solved structures and, for complex IV, every residue of the
+ *  mitochondrial subunits with its contacts (written by `bun run complexes`). */
+export const getComplexes = memo(() => load<ComplexesFile>("complexes.json"));
+
 export const getPhylogeny = memo(() => load<{ version: string; root: PhyloNode } | null>("phylogeny.json"));
 
 const correlations = memo(() => {

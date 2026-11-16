@@ -1,0 +1,407 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getComplexes } from "~/data";
+import Hero from "~/components/ui/Hero.astro";
+import SectionHeader from "~/components/ui/SectionHeader.astro";
+import StatCard from "~/components/ui/StatCard.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { contactMatrix, contactsWith, summariseGene } from "~/lib/complexes";
+import { fmtInt, fmtPct } from "~/lib/format";
+import { breadcrumbLd } from "~/lib/seo";
+import { geneUrl } from "~/lib/urls";
+import type { Complex } from "../../../../pipeline/complexes";
+
+export const getStaticPaths = (() =>
+  getComplexes().complexes.map((c) => ({ params: { complex: c.id }, props: { complex: c } }))) satisfies GetStaticPaths;
+
+const { complex } = Astro.props as { complex: Complex };
+const { contactCutoffAngstrom } = getComplexes();
+const short = complex.name.split(" (")[0];
+const mt = complex.chains.filter((c) => c.mitochondrial);
+const nuclear = complex.chains.filter((c) => !c.mitochondrial);
+const summaries = (complex.sites ?? []).map(summariseGene);
+const matrix = contactMatrix(complex);
+const totalContact = summaries.reduce((a, s) => a + s.contact, 0);
+const totalResidues = summaries.reduce((a, s) => a + s.residues, 0);
+const pdbUrl = `https://www.rcsb.org/structure/${complex.pdb}`;
+const description = complex.sites
+  ? `${short}: its mitochondrial and nuclear subunits and the ${totalContact} residues of the mitochondrial ones that touch a nuclear subunit in the solved human structure.`
+  : `${short}: the subunits encoded in the mitochondrial genome, as placed in the solved human structure.`;
+
+// the strip: one bar per residue, 2 units wide; height is the share of species with the human residue
+const BAR = 2;
+const H = 44;
+const GROUP_LABEL = { contact: "touches a nuclear subunit", control: "as buried, touches none", other: "elsewhere" } as const;
+---
+
+<BaseLayout
+  title={short}
+  description={description}
+  jsonLd={[
+    breadcrumbLd(Astro.site, [
+      { name: "Complexes", path: "/complexes/" },
+      { name: short, path: `/complexes/${complex.id}/` },
+    ]),
+  ]}
+>
+  <Hero variant="page" seed={31}>
+    <p class="hero__eyebrow">Complexes</p>
+    <h1 class="hero__title">{complex.name}</h1>
+    <p class="hero__lede">
+      {
+        complex.sites
+          ? `Which residues of ${mt.map((c) => c.gene).join(", ")} touch which nuclear subunit, read from the solved human enzyme, and how well each of those residues is kept across the species of MitoAge.`
+          : `The mitochondrial subunits of this complex as they sit in the solved human structure. No contact map has been read for it yet.`
+      }
+    </p>
+  </Hero>
+
+  <div class="container section cx">
+    {
+      complex.sites && (
+        <div class="grid-auto cx-stats" style="--grid-min: 12rem">
+          <StatCard value={String(mt.length)} label="subunits from the mitochondrial genome" tone="green" />
+          <StatCard value={String(nuclear.length)} label="subunits from the nucleus, in this structure" tone="sky" />
+          <StatCard
+            value={fmtInt(totalContact)}
+            label={`of ${fmtInt(totalResidues)} mitochondrial residues touch a nuclear subunit`}
+            tone="orange"
+          />
+        </div>
+      )
+    }
+
+    <section>
+      <SectionHeader
+        id="subunits"
+        title="Subunits"
+        description={`Chains of PDB entry ${complex.pdb}, the human complex. A mitochondrial subunit links to its gene page, with its alignment across species.`}
+      />
+      <div class="cx-scroll">
+        <table class="cx-table">
+          <thead>
+            <tr>
+              <th scope="col">Subunit</th>
+              <th scope="col">Encoded in</th>
+              <th scope="col">Chain</th>
+              <th scope="col" class="num">Residues in the structure</th>
+              {complex.sites && <th scope="col" class="num">Touching the other genome's subunits</th>}
+            </tr>
+          </thead>
+          <tbody>
+            {
+              complex.chains.map((c) => {
+                const own = summaries.find((s) => s.gene === c.gene);
+                const asPartner = matrix.genes.reduce((a, g) => a + matrix.count(g, c.gene), 0);
+                return (
+                  <tr>
+                    <th scope="row">
+                      {c.mitochondrial ? <a href={geneUrl(c.gene)}>{c.gene}</a> : c.gene}
+                      <span class="muted cx-desc">{c.description}</span>
+                    </th>
+                    <td>{c.mitochondrial ? "mitochondrial genome" : "nucleus"}</td>
+                    <td>{c.chain}</td>
+                    <td class="num">{fmtInt(c.residues)}</td>
+                    {complex.sites && (
+                      <td class="num">
+                        {c.mitochondrial
+                          ? own
+                            ? `${fmtInt(own.contact)} residues`
+                            : ""
+                          : `${fmtInt(asPartner)} mitochondrial residues touch it`}
+                      </td>
+                    )}
+                  </tr>
+                );
+              })
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    {
+      complex.sites && (
+        <>
+          <section>
+            <SectionHeader
+              id="strips"
+              title="Along each mitochondrial subunit"
+              description="One bar per residue, from the first to the last. Its colour says where the residue sits; its height is the share of species that carry the same residue as human, so a low bar is a position that varies."
+            />
+            <ul role="list" class="cx-legend">
+              <li>
+                <span class="cx-key cx-key--contact" />
+                {GROUP_LABEL.contact}
+              </li>
+              <li>
+                <span class="cx-key cx-key--control" />
+                {GROUP_LABEL.control}
+              </li>
+              <li>
+                <span class="cx-key cx-key--other" />
+                {GROUP_LABEL.other}
+              </li>
+            </ul>
+            {complex.sites.map((g) => {
+              const s = summaries.find((x) => x.gene === g.gene)!;
+              return (
+                <figure class="cx-strip">
+                  <figcaption>
+                    <a href={geneUrl(g.gene)}>
+                      <strong>{g.gene}</strong>
+                    </a>
+                    <span class="muted">
+                      {fmtInt(s.residues)} residues, {fmtInt(s.contact)} touch a nuclear subunit. Species carrying the
+                      human residue, on average: {s.identity.contact === null ? "n/a" : fmtPct(s.identity.contact * 100, 0)} at
+                      contacts, {s.identity.control === null ? "n/a" : fmtPct(s.identity.control * 100, 0)} at equally
+                      buried residues without one.
+                    </span>
+                  </figcaption>
+                  <svg
+                    viewBox={`0 0 ${g.sites.length * BAR} ${H}`}
+                    preserveAspectRatio="none"
+                    role="img"
+                    aria-label={`${g.gene}: ${s.contact} of ${s.residues} residues touch a nuclear subunit`}
+                  >
+                    {g.sites.map((site, i) => {
+                      const h = Math.max(2, site.identity * H);
+                      return (
+                        <rect class={`cx-bar cx-bar--${site.group}`} x={i * BAR} y={H - h} width={BAR} height={h}>
+                          <title>
+                            {`${g.gene} ${site.aa}${site.pos}: ${GROUP_LABEL[site.group]}${
+                              site.partners.length ? ` (${site.partners.join(", ")})` : ""
+                            }; ${Math.round(site.identity * 100)}% of species carry ${site.aa}; alignment column ${site.column}`}
+                          </title>
+                        </rect>
+                      );
+                    })}
+                  </svg>
+                  <div class="cx-axis muted" aria-hidden="true">
+                    <span>1</span>
+                    <span>{g.sites.length}</span>
+                  </div>
+                </figure>
+              );
+            })}
+          </section>
+
+          <section>
+            <SectionHeader
+              id="pairs"
+              title="Who touches whom"
+              description={`Residues of each mitochondrial subunit with an atom within ${contactCutoffAngstrom} Å of each nuclear subunit. A residue that touches two partners is counted for both.`}
+            />
+            <div class="cx-scroll">
+              <table class="cx-table cx-matrix">
+                <thead>
+                  <tr>
+                    <th scope="col">Nuclear subunit</th>
+                    {matrix.genes.map((g) => (
+                      <th scope="col" class="num">
+                        {g}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {matrix.partners.map((p) => (
+                    <tr>
+                      <th scope="row">{p}</th>
+                      {matrix.genes.map((g) => {
+                        const n = matrix.count(g, p);
+                        return (
+                          <td class="num" style={n ? `--share:${Math.min(1, n / 40)}` : undefined} data-n={n ? "y" : undefined}>
+                            {n || ""}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div class="cx-pairs">
+              {complex.sites.flatMap((g) =>
+                matrix.partners
+                  .filter((p) => matrix.count(g.gene, p) > 0)
+                  .map((p) => (
+                    <details>
+                      <summary>
+                        {g.gene} with {p}
+                        <span class="muted"> {matrix.count(g.gene, p)} residues</span>
+                      </summary>
+                      <p class="cx-residues">
+                        {contactsWith(g, p).map((site) => (
+                          <span
+                            class="cx-res"
+                            title={`${Math.round(site.identity * 100)}% of species carry ${site.aa}; alignment column ${site.column}`}
+                          >
+                            {site.aa}
+                            {site.pos}
+                          </span>
+                        ))}
+                      </p>
+                    </details>
+                  )),
+              )}
+            </div>
+          </section>
+        </>
+      )
+    }
+
+    <section class="prose cx-notes">
+      <h2>How to read this</h2>
+      <ul>
+        <li>
+          The structure is the human complex (<a href={pdbUrl} rel="noopener">PDB {complex.pdb}</a>). Every species is
+          shown on it: positions are those of the human protein, carried to other species through the alignment.
+          Where a species' protein differs in length or fold, this page does not show it.
+        </li>
+        {
+          complex.sites && (
+            <>
+              <li>
+                A contact is geometry in one structure: two heavy atoms within {contactCutoffAngstrom} Å. It does not
+                say that the pair matters for function, nor that the same residues touch in another species.
+              </li>
+              <li>
+                The comparison residues ("as buried, touches none") were matched one to one to the contact residues by
+                how exposed they are in the assembled complex, so that contact and burial are not confused.
+              </li>
+              <li>
+                Nuclear subunits are named here but their sequences across species are not part of MitoAge's build:
+                they exist for about 180 mammals with an annotated nuclear genome.
+              </li>
+            </>
+          )
+        }
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .cx > section {
+    margin-top: var(--space-6);
+  }
+  .cx-stats {
+    margin-bottom: var(--space-4);
+  }
+  .cx-scroll {
+    overflow-x: auto;
+  }
+  .cx-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.95rem;
+  }
+  .cx-table th,
+  .cx-table td {
+    padding: var(--space-2) var(--space-3);
+    border-bottom: 1px solid var(--color-border);
+    text-align: left;
+    vertical-align: baseline;
+  }
+  .cx-table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .cx-desc {
+    display: block;
+    font-weight: 400;
+    font-size: 0.85rem;
+  }
+  .cx-matrix td[data-n] {
+    background: color-mix(in srgb, var(--tone-orange-bar) calc(var(--share) * 70%), transparent);
+  }
+  .cx-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-4);
+    padding: 0;
+    margin: 0 0 var(--space-3);
+    font-size: 0.9rem;
+  }
+  .cx-legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .cx-key {
+    width: 0.9rem;
+    height: 0.9rem;
+    border-radius: 2px;
+  }
+  .cx-key--contact,
+  .cx-bar--contact {
+    background: var(--tone-orange-bar);
+    fill: var(--tone-orange-bar);
+  }
+  .cx-key--control,
+  .cx-bar--control {
+    background: var(--tone-sky-bar);
+    fill: var(--tone-sky-bar);
+  }
+  .cx-key--other,
+  .cx-bar--other {
+    background: var(--color-border-strong);
+    fill: var(--color-border-strong);
+  }
+  .cx-strip {
+    margin: 0 0 var(--space-4);
+  }
+  .cx-strip figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1) var(--space-3);
+    align-items: baseline;
+    margin-bottom: var(--space-1);
+    font-size: 0.9rem;
+  }
+  .cx-strip svg {
+    display: block;
+    width: 100%;
+    height: 3.5rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .cx-axis {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+  }
+  .cx-pairs {
+    margin-top: var(--space-4);
+    columns: 20rem;
+    column-gap: var(--space-5);
+  }
+  .cx-pairs details {
+    break-inside: avoid;
+    padding: var(--space-1) 0;
+  }
+  .cx-pairs summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+  .cx-pairs summary .muted {
+    font-weight: 400;
+  }
+  .cx-residues {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    margin: var(--space-2) 0;
+  }
+  .cx-res {
+    padding: 0 var(--space-1);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .cx-notes {
+    max-width: 48rem;
+  }
+</style>

@@ -415,3 +415,29 @@ Two consequences, taken by the session on these answers and said here so they ca
 **What it costs, and was accepted:** a second generator of committed data besides `bun run data` (the alignments
 already had one), a menu entry, a section on 316 species pages, and tables whose alignment columns belong to an
 earlier build's alignments, which the README of `public/data/mitoport/` says.
+## D21 — The complexes section reads a table made outside this repository's pipeline (2026-11-16)
+
+**Decided.** The pages under `/complexes/` show, for complex IV, every residue of COX1, COX2 and COX3 with
+the nuclear subunits it touches in the solved human structure (PDB 5Z62), its burial and how widely the human
+residue is kept across the build's species. That table (`SITES.tsv`) and the chains of the four structures
+(`CHAINS.tsv`) are made by `mitoage mitoport burial` of `dna-seq/mitoage-pipelines`, in Python, and are
+committed here under `docs/analyses/cluster-2026-11-15/` byte for byte. `bun run complexes` turns the two
+files into `src/data/generated/complexes.json`; it computes nothing, it checks and reshapes. Complexes I, III
+and V are listed with their mitochondrial subunits and say that no contact map has been read.
+
+**Why.** The maintainer asked for "a page on interactions with complexes" and, on the proposal that named
+structures and nuclear subunits as new sources, answered "so, implement then" (2026-11-14). Recomputing
+accessibility and contacts in TypeScript would duplicate a structure library for one table of 1,000 rows.
+
+**Rejected.** Recomputing the table in this repository's pipeline (a second implementation of the same
+geometry, with nothing to gain but the rule's letter); fetching it at build time from the pipelines
+repository or from Hugging Face (the site builds on a clone, with no network); a 3D viewer in the page as
+the first version (a large script for what a table and a strip already say; the page links to the entry at
+RCSB instead); showing nuclear subunits' sequences across species (they are not part of the build: about
+180 mammals have them).
+
+**Cost.** One generated file whose source is another repository's output: when that table changes, the copy
+under `docs/analyses/` is replaced by hand and `bun run complexes` rerun. The rule that the repository holds
+no Python stands; the rule that generated files are written by `bun run data` only gains this second writer,
+as `bun run align` was the first.
+

@@ -137,6 +137,7 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | `bun run align` | align the mitochondrial genes of the committed build with MAFFT, writing `public/data/alignments/`; it needs MAFFT at the pinned version and the pinned RefSeq release in `data/cache/` |
 | `bun run mitoport` | fetch the coevolution tables of mitoage-pipelines from Hugging Face at the pinned revision (`pipeline/sources/mitoport.ts`), refuse any file whose SHA-256 differs, and write them as parquet to `public/data/mitoport/` (D20); needs network once, nothing of `bun run data`'s inputs |
 | `bun run hf` | package the committed build for Hugging Face into `out/hf/` (the data files, `alignments/alignments.parquet`, the dataset card); the upload is run by hand, `hf upload longevity-genie/mitoage out/hf . --repo-type dataset` (D6) |
+| `bun run complexes` | write `src/data/generated/complexes.json`, the data of the pages under `/complexes/`, from the per-residue table of complex IV and the chains of the solved structures in `docs/analyses/cluster-2026-11-15/` (D21) |
 | `bun run sqlite` | write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads; runs after `bun run hf`, and needs `dist/data/correlations.parquet` from `bun run build` (D8) |
 | `bun run mcp` | compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | dev server |

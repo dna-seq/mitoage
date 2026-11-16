@@ -1,0 +1,93 @@
+---
+import { getComplexes } from "~/data";
+import Card from "~/components/ui/Card.astro";
+import Hero from "~/components/ui/Hero.astro";
+import BaseLayout from "~/layouts/BaseLayout.astro";
+import { breadcrumbLd } from "~/lib/seo";
+import { href } from "~/lib/url";
+import { geneUrl } from "~/lib/urls";
+
+const { complexes } = getComplexes();
+const description =
+  "The respiratory complexes of the mitochondrial inner membrane: which subunits the mitochondrial genome encodes, which the nucleus, and where they touch.";
+---
+
+<BaseLayout
+  title="Respiratory complexes"
+  description={description}
+  jsonLd={[breadcrumbLd(Astro.site, [{ name: "Complexes", path: "/complexes/" }])]}
+>
+  <Hero variant="page" seed={31}>
+    <p class="hero__eyebrow">Complexes</p>
+    <h1 class="hero__title">Respiratory complexes</h1>
+    <p class="hero__lede">
+      The 13 proteins of the mitochondrial genome work inside four complexes of the inner membrane, each built
+      together with subunits encoded in the nucleus. This section shows which subunit comes from which genome and,
+      where a solved structure has been read, which residues touch.
+    </p>
+  </Hero>
+
+  <div class="container section">
+    <ul role="list" class="grid-auto cx-list" style="--grid-min: 18rem">
+      {
+        complexes.map((c) => {
+          const mt = c.chains.filter((x) => x.mitochondrial);
+          const nuclear = c.chains.filter((x) => !x.mitochondrial);
+          return (
+            <li>
+              <Card level={2} title={c.name}>
+                <p class="card__desc">
+                  {mt.length} mitochondrial {mt.length === 1 ? "subunit" : "subunits"}
+                  {nuclear.length > 0 ? `, ${nuclear.length} nuclear in the structure read` : ""}
+                </p>
+                <p class="cx-genes">
+                  {mt.map((x) => (
+                    <a class="cx-gene" href={geneUrl(x.gene)}>
+                      {x.gene}
+                    </a>
+                  ))}
+                </p>
+                <p class="muted cx-state">
+                  {c.sites ? "Contacts between mitochondrial and nuclear subunits, residue by residue" : "Subunits only: no contact map yet"}
+                </p>
+                <p class="cx-open">
+                  <a href={href(`/complexes/${c.id}/`)}>Open {c.name.split(" (")[0]}</a>
+                </p>
+              </Card>
+            </li>
+          );
+        })
+      }
+    </ul>
+    <p class="muted cx-note">
+      Complex II (succinate dehydrogenase) has no subunit encoded in the mitochondrial genome and is not listed.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .cx-list {
+    padding: 0;
+    margin: 0;
+  }
+  .cx-genes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-2) 0;
+  }
+  .cx-gene {
+    font-weight: 700;
+  }
+  .cx-state {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+  .cx-open {
+    margin: var(--space-3) 0 0;
+    font-weight: 700;
+  }
+  .cx-note {
+    margin-top: var(--space-5);
+  }
+</style>
