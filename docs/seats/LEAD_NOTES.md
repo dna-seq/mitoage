@@ -124,6 +124,18 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
   scan for peptides (RM16), seats in `mitoage-pipelines` (the maintainer asked; the seat's design was put
   to him on 2026-11-14 and not answered).
 
+### 2026-11-16, afternoon
+
+- Live: the complexes section (RM17, D21), not in the top menu (desk #42). Done: RM18 (25 long-read records
+  of 2,344, so H8's control cannot run), RM21, and of RM15 the plot's sentence and the chips over the stars.
+- Left unattended: RM12 step 5, RM16 blind scan, RM11 per-residue embeddings, the rest of RM15 (the outlined
+  button on taxon pages, the old addresses, the whale families under two orders).
+- Desk: #41 (a seat for mitoage-pipelines; default none), #42; #36 withdrawn as moot.
+- Lessons: a site build queued in Slurm builds the worktree as it is when the job starts, not when it was
+  submitted, so check the built files for the last edit before trusting it; other sessions push to main
+  several times an hour, so fetch immediately before the merge, in the same command as the push; look at a
+  screenshot of every page a change touches, since a link added to a hero paragraph was invisible until seen.
+
 ### For the maintainer, by hand
 
 - Where the pipeline's inputs come from (RM7); the go on the alignments' design (RM10).

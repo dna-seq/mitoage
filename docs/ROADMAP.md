@@ -174,7 +174,7 @@ that the maintainer registers for at https://foldxsuite.crg.eu/academic-license-
 
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
-**State:** urgent (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); complex IV first, from the per-residue table named below; its design goes to him in screenshots before it is live · **Owner:** lead
+**State:** blocked: desk #42 (in the top menu or not; if nobody answers, it stays out). The first version is live since 2026-11-16 (changelog, D21): the four complexes' subunits and complex IV's contacts residue by residue. Left, each waiting on the maintainer's word after he has seen it: a 3D viewer, the contact maps of complexes I, III and V on the pages, the nuclear subunits' sequences · **Owner:** lead
 
 The maintainer: "can we extend mitoage website with page on interactions with complexes and provide
 complexes for all those species in comparative way?" Proposed to him: a page per complex (I, III, IV, V)
