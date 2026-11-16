@@ -51,7 +51,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** unattended: only step 5 (convergence tests) is left. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 of `docs/HYPOTHESES.md` in `dna-seq/mitoage-pipelines`; H7: lifespan does not predict the substitution rate) · **Owner:** lead
+**State:** after H21's code is on `main` of `dna-seq/mitoage-pipelines`: step 5 (convergence) then runs as one more trait, "long-lived for its body mass", in the design H21 to H25 share (trait clades, RELAX against matched control clades, one pair per origin), instead of a second framework; put to the maintainer in `#mitoalignments` on 2026-11-16 with that as the default. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 of `docs/HYPOTHESES.md` there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
