@@ -184,6 +184,12 @@ as well as divergence over whole proteins, and like divergence it cannot say whi
 counts used so far are not a measure of incompatibility. Open: an interface energy on the threaded chimeric
 complexes (FoldX or Rosetta), on haumea, scored against the same table.
 
+The cheaper scores were tried first, on 2026-11-16 (H17, fixed in advance; haumea jobs 6493605 and 6493606): the
+co-evolved residue pairs a chimera loses at the contacts, and ESM-2's reading of the donor's residues in the host's
+proteins, alone and beside the nuclear partner. Neither beats divergence on the cybrid table by the rule set before
+the run. The interface energy, or molecular dynamics at a few sites, stays open; FoldX needs an academic licence
+that the maintainer registers for at https://foldxsuite.crg.eu/academic-license-info.
+
 ## RM17 — A complexes section: mitochondrial and nuclear subunits, compared across species
 
 **State:** urgent (the maintainer, 2026-11-14, on the proposal below: "so, implement then"); complex IV first, from the per-residue table named below; its design goes to him in screenshots before it is live · **Owner:** lead

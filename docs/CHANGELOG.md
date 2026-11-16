@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The cybrids scored by co-evolved pairs and by ESM-2** (2026-11-16, RM11, H17): `docs/ANALYSIS_FINDINGS.md` gains
+  H17, the same text as `dna-seq/mitoage-pipelines` at ffdb2d6 (`mitoport cybrid-coev`, `cybrid-esm`,
+  `cybrid-readout`; `results/h17/`). Neither score beats divergence; RM11 says so and keeps the interface energy open.
+
 - **The coevolution page and the species sections no longer name builds or revisions** (2026-11-16, D20 amended).
   The maintainer, on the note "Computed on an earlier build": "visitors should not know such technicalities". The
   note at the top of `/coevolution/`, the line under each species section's title, and the revisions in the
