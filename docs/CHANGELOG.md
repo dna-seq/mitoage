@@ -8,7 +8,8 @@ Newest first.
   asked whether the hypothesis labels linking to mitoage-pipelines' record should go the way of the build note: "Yes,
   remove them". The lifespan and protein sections name each analysis by what it measures, the lifespan table's rows
   say "Contact mismatch" and "Pair discordance", and the downloads on `/coevolution/` and `/data/` drop the label
-  before each file's description. `mitoport.json` keeps each file's hypothesis.
+  before each file's description. `mitoport.json` keeps each file's hypothesis. The licence line under the
+  downloads says "CC BY 4.0", linked, without the dataset card's quote, which stays in `mitoport.json`.
 - **The cybrids scored by co-evolved pairs and by ESM-2** (2026-11-16, RM11, H17): `docs/ANALYSIS_FINDINGS.md` gains
   H17, the same text as `dna-seq/mitoage-pipelines` at ffdb2d6 (`mitoport cybrid-coev`, `cybrid-esm`,
   `cybrid-readout`; `results/h17/`). Neither score beats divergence; RM11 says so and keeps the interface energy open.

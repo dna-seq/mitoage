@@ -26,6 +26,8 @@ if (!verdict.holds) {
   throw new Error(`/coevolution/ says that none of these features follows lifespan, and the tables do not show it:\n  ${verdict.failures.join("\n  ")}`);
 }
 
+// The page names the licence plainly; mitoport.json keeps the dataset card's own words.
+if (!man.license.startsWith("CC BY 4.0")) throw new Error(`/coevolution/ says CC BY 4.0, and mitoport.json says: ${man.license}`);
 const pipelinesUrl = mitoportTreeUrl(man.dataset, man.revision, "output/mitoport");
 const partnersUrl = mitoportTreeUrl(man.nuclearPartners.dataset, man.nuclearPartners.revision);
 
@@ -273,7 +275,7 @@ const speciesByClass = m.classes.map((c) => ({
 
     <Card as="section" id="downloads" title="Downloads">
       <p class="card__desc">
-        The tables as parquet, values unchanged from <a href={pipelinesUrl}>the source</a>. Licence: {man.license}.
+        The tables as parquet, values unchanged from <a href={pipelinesUrl}>the source</a>. Licence: <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.
       </p>
       <ul role="list" class="data-files">
         {files.map((f) => (
