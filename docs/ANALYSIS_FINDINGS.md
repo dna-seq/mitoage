@@ -20,8 +20,8 @@ kept in `docs/analyses/cluster-2026-11-15/`, with the cluster paths of the origi
 
 **Not done**: the complexes section of the site with nuclear and mitochondrial subunits side by side (RM17);
 the mito-nuclear pairing against lifespan for any complex but IV, and for anything other than its contact
-residues; the long-read-only replication of H8, because no record in the build states its sequencing
-technology (RM18).
+residues; the long-read-only replication of H8: the sequencing technology of every record was read from NCBI on
+2026-11-16, and only 25 of 2,344 come from long reads, at most 10 in one class (H8, "Limit").
 
 Each entry: the hypothesis as we held it, the test, the control that keeps the test honest, the result, and
 its limits. Results that did not hold are kept next to those that did: a reader should see what was tried.
@@ -315,9 +315,20 @@ result was gone (q = 0.66) and a reptile G-quadruplex test passed instead (q = 0
 build that one is gone too (q = 0.38). Three runs, three different survivors, and none of them
 survives the next run: the screen is reporting noise, and this entry reports that rather than any of
 the three.
-**Limit, and it is the important one.** **The control could not be run.** No record in the build states
-a sequencing technology, so the long-read subset is empty and the mitoVGP caveat stays open: every
-repeat, motif and contact-zone number above is computed on records of unknown assembly type.
+**Limit, and it is the important one.** **The control could not be run**, and since 2026-11-16 the reason
+is counted rather than assumed. `mitoage download technology` fetches the RefSeq record of each of the
+build's 2,344 species and the INSDC record each one names as its source; `mitoage longevity technology`
+reads the `Sequencing Technology` field of both into `technology.tsv` (`results/h8/technology.tsv`). All
+2,344 RefSeq records name a source and every source was read. 893 sources (38%) state a technology; no
+RefSeq record states one that its source does not. By class of technology: **25 long-read** (PacBio or
+Nanopore, hybrids included), 642 short-read, 226 Sanger, 1,451 unstated. The 25 long-read records are 10
+ray-finned fishes, 5 mammals, 5 birds, 2 cartilaginous fishes and one each of amphibians, gastropods and
+insects: no class reaches the 25 species the model needs, so `motif-pgls`, which now reads the table,
+still writes no `long_read` rows. An unstated record is never counted as short-read, and nothing is
+inferred from a record's date. The mitoVGP caveat therefore stays open: the repeat, motif and
+contact-zone numbers above are computed on records of which at most 1% are known to come from long reads.
+A comparison this table would allow, and which was not fixed in advance and has not been run: whether the
+features themselves differ between short-read and Sanger records of one class.
 
 ## H9. Mismatch at complex IV's mito-nuclear contacts follows lifespan (mitoport)
 
