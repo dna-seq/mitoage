@@ -740,7 +740,8 @@ species so that no two pairs share a branch of the dated tree (65), took each pa
 Methods S12.10); the tests and their reading were fixed before the run. The size effect is there: the rate falls
 with body length across 288 pairs of ray-finned fishes (p = 0.036). Temperature is not: over 74 pairs its activation
 energy is −0.22 eV (95% interval −0.49 to +0.04), so warmer water does not speed the mitochondrial clock of these
-fishes, and an effect in the predicted direction, if there is one, is below 0.04 eV. Exploring further, the
+fishes. The interval excludes the 0.65 eV the theory takes from the kinetics of metabolism, and the 0.40 eV that
+Gillooly et al. estimated on average from rates compiled across taxa without a tree (64). Exploring further, the
 nonsynonymous rate rises in colder water (q = 0.0045), with dN/dS unchanged; depth and generation time are not in
 the model. In mammals the test cannot be read, because the size effect itself did not appear on their pairs
 (p = 0.16, 232 pairs). Metabolic rate, with body mass in the model, predicts the rate in neither mammals (47 pairs)

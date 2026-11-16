@@ -1482,7 +1482,9 @@ tables, and every table is identical on a rerun.
 
 **Question.** Metabolic theory predicts that substitution rates scale with mass-specific metabolic rate, so rise with
 temperature as exp(−E/kT) and fall with body size (main text reference 64); a slope of log10 rate on 1/kT (k in
-eV/K, T in kelvin) gives E = −ln(10) × slope, positive when warmer animals evolve faster. Beside it, the model of
+eV/K, T in kelvin) gives E = −ln(10) × slope, positive when warmer animals evolve faster. The theory takes E ≈ 0.65
+eV from the kinetics of metabolism, and Gillooly et al.'s type I regressions over rates compiled across taxa from
+0 to 40 °C, without a tree, averaged 0.40 eV (four data sets). Beside it, the model of
 Lehmann et al. (main text reference 4), mtDNA GC content and metabolic rate against mammalian lifespan, retested on
 the tree. The tests and their reading were committed before the run (mitoage-pipelines 78f8734), with what had been
 seen while the code was written: a first version on the plain cherries of the tree had printed its rate fits, and
@@ -1521,7 +1523,7 @@ the pairing was changed afterwards to use more species, so the plain cherries ar
 
 **Results.** No primary test passes. In ray-finned fishes, whose size control passes, the slope on 1/kT points the
 other way, colder water with the faster rate, under both pairings; E's interval excludes any positive value above
-0.04 eV. In mammals the size control does not pass, so their tests are not read. Exploratory: in ray-finned fishes
+0.04 eV, and so both 0.65 and 0.40 eV. In mammals the size control does not pass, so their tests are not read. Exploratory: in ray-finned fishes
 dN per million years follows 1/kT the same way (+0.095, q = 0.0045, 74 pairs) while dN/dS does not move (p = 0.94);
 dN per million years falls with fish length (q = 0.015, 288 pairs); dN/dS rises with body mass in mammals (q = 0.042,
 232 pairs), as the nearly-neutral theory expects. In the composition screen no feature follows 1/kT at q < 0.05 in

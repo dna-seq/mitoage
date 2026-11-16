@@ -579,8 +579,9 @@ p 0.15917; P2 -0.14761, p 0.035785; L1 0.018335, p 0.0072263, 201; L2 0.017209, 
 (fishes dN per Myr on 1/kT 0.094976, q 0.0044953) and `lehmann.tsv` (R^2 0.48794; metabolic rate with mass -0.021075,
 p 0.70208; mass 0.14663, p 0.00054904; 1/kT 0.33946, p 1.6768e-05). References 64 (Gillooly et al. 2005, PMID
 15618408) and 65 (Maddison 2000, PMID 10660474) were found by title with the module plugin's literature search;
-volumes and pages are Crossref's. Gillooly et al.'s own value of E was not read (PMC served a reCAPTCHA), so the text
-compares E with zero only; an author with access can add the published value.
+volumes and pages are Crossref's. Gillooly et al.'s values were read from PMC544068 in the app's browser (the automated
+fetch had met a reCAPTCHA): E ≈ 0.65 eV predicted from the kinetics of metabolism, and Ē = 0.40 eV (n = 4) for their
+type I regressions, in Results; their ectotherm temperatures are the habitat's, for some fishes the preferred one.
 
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
