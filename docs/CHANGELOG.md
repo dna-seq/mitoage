@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 is on the co-authors' Drive folder** (2026-11-16, the maintainer: "we have to release it"): the paper and
+  the Supplementary Methods as Google Docs, the six figures and Supplementary Table S1, built from 5b2ac14
+  (`rounds.py push 0.3`). Tables in the Docs are set at 9 pt by `docs/manuscript/build-docx.ts`, so Table 3's eleven
+  columns fit the page without breaking a number or a word; every table was checked in a PDF export of the Docs.
+
 - **Round v0.3 says which RefSeq records are probably wrong** (2026-11-15). Database content gains a paragraph
   on the record audit (mitoage-pipelines H13, rerun on build 0f4e970 as haumea job 6490297, tables at b6af4ed):
   nine near-identical pairs across genera (*Echis coloratus* and *Vipera berus* identical over 11,265 bases; the
