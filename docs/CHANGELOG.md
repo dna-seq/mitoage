@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **Links and chips on the green band read clearly** (2026-11-16, RM15). A link inside a hero's opening paragraph
+  took the body's dark green and vanished on the band (seen on the new link to the complexes section from the genes
+  page): it now takes the band's text colour, underlined. The band's decorative stars crossed the text of the
+  translucent chips and of the gene list's counts: both now blur what is behind them (`backdrop-filter`).
 - **The plot's sentence says which statistic it follows** (2026-11-16, RM15). The sentence above the live
   statistics on `/compare/plot/` followed Spearman's rho without saying so, and read "No clear relationship" beside
   a Pearson r of -0.20 with p = 8e-23. It now opens "By rank (Spearman)", and where rho shows nothing while

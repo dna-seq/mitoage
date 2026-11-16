@@ -158,6 +158,12 @@ const hasAside = Astro.slots.has("aside");
     line-height: 1.45;
     color: var(--color-on-brand);
   }
+  /* A link inside the lede: the body's link colour is a dark green that disappears on the band. */
+  .hero :global(.hero__lede a) {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
   .hero :global(.hero__actions) {
     display: flex;
     flex-wrap: wrap;

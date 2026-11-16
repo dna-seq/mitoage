@@ -123,6 +123,8 @@
   .chip--on-brand {
     color: var(--color-on-brand);
     background: var(--color-on-brand-chip);
+    /* the hero's decorative stars sit behind these chips: blurred, they no longer cross the text */
+    backdrop-filter: blur(8px);
   }
   a.chip--on-brand:hover {
     color: var(--color-on-brand);

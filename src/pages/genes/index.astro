@@ -86,7 +86,7 @@ const kinds = [
     <h1 class="hero__title">Genes of the mitochondrial genome</h1>
     <p class="hero__lede">
       Animal mtDNA is a small circle with 37 genes and one control region. Pick a gene to compare its length, base
-      composition and codon usage across {fmtInt(species.length)} species, and to see how it relates to lifespan. The 13 proteins work inside four
+      composition and codon usage across {fmtInt(species.length)} species, and to see how it relates to lifespan. The 13 proteins work inside four{" "}
       <a href={href("/complexes/")}>respiratory complexes</a>, beside subunits encoded in the nucleus.
     </p>
     <Fragment slot="aside">
@@ -193,6 +193,8 @@ const kinds = [
     padding: var(--space-2) var(--space-4);
     border-radius: var(--radius-pill);
     background: var(--color-on-brand-chip);
+    /* the band's decorative stars sit behind these rows: blurred, they no longer cross the text */
+    backdrop-filter: blur(8px);
     color: var(--color-on-brand);
     font-weight: var(--fw-heavy);
   }
