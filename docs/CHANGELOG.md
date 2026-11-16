@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The outlined button on the green band, and the old addresses** (2026-11-16, RM15, which this closes). The
+  outlined button of a taxon page ("Compare mtDNA") blurs the band's decorative stars behind it, as the chips do.
+  The addresses kept for links from the 2015 site were read on the built site: all 2,729 pages under `/browse/`,
+  `/view/`, `/stats-for/` and `/export-section/` redirect to a page that exists (922 to species, 621 to taxa,
+  1,184 to the comparison pages, one each to the genes and the tree). Families filed under two orders are RM24.
 - **Links and chips on the green band read clearly** (2026-11-16, RM15). A link inside a hero's opening paragraph
   took the body's dark green and vanished on the band (seen on the new link to the complexes section from the genes
   page): it now takes the band's text colour, underlined. The band's decorative stars crossed the text of the

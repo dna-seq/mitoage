@@ -208,18 +208,6 @@ the D-loop's GC content ranges from 0 to 100% in the statistics and these values
 correlations. The rule proposed: under 100 bases counts as not annotated (unknown). A data rule, applied at
 the next data build, which runs where the pipeline's inputs are (RM7).
 
-## RM15 — Small things seen on the build 2 site
-
-**State:** unattended · **Owner:** lead
-
-From the reading of 2026-11-13 (20 pages, a desktop's width in light and a phone's in dark, no script error
-on any): the hero's decorative stars showed through the translucent chips and crossed their text; the chips and
-the gene list's counts blur them since 2026-11-16, and the plot's sentence was done the same day (changelog).
-Still to look at: the taxon pages' outlined "Compare mtDNA" button. Not read: the old addresses kept for links from
-the 2015 site (`/browse/`, `/view/`, `/stats-for/`, `/export-section/`).
-
-The whale families filed under two orders are RM24 now.
-
 ## RM20 — Release mitoage-mcp to npm
 
 **State:** open; the upload and the pin are done (D9), the tag is not · **Owner:** maintainer
