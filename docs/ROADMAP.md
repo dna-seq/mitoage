@@ -218,10 +218,7 @@ the gene list's counts blur them since 2026-11-16, and the plot's sentence was d
 Still to look at: the taxon pages' outlined "Compare mtDNA" button. Not read: the old addresses kept for links from
 the 2015 site (`/browse/`, `/view/`, `/stats-for/`, `/export-section/`).
 
-Seen in the data on the same day, during the site-by-site analysis (RM12): whale families are filed under
-two orders in the species table (Balaenidae, Delphinidae and Monodontidae appear under both Artiodactyla
-and Cetacea), so a taxon page or a per-order statistic splits them. Which source gives which, and the rule
-that makes them one, are not looked at yet.
+The whale families filed under two orders are RM24 now.
 
 ## RM20 — Release mitoage-mcp to npm
 
@@ -271,3 +268,22 @@ them as RefSeq deposits them. What is left:
   patch them the way the parrot's ND6 was patched, or leave them stated as missing.
 - Whether to report the candidates to NCBI (RefSeq's record-feedback route) is the maintainer's call; nothing is
   sent before that.
+
+## RM24 — One taxonomy for a species' order and family
+
+**State:** blocked: desk #43 · **Owner:** lead
+
+39 families (268 of the 2,344 species) are filed under two orders, and ten genera under two families: 30 of
+the families are ray-finned fishes (Scombridae under Perciformes and Scombriformes), 7 are mammals (Delphinidae
+under Cetacea and Artiodactyla, Soricidae under Soricomorpha and Eulipotyphla), with Crocodylidae and
+Strongylocentrotidae. A family's page, an order's page and every per-order number split such a group.
+
+The split follows one line exactly (counted on the committed species table, 2026-11-16): the 922 species kept
+from build 1 take their order and family from AnAge, or from build 1 where AnAge has none, and the 1,422 new
+species take them from the NCBI lineage (`pipeline/steps/build2.ts`). No family mixes the two within one of
+its orders. 44 species have no order and 6 no family, all from NCBI lineages without that rank.
+
+The question on the desk: NCBI's order and family for every species (recommended: the one source that covers
+all of them; Cetacea, Soricomorpha and Erinaceomorpha stop being orders and their addresses get redirects), or
+the build 1 scheme first within a family, or as it is. Either change is a rerun of `bun run data`, which needs
+the raw inputs (RM7).
