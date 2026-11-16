@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.3 reports what the build shows beyond longevity: mtDNA and nuclear subunits co-evolve as whole proteins
+  in all four complexes** (2026-11-16). A Results subsection and Supplementary Methods S12.9 read mitoage-pipelines
+  H14 (haumea job 6490344, build 0f4e970, tables at 8eeaf6f): in complexes I, III, IV and V the nuclear subunits
+  co-vary with the mtDNA-encoded ones as whole proteins (p = 7e-7 to 9e-4 against cytosolic controls), and neither
+  side's contact residues nor the pairs across the interface add anything after Holm (smallest adjusted p 0.11,
+  complex I's pairs). A Discussion paragraph, "Beyond lifespan", gathers H13, H14 and H15 and the released data.
+  References 61-63 (Osada & Akashi 2012; Weaver et al. 2022; Piccinini et al. 2021) checked by title and against
+  Crossref; S12.5 no longer lists the residue-level co-evolution as unreported; Table S3 gains the H14 tables.
+  Documents only.
 - **Round v0.3 is on the co-authors' Drive folder** (2026-11-16, the maintainer: "we have to release it"): the paper and
   the Supplementary Methods as Google Docs, the six figures and Supplementary Table S1, built from 5b2ac14
   (`rounds.py push 0.3`). Tables in the Docs are set at 9 pt by `docs/manuscript/build-docx.ts`, so Table 3's eleven

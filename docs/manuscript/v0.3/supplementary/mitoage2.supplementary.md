@@ -1251,9 +1251,9 @@ of these cherries reach, which is why saturated pairs are flagged and kept.
 
 The analysis repository holds further tests that the main text does not report: selection on the
 mitochondrial genes in long-lived against short-lived lineages (HyPhy RELAX, which did not reproduce
-between draws or between runs; and Coevol, whose chains had not converged); the co-evolution of mitochondrial
-and nuclear subunits of the respiratory complexes, whose per-residue ESM-2 embeddings are published as
-`longevity-genie/mitoage-embeddings` (revision fc70053). They are described, with their failures, in `docs/ANALYSIS_FINDINGS.md` of
+between draws or between runs; and Coevol, whose chains had not converged); and the co-evolution of mitochondrial
+and nuclear subunits measured with ESM-2 embeddings (H6), which are published as `longevity-genie/mitoage-embeddings`
+(revision fc70053). The residue-level co-evolution in the four complexes is reported in the main text and S12.9. They are described, with their failures, in `docs/ANALYSIS_FINDINGS.md` of
 the site repository and `docs/HYPOTHESES.md` of the analysis repository. Mismatch at the contacts of complex IV, first tested in mammals and in all species pooled (H9), is not among them: the main text reports it class by class (H12, S12.7). The peptides encoded inside mtDNA (H4, H15) are not among them either: the main text reports them, and S12.8 describes the test.
 
 <!-- src: docs/ANALYSIS_FINDINGS.md H3, H5, H6, H9 -->
@@ -1420,6 +1420,64 @@ breaks caught, and every table identical on a rerun; the run on c525adb (job 649
 
 <!-- src: mitoage-pipelines docs/HYPOTHESES.md H4, H15; results/job4-peptides/0f4e970/ at 72b3eb2 -->
 
+### S12.9 Mitochondrial and nuclear subunits at their contacts, in four complexes (H5, H14)
+
+**What was asked.** Whether the coupling between mtDNA-encoded subunits and the nuclear subunits beside them sits at
+the residues where they touch, as compensatory coevolution predicts (main text references 61-63), or in the
+proteins as wholes. H5 asked it of complex IV; H14 asks it of complexes I, III and V with the same code, and of
+complex IV again. A question of mitochondrial evolution, not of lifespan.
+
+**How.** `mitoage mitoport contacts|burial|iface|partners|readouts --complex I|III|IV|V` (analysis repository;
+H14 written and committed before any of its statistics was computed, at bf691b3).
+- *Contact maps.* Human structures 5XTD (complex I), 5XTE (III, a dimer; cytochrome b read from one copy, the other
+  counted as a mitochondrial partner), 5Z62 (IV) and 8H9S (V). A contact is a residue of a mitochondrial subunit with
+  a heavy atom within 4.5 Å of a nuclear subunit: 621 in complex I (ND1 116, ND2 105, ND3 32, ND4 144, ND4L 17, ND5
+  176, ND6 31), 104 in III, 298 in IV and 129 in V (ATP6 95, ATP8 34). Each is matched to a non-contact residue of the
+  same gene with the same accessibility in the isolated chain, without replacement; 17 of ATP8's 34 contacts have no
+  candidate and are left out of the pair tests. Every contact and control maps to an alignment column. Complex IV's
+  map from the generalised code is byte-identical to H5's.
+- *Sequences.* NCBI's mammalian ortholog sets of the nuclear subunits of each complex (37 of complex I, 9 of III, 11
+  of IV, 15 of V) and of 30 cytosolic control proteins, one protein per mammal, aligned with MAFFT L-INS-i; for the
+  pair test, NCBI's vertebrate ortholog sets of the subunits that touch.
+- *Readouts per complex.* R0, the positive control: over pairs of mammals, with patristic distance on the dated tree
+  partialled out, the correlation of a nuclear subunit's distances away from the interface with the mitochondrial
+  control residues' distances, its subunits against the cytosolic controls (Mann-Whitney). R1b, the mitochondrial
+  side: contact residues' coupling minus their controls', subunits with at least 5 interface residues against the
+  cytosolic controls. R2, the nuclear side: interface columns' coupling minus the rest's, likewise. R3, the pairs:
+  per species, the share of contact pairs where exactly one side differs from its column's class consensus, minus
+  the same for control pairs, averaged as a phylogenetic intercept with Pagel's lambda. R1a, conservation of contacts
+  against controls, is descriptive only, because a printout of it was seen before the entry was written. Holm over
+  the 12 tests of R1b, R2 and mammalian R3. The reading fixed in advance: H5's conclusion holds in a complex when R0
+  is positive and no interface readout passes Holm.
+
+**Supplementary Table S12.9.** The readouts per complex (mammals; build 0f4e970).
+
+| Readout | Complex I | Complex III | Complex IV | Complex V |
+|---|---|---|---|---|
+| R0: subunits / controls; median coupling; p | 37 / 29; 0.49 against 0.09; 7.0 × 10⁻⁷ | 9 / 29; 0.40 against 0.02; 6.8 × 10⁻⁵ | 11 / 29; 0.42 against −0.02; 6.4 × 10⁻⁵ | 15 / 29; 0.21 against 0.04; 9.1 × 10⁻⁴ |
+| R1a: identity to human, contact minus control (paired); p | −0.029; 0.016 | −0.005; 0.91 | −0.021; 0.010 | +0.037; 0.08 |
+| R1b: mitochondrial contacts' excess coupling; p (Holm) | 0.45 (1) | 0.41 (1) | 0.36 (1) | 0.71 (1) |
+| R2: nuclear interface's excess coupling; p (Holm) | 0.38 (1) | 0.34 (1) | 0.72 (1) | 0.54 (1) |
+| R3: pair discordance, contact minus control, mammals; mean [95% interval] | −0.047 [−0.081, −0.012] | −0.027 [−0.093, 0.040] | 0.028 [−0.012, 0.068] | −0.023 [−0.080, 0.034] |
+| R3, mammals: p (Holm) | 0.009 (0.11) | 0.43 (1) | 0.17 (1) | 0.42 (1) |
+
+**Results.** R0 is positive in every complex, so there is coupling to localise. No interface readout passes Holm in
+either direction (smallest adjusted p 0.11, complex I's pairs in mammals), so under the reading fixed in advance the
+coupling belongs to whole proteins in all four complexes. Outside the Holm family, complex I's pairs lean the same
+way in birds (−0.012 [−0.018, −0.005], p = 0.001), as do complex III's in ray-finned fishes and complex V's in birds
+(p = 0.04 each); reptiles have too few species with partner sequences. Complex I is therefore the place to test
+compensation again, not a finding of it. The secondary fits of mismatch at the contacts against lifespan reach no
+q < 0.05 in any complex.
+
+**Limits.** One human structure stands for every species. The residue-level coupling is measured in mammals only,
+on sequence distances; no per-residue embeddings exist for the nuclear subunits of complexes I, III and V. Complexes
+III and V each have five subunits with an interface, so their nulls bound little. The run is Slurm job 6490344 on
+haumea (build 0f4e970, dated tree of the site at 03c0949): 55 tests pass, 20 of 20 deliberate breaks of the new code
+and 19 of 19 of H12's are caught, complex IV run through the old code on the same inputs gives byte-identical
+tables, and every table is identical on a rerun.
+
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H5, H14; results/job1-contacts/contact_readouts.tsv at 8eeaf6f -->
+
 ## S13. The MCP server
 
 A language-model agent asked whether an mtDNA feature predicts lifespan, with only the downloads to hand,
@@ -1509,6 +1567,7 @@ repositories only, so far. Supplementary Table S3 lists them.
 | ESM-2 650M embeddings, mean and per residue, of the 13 mitochondrial proteins and 61 nuclear partners | Hugging Face `longevity-genie/mitoage-embeddings` | fc70053 |
 | 806 predicted structures of the 13 proteins in 62 mammals (ESMFold2) | Hugging Face `longevity-genie/mitoage-structures` | 8e5cfdc |
 | The contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase (PDB 5Z62), with burial-matched control residues and their pairs, the coupling of each nuclear protein with the mitochondrial ones, and its fits against lifespan | Hugging Face `longevity-genie/mitoage-pipelines`, `output/mitoport/iface/` | 126d237 |
+| The contact maps of complexes I, III and V with their controls, the mammalian and vertebrate ortholog sets of their nuclear subunits, the coupling tables and the readouts of all four complexes (H14, S12.9) | GitHub `dna-seq/mitoage-pipelines`, `results/job1-contacts/` | 8eeaf6f |
 | The structural against the sequence alignments of the 13 proteins in 62 mammals, and the superposition of the human chains | GitHub `dna-seq/mitoage`, `docs/analyses/cluster-2026-11-15/` | 094aa57 |
 | The audit of every record: strand orientation, gene order, genetic code, near-identical pairs and records nearest to another order or class (H13, S16) | GitHub `dna-seq/mitoage-pipelines`, `results/job3-audit/0f4e970/` | b6af4ed |
 | The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | Hugging Face `longevity-genie/mitoage-pipelines`: `output/longevity/structure_pgls.tsv`, `output/mitoport/partners.tsv`, `output/structure/embed_cox.parquet`; GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 126d237; 7692a55 |
@@ -1519,8 +1578,7 @@ Lifespan values from FishBase and SeaLifeBase keep their CC BY-NC 4.0 terms in e
 (main text, Data availability).
 
 > AUTHOR: the GitHub-only rows are to move to the Hugging Face dataset `longevity-genie/mitoage-pipelines` when it is
-> next refreshed, together with the contact maps of complexes I, III and V, which were running when this was
-> written; the revisions of those rows change then. The correlation table
+> next refreshed; the revisions of those rows change then. The correlation table
 > is computed by the site build and not committed (decision D3): deposit the release's copy (Zenodo) so it has a
 > revision of its own.
 

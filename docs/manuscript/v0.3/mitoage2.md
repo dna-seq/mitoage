@@ -688,6 +688,35 @@ in reptiles, and it is not repeated in mammals.
 > lie in the D-loop and over a tRNA gene that the build does not align. The scan of every reading frame of 20
 > codons or more (RM16's fourth question) was not run.
 
+### Beyond longevity: mitochondrial and nuclear subunits evolve together as whole proteins
+
+The alignments, the dated tree and the nuclear partners serve questions other than lifespan. One is how the
+proteins encoded by mtDNA evolve with the nuclear-encoded subunits beside them in the respiratory complexes. Rates
+of the two genomes' subunits are correlated across species (61-63), and compensatory coevolution predicts more:
+residues where the two genomes' products touch should change together more than the rest of each protein (61).
+Later tests in mammals and in bivalves did not find that signature at the contacts (62, 63). We tested it in all
+four complexes that hold mtDNA-encoded subunits. In human structures of complexes I, III, IV and V, 621, 104, 298
+and 129 mitochondrial residues lie within 4.5 Å of a nuclear subunit. We matched each such residue to a residue of
+the same gene that is as buried but touches nothing, and compared how the two sets co-vary with nuclear orthologs
+across mammals, with the time between species partialled out (Supplementary Methods S12.9). In every complex the
+nuclear subunits co-vary with the mitochondrial ones as whole proteins: their columns away from the interface follow
+the mitochondrial controls more than 29 cytosolic proteins do (p = 7 × 10⁻⁷, 7 × 10⁻⁵, 6 × 10⁻⁵ and 9 × 10⁻⁴ for
+complexes I, III, IV and V). The contacts add nothing measurable. Neither the mitochondrial contact residues nor the
+nuclear interface residues co-vary more than the rest of their proteins in any complex (eight tests, every
+Holm-adjusted p = 1). Residue pairs across the interface are not changed together more often than control pairs in
+mammals (smallest Holm-adjusted p = 0.11, complex I). Contact residues are, if anything, less conserved than their
+controls (complexes I and IV). The coupling therefore belongs to the proteins that share a complex with mtDNA
+products, as a lineage-wide rate of mitochondrial evolution that their partners follow would make it, not to
+compensation at the residues that touch. Complex I is the one place where the pairs lean toward compensation, in
+mammals and in birds, and is where to look again. The contact maps of the four complexes, the nuclear ortholog sets
+and their alignments are among the downloads (Supplementary Table S3).
+
+> AUTHOR: H14 of `docs/HYPOTHESES.md` in mitoage-pipelines (fixed before the results at bf691b3, the species fix
+> at 7ab48d2), run on haumea as job 6490344 on build 0f4e970 with the dated tree of dna-seq/mitoage 03c0949; tables
+> in `results/job1-contacts/` (8eeaf6f). Structures 5XTD (complex I), 5XTE (III), 5Z62 (IV) and 8H9S (V). The
+> residue-level analysis is in mammals only; complexes III and V have five subunits each with an interface, so
+> their nulls bound little. No per-residue embeddings exist for the nuclear subunits of complexes I, III and V.
+
 ### The website and interface
 
 The website, [www.mitoage.info](https://www.mitoage.info) (for now at https://just-dna.life/mitoage/), presents the same build, and its menu follows the data: Species, Tree, Genes, Compare, Data and About (Figure 3).
@@ -864,6 +893,14 @@ records matched in RefSeq mitochondrion release 237, one states a sequencing tec
 source INSDC accession from which it could be resolved. The same tests restricted to long-read assemblies
 are therefore not assessed here, rather than assessed and found negative.
 
+Beyond lifespan, the same build answers questions of mitochondrial evolution in general. The nuclear subunits of
+all four respiratory complexes that hold mtDNA-encoded proteins co-vary with them as whole proteins, and the residues
+that touch add nothing measurable, which extends to every complex the evidence against compensation at the contacts
+(62, 63). None of the published peptides encoded inside mtDNA is kept across species more widely than other open
+windows of its gene. An audit of the records names those in RefSeq that are probably mislabelled or misannotated.
+The alignments, the dated tree, the contact maps, the nuclear ortholog sets, the protein-language-model embeddings
+and the predicted structures are released with the build for such work (Supplementary Table S3).
+
 The next analyses should therefore look where the survivors are, at mammalian base composition and the slow
 life history it follows. They need generation length, which the build does not yet hold; age at maturity is
 its proxy here, and it leaves out the part of the reproductive years that generation length includes. They also need
@@ -918,8 +955,8 @@ collection MitoAge, https://huggingface.co/collections/longevity-genie/mitoage-6
 Supplementary Table S3 lists each of them with its revision: besides the build, the alignments and the dated
 tree, they hold data that are not about lifespan and that other studies can reuse, among them ESM-2
 embeddings of the 13 mitochondrial proteins and of 61 nuclear partners, 806 predicted structures of the 13
-proteins in 62 mammals, the contact map of the mitochondrial and nuclear subunits of human cytochrome c oxidase
-with burial-matched control residues, and the reading frames of the peptides encoded inside mtDNA in every
+proteins in 62 mammals, the contact maps of the mitochondrial and nuclear subunits of the four human respiratory
+complexes that hold both, with burial-matched control residues, and the reading frames of the peptides encoded inside mtDNA in every
 species. The experimental MCP server is in `mcp/` of the site repository and is to be released as the npm package
 `mitoage-mcp`. Lifespan values from
 FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial use only) and are marked as such in the downloads.
@@ -1051,6 +1088,13 @@ and NCBI places no restrictions of its own on the use of RefSeq and Taxonomy dat
     type 2 diabetes. Theranostics. 2026;16:8180-8194. https://doi.org/10.7150/thno.134637
 60. Hebert PDN, Cywinska A, Ball SL, deWaard JR. Biological identifications through DNA barcodes. Proc Biol Sci.
     2003;270:313-321. https://doi.org/10.1098/rspb.2002.2218
+61. Osada N, Akashi H. Mitochondrial-nuclear interactions and accelerated compensatory evolution: evidence from
+    the primate cytochrome c oxidase complex. Mol Biol Evol. 2012;29:337-346. https://doi.org/10.1093/molbev/msr211
+62. Weaver RJ, Rabinowitz S, Thueson K, Havird JC. Genomic signatures of mitonuclear coevolution in mammals. Mol Biol
+    Evol. 2022;39:msac233. https://doi.org/10.1093/molbev/msac233
+63. Piccinini G, Iannello M, Puccio G, Plazzi F, Havird JC, Ghiselli F. Mitonuclear coevolution, but not nuclear
+    compensation, drives evolution of OXPHOS complexes in bivalves. Mol Biol Evol. 2021;38:2597-2614.
+    https://doi.org/10.1093/molbev/msab054
 
 > AUTHOR: references 19, 21 and 24–36 are new and need checking (a reference-check pass is suggested).
 > The data and software citations 38–42 are placed but have no version-level DOI yet: mint the Zenodo

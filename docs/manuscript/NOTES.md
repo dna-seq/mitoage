@@ -553,6 +553,14 @@ maybe very short in the paper and in details in supplements") reads mitoage-pipe
 tRNAs only 6, reversed deposit 5, order 5), `code.tsv` (no mismatch; Pelomedusa subrufa 6 + 8 stops). Reference 60
 (Hebert 2003, PMID 12614582) was checked by title in PubMed.
 
+The "Beyond longevity" subsection, S12.9 and the Discussion's "Beyond lifespan" paragraph read mitoage-pipelines H14
+(job 6490344, `results/job1-contacts/contact_readouts.tsv` at 8eeaf6f): R0 `seq_control_other` p 7.0068e-07 (I, 37
+subunits), 6.8088e-05 (III, 9), 6.3794e-05 (IV, 11), 9.0743e-04 (V, 15) against 29 cytosolic controls; R1b and R2 Holm 1
+in every complex; R3 mammals I -0.046565 [-0.081461, -0.011669] p 0.0092 Holm 0.11; contact residues 621 / 104 / 298 /
+129 from H14's design section. References 61 (PMID 21890478), 62 (PMID 36288802) and 63 (PMID 33616640) were found by
+title with the module plugin's literature search (the PubMed connector had disconnected); volumes and pages are
+Crossref's.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through
