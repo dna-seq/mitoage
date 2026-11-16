@@ -182,7 +182,6 @@ const jsonLd = [
 // Contact-pair discordance at complex IV (D20): from mitoage-pipelines, computed on an earlier build, joined by slug.
 const discord = getSpeciesDiscordance(s.slug);
 const discordClass = discord ? getClassDiscordance(discord.class) : undefined;
-const mitoport = getMitoport().manifest;
 /** A share as a percentage; unknown stays unknown. */
 const pct = (v: number | null): number | null => (v === null ? null : v * 100);
 // Every contact pair of the map: the most any species fills (H12: 687).
@@ -472,10 +471,6 @@ const tabs = [
           <Card>
             <div class="card__head">
               <h2 id="coevolution-title" class="card__title">Mito-nuclear contacts of complex IV</h2>
-              <span class="card__desc">
-                Computed by mitoage-pipelines on build {mitoport.computedOn.revision.slice(0, 7)}, not on this one; matched by
-                species slug
-              </span>
             </div>
             <p class="sp-mp-text">
               How often a pair of touching residues, one in COX1-3 and one in a nuclear subunit, has exactly one side differing

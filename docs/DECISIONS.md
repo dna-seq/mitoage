@@ -394,6 +394,11 @@ maintainer chose the recommendation in each:
   stable across builds, and any species not in the site's build is counted and named, never dropped silently.
   **Rejected:** a note on the page only (a species page's numbers would not say they come from an earlier build);
   showing nothing until the tables are rerun on the current build (a cluster run, with a GPU job, first).
+  **Reversed the same day**, once the maintainer saw the note live: "why do we show shit like [the note] … It is
+  for the paper and visitors should not know such technicalities". The page and the species sections no longer name
+  builds, revisions or slugs; which build the tables were computed on stays in `public/data/mitoport/README.md` and
+  `mitoport.json`, for whoever reuses them, and a species the slug join loses is reported as a warning of the site
+  build, not to the visitor. **Rejected, now:** the note on the page and in each species section, as first chosen.
 - **Going live:** the maintainer sees phone and desktop screenshots before the push (RM17's line for a complexes
   section). **Rejected:** pushing as soon as the checks pass.
 

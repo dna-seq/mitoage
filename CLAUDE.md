@@ -234,3 +234,6 @@ machine and this project that reading the code does not reveal.
   not "from here"". The cluster never runs code that is not on `main`: commit and push the script and its job
   file to `main` first, then `git pull` on haumea and submit. The results come back to `main` as their own commit,
   which names the commit they ran from.
+- 2026-11-16, the maintainer, on a note naming the build and revisions the coevolution tables were computed on: "It
+  is for the paper and visitors should not know such technicalities". Pages say what the data shows; which build,
+  revision or slug join it came from goes into the downloads' README and manifest, and the paper, never the page text.

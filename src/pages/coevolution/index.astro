@@ -4,7 +4,7 @@
  * computed on an earlier build, shown for reuse. The page states that none of the measures follows lifespan
  * only after lifespanNull() has checked it on the tables; if the tables ever say otherwise, the build stops.
  */
-import { getBuildInfo, getSpeciesBySlug, PUBLIC_DIR } from "~/data";
+import { getSpeciesBySlug, PUBLIC_DIR } from "~/data";
 import { getMitoport } from "~/data/mitoport";
 import Card from "~/components/ui/Card.astro";
 import DataTable, { type Column, type Row } from "~/components/ui/DataTable";
@@ -20,23 +20,27 @@ import { statSync } from "node:fs";
 import { join } from "node:path";
 import { MITOPORT_HYPOTHESES, mitoportTreeUrl } from "../../../pipeline/sources/mitoport";
 
-const info = getBuildInfo();
 const m = getMitoport();
 const { manifest: man, verdict } = m;
 if (!verdict.holds) {
   throw new Error(`/coevolution/ says that none of these features follows lifespan, and the tables do not show it:\n  ${verdict.failures.join("\n  ")}`);
 }
 
-const short = (rev: string) => rev.slice(0, 7);
 const pipelinesUrl = mitoportTreeUrl(man.dataset, man.revision, "output/mitoport");
-const computedOnUrl = mitoportTreeUrl(man.computedOn.dataset, man.computedOn.revision);
 const partnersUrl = mitoportTreeUrl(man.nuclearPartners.dataset, man.nuclearPartners.revision);
 const hyp = (h: string) => `${MITOPORT_HYPOTHESES}#${h.toLowerCase()}`;
 
-// Species joined by slug: say how many are on this site and name any that are not.
+// Species joined by slug. Which build the tables were computed on is for the maintainer, not the visitor
+// (mitoport.json and its README say it), so a species the join loses is said here, at build time, once.
 const onSite = m.species.filter((s) => getSpeciesBySlug(s.slug));
 const notOnSite = m.species.filter((s) => !getSpeciesBySlug(s.slug));
 const retired = onSite.filter((s) => getSpeciesBySlug(s.slug)!.recordStatus === "retired");
+if (notOnSite.length || retired.length) {
+  console.warn(
+    `/coevolution/: of ${m.species.length} species with a discordance value, ${notOnSite.length} have no page in this build` +
+      `${notOnSite.length ? ` (${notOnSite.map((s) => s.slug).join(", ")})` : ""} and ${retired.length} are retired; they are left out of the lists.`,
+  );
+}
 
 // Lifespan: the test rows ("contact minus control") of both tables, primary model for H12.
 type Rec = Record<string, unknown>;
@@ -101,24 +105,6 @@ const speciesByClass = m.classes.map((c) => ({
   </Hero>
 
   <div class="container section mp">
-    <aside class="mp-note" aria-labelledby="mp-build-title">
-      <Icon name="info" size={20} />
-      <div>
-        <p id="mp-build-title" class="mp-note__title">Computed on an earlier build</p>
-        <p>
-          These tables come from <a href={pipelinesUrl}>{man.dataset}</a> at revision <code>{short(man.revision)}</code>,
-          computed by <a href="https://github.com/dna-seq/mitoage-pipelines">mitoage-pipelines</a> on the MitoAge build
-          at{" "}<a href={computedOnUrl}>revision <code>{short(man.computedOn.revision)}</code></a>{" "}
-          ({fmtInt(man.computedOn.species)} species). This site shows a later state of the build, with{" "}
-          {fmtInt(info.speciesCount)} species.{" "}{man.computedOn.note}{" "}Species are matched by their slug, which does
-          not change between builds:{" "}{fmtInt(onSite.length)} of the {fmtInt(m.species.length)} species with a
-          discordance value have a page here{
-            notOnSite.length ? <>; {fmtInt(notOnSite.length)} do not ({notOnSite.map((s) => s.slug).join(", ")})</> : null
-          }{retired.length ? <>, {fmtInt(retired.length)} of them retired in this build</> : null}.
-        </p>
-      </div>
-    </aside>
-
     <Card as="section" id="lifespan" title="Lifespan: no signal">
       <p class="card__desc">
         What the analyses asked first, and what they found. The tables below are kept for what else they can tell.
@@ -313,8 +299,7 @@ const speciesByClass = m.classes.map((c) => ({
         </li>
       </ul>
       <p class="mp-small">
-        The nuclear ortholog sets and their alignments: <a href={partnersUrl}>{man.nuclearPartners.dataset}</a> at
-        revision{" "}<code>{short(man.nuclearPartners.revision)}</code>. The code: <a href="https://github.com/dna-seq/mitoage-pipelines">dna-seq/mitoage-pipelines</a>.
+        The nuclear ortholog sets and their alignments: <a href={partnersUrl}>{man.nuclearPartners.dataset}</a>. The code: <a href="https://github.com/dna-seq/mitoage-pipelines">dna-seq/mitoage-pipelines</a>.
         Nothing here is peer reviewed.
       </p>
     </Card>
@@ -326,29 +311,6 @@ const speciesByClass = m.classes.map((c) => ({
     display: flex;
     flex-direction: column;
     gap: var(--space-6);
-  }
-  .mp-note {
-    display: flex;
-    gap: var(--space-3);
-    align-items: flex-start;
-    padding: var(--space-4) var(--space-5);
-    border: 1px solid var(--color-border);
-    border-left: 4px solid var(--color-link);
-    border-radius: var(--radius-md);
-    background: var(--color-surface-sunken);
-    max-width: 80ch;
-  }
-  .mp-note :global(.icon) {
-    flex: none;
-    margin-top: 0.15rem;
-    color: var(--color-link);
-  }
-  .mp-note p {
-    margin: 0;
-  }
-  .mp-note__title {
-    font-weight: var(--fw-bold);
-    margin-bottom: var(--space-1) !important;
   }
   .mp-prose {
     max-width: 75ch;

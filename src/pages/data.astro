@@ -68,7 +68,7 @@ const mitoport = getMitoport().manifest;
 const MITOPORT_DESCRIPTIONS = new Map<string, string>([
   ...mitoport.files.map((f): [string, string] => [`mitoport/${f.file}`, `${f.hypothesis}. ${f.description}`]),
   ["mitoport/mitoport.json", "Where each coevolution table comes from: the Hugging Face revision, source path, SHA-256 and columns."],
-  ["mitoport/README.md", "What the coevolution tables hold, and the build they were computed on."],
+  ["mitoport/README.md", "What the coevolution tables hold and where they come from."],
 ]);
 const isMitoport = (rel: string): boolean => rel.startsWith("mitoport/");
 
@@ -90,7 +90,7 @@ const fileGroups = [
   },
   {
     title: "Coevolution of mitochondrial and nuclear proteins",
-    description: `Tables of mitoage-pipelines (${mitoport.dataset} at ${mitoport.revision.slice(0, 7)}), computed on build ${mitoport.computedOn.revision.slice(0, 7)}; see the coevolution page`,
+    description: "How mitochondrial and nuclear proteins change together across species; see the coevolution page",
     files: files.filter((f) => isMitoport(f.rel)),
   },
 ].filter((g, i) => i === 0 || g.files.length);

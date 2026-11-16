@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **The coevolution page and the species sections no longer name builds or revisions** (2026-11-16, D20 amended).
+  The maintainer, on the note "Computed on an earlier build": "visitors should not know such technicalities". The
+  note at the top of `/coevolution/`, the line under each species section's title, and the revisions in the
+  downloads' wording are gone; `public/data/mitoport/README.md` and `mitoport.json` still say which build the tables
+  come from. A species with a discordance value that has no page, or a retired one, is now a warning of the site
+  build instead of a sentence on the page.
 - **Mito-nuclear coevolution on the site** (2026-11-16, D20). A new page, `/coevolution/` (in the menu), shows the
   coevolution tables of mitoage-pipelines (Hugging Face `longevity-genie/mitoage-pipelines` at 126d237, computed on
   build c525adb): 61 nuclear proteins against the mitochondrial subunits of the respiratory complexes (rate over
