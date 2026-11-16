@@ -561,6 +561,27 @@ in every complex; R3 mammals I -0.046565 [-0.081461, -0.011669] p 0.0092 Holm 0.
 title with the module plugin's literature search (the PubMed connector had disconnected); volumes and pages are
 Crossref's.
 
+## Round v0.4: opened 2026-11-16, with H14 and H20
+
+Round v0.3 went to Drive from 5b2ac14 (ef67193). The H14 text ("Beyond longevity", S12.9, the Discussion's "Beyond
+lifespan") was pushed after it (58b2d97), so the repository's v0.3 no longer matched what the co-authors have. The
+maintainer chose "Open v0.4 with it": `rounds.py open 0.4 --from 0.3` copied the repository's v0.3 (with H14) at
+92f7ebf, and v0.3's two masters are back at 5b2ac14, as released. v0.4's project file is git-excluded like the
+others, in the main checkout's `docs/manuscript/v0.4/`. Edits the co-authors make in the v0.3 Docs are not in v0.4
+yet: `rounds.py sync 0.3 --into 0.4 --out DIR`, then `runs.py apply`.
+
+v0.4 adds mitoage-pipelines H20 (job 6494078 from 78f8734, `results/h20-thermal/` at 76c2c1f): the subsection "Beyond
+longevity: temperature and the rate of mitochondrial evolution", the paragraph on Lehmann et al.'s model (reference 4)
+in "Repeats, motifs, protein structure and the rate of evolution", the Introduction's list of retests, a FishBase
+sentence in Sources, two Discussion sentences and S12.10 with its table, and a Table S3 row. The numbers are those of
+`readout.tsv` (T1 slope 0.096187, p 0.10125, Holm 0.30374, E -0.22148 [-0.48745, 0.044493], 74 pairs; P1 -0.048636,
+p 0.15917; P2 -0.14761, p 0.035785; L1 0.018335, p 0.0072263, 201; L2 0.017209, p 0.0083567, 183), `pair_fits.tsv`
+(fishes dN per Myr on 1/kT 0.094976, q 0.0044953) and `lehmann.tsv` (R^2 0.48794; metabolic rate with mass -0.021075,
+p 0.70208; mass 0.14663, p 0.00054904; 1/kT 0.33946, p 1.6768e-05). References 64 (Gillooly et al. 2005, PMID
+15618408) and 65 (Maddison 2000, PMID 10660474) were found by title with the module plugin's literature search;
+volumes and pages are Crossref's. Gillooly et al.'s own value of E was not read (PMC served a reCAPTCHA), so the text
+compares E with zero only; an author with access can add the published value.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

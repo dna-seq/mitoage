@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Manuscript round v0.4 opened, with the H14 coevolution text and H20 on temperature** (2026-11-16). Round v0.3 had
+  gone to the co-authors from 5b2ac14 before the H14 text was pushed (58b2d97), so the maintainer chose "Open v0.4
+  with it": v0.4 is a copy of the repository's v0.3 with H14, and v0.3's two masters are back as released. v0.4 adds
+  mitoage-pipelines H20 (`results/h20-thermal/`, 76c2c1f): in ray-finned fishes the mitochondrial substitution rate does not
+  rise with water temperature, against metabolic theory (E -0.22 eV [-0.49, +0.04], 74 pairs); the mammalian tests
+  cannot be read because their size control did not pass; Lehmann et al.'s GC-and-metabolic-rate model of mammalian
+  lifespan keeps its GC term on the tree (p = 0.007) at R^2 0.49 rather than 0.77, its metabolic rate adding nothing
+  beyond body mass. New subsection, S12.10, a Table S3 row and references 64-65. `docs/manuscript/NOTES.md`, "Round
+  v0.4", has the sources of the numbers.
 - **The coevolution page no longer labels its analyses H5, H6, H9 and H12** (2026-11-16, D20 amended). The maintainer,
   asked whether the hypothesis labels linking to mitoage-pipelines' record should go the way of the build note: "Yes,
   remove them". The lifespan and protein sections name each analysis by what it measures, the lifespan table's rows
