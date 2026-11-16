@@ -37,10 +37,14 @@ builds the site from the committed parquet and cannot rebuild the data.
 
 ## RM8 — Detect possible duplicate species
 
-**State:** unattended · **Owner:** lead
+**State:** blocked: desk #32 (the rule by names needs the pipeline's raw inputs, RM7) · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
-A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and reports, never merges.
+Done on 2026-11-17: the rule by sequence, `bun run duplicates`, which lists 12 pairs of one genus with nearly
+identical protein genes (changelog; `docs/analyses/possible-duplicates/`). It does not find the three hand
+pairs, whose sequences differ. Left: the rule by names (two names one taxonomy treats as synonyms, in NCBI or
+FishBase), inside `bun run data`, reporting into the review list and never merging; and what the build does
+with the 12 pairs by sequence (a review flag at most), which is the maintainer's to say.
 
 ## RM9 — A DOI for each build
 

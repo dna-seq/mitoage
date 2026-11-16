@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **A rule that lists possible duplicate species by sequence** (2026-11-17, RM8). `bun run duplicates` compares the
+  13 mitochondrial protein genes of every two species of one genus on the committed build and lists the pairs that
+  agree at 99.9% or more: 12 of 2,876 pairs, in `docs/analyses/possible-duplicates/`. One pair is identical at all
+  11,346 shared bases (*Agapornis lilianae* and *A. pullarius*); two differ at one base. It reports and merges
+  nothing: a listed pair may be one species under two names, a record under the wrong species, or two species
+  that share a mitochondrial lineage. The three pairs flagged by hand in build 2 are synonyms with different
+  sequences and are not found this way; the rule for those needs the pipeline's raw inputs.
 - **The outlined button on the green band, and the old addresses** (2026-11-16, RM15, which this closes). The
   outlined button of a taxon page ("Compare mtDNA") blurs the band's decorative stars behind it, as the chips do.
   The addresses kept for links from the 2015 site were read on the built site: all 2,729 pages under `/browse/`,

@@ -1,0 +1,13 @@
+species_a	refseq_a	species_b	refseq_b	shared_bases	differences	identity_percent
+Agapornis lilianae	NC_045369.1	Agapornis pullarius	NC_045368.1	11346	0	100.000
+Lepisosteus oculatus	NC_004744.1	Lepisosteus platyrhincus	NC_029715.1	11469	1	99.991
+Solenocera crassicornis	NC_030280.1	Solenocera melantho	NC_069041.1	11130	1	99.991
+Saimiri boliviensis	NC_018096.1	Saimiri sciureus	NC_012775.1	11349	3	99.974
+Echis carinatus	NC_060591.1	Echis coloratus	NC_060592.1	11274	3	99.973
+Pseudoscaphirhynchus hermanni	NC_058992.1	Pseudoscaphirhynchus kaufmanni	NC_050885.1	11406	7	99.939
+Eubalaena australis	NC_006930.1	Eubalaena glacialis	NC_037444.1	11370	8	99.930
+Aotus trivirgatus	NC_064150.1	Aotus vociferans	NC_064163.1	11370	9	99.921
+Zanda baudinii	NC_020594.1	Zanda latirostris	NC_020595.1	11359	9	99.921
+Pomoxis annularis	NC_066918.1	Pomoxis nigromaculatus	NC_028298.1	11400	10	99.912
+Ateles chamek	NC_064190.1	Ateles marginatus	NC_064192.1	11373	10	99.912
+Scaphirhynchus albus	NC_030324.1	Scaphirhynchus platorynchus	NC_030326.1	11406	11	99.904

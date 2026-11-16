@@ -82,6 +82,7 @@ definitions and reports a control that was never computed as not assessed rather
 | `bun run mitoport` | Fetch the coevolution tables of mitoage-pipelines from Hugging Face at a pinned revision, refuse any file whose SHA-256 is not the pinned one, and write them as parquet to `public/data/mitoport/` (D20). Needs nothing of `bun run data`'s inputs |
 | `bun run hf` | Package the committed build for Hugging Face into `out/hf/`: the data files, the alignments as one parquet table, the dataset card. The dataset is [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage); `public/data/mitoport/` is left out (another build's tables, published by mitoage-pipelines) |
 | `bun run complexes` | write `src/data/generated/complexes.json`, the data of the pages under `/complexes/`, from the per-residue table of complex IV and the chains of the solved structures in `docs/analyses/cluster-2026-11-15/` (D21) |
+| `bun run duplicates` | list the species of one genus whose mitochondrial protein genes are nearly identical (99.9% or more), from the committed build and its alignments, into `docs/analyses/possible-duplicates/`; it reports and merges nothing (RM8) |
 | `bun run sqlite` | Write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads: one table per download, plus the correlations. Runs after `bun run hf` (which empties `out/hf/`) and needs `dist/data/correlations.parquet` from `bun run build` |
 | `bun run mcp` | Compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | Dev server |
