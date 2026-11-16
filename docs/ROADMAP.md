@@ -236,13 +236,6 @@ version and that the revision is a full commit SHA before it publishes. The npm 
 free on 2026-11-15 and is not reserved. Once it is published, add it to the manuscript's numbered
 references beside 40-42, which was left out while the URL would have 404ed.
 
-## RM21 — `deploy.yml` is two majors behind on `actions/checkout`
-
-**State:** unattended · **Owner:** lead
-
-It pins `actions/checkout@v4`; v7.0.1 is current. `mcp-release.yml` was written to match the existing
-pin rather than split the repository across two versions, so both move together when this is done.
-
 ## RM22 — Calibrated counts, power and a like-for-like comparison with release 1
 
 **State:** open; PGLS done and in Table 3 and S1 (D18, D19); A1 can start from the EURING calibration (b6c6ec6); one question to the maintainer · **Owner:** lead

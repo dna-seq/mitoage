@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **Both workflows check out with `actions/checkout@v7`** (2026-11-16, RM21, done), from v4. Read in its release
+  notes: v5 moves to Node 24 (GitHub's hosted runners have it), v6 keeps the credentials in a separate file, v7
+  refuses fork pull requests under `pull_request_target` and `workflow_run`; neither workflow uses those triggers.
+  `deploy.yml` is tested by the push that carries this; `mcp-release.yml` runs only on a `mcp-v*` tag and has not
+  run with it.
 - **The sequencing technology of every record, counted** (2026-11-16, RM18, done). `dna-seq/mitoage-pipelines` at
   a4ab414 (`mitoage download technology`, `mitoage longevity technology`; `results/h8/technology.tsv`) reads it
   from each record's INSDC source at NCBI: 893 of 2,344 state one, 25 long-read, 642 short-read, 226 Sanger. No
