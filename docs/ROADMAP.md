@@ -5,7 +5,7 @@ owner. A done item leaves this file; `docs/CHANGELOG.md` says what landed.
 
 ## RM2 — Bring the explorer's payload under its page-weight target
 
-**State:** waits until 2026-11-17: after the first steps of RM12, which the maintainer asked for first · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 `/data/explorer.json` is 2.7 MB with build 2, against 1.5 MB (open questions, item 9). Split it on the
 site's side, as the per-gene codon tables are.
@@ -37,7 +37,7 @@ builds the site from the committed parquet and cannot rebuild the data.
 
 ## RM8 — Detect possible duplicate species
 
-**State:** waits until 2026-11-17: after the first steps of RM12, which the maintainer asked for first · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
 A rule that finds them (one RefSeq record under two names, synonyms in NCBI) and reports, never merges.
@@ -51,7 +51,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** waits until 2026-11-17: by then the code of H21 should be on `main` of `dna-seq/mitoage-pipelines` (checked that day); step 5 (convergence) then runs as one more trait, "long-lived for its body mass", in the design H21 to H25 share (trait clades, RELAX against matched control clades, one pair per origin), instead of a second framework; put to the maintainer in `#mitoalignments` on 2026-11-16 with that as the default. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 of `docs/HYPOTHESES.md` there) · **Owner:** lead
+**State:** waits until 2026-11-18: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in H21's design (mammals and birds), fixed and coded on 2026-11-17 after H21's code landed; its first job (trait, pairs, selection inputs) is submitted, and its RELAX runs (46 tasks of 4 CPUs) are held while the cluster is at its CPU cap, looked at again that day. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
