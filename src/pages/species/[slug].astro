@@ -24,6 +24,7 @@ import GenomeMapFigure from "~/components/genome/GenomeMapFigure.astro";
 import { mapDataFor } from "~/lib/genome/mapData";
 import StatCard from "~/components/ui/StatCard.astro";
 import TabNav from "~/components/ui/TabNav.astro";
+import { getClassDiscordance, getMitoport, getSpeciesDiscordance } from "~/data/mitoport";
 import BaseLayout from "~/layouts/BaseLayout.astro";
 import { CLASS_GROUPS, classColor, classGroup, classLabel } from "~/lib/classes";
 import { basePercents } from "~/lib/composition";
@@ -178,12 +179,23 @@ const jsonLd = [
   ]),
 ];
 
+// Contact-pair discordance at complex IV (D20): from mitoage-pipelines, computed on an earlier build, joined by slug.
+const discord = getSpeciesDiscordance(s.slug);
+const discordClass = discord ? getClassDiscordance(discord.class) : undefined;
+const mitoport = getMitoport().manifest;
+/** A share as a percentage; unknown stays unknown. */
+const pct = (v: number | null): number | null => (v === null ? null : v * 100);
+// Every contact pair of the map: the most any species fills (H12: 687).
+const contactPairsTotal = Math.max(...getMitoport().species.map((x) => x.contactPairs));
+// The section says the measure follows lifespan in no class; the tables must show it (the coevolution page checks the same).
+if (discord && !getMitoport().verdict.holds) throw new Error(`species/${s.slug}: the coevolution tables show a lifespan signal; the section's text is wrong`);
 const tabs = [
   { id: "overview", label: "Overview" },
   { id: "composition", label: "Composition" },
   { id: "genes", label: "Genes", count: geneRows.length },
   { id: "codons", label: "Codon usage" },
   { id: "genome-map", label: "Genome map" },
+  ...(discord ? [{ id: "coevolution", label: "Coevolution" }] : []),
   { id: "downloads", label: "Downloads" },
 ];
 ---
@@ -454,6 +466,55 @@ const tabs = [
       </Card>
     </section>
 
+    {
+      discord && (
+        <section id="coevolution" class="sp-section" aria-labelledby="coevolution-title">
+          <Card>
+            <div class="card__head">
+              <h2 id="coevolution-title" class="card__title">Mito-nuclear contacts of complex IV</h2>
+              <span class="card__desc">
+                Computed by mitoage-pipelines on build {mitoport.computedOn.revision.slice(0, 7)}, not on this one; matched by
+                species slug
+              </span>
+            </div>
+            <p class="sp-mp-text">
+              How often a pair of touching residues, one in COX1-3 and one in a nuclear subunit, has exactly one side differing
+              from the consensus residue among {classLabel(discord.class).toLowerCase()}: one side changed, its partner did not. Control pairs swap the
+              mitochondrial residue for one buried as deeply that touches nothing.
+            </p>
+            {
+              discord.contact === null || discord.control === null ? (
+                <p class="sp-mp-text">
+                  Not scored: only {fmtInt(discord.contactPairs)} of the {fmtInt(contactPairsTotal)} contact pairs are filled on
+                  both sides here, and a species needs at least half.
+                </p>
+              ) : (
+                <dl class="kv sp-mp-kv">
+                  <dt>Discordant contact pairs</dt>
+                  <dd>{fmtPct(pct(discord.contact), 1)} of {fmtInt(discord.contactPairs)} pairs</dd>
+                  <dt>Discordant control pairs</dt>
+                  <dd>{fmtPct(pct(discord.control), 1)} of {fmtInt(discord.controlPairs)} pairs</dd>
+                  <dt>Contact minus control</dt>
+                  <dd>{discord.contactMinusControl === null ? "–" : `${fmtSigned(pct(discord.contactMinusControl), 1)} points`}</dd>
+                  {discordClass && discordClass.meanContact !== null && (
+                    <>
+                      <dt>Mean of {fmtInt(discordClass.scored)} {classLabel(discord.class).toLowerCase()}</dt>
+                      <dd>{fmtPct(pct(discordClass.meanContact), 1)} at contacts, {fmtPct(pct(discordClass.meanControl), 1)} at controls</dd>
+                    </>
+                  )}
+                </dl>
+              )
+            }
+            <p class="sp-mp-text muted">
+              This measure follows lifespan in no class tested. It is here for studies of mito-nuclear coevolution:{" "}
+              <a href={`${href("/coevolution/")}#lifespan`}>what was tested</a>, and the{" "}
+              <a href={href("/coevolution/")}>coevolution tables</a>.
+            </p>
+          </Card>
+        </section>
+      )
+    }
+
     <section id="downloads" class="sp-section" aria-labelledby="downloads-title">
       <Card>
         <h2 id="downloads-title" class="card__title">Downloads</h2>
@@ -560,6 +621,13 @@ const tabs = [
   }
   .sp-section {
     scroll-margin-top: 5rem;
+  }
+  .sp-mp-text {
+    max-width: 75ch;
+    margin-block: var(--space-3);
+  }
+  :global(.sp-mp-kv) {
+    max-width: 40rem;
   }
   #overview {
     scroll-margin-top: 5rem;

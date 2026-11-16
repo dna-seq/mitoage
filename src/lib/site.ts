@@ -50,6 +50,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
   { label: "Tree", href: "/tree/", hint: "Browse the taxonomy" },
   { label: "Genes", href: "/genes/", hint: "The 13 protein-coding genes, rRNA and D-loop" },
   { label: "Compare", href: "/compare/", hint: "mtDNA statistics across species and taxa" },
+  { label: "Coevolution", href: "/coevolution/", hint: "Mitochondrial and nuclear proteins, changing together" },
   { label: "Data", href: "/data/", hint: "Download every table" },
   { label: "About", href: "/about/", hint: "Methods, sources and citation" },
 ];
@@ -63,6 +64,7 @@ export const FOOTER_LINKS: readonly { label: string; href: string }[] = [
   { label: "Regions", href: "/compare/regions/" },
   { label: "Species side by side", href: "/compare/species/" },
   { label: "Plot", href: "/compare/plot/" },
+  { label: "Mito-nuclear coevolution", href: "/coevolution/" },
   { label: "Download data", href: "/data/" },
   { label: "Methods and sources", href: "/about/" },
 ];

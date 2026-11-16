@@ -65,7 +65,7 @@ function resolveDir(rel: string[], marker: string): string {
 }
 
 const GENERATED_DIR = resolveDir(["src", "data", "generated"], "build-info.json");
-const PUBLIC_DIR = resolveDir(["public", "data"], "species.parquet");
+export const PUBLIC_DIR = resolveDir(["public", "data"], "species.parquet");
 
 const jsonCache = new Map<string, unknown>();
 function load<T>(file: string): T {

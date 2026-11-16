@@ -4,6 +4,29 @@ Newest first.
 
 ## Unreleased
 
+- **Mito-nuclear coevolution on the site** (2026-11-16, D20). A new page, `/coevolution/` (in the menu), shows the
+  coevolution tables of mitoage-pipelines (Hugging Face `longevity-genie/mitoage-pipelines` at 126d237, computed on
+  build c525adb): 61 nuclear proteins against the mitochondrial subunits of the respiratory complexes (rate over
+  branches, ESM-2 embeddings, residue coupling at complex IV's contacts), per protein and as group medians; each
+  class's discordance at complex IV's mito-nuclear contact pairs; and the lifespan tests, stated as nulls (H9, H12).
+  The 316 species with a discordance value show it in a section of their page, with their class's mean and the
+  build it was computed on. The downloads page gains a group for the tables.
+  - **The data:** `bun run mitoport` (`pipeline/mitoport.ts`) fetches the 11 files at the pinned revision, refuses
+    any whose SHA-256 is not pinned (the pins were taken from files whose git blob ids matched Hugging Face's tree
+    listing), and writes them as parquet to `public/data/mitoport/` without changing a value: empty cells are null,
+    one header with spaces gets underscores, and every file is read back cell for cell. `mitoport.json` and a README
+    say where each came from. `bun run hf` leaves the folder out.
+  - **The claim checked:** the page, the species sections and the README say "none of these follows lifespan" only
+    after `lifespanNull()` finds every H12 fit at q ≥ 0.05 and every H9 interval through zero; otherwise the build
+    stops. All 316 species are in this build and none is retired.
+  - **Tests** (`pipeline/tests/mitoport.test.ts`, `src/lib/mitoport.test.ts`): the parquet against the pinned
+    sources cell for cell, the pins, the converter's refusals, the lifespan check's failures, the join by gene, and
+    the group medians and class means against the numbers H5 and H12 publish (complex IV's subunits +0.58 against
+    +0.03 for the controls; mammals 0.135 and 0.135). Each of 16 deliberate breaks of the code makes a test fail.
+  - **The header:** with a seventh menu item the one-row header overflowed the window by 38 px from 1,152 to 1,280 px
+    wide; the menu row may now shrink below its content's width and the search box gives way first
+    (`src/components/ui/Header.astro`). Checked at 1,152, 1,280 and 1,440 px, and the new pages at 375 px, with no
+    horizontal scroll.
 - **Round v0.3 reports what the build shows beyond longevity: mtDNA and nuclear subunits co-evolve as whole proteins
   in all four complexes** (2026-11-16). A Results subsection and Supplementary Methods S12.9 read mitoage-pipelines
   H14 (haumea job 6490344, build 0f4e970, tables at 8eeaf6f): in complexes I, III, IV and V the nuclear subunits

@@ -6,6 +6,7 @@
 import { readdirSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { getBuildInfo } from "~/data";
+import { getMitoport } from "~/data/mitoport";
 import Card from "~/components/ui/Card.astro";
 import Hero from "~/components/ui/Hero.astro";
 import Icon from "~/components/ui/Icon.astro";
@@ -62,21 +63,35 @@ const FORMATS: Record<string, string> = {
   nwk: "text/x-nh",
 };
 
+// The coevolution tables (D20) describe themselves in their manifest; they come from another build.
+const mitoport = getMitoport().manifest;
+const MITOPORT_DESCRIPTIONS = new Map<string, string>([
+  ...mitoport.files.map((f): [string, string] => [`mitoport/${f.file}`, `${f.hypothesis}. ${f.description}`]),
+  ["mitoport/mitoport.json", "Where each coevolution table comes from: the Hugging Face revision, source path, SHA-256 and columns."],
+  ["mitoport/README.md", "What the coevolution tables hold, and the build they were computed on."],
+]);
+const isMitoport = (rel: string): boolean => rel.startsWith("mitoport/");
+
 const files = walk(dataDir)
   .map((abs) => {
     const rel = relative(dataDir, abs).split("\\").join("/");
     const ext = rel.split(".").pop()?.toLowerCase() ?? "";
-    const desc = DESCRIPTIONS.find(([re]) => re.test(rel))?.[1];
+    const desc = isMitoport(rel) ? MITOPORT_DESCRIPTIONS.get(rel) : DESCRIPTIONS.find(([re]) => re.test(rel))?.[1];
     return { rel, path: href(`/data/${rel}`), ext, size: statSync(abs).size, desc };
   })
   .sort((a, b) => a.rel.localeCompare(b.rel));
 const isAlignment = (rel: string): boolean => rel.startsWith("alignments/");
 const fileGroups = [
-  { title: `Files in ${info.build}`, description: `Generated ${fmtDate(info.generatedAt)}`, files: files.filter((f) => !isAlignment(f.rel)) },
+  { title: `Files in ${info.build}`, description: `Generated ${fmtDate(info.generatedAt)}`, files: files.filter((f) => !isAlignment(f.rel) && !isMitoport(f.rel)) },
   {
     title: "Alignments of the mitochondrial genes",
     description: "The 13 proteins and the two rRNAs across the species of the build, aligned with MAFFT",
     files: files.filter((f) => isAlignment(f.rel)),
+  },
+  {
+    title: "Coevolution of mitochondrial and nuclear proteins",
+    description: `Tables of mitoage-pipelines (${mitoport.dataset} at ${mitoport.revision.slice(0, 7)}), computed on build ${mitoport.computedOn.revision.slice(0, 7)}; see the coevolution page`,
+    files: files.filter((f) => isMitoport(f.rel)),
   },
 ].filter((g, i) => i === 0 || g.files.length);
 

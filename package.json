@@ -27,6 +27,7 @@
     "align": "bun run pipeline/align.ts",
     "hf": "bun run pipeline/hf.ts",
     "sqlite": "bun run pipeline/sqlite.ts",
+    "mitoport": "bun run pipeline/mitoport.ts",
     "mcp": "bun run --cwd mcp build"
   },
   "workspaces": [

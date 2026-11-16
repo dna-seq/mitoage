@@ -1,0 +1,533 @@
+{
+ "dataset": "longevity-genie/mitoage-pipelines",
+ "revision": "126d2371c337542f341ee00ef9ec30544edf24b8",
+ "retrieved": "2026-11-16",
+ "license": "CC BY 4.0 (the dataset card: \"Tables computed here: CC BY 4.0\")",
+ "computedOn": {
+  "dataset": "longevity-genie/mitoage",
+  "revision": "c525adbff8c12b19981fdada7f1615c2559b7140",
+  "species": 2335,
+  "note": "The complex IV and H12 tables (iface/, partners.tsv, partners_species.tsv) were computed on c525adb; erc.tsv and coembed.tsv come from the runs of 2026-11-13 on build 2, before its first upload to Hugging Face."
+ },
+ "nuclearPartners": {
+  "dataset": "longevity-genie/mitoage-nuclear-partners",
+  "revision": "7deb2e00035fdfbc482f1bc05979af4b358d1253"
+ },
+ "files": [
+  {
+   "source": "output/mitoport/erc.tsv",
+   "file": "erc.parquet",
+   "sha256": "c525c8a7067e7a8dbbf4e2ad61e63f1eef745d2d1c642970fd988c4d753cc3bc",
+   "rows": 54,
+   "columns": [
+    {
+     "name": "group",
+     "type": "STRING"
+    },
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "B_complex_IV",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "B_complex_III",
+     "type": "DOUBLE"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "Rate covariation over the branches of the dated tree (62 mammals): per nuclear protein, the correlation of its relative rate with that of complex IV's (COX1-3) and complex III's (CYTB) mitochondrial subunits."
+  },
+  {
+   "source": "output/mitoport/coembed.tsv",
+   "file": "coembed.parquet",
+   "sha256": "0f9160837001274a0fd8d2063845c2548f5e28641df51c12c630ae271d49ee4b",
+   "rows": 61,
+   "columns": [
+    {
+     "name": "group",
+     "type": "STRING"
+    },
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "species",
+     "type": "INT32"
+    },
+    {
+     "name": "IV",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "III",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "I",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "V",
+     "type": "DOUBLE"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H6",
+   "description": "ESM-2 embedding covariation: per nuclear protein, the partial correlation over pairs of mammals of its embedding distance with that of the mitochondrial subunits of complexes IV, III, I and V, time on the dated tree partialled out."
+  },
+  {
+   "source": "output/mitoport/iface/coupling.tsv",
+   "file": "iface/coupling.parquet",
+   "sha256": "8ef90c4288ba7d4dfe742f22ef613dc14bb58a6270ee347913c89221aba49c81",
+   "rows": 61,
+   "columns": [
+    {
+     "name": "group",
+     "type": "STRING"
+    },
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "species",
+     "type": "INT32"
+    },
+    {
+     "name": "iface_cols",
+     "type": "INT32"
+    },
+    {
+     "name": "other_cols",
+     "type": "INT32"
+    },
+    {
+     "name": "seq_contact_iface",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_control_iface",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_contact_other",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_control_other",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_excess_mt",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_excess_nuc",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "seq_own_contacts_iface",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_contact_iface",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_control_iface",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_contact_other",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_control_other",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_excess_mt",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_excess_nuc",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "esm_own_contacts_iface",
+     "type": "DOUBLE"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "Residue-level coupling with complex IV: per nuclear protein, the partial correlation over pairs of mammals between its distances and the COX1-3 distances at contact and at burial-matched control residues, by sequence (seq_) and by ESM-2 embedding (esm_)."
+  },
+  {
+   "source": "output/mitoport/iface/lifespan.tsv",
+   "file": "iface/lifespan.parquet",
+   "sha256": "ccdafd057fa9611c0aca77e958f4a3fac6f467c72f7fc283c9ea97dddeca4a28",
+   "rows": 9,
+   "columns": [
+    {
+     "name": "set",
+     "type": "STRING"
+    },
+    {
+     "name": "species",
+     "type": "INT32"
+    },
+    {
+     "name": "lam",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "variable",
+     "type": "STRING"
+    },
+    {
+     "name": "slope_log10_years",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "t",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "p",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "se",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ci95_low",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ci95_high",
+     "type": "DOUBLE"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H9",
+   "description": "Lifespan on mismatch at complex IV's contact residues (COX1-3 side): phylogenetic regression slopes with 95% intervals, all species, mammals, and the species with nuclear partners."
+  },
+  {
+   "source": "output/mitoport/partners.tsv",
+   "file": "partners.parquet",
+   "sha256": "3e9a203283b9ee165ee029dc9e4748bb906f8df25645332d360e155a5adb1185",
+   "rows": 20,
+   "columns": [
+    {
+     "name": "class",
+     "type": "STRING"
+    },
+    {
+     "name": "family",
+     "type": "STRING"
+    },
+    {
+     "name": "feature",
+     "type": "STRING"
+    },
+    {
+     "name": "model",
+     "type": "STRING"
+    },
+    {
+     "name": "n",
+     "type": "INT32"
+    },
+    {
+     "name": "status",
+     "type": "STRING"
+    },
+    {
+     "name": "lambda",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "slope_per_sd",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "se",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ci95_low",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "ci95_high",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "t",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "p",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "q",
+     "type": "DOUBLE"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H12",
+   "description": "Lifespan on discordance of complex IV's mito-nuclear contact pairs, per class and model: slope per standard deviation, 95% interval, p and q."
+  },
+  {
+   "source": "output/mitoport/partners_species.tsv",
+   "file": "partners_species.parquet",
+   "sha256": "48e2ebaa892ee7011607a176f6b9ec539838aedde35ab64a3a9a5649ee59d610",
+   "rows": 316,
+   "columns": [
+    {
+     "name": "slug",
+     "type": "STRING"
+    },
+    {
+     "name": "contact",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "contact_pairs",
+     "type": "INT32"
+    },
+    {
+     "name": "control",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "control_pairs",
+     "type": "INT32"
+    },
+    {
+     "name": "contact_minus_control",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "class",
+     "type": "STRING"
+    }
+   ],
+   "renamed": {
+    "contact minus control": "contact_minus_control"
+   },
+   "hypothesis": "H12",
+   "description": "Every species' discordance at complex IV's mito-nuclear contact pairs and at control pairs (share of pairs where exactly one side differs from its class's consensus), with the pairs counted."
+  },
+  {
+   "source": "output/mitoport/iface/contact_map/chains.tsv",
+   "file": "iface/contact_map/chains.parquet",
+   "sha256": "853d29226eccebf977fc6d9dd6973107b7e1e515b5917a18f5c1753a34a44df5",
+   "rows": 14,
+   "columns": [
+    {
+     "name": "chain",
+     "type": "STRING"
+    },
+    {
+     "name": "description",
+     "type": "STRING"
+    },
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "is_mt",
+     "type": "INT32"
+    },
+    {
+     "name": "residues",
+     "type": "INT32"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "The chains of human complex IV (PDB 5Z62): gene, mitochondrial or nuclear, residues."
+  },
+  {
+   "source": "output/mitoport/iface/contact_map/contacts.tsv",
+   "file": "iface/contact_map/contacts.parquet",
+   "sha256": "dc712a025912e5d7fb418d94a88bfa23016533c74729849b54c4c8dcbc17395c",
+   "rows": 1245,
+   "columns": [
+    {
+     "name": "mt_gene",
+     "type": "STRING"
+    },
+    {
+     "name": "chain",
+     "type": "STRING"
+    },
+    {
+     "name": "pdb_resnum",
+     "type": "INT32"
+    },
+    {
+     "name": "pdb_res",
+     "type": "STRING"
+    },
+    {
+     "name": "human_pos",
+     "type": "INT32"
+    },
+    {
+     "name": "human_aa",
+     "type": "STRING"
+    },
+    {
+     "name": "partner_chain",
+     "type": "STRING"
+    },
+    {
+     "name": "partner",
+     "type": "STRING"
+    },
+    {
+     "name": "partner_is_mt",
+     "type": "INT32"
+    },
+    {
+     "name": "partner_resnum",
+     "type": "INT32"
+    },
+    {
+     "name": "partner_res",
+     "type": "STRING"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "Every residue pair of COX1-3 and another chain of PDB 5Z62 within 4.5 Å (heavy atoms)."
+  },
+  {
+   "source": "output/mitoport/iface/contact_map/sites.tsv",
+   "file": "iface/contact_map/sites.parquet",
+   "sha256": "6f219d3a7d70e10fce1a5fdf8220b46eb813291eba1159376c17f7b1d0f5e4c7",
+   "rows": 1000,
+   "columns": [
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "chain",
+     "type": "STRING"
+    },
+    {
+     "name": "pdb_resnum",
+     "type": "INT32"
+    },
+    {
+     "name": "resname",
+     "type": "STRING"
+    },
+    {
+     "name": "human_pos",
+     "type": "INT32"
+    },
+    {
+     "name": "human_aa",
+     "type": "STRING"
+    },
+    {
+     "name": "aln_col",
+     "type": "INT32"
+    },
+    {
+     "name": "rasa_complex",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "rasa_alone",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "d_rasa",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "n_contacts",
+     "type": "INT32"
+    },
+    {
+     "name": "partners",
+     "type": "STRING"
+    },
+    {
+     "name": "occupancy",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "identity_to_human",
+     "type": "DOUBLE"
+    },
+    {
+     "name": "group",
+     "type": "STRING"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "Every COX1-3 residue of PDB 5Z62 with its column in the MitoAge alignment, accessibility in the complex and alone, nuclear contact partners, occupancy, identity to human and group (contact, control or neither)."
+  },
+  {
+   "source": "output/mitoport/iface/contact_map/control_pairs.tsv",
+   "file": "iface/contact_map/control_pairs.parquet",
+   "sha256": "e6c1923d2d051f24ac302535bcd003c90cc02f7f1e8696569aa6811b59f80298",
+   "rows": 298,
+   "columns": [
+    {
+     "name": "gene",
+     "type": "STRING"
+    },
+    {
+     "name": "contact_resnum",
+     "type": "INT32"
+    },
+    {
+     "name": "contact_aln_col",
+     "type": "INT32"
+    },
+    {
+     "name": "control_resnum",
+     "type": "INT32"
+    },
+    {
+     "name": "control_aln_col",
+     "type": "INT32"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "Which burial-matched non-contact residue each contact residue took as its control."
+  },
+  {
+   "source": "output/mitoport/iface/contact_map/species.txt",
+   "file": "iface/contact_map/species.parquet",
+   "sha256": "54706d4569b7e4bac1029d507e6cd182e7ef5af565aa61f9b57c8abfe76ec37a",
+   "rows": 2174,
+   "columns": [
+    {
+     "name": "slug",
+     "type": "STRING"
+    }
+   ],
+   "renamed": {},
+   "hypothesis": "H5",
+   "description": "The species (slugs) the contact map's occupancy and identity columns are computed over."
+  }
+ ]
+}

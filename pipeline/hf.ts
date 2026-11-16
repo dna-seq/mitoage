@@ -3,7 +3,9 @@
  * then uploaded by hand (`hf upload ORG/NAME out/hf . --repo-type dataset`). Nothing here talks
  * to Hugging Face.
  *
- * The folder holds public/data/ as it is, one file more and a card:
+ * The folder holds public/data/ as it is, one file more and a card. It leaves out public/data/mitoport/
+ * (D20): those tables belong to another build and are published by longevity-genie/mitoage-pipelines,
+ * and one dataset here matches one build (D6).
  *  - alignments/alignments.parquet: every row of every aligned FASTA as one table (gene, kind,
  *    slug, scientific name, accession, aligned sequence), so the dataset viewer and `load_dataset`
  *    read the alignments. It is made here from the committed FASTA files and is not in git (22 MB).
@@ -11,7 +13,7 @@
  *    under a header that names the licence (mixed) and the tables the viewer shows.
  */
 import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative, sep } from "node:path";
 import { gunzipSync } from "node:zlib";
 import { parseFasta } from "./lib/align";
 import { readParquet, writeParquet } from "./lib/parquet";
@@ -19,6 +21,12 @@ import { readParquet, writeParquet } from "./lib/parquet";
 const ROOT = join(import.meta.dir, "..");
 const DATA = join(ROOT, "public", "data");
 const OUT = join(ROOT, "out", "hf");
+
+/** public/data/mitoport/ and what is under it: not packaged (D20). */
+export const isMitoport = (src: string): boolean => {
+  const rel = relative(DATA, src).split(sep);
+  return rel[0] === "mitoport";
+};
 
 interface ManifestFile {
   file: string;
@@ -151,7 +159,7 @@ if (import.meta.main) {
   if (!existsSync(join(DATA, "species.parquet"))) throw new Error("public/data/species.parquet is missing: nothing to package");
   rmSync(OUT, { recursive: true, force: true });
   mkdirSync(OUT, { recursive: true });
-  cpSync(DATA, OUT, { recursive: true });
+  cpSync(DATA, OUT, { recursive: true, filter: (src) => !isMitoport(src) });
   const rows = alignmentRows(join(DATA, "alignments"));
   const bytes = await writeParquet(join(OUT, "alignments", "alignments.parquet"), [
     { name: "gene", type: "STRING", data: rows.gene },

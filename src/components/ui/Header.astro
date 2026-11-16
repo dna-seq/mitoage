@@ -217,6 +217,7 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
       position: static;
       display: flex;
       flex: 1;
+      min-width: 0;
       flex-direction: row;
       align-items: center;
       gap: var(--space-4);
@@ -229,7 +230,9 @@ const isCurrent = (target: string) => (target === "/" ? path === "/" : path.star
     }
     .site-search {
       order: 0;
-      flex: 1 1 14rem;
+      /* Shrinks before the menu does: with seven menu items it is what keeps the row inside the window. */
+      flex: 1 1 12rem;
+      min-width: 0;
       max-width: 21rem;
       margin-left: auto;
     }

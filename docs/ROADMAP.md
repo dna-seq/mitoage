@@ -206,6 +206,10 @@ contact partners, occupancy and identity to human (`mitoage mitoport burial` in 
 writes it; it is not produced by this repository's pipeline). Complexes
 I, III and V have no contact map yet; complex II has no mitochondrial subunit.
 
+Started by D20 (2026-11-16): `/coevolution/` shows mitoage-pipelines' per-protein coevolution tables and each species'
+contact-pair discordance at complex IV, with the contact map as a download; a page per complex, the subunits per
+species, the alignment of each nuclear subunit and the structure viewer are still to come.
+
 ## RM14 — D-loops annotated as a point
 
 **State:** blocked: desk #35 (if nobody answers, nothing changes in the data) · **Owner:** lead

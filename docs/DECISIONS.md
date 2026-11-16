@@ -369,3 +369,42 @@ maintainer: "Add PGLS column".
   for (the 430 is in the text).
 - **What it costs, and was accepted:** an eleventh column in Table 3, and a count the site build does not reproduce. It
   comes from a cluster run, joined to the build by a script that refuses on any mismatch.
+
+## D20 — The coevolution tables of mitoage-pipelines go on the site, from a pinned revision (2026-11-16)
+
+The maintainer asked whether users of the site, interested in longevity or not, can benefit from the coevolution
+data of mitoage-pipelines (H5, H6, H9, H12 of its `docs/HYPOTHESES.md`), published on Hugging Face on 2026-11-15
+(`longevity-genie/mitoage-pipelines` at `126d237`). Asked four questions, each with options and their costs, the
+maintainer chose the recommendation in each:
+
+- **What and where:** a page of its own, `/coevolution/`, with one per-protein table (the rate, embedding and
+  residue-coupling tables joined by gene), the medians per group of proteins, the lifespan tests stated as nulls and
+  the downloads; each of the 316 species with a contact-pair discordance shows it on its own page. The contact map is
+  a download only. **Rejected:** the page alone, with the per-species values in a table there (a species' value then
+  found only on the coevolution page); the page, the species and a per-residue contact-map table (it would start
+  RM17's complex IV page here, without its 3D viewer design).
+- **Source:** a pinned input fetched by its own command, `bun run mitoport`, like `bun run align`: the dataset
+  revision and each file's SHA-256 in `pipeline/sources/mitoport.ts`, the tables written as parquet to
+  `public/data/mitoport/` and committed, read offline by the site build. **Rejected:** a source inside `bun run data`
+  (adding it means rerunning the whole data build, which needs every raw input, and any drift in those would ride
+  along); vendoring the TSVs as they are (the copy's link to its revision would be a comment only, and the rule that
+  generated files come from a command would bend).
+- **The build they come from:** a note at the top of the page and in each species section naming build `c525adb`
+  (2,335 species), on which the tables were computed, and the build the site shows; species are matched by slug,
+  stable across builds, and any species not in the site's build is counted and named, never dropped silently.
+  **Rejected:** a note on the page only (a species page's numbers would not say they come from an earlier build);
+  showing nothing until the tables are rerun on the current build (a cluster run, with a GPU job, first).
+- **Going live:** the maintainer sees phone and desktop screenshots before the push (RM17's line for a complexes
+  section). **Rejected:** pushing as soon as the checks pass.
+
+Two consequences, taken by the session on these answers and said here so they can be reversed:
+
+- The page says that none of these measures follows lifespan only after `lifespanNull()` has checked it on the
+  tables (every H12 fit q ≥ 0.05, every H9 interval through zero, a missing value counted as a failure); the build
+  stops if the tables ever say otherwise. `bun run mitoport` applies the same check before it writes the README.
+- `bun run hf` leaves `public/data/mitoport/` out of the Hugging Face package: those tables belong to another build
+  and are already published by mitoage-pipelines, and D6 has one dataset match one build.
+
+**What it costs, and was accepted:** a second generator of committed data besides `bun run data` (the alignments
+already had one), a menu entry, a section on 316 species pages, and tables whose alignment columns belong to an
+earlier build's alignments, which the README of `public/data/mitoport/` says.

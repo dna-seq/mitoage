@@ -79,7 +79,8 @@ definitions and reports a control that was never computed as not assessed rather
 | `bun install` | Install dependencies |
 | `bun run data` | Run the data pipeline (`pipeline/`), writing `src/data/generated/` and `public/data/` |
 | `bun run align` | Align the 13 proteins and two rRNAs of every live species with MAFFT (pinned version), writing `public/data/alignments/` |
-| `bun run hf` | Package the committed build for Hugging Face into `out/hf/`: the data files, the alignments as one parquet table, the dataset card. The dataset is [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage) |
+| `bun run mitoport` | Fetch the coevolution tables of mitoage-pipelines from Hugging Face at a pinned revision, refuse any file whose SHA-256 is not the pinned one, and write them as parquet to `public/data/mitoport/` (D20). Needs nothing of `bun run data`'s inputs |
+| `bun run hf` | Package the committed build for Hugging Face into `out/hf/`: the data files, the alignments as one parquet table, the dataset card. The dataset is [longevity-genie/mitoage](https://huggingface.co/datasets/longevity-genie/mitoage); `public/data/mitoport/` is left out (another build's tables, published by mitoage-pipelines) |
 | `bun run sqlite` | Write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads: one table per download, plus the correlations. Runs after `bun run hf` (which empties `out/hf/`) and needs `dist/data/correlations.parquet` from `bun run build` |
 | `bun run mcp` | Compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | Dev server |
@@ -112,7 +113,8 @@ canonical and Open Graph URLs. Never hard-code a root-absolute path such as `"/s
 
 ```
 src/
-  data/            data contract (schema.ts) and access layer (index.ts), generated JSON
+  data/            data contract (schema.ts) and access layer (index.ts; mitoport.ts reads the coevolution
+                   tables of public/data/mitoport/), generated JSON
   styles/          tokens.css (design tokens, light + dark), global.css, components.css, charts.css
   layouts/         BaseLayout.astro: SEO, Open Graph, JSON-LD, theme, header and footer
   components/
@@ -141,7 +143,7 @@ src/
   pages/           routes, below
 ```
 
-The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · About**.
+The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Coevolution · Data · About**.
 
 | Route | What it is |
 | --- | --- |
@@ -152,6 +154,7 @@ The site is mtDNA-first. Menu: **Species · Tree · Genes · Compare · Data · 
 | `/compare/regions/`, `/compare/regions/{region}/` | One region in every species: all parameters, by class, order or family (with the same chart), and each species' values, with a scatter of the listed species on any two parameters or lifespan (`?x=&y=`) |
 | `/compare/species/?species=a,b` | Two to six species side by side, genome first; their genomes download as one FASTA file, in the order chosen |
 | `/compare/plot/?x=&y=&scope=` | Plot explorer: any two mtDNA features, or one against a life-history trait |
+| `/coevolution/` | Mito-nuclear coevolution (D20): how far 61 nuclear proteins change with the mitochondrial subunits of the respiratory complexes across mammals (rate, ESM-2 embedding and residue coupling, per protein and as group medians), each species' discordance at complex IV's mito-nuclear contact pairs per class, the lifespan tests (none follows lifespan; the build stops if the tables ever say otherwise) and the downloads. The tables are mitoage-pipelines', computed on build c525adb, read from `public/data/mitoport/`; the 316 species with a discordance value show it on their own page (`#coevolution`) |
 
 Old URLs get static redirects: `/explore/` (keeps the query), `/compare/?species=`,
 `/stats-for/...`, `/export-section/...`, `/browse/...`, `/statistics/` and `/view/{id}/species/`.
