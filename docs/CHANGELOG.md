@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.4 is on the co-authors' Drive folder** (2026-11-17, the maintainer: "so far we have v0.4 but I do not see
+  it on google drive"). Opened on 2026-11-16, it had never been pushed. The paper and the Supplementary Methods as
+  Google Docs, the six figures and Supplementary Table S1, built from 286c74e, whose v0.4 masters are those of 5693464
+  (`rounds.py push 0.4`). The v0.3 Docs had no comments and no edits to carry over. Every table and figure was
+  checked in a PDF export of the Docs: 39 and 43 pages, Table 3's eleven columns without a broken word.
 - **The data pipeline's inputs on any clone, and a data build that leaves the other commands' files alone**
   (2026-11-17, RM7, which this closes). `bun run inputs` writes the 34 CSVs of the 2015 export back from the committed
   parquet copies, each with the SHA-256 its README records, and fetches the pinned build 2 sources from the public
