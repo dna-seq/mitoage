@@ -15,7 +15,7 @@ the values by region, on the site's side, as the extended features and the per-g
 
 ## RM4 — The build 2 defaults, put to the maintainer
 
-**State:** blocked: desk #34 (the five calls that change results; if nobody answers, the defaults stay) · **Owner:** lead
+**State:** blocked: desk #49 (four calls that change results; if nobody answers, the defaults stay) and desk #43 (order and family, RM24) · **Owner:** lead
 
 `docs/BUILD2_OPEN_QUESTIONS.md` lists 20 calls made without confirmation. Asked in `#mitoage>decisions`,
 the ones that change results first: order and family not harmonised between AnAge and NCBI (e), the ids
@@ -32,15 +32,21 @@ The priming's weekly look for a release newer than each pin; the dates and findi
 
 ## RM7 — The pipeline's inputs on every machine that runs the seat
 
-**State:** blocked: desk #32 (if nobody answers, data rebuilds stay on the laptop) · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 `bun run data` and one test file (`pipeline/tests/lifespan.test.ts`) need the build 1 CSVs (`data/input/`)
 and the pinned downloads (`data/cache/build2/sources/`), which are in no repository. A clone without them
 builds the site from the committed parquet and cannot rebuild the data.
 
+Since 2026-11-15 the inputs no archive keeps are public: the Hugging Face dataset
+`longevity-genie/mitoage-build2-sources`, with its pins and download commands in `docs/BUILD2_REPRODUCTION.md` of
+`dna-seq/mitoage-pipelines`. Desk #32 is withdrawn for that reason. To do: fetch them on the cluster into the
+folders `bun run data` reads, run it, and check that it reproduces the committed build byte for byte; say what
+does not fit.
+
 ## RM8 — Detect possible duplicate species
 
-**State:** blocked: desk #32 (the rule by names needs the pipeline's raw inputs, RM7) · **Owner:** lead
+**State:** after RM7 (the rule by names needs the pipeline's raw inputs) · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
 Done on 2026-11-17: the rule by sequence, `bun run duplicates`, which lists 12 pairs of one genus with nearly
