@@ -58,7 +58,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** waits until 2026-11-18: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in H21's design (mammals and birds), fixed and coded on 2026-11-17 after H21's code landed; its first job (trait, pairs, selection inputs) is submitted, and its RELAX runs (46 tasks of 4 CPUs) are held while the cluster is at its CPU cap, looked at again that day. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 there) · **Owner:** lead
+**State:** waits until 2026-11-18: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in the design of H21 (mammals and birds). Its pair test ran on 2026-11-17: not detected in birds (41 pairs), not assessed in mammals (6 unsaturated pairs). Its RELAX runs (46 tasks of 4 CPUs) are held while the cluster is at its CPU cap, looked at again that day. Steps 1 to 4 and lifespan as a continuous trait ran (H0 to H3 and H7 there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
