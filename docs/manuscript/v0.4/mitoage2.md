@@ -719,16 +719,33 @@ nuclear interface residues co-vary more than the rest of their proteins in any c
 Holm-adjusted p = 1). Residue pairs across the interface are not changed together more often than control pairs in
 mammals (smallest Holm-adjusted p = 0.11, complex I). Contact residues are, if anything, less conserved than their
 controls (complexes I and IV). The coupling therefore belongs to the proteins that share a complex with mtDNA
-products, as a lineage-wide rate of mitochondrial evolution that their partners follow would make it, not to
-compensation at the residues that touch. Complex I is the one place where the pairs lean toward compensation, in
-mammals and in birds, and is where to look again. The contact maps of the four complexes, the nuclear ortholog sets
-and their alignments are among the downloads (Supplementary Table S3).
+products, not to compensation at the residues that touch. Complex I is the one place where the pairs lean toward
+compensation, in mammals and in birds, and is where to look again.
+
+A second test, fixed before it was run, asked what the nuclear subunits follow, and whether they do so outside
+mammals (Supplementary Methods S12.11). In mammals they follow the change of the mitochondrial proteins, not the
+neutral rate of the mitochondrial genome: with the transversion distance at fourfold-degenerate sites partialled out,
+the coupling remains (Holm-adjusted p = 1.3 × 10⁻⁶), and that neutral distance adds nothing once the proteins are in
+the model (p = 0.78). A mutation rate or generation time shared by the two genomes therefore does not account for
+it. Only complex I's subunits follow their own complex's mitochondrial genes more than those of the other complexes
+(p = 1.4 × 10⁻⁵); the subunits of complexes III, IV and V follow the mitochondrial genome as a whole. Outside
+mammals the coupling is shown in some complexes: complex III in birds (82 species, Holm-adjusted p = 0.04), and
+complexes I and IV in ray-finned fishes (137 species, p = 0.013 and 0.015). In birds' other three complexes the
+subunits lie above the controls only before correction, and the 17 reptiles are too few to test. In mammals the
+subunits nearer the mtDNA-encoded ones couple more, but that pattern was seen before the test was fixed, and it is
+not replicated in birds or fishes. Published cybrids, cells that carry another species' mtDNA, point the same way:
+no score of the residues that touch tells which complex loses activity better than the divergence between host and
+donor (Supplementary Methods S12.12). The contact maps of the four complexes, the nuclear ortholog sets and their
+alignments are among the downloads (Supplementary Table S3).
 
 > AUTHOR: H14 of `docs/HYPOTHESES.md` in mitoage-pipelines (fixed before the results at bf691b3, the species fix
 > at 7ab48d2), run on haumea as job 6490344 on build 0f4e970 with the dated tree of dna-seq/mitoage 03c0949; tables
 > in `results/job1-contacts/` (8eeaf6f). Structures 5XTD (complex I), 5XTE (III), 5Z62 (IV) and 8H9S (V). The
 > residue-level analysis is in mammals only; complexes III and V have five subunits each with an interface, so
 > their nulls bound little. No per-residue embeddings exist for the nuclear subunits of complexes I, III and V.
+> The second paragraph is H19 (fixed before the run at c63661b), run on haumea as job 6493878 on 2026-11-16 and read
+> on 2026-11-17; tables in `results/h19/` (bd23aca), reading at 1708f8e. The cybrids are H16 (0b1c5e8) and H17
+> (job 6493605 and 6493606 from 329d9a6, `results/h17/` at ffdb2d6).
 
 ### Beyond longevity: temperature and the rate of mitochondrial evolution
 
@@ -935,7 +952,8 @@ are therefore not assessed here, rather than assessed and found negative.
 Beyond lifespan, the same build answers questions of mitochondrial evolution in general. The nuclear subunits of
 all four respiratory complexes that hold mtDNA-encoded proteins co-vary with them as whole proteins, and the residues
 that touch add nothing measurable, which extends to every complex the evidence against compensation at the contacts
-(62, 63). Nor does temperature set the pace of the mitochondrial clock in ray-finned fishes, whose bodies are at the
+(62, 63). In mammals they follow the change of the mitochondrial proteins rather than the genome's neutral rate, and
+the coupling recurs in some complexes of birds and ray-finned fishes. Nor does temperature set the pace of the mitochondrial clock in ray-finned fishes, whose bodies are at the
 water's temperature, against the prediction of metabolic theory (64). None of the published peptides encoded inside mtDNA is kept across species more widely than other open
 windows of its gene. An audit of the records names those in RefSeq that are probably mislabelled or misannotated.
 The alignments, the dated tree, the contact maps, the nuclear ortholog sets, the protein-language-model embeddings

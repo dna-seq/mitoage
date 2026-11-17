@@ -1546,6 +1546,137 @@ rerun.
 <!-- src: mitoage-pipelines docs/HYPOTHESES.md H20; results/h20-thermal/readout.tsv, pair_fits.tsv, lehmann.tsv,
 composition.tsv at 76c2c1f -->
 
+### S12.11 The coupling in birds and fishes, and what its mitochondrial side is (H19)
+
+**What was asked.** S12.9 found, in mammals, that the nuclear subunits of complexes I, III, IV and V follow the
+mitochondrial genes as whole proteins. Three questions about that coupling, none of them about lifespan: whether it
+holds in birds and ray-finned fishes; whether it falls with a subunit's distance from the mtDNA-encoded subunits of
+its complex; and what the mitochondrial side is, the complex's own genes or the whole genome, the change of the
+proteins or the neutral rate. The tests and their reading were committed before the run (mitoage-pipelines c63661b).
+An exploratory look at the mammalian tables of S12.9 had already shown the distance pattern in mammals, so only
+birds and fishes test it.
+
+**How.** `mitoage mitoport classes` (analysis repository).
+- *Species and proteins.* Per class, the species with the 13 mitochondrial protein alignments, the 12 heavy-strand
+  codon alignments, a tip on the dated tree and at least one nuclear sequence: 182 mammals, 82 birds, 137 ray-finned
+  fishes and 17 reptiles. A protein is read in a class with 40 species or more. NCBI's vertebrate ortholog sets, one
+  protein per species, aligned with MAFFT L-INS-i: the 72 nuclear subunits of the four complexes, complex II (4), 7
+  matrix enzymes, the 30 cytosolic controls of S12.9 and 15 inner-membrane proteins outside the respiratory chain
+  (carriers, import, MICOS, the calcium uniporter, prohibitins), chosen as a control for sitting in the membrane.
+- *Coupling.* As R0 of S12.9, within one class: over pairs of species, the Spearman correlation of the nuclear
+  protein's distance (columns away from the interface) with the distance of a set of mitochondrial genes at their
+  burial-matched non-contact residues, the patristic distance and its logarithm partialled out.
+- *Distance from the core.* Per subunit, the median distance of its heavy atoms to the nearest atom of an
+  mtDNA-encoded chain in the human structure.
+- *Readouts per class.* C1, per complex: the subunits against the cytosolic controls, coupling with the complex's
+  own mitochondrial genes. G1: coupling against distance from the core, both ranked within complex, permutation p;
+  G2, the same with each subunit's own divergence partialled out. M1 and M2: inner-membrane proteins against
+  cytosolic controls, and touching subunits against inner-membrane proteins. S1, per complex: coupling with the
+  complex's own genes given the other complexes' genes; S2, the reverse. T1 to T3, all subunits against the
+  controls: coupling with the neutral distance (transversions at fourfold-degenerate third positions, 12
+  heavy-strand genes); with the mitochondrial proteins given the neutral distance (T2); with the neutral distance
+  given the proteins (T3). Mann-Whitney, two-sided. Holm within class over C1, G1, S1, T2 and T3.
+- *Reading fixed in advance.* Mammals are the positive control: C1 must pass in all four complexes or nothing is
+  read. The coupling holds in a class and complex when C1 passes Holm there. The distance pattern is replicated when
+  G1 is negative and passes Holm in birds or fishes. A complex's coupling is specific to its own genes when S1
+  passes Holm. T2 passing and T3 not means the subunits follow the change of the mitochondrial proteins beyond the
+  neutral rate.
+
+**Supplementary Table S12.11.** The readouts per class: median coupling of the two groups; p (Holm-adjusted p for
+the readouts in the correction). Build 0f4e970, dated tree of the site at 03c0949. Reptiles: every readout not
+assessed (17 species).
+
+| Readout | Mammals | Birds | Ray-finned fishes |
+|---|---|---|---|
+| C1, complex I | 0.49 / 0.17; 2.4 × 10⁻⁶ (2.2 × 10⁻⁵) | 0.30 / 0.19; 0.026 (0.21) | 0.31 / 0.12; 0.0013 (0.013) |
+| C1, complex III | 0.40 / 0.01; 1.8 × 10⁻⁴ (0.0013) | 0.56 / 0.31; 0.0037 (0.041) | 0.28 / 0.19; 0.025 (0.18) |
+| C1, complex IV | 0.45 / 0.00; 9.3 × 10⁻⁵ (7.5 × 10⁻⁴) | 0.57 / 0.34; 0.033 (0.23) | 0.24 / 0.10; 0.0016 (0.015) |
+| C1, complex V | 0.21 / 0.01; 0.0014 (0.0070) | 0.13 / 0.01; 0.037 (0.23) | 0.21 / 0.17; 0.40 (0.67) |
+| G1, distance from the core | −0.39; 9.0 × 10⁻⁴ (seen before) | +0.009; 0.94 (1) | −0.28; 0.031 (0.18) |
+| M2, touching / inner membrane | 0.49 / 0.15; 3.5 × 10⁻⁷ | 0.45 / 0.37; 0.68 | 0.32 / 0.04; 6.1 × 10⁻⁵ |
+| S1, complex I | 0.36 / 0.10; 1.4 × 10⁻⁶ (1.4 × 10⁻⁵) | −0.005 / −0.04; 0.33 (1) | 0.26 / 0.07; 1.3 × 10⁻⁴ (0.0015) |
+| S1, complex III | 0.007 / −0.04; 0.20 (0.61) | 0.42 / 0.20; 0.0037 (0.041) | 0.19 / 0.09; 0.035 (0.18) |
+| S1, complex IV | 0.11 / −0.03; 0.034 (0.14) | 0.48 / 0.20; 0.085 (0.43) | 0.16 / 0.005; 0.0023 (0.018) |
+| S1, complex V | 0.004 / −0.02; 0.29 (0.61) | −0.08 / −0.09; 0.37 (1) | 0.12 / 0.07; 0.26 (0.67) |
+| T2, proteins given neutral rate | 0.35 / −0.01; 1.2 × 10⁻⁷ (1.3 × 10⁻⁶) | 0.18 / 0.11; 0.086 (0.43) | 0.23 / 0.16; 0.027 (0.18) |
+| T3, neutral rate given proteins | 0.15 / 0.14; 0.78 (0.78) | 0.29 / 0.19; 0.010 (0.092) | 0.11 / 0.18; 0.22 (0.67) |
+
+**Results.** The positive control passes: in mammals the subunits of all four complexes couple above the controls,
+with medians close to S12.9's (0.49, 0.40, 0.45 and 0.21 against 0.49, 0.40, 0.42 and 0.21). Outside mammals the
+coupling holds in birds' complex III and in ray-finned fishes' complexes I and IV; birds' other complexes lie above
+the controls only before correction, and fishes' complex V not at all. The distance pattern is not replicated: none in
+birds, the predicted sign in fishes without passing Holm. In mammals and fishes the touching subunits couple more than
+inner-membrane proteins without a mitochondrial partner, which couple no more than the cytosolic controls (M1 p =
+0.49 and 0.19), so touching is told from sitting in the membrane; in birds it is not. In mammals only complex I's
+subunits follow their own complex's genes beyond the others'; complexes III, IV and V follow the other complexes'
+genes given their own (S2 p = 2.4 × 10⁻⁴, 0.0018 and 0.0065), so their subunits follow the mitochondrial genome as a
+whole. In fishes complexes I and IV are specific, in birds complex III. In mammals T2 passes and T3 does not: the
+subunits follow the change of the mitochondrial proteins, and the neutral rate adds nothing once the proteins are in.
+In birds and fishes the two are not separated.
+
+**Limits.** One human structure stands for every species. Species pairs are not independent, which is why only
+groups of proteins are tested, and the proteins of one complex are not independent either. Fewer controls have a
+value in birds (19 of 30) and fishes (14) than in mammals (29), and birds' controls couple more than mammals' in
+complexes I, III and IV, so their tests are weaker. Ray-finned fishes carry duplicated genes and one protein per
+species is kept, which may be the other copy. Fourfold transversions saturate in the deepest pairs. The
+inner-membrane set was chosen by hand. The run is Slurm job 6493878 on haumea from c63661b: 26 tests pass, 33 of 33
+deliberate breaks of the code are caught, the 50 alignments of S12.9's run are made again identically, and every
+table is identical on a rerun.
+
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H19 (reading at 1708f8e); results/h19/class_readouts.tsv at bd23aca -->
+
+### S12.12 The published cybrids: does mismatch at the contacts predict which complex fails? (H16, H17)
+
+**What was asked.** Xenomitochondrial cybrids put a donor species' mtDNA into cells of a host species, so every
+nuclear subunit is the host's and every mtDNA-encoded one the donor's, and their complex activities are measured.
+Before any score of mismatch at the mito-nuclear contacts is read as incompatibility, it should order these
+cybrids as their measured activities do. A negative result, reported here for completeness.
+
+**Data.** Activities transcribed from the published figures and tables: human cells with chimpanzee, bonobo and
+gorilla mtDNA (doi 10.1074/jbc.273.23.14210); mouse cells with *Mus spretus* and rat mtDNA (10.1074/jbc.M004070200),
+rat again from a second laboratory (10.1074/jbc.M004053200), and *M. caroli*, *M. terricolor*, *M. pahari* and
+*Otomys irroratus* (10.1093/molbev/msg132); donors that gave no respiring cybrid: orangutan in human cells
+(10.1073/pnas.94.17.9131; both *Pongo* species scored, since the paper names none) and two hamsters in mouse cells.
+In all, 29 measured (host, donor, complex) points, 9 reduced and 20 not, of which 13 have a stated value; one point
+where the two laboratories disagree is left out.
+
+**How.** `mitoage mitoport cybrid`, `cybrid-coev` and `cybrid-esm` (analysis repository), on the contact maps of
+S12.9. Host and donor proteins from RefSeq placed on the human positions. Scores per (host, donor, complex): the
+count and share of differing contact positions (H16); the excess loss of co-evolved contact pairs over control
+pairs, and ESM-2 650M's log-likelihood ratios of the donor residues, alone and beside the host's nuclear subunit
+(H17); against divergence over every position, the baseline any interface score must beat. Tests: T1, Spearman
+correlation with the 13 stated activities; T2, area under the ROC curve for reduced against not reduced; T3, whether
+a pair's highest-scoring complex is its most reduced one (6 pairs); T4, whether donors that gave no cybrid score
+above every donor that did. No significance is claimed: the points are few and not independent.
+
+**Supplementary Table S12.12.** The scores against the measured activities.
+
+| Score | T1, Spearman (13) | T2, area (9 against 20) | T3, most reduced complex named (of 6) |
+|---|---|---|---|
+| Divergence over all positions (baseline) | −0.36 | 0.74 | 4 |
+| Differing contact positions | −0.20 | 0.80 | 4 |
+| Co-evolved pairs' excess loss | −0.06 | 0.73 | 4 |
+| ESM-2, donor residues at the contacts | +0.33 | 0.33 | 2 |
+| ESM-2, beside the host's partner | −0.12 | 0.58 | 4 |
+
+**Results.** Divergence orders the measured activities as well as or better than any contact score: the donors that
+fail are the most distant, and both orangutans and both hamsters score above every donor that respired. The count of
+differing contacts separates reduced from normal complexes slightly better (about 10 of the 180 orderings) but orders
+the stated activities worse and cannot say which complex fails in a pair: as raw counts it always names complex I,
+the largest. Neither the co-evolved pairs nor ESM-2 does better than divergence; ESM-2 alone points the wrong way. Two
+single hits, ESM-2 with the partner at *Otomys*' complex III and the co-evolution score at *M. pahari*'s complex IV,
+are not claims. The cybrids thus agree with S12.9: what is measured at the contacts adds nothing beyond the divergence
+of the whole proteins. An interface energy on the chimeric complexes (H18) has not run.
+
+**Limits.** RefSeq individuals stand in for the donor cell lines, except for cytochrome b where the papers sequenced
+their own. The mouse host is scored on human structures. Activities are percentages of each paper's control, by
+different assays; the murid papers' complex III is a linked II+III assay. A failed cybrid can fail for reasons
+outside the respiratory chain. The 80% identity weighting of the co-evolution score leaves complex IV's conserved
+proteins few effective sequences.
+
+<!-- src: mitoage-pipelines docs/HYPOTHESES.md H16, H17; results/h16/summary.tsv at 0b1c5e8; results/h17/h17_summary.tsv
+at ffdb2d6 -->
+
 ## S13. The MCP server
 
 A language-model agent asked whether an mtDNA feature predicts lifespan, with only the downloads to hand,
@@ -1641,6 +1772,8 @@ repositories only, so far. Supplementary Table S3 lists them.
 | The structural features against lifespan by class, the discordance of the mito-nuclear contact pairs, and the ESM-2 divergence at the contacts (H12) | Hugging Face `longevity-genie/mitoage-pipelines`: `output/longevity/structure_pgls.tsv`, `output/mitoport/partners.tsv`, `output/structure/embed_cox.parquet`; GitHub `dna-seq/mitoage-pipelines`, `results/h12/` | 126d237; 7692a55 |
 | The reading frames of the nine peptides encoded inside mtDNA, per species, with their nulls, tree changes and lifespan fits (S12.8, H15) | GitHub `dna-seq/mitoage-pipelines`, `results/job4-peptides/0f4e970/` | 72b3eb2 |
 | Temperature, size and metabolic rate against the mitochondrial rate of sister pairs and composition, the FishBase matching of every fish, and Lehmann et al.'s model on the tree (H20, S12.10) | GitHub `dna-seq/mitoage-pipelines`, `results/h20-thermal/` | 76c2c1f |
+| The coupling of every nuclear and control protein with each set of mitochondrial genes in mammals, birds and ray-finned fishes, the readouts, and each subunit's distance from the mtDNA-encoded core (H19, S12.11) | GitHub `dna-seq/mitoage-pipelines`, `results/h19/` | bd23aca |
+| The published cybrids: the measured activities as transcribed, the host and donor sequences, and every score against them (H16, H17, S12.12) | GitHub `dna-seq/mitoage-pipelines`, `results/h16/`, `results/h17/` | 0b1c5e8; ffdb2d6 |
 | The other result tables of the worked analyses (aligner agreement, the column screen, RELAX, rate covariation, co-embedding, composition) | Hugging Face `longevity-genie/mitoage-pipelines`, `output/` | 126d237 |
 
 Lifespan values from FishBase and SeaLifeBase keep their CC BY-NC 4.0 terms in every download that carries them

@@ -583,6 +583,18 @@ volumes and pages are Crossref's. Gillooly et al.'s values were read from PMC544
 fetch had met a reCAPTCHA): E ≈ 0.65 eV predicted from the kinetics of metabolism, and Ē = 0.40 eV (n = 4) for their
 type I regressions, in Results; their ectotherm temperatures are the habitat's, for some fishes the preferred one.
 
+v0.4 went to Drive on 2026-11-17 (8c32b5e) and was updated the same day, at the maintainer's word ("Yes, as v0.4
+update"), with mitoage-pipelines H19 and the cybrids. H19 had run on 2026-11-16 (job 6493878 from c63661b) and sat
+unread; its tables went to `results/h19/` from haumea (bd23aca) and its reading into HYPOTHESES.md (1708f8e). Added: a
+second paragraph in "Beyond longevity: mitochondrial and nuclear subunits evolve together as whole proteins" (its
+clause "as a lineage-wide rate of mitochondrial evolution that their partners follow would make it" removed, since
+H19 separates protein change from the neutral rate), one Discussion sentence, S12.11 (H19) and S12.12 (H16 and H17,
+the cybrids, in the supplement only, as the maintainer asked: "if cbrids are negative I assume it is more on
+supplemenary side"), and two Table S3 rows. The numbers are those of `class_readouts.tsv` (mammals T2 Holm 1.3043e-06,
+T3 0.7841, S1 complex I Holm 1.4424e-05; birds C1 complex III Holm 0.040745; fishes C1 complexes I and IV Holm
+0.013294 and 0.014551; G1 birds +0.008896 p 0.93991, fishes -0.28259 Holm 0.17733) and of H16's `summary.tsv` and
+H17's `h17_summary.tsv`.
+
 ## Not yet done
 - Decided by the authors on 2026-11-15: D2, MitoAge 2's address is https://just-dna.life/mitoage/, with
   www.mitoage.info to follow once it is redirected; maintenance is by the authors as needed, errors through

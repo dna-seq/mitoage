@@ -4,6 +4,15 @@ Newest first.
 
 ## Unreleased
 
+- **Round v0.4 updated with H19 and the cybrids** (2026-11-17, the maintainer: "Yes, as v0.4 update"). H19 of
+  mitoage-pipelines had run on haumea on 2026-11-16 and was never read; its tables are now committed from haumea
+  (bd23aca) and read by the rules fixed in advance (1708f8e). In mammals the nuclear subunits follow the change of the
+  mitochondrial proteins, not the genome's neutral rate, and only complex I's follow their own complex specifically;
+  the coupling holds in birds' complex III and in ray-finned fishes' complexes I and IV; the fall of coupling with
+  distance from the mtDNA-encoded core is not replicated. The paper gains a paragraph on it and a Discussion
+  sentence; the supplement gains S12.11 (H19) and S12.12, the published cybrids (H16, H17), which are negative and so
+  sit in the supplement only, with a pointer from the paper; Table S3 two rows. `docs/manuscript/NOTES.md`, "Round
+  v0.4", has the sources of the numbers.
 - **A handoff for an agent on the cluster** (2026-11-17, the maintainer: "a markdown on the summary with results of
   all mitochondria sessions ... which jobs are on the server and which results are located where").
   `docs/CLUSTER_HANDOFF.md`: the cluster's rules, the mitoage jobs in haumea's queue (H18's energy array, the four
