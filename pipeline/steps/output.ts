@@ -6,7 +6,7 @@
  * data layer reads them at build time, decision D3); derived tables (feature values, correlations,
  * explorer.json) are computed during the site build and are not committed.
  */
-import { mkdirSync, rmSync } from "node:fs";
+import { mkdirSync, readdirSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import type {
   BuildInfo,
@@ -40,9 +40,23 @@ async function write(path: string, content: string): Promise<number> {
   return Buffer.byteLength(content);
 }
 
-export function resetDir(dir: string): void {
-  rmSync(dir, { recursive: true, force: true });
+/**
+ * What other commands write into the two folders `bun run data` clears. They are kept: a data build that wiped
+ * them left the site without its alignments, coevolution tables and complexes until three more commands ran.
+ * A build that changes the species makes them stale, which `bun run data` says when it ends.
+ */
+export const KEPT_IN_GENERATED = ["complexes.json"]; // bun run complexes
+export const KEPT_IN_PUBLIC_DATA = ["alignments", "mitoport"]; // bun run align, bun run mitoport
+
+/** Empties `dir`, except the entries named in `keep` (top-level names); returns the kept ones that exist. */
+export function resetDir(dir: string, keep: string[] = []): string[] {
   mkdirSync(dir, { recursive: true });
+  const kept: string[] = [];
+  for (const name of readdirSync(dir).sort()) {
+    if (keep.includes(name)) kept.push(name);
+    else rmSync(join(dir, name), { recursive: true, force: true });
+  }
+  return kept;
 }
 
 export const AA_KEYS = [...AMINO_ACIDS, "*"];
@@ -56,7 +70,7 @@ export interface GeneratedPayload {
 
 /** src/data/generated/*.json. Returns file sizes. */
 export async function writeGenerated(p: GeneratedPayload): Promise<Record<string, number>> {
-  resetDir(GENERATED_DIR);
+  resetDir(GENERATED_DIR, KEPT_IN_GENERATED);
   const sizes: Record<string, number> = {};
   sizes["build-info.json"] = await write(join(GENERATED_DIR, "build-info.json"), json(p.buildInfo));
   sizes["taxonomy.json"] = await write(join(GENERATED_DIR, "taxonomy.json"), json(p.taxonomy));
@@ -185,7 +199,7 @@ export function speciesColumns(species: Species[], extra: Map<number, SpeciesExt
 }
 
 export async function writePublic(p: PublicPayload, readme: string): Promise<Record<string, number>> {
-  resetDir(PUBLIC_DATA_DIR);
+  resetDir(PUBLIC_DATA_DIR, KEPT_IN_PUBLIC_DATA);
   const sizes: Record<string, number> = {};
   const slugOf = new Map(p.species.map((s) => [s.id, s.slug]));
   const out = async (name: string, cols: Column[]) => {

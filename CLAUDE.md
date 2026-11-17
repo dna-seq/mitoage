@@ -133,6 +133,7 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | Command | What it does |
 | --- | --- |
 | `bun install` | install dependencies |
+| `bun run inputs` | put the raw inputs of `bun run data` in place on a clone that has none: the 2015 export's CSVs written back from the committed parquet copies (each kept only with its recorded SHA-256) and the pinned build 2 sources from the public snapshot `longevity-genie/mitoage-build2-sources` (each checked against its md5); needs network |
 | `bun run data` | run the data pipeline, writing `src/data/generated/` and `public/data/`; it needs the raw inputs, which are not in git |
 | `bun run align` | align the mitochondrial genes of the committed build with MAFFT, writing `public/data/alignments/`; it needs MAFFT at the pinned version and the pinned RefSeq release in `data/cache/` |
 | `bun run mitoport` | fetch the coevolution tables of mitoage-pipelines from Hugging Face at the pinned revision (`pipeline/sources/mitoport.ts`), refuse any file whose SHA-256 differs, and write them as parquet to `public/data/mitoport/` (D20); needs network once, nothing of `bun run data`'s inputs |

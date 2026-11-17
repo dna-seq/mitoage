@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **The data pipeline's inputs on any clone, and a data build that leaves the other commands' files alone**
+  (2026-11-17, RM7, which this closes). `bun run inputs` writes the 34 CSVs of the 2015 export back from the committed
+  parquet copies, each with the SHA-256 its README records, and fetches the pinned build 2 sources from the public
+  snapshot `longevity-genie/mitoage-build2-sources` (revision `a762151`), each checked against its md5. Run on the
+  cluster, `bun run data` then wrote every file of the committed build again byte for byte (Slurm job 6498687, about
+  five minutes), and the whole test suite runs there (390 pass, none skipped for missing inputs). That run showed a
+  defect: `bun run data` emptied `public/data/` and `src/data/generated/` whole, deleting the alignments, the
+  coevolution tables and `complexes.json` that other commands write. It now keeps them and says so when it ends.
 - **A rule that lists possible duplicate species by sequence** (2026-11-17, RM8). `bun run duplicates` compares the
   13 mitochondrial protein genes of every two species of one genus on the committed build and lists the pairs that
   agree at 99.9% or more: 12 of 2,876 pairs, in `docs/analyses/possible-duplicates/`. One pair is identical at all

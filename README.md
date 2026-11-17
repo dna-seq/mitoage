@@ -77,6 +77,7 @@ definitions and reports a control that was never computed as not assessed rather
 | Command | What it does |
 | --- | --- |
 | `bun install` | Install dependencies |
+| `bun run inputs` | put the raw inputs of `bun run data` in place on a clone that has none: the 2015 export's CSVs written back from the committed parquet copies (each kept only with its recorded SHA-256) and the pinned build 2 sources from the public snapshot `longevity-genie/mitoage-build2-sources` (each checked against its md5); needs network |
 | `bun run data` | Run the data pipeline (`pipeline/`), writing `src/data/generated/` and `public/data/` |
 | `bun run align` | Align the 13 proteins and two rRNAs of every live species with MAFFT (pinned version), writing `public/data/alignments/` |
 | `bun run mitoport` | Fetch the coevolution tables of mitoage-pipelines from Hugging Face at a pinned revision, refuse any file whose SHA-256 is not the pinned one, and write them as parquet to `public/data/mitoport/` (D20). Needs nothing of `bun run data`'s inputs |

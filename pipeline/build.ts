@@ -289,3 +289,6 @@ if (problems.length) {
   process.exit(1);
 }
 step(`Done: ${b2.species.length} species, ${b2.stats.length} region stats, ${b2.usage.length} codon tables, ${b2.changelog.length} changelog rows`);
+console.log(
+  "  Kept as they were, written by other commands: public/data/alignments (bun run align), public/data/mitoport (bun run mitoport), src/data/generated/complexes.json (bun run complexes). If this build changed the species or their sequences, run those again.",
+);

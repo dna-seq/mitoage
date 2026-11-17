@@ -30,23 +30,9 @@ now resolves to another species (c), a nullable maximum lifespan (b). Each answe
 The priming's weekly look for a release newer than each pin; the dates and findings are in
 `docs/seats/LEAD_NOTES.md`. A newer release becomes its own item.
 
-## RM7 — The pipeline's inputs on every machine that runs the seat
-
-**State:** unattended · **Owner:** lead
-
-`bun run data` and one test file (`pipeline/tests/lifespan.test.ts`) need the build 1 CSVs (`data/input/`)
-and the pinned downloads (`data/cache/build2/sources/`), which are in no repository. A clone without them
-builds the site from the committed parquet and cannot rebuild the data.
-
-Since 2026-11-15 the inputs no archive keeps are public: the Hugging Face dataset
-`longevity-genie/mitoage-build2-sources`, with its pins and download commands in `docs/BUILD2_REPRODUCTION.md` of
-`dna-seq/mitoage-pipelines`. Desk #32 is withdrawn for that reason. To do: fetch them on the cluster into the
-folders `bun run data` reads, run it, and check that it reproduces the committed build byte for byte; say what
-does not fit.
-
 ## RM8 — Detect possible duplicate species
 
-**State:** after RM7 (the rule by names needs the pipeline's raw inputs) · **Owner:** lead
+**State:** unattended · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
 Done on 2026-11-17: the rule by sequence, `bun run duplicates`, which lists 12 pairs of one genus with nearly
@@ -286,5 +272,5 @@ its orders. 44 species have no order and 6 no family, all from NCBI lineages wit
 
 The question on the desk: NCBI's order and family for every species (recommended: the one source that covers
 all of them; Cetacea, Soricomorpha and Erinaceomorpha stop being orders and their addresses get redirects), or
-the build 1 scheme first within a family, or as it is. Either change is a rerun of `bun run data`, which needs
-the raw inputs (RM7).
+the build 1 scheme first within a family, or as it is. Either change is a rerun of `bun run data`, which the cluster can
+do since 2026-11-17 (`bun run inputs`).
