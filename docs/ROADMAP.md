@@ -205,7 +205,7 @@ Found reading the live site (RM3): of the 1,976 species with a D-loop annotation
 1 base, 2 of 2 to 9 and 10 of 10 to 99; the rest have a median of 1,051. Each counts as a region today, so
 the D-loop's GC content ranges from 0 to 100% in the statistics and these values enter the D-loop
 correlations. The rule proposed: under 100 bases counts as not annotated (unknown). A data rule, applied at
-the next data build, which runs where the pipeline's inputs are (RM7).
+the next data build, which the cluster can run since 2026-11-17 (`bun run inputs`).
 
 ## RM20 — Release mitoage-mcp to npm
 
