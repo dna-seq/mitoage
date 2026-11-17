@@ -163,3 +163,20 @@ The pinned RefSeq release file is on the cluster now (checksum equal to the pin)
 - RM8: the rule by sequence is done (`bun run duplicates`, 12 pairs); the rule by names waits on the raw inputs.
 - RM2: the payload is 0.8 MB as downloaded; desk #44 asks what the target measures.
 - Desk, open: #32 to #35, #41, #42, #43, #44.
+
+## 2026-11-17, evening: the maintainer's handoff of the cluster analyses
+
+The maintainer sent `docs/CLUSTER_HANDOFF.md` (86c0726) by direct message: "since now you take your control back on
+mitoage related anslysis on the server". Its rules hold for this seat; the ones that were new to me:
+
+- Every mitoage job goes to `compute` with `--nice=10000`, arrays throttled, so the Kron jobs stay first under the
+  account's CPU limit.
+- Run from a fresh clone under the runs folder, never pull into a clone a job runs from.
+- `sacct` can hang: wrap it in `timeout`.
+- Results come back to `main` as their own commit naming the job ids and the commit they ran from.
+
+To do, in its order: H18's readout when its check job (6500885) ends, from the `h17-cybrid` clone (pull only
+after it ends); the Coevol chains once a day, tracecomp after each leg, nothing read below an effective sample
+size of 100, a fifth leg if the fourth ends short of 15,000 points; H26's selection array is queued (6500930,
+four tasks at a time); then H19, then H21 to H25, throttled. Reports: `#mitoalignments` for RM12,
+`#mitoage>mitoport` for RM11, `#mitoage` otherwise.
