@@ -13,7 +13,7 @@ Newest first.
   sentence; the supplement gains S12.11 (H19) and S12.12, the published cybrids (H16, H17), which are negative and so
   sit in the supplement only, with a pointer from the paper; Table S3 two rows. `docs/manuscript/NOTES.md`, "Round
   v0.4", has the sources of the numbers. The PDF export of the updated Doc showed that seven lists of the
-  Supplementary Methods (S10.8 twice, S12.8 to S12.11, S16) ran into the paragraph above them, the older ones in earlier rounds too:
+  Supplementary Methods (S10.8 twice, S12.8 to S12.11, S16) ran into the paragraph above them, in the first v0.4 Docs as well (earlier rounds not checked):
   pandoc needs a blank line before a list. They now have one (0727f74). The v0.4 Docs were checked for comments and
   for edits before each replacement (none) and keep their links.
 - **A handoff for an agent on the cluster** (2026-11-17, the maintainer: "a markdown on the summary with results of
