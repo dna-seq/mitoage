@@ -938,6 +938,7 @@ covariance of the tree pruned to those species and rooted at their most recent c
 multiplied by Pagel's λ (Pagel 1999).
 
 **How it is fitted.** That covariance is itself the Brownian covariance of a transformed tree:
+
 - its internal branches are multiplied by λ;
 - a tip branch of length b becomes λb + (1 − λ)d, with d the tip's depth below the ancestor.
 
@@ -951,6 +952,7 @@ RSS/(n − p), on n − p degrees of freedom. The feature is the response becaus
 as in S12.1 and S12.6. The model is therefore not symmetric in the two traits, unlike the correlations beside it.
 
 **Checks.** The implementation (`pipeline/lib/pgls.ts`) is tested on the build's own data:
+
 - against a generalised least squares fit computed from the full covariance matrix, at five values of λ;
 - against the contrast tests of S10.6 at λ = 1;
 - for the maximum of the likelihood, on a grid twenty times finer than the search.
@@ -1354,6 +1356,7 @@ with AGG as a stop for MENTSH. A frame is *open* in a species when it has no sto
 and *kept* when it is open and begins with a start codon (ATG under the standard code; any start codon of the
 species' code for the three protein-gene frames). Three nulls were fixed in advance, each read at the level of
 one species per family, since related species inherit their frames:
+
 - *Windows that are reading frames* (decisive): other windows of the same length in the same gene, strand and
   frame that are open reading frames with a start in human. Needs 20 such windows; no host gene has them for any
   peptide (0 to 9), so this null was not run, and the criterion was not relaxed after the fact.
@@ -1429,6 +1432,7 @@ complex IV again. A question of mitochondrial evolution, not of lifespan.
 
 **How.** `mitoage mitoport contacts|burial|iface|partners|readouts --complex I|III|IV|V` (analysis repository;
 H14 written and committed before any of its statistics was computed, at bf691b3).
+
 - *Contact maps.* Human structures 5XTD (complex I), 5XTE (III, a dimer; cytochrome b read from one copy, the other
   counted as a mitochondrial partner), 5Z62 (IV) and 8H9S (V). A contact is a residue of a mitochondrial subunit with
   a heavy atom within 4.5 Å of a nuclear subunit: 621 in complex I (ND1 116, ND2 105, ND3 32, ND4 144, ND4L 17, ND5
@@ -1491,6 +1495,7 @@ seen while the code was written: a first version on the plain cherries of the tr
 the pairing was changed afterwards to use more species, so the plain cherries are reported beside every test.
 
 **Design.**
+
 - *Traits.* Body temperature: AnAge's, for 253 mammals (270–320 K kept). Fishes: the median over a species' FishBase
   stocks of the preferred temperature (`TempPref50`, −3 to 40 °C kept), for 256 ray-finned and 40 cartilaginous
   fishes; all 980 fishes were matched to FishBase, 955 by exact name and 25 by synonym, none ambiguous and none in
@@ -1557,6 +1562,7 @@ An exploratory look at the mammalian tables of S12.9 had already shown the dista
 birds and fishes test it.
 
 **How.** `mitoage mitoport classes` (analysis repository).
+
 - *Species and proteins.* Per class, the species with the 13 mitochondrial protein alignments, the 12 heavy-strand
   codon alignments, a tip on the dated tree and at least one nuclear sequence: 182 mammals, 82 birds, 137 ray-finned
   fishes and 17 reptiles. A protein is read in a class with 40 species or more. NCBI's vertebrate ortholog sets, one
@@ -1795,6 +1801,7 @@ removed from the build because of it, and the analyses of the main text include 
 on the build). Each species' record is read from RefSeq release 237 as deposited, with its features named by build 2's
 rules; where the build patches an annotation (the parrot's ND6), the audit names the difference rather than taking the
 patch. The build is 0f4e970 (2,344 species; 2,326 records in release 237, 18 retired species without one).
+
 - *Strand.* The vertebrate convention: 12 protein genes on one strand, ND6 on the other. A record is conventional,
   reversed (every copy on the other strand), mixed (the genes against the convention are named) or unknown (outside
   the vertebrates, where the convention is not defined, or with fewer than 7 of the 13 genes annotated).
