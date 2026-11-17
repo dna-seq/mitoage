@@ -166,7 +166,7 @@ const releaseRecords = classifyRelease(release, tax);
 step("Assembling build 2");
 const b2 = await assembleBuild2({
   raw, kept, base: { species: baseSpecies, stats: baseStats, usage: baseUsage, features: baseFeatures, cited, citedText, anageMatch },
-  anage, release, releaseRecords, tax, observations, matches, buildDate: BUILD_DATE,
+  anage, release, releaseRecords, tax, observations, matches, sourceSynonyms: synonyms, buildDate: BUILD_DATE,
   fetchWithParts: async (versions) => {
     const { texts, failed } = await fetchGenBank(versions);
     if (failed.length) throw new Error(`efetch (gbwithparts) failed for ${failed.join(", ")}`);

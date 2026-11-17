@@ -209,6 +209,26 @@ export class NcbiTaxonomy {
     }
   }
 
+  /**
+   * The names NCBI lists as synonyms of each given taxid (names.dmp read once more), sorted. A taxid with
+   * none is absent from the result.
+   */
+  async synonymsOf(taxids: Set<number>): Promise<Map<number, string[]>> {
+    const dir = requirePinned(NCBI_TAXONOMY);
+    const out = new Map<number, string[]>();
+    await forEachLine(`${dir}/names.dmp`, (line) => {
+      if (!line) return;
+      const tab = line.indexOf("\t");
+      if (tab < 0 || !taxids.has(Number(line.slice(0, tab)))) return;
+      const f = fields(line);
+      if (!SYN_CLASSES.has(f[3]!)) return;
+      const t = Number(f[0]);
+      (out.get(t) ?? out.set(t, []).get(t)!).push(f[1]!);
+    });
+    for (const list of out.values()) list.sort();
+    return out;
+  }
+
   taxonNames(t: number): TaxonNames | undefined {
     return this.names.get(t);
   }

@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **Possible duplicate species by names, in the data pipeline** (2026-11-17, RM8). `bun run data` now lists, in the
+  review list as `possible_synonym_species`, each pair of species of the build whose names one taxonomy treats as one
+  species: NCBI lists the name of one as a synonym of the other, or one species record of FishBase or SeaLifeBase
+  carries both names as its accepted name or a synonym (a "misapplied name" and an "ambiguous synonym" are not
+  counted). It reports and merges nothing, and puts no flag on a species. `pipeline/steps/synonym-pairs.ts`, with
+  `NcbiTaxonomy.synonymsOf`; 8 tests, each of 8 deliberate breaks of the rule caught. This commit is the code; the
+  build's output with the pairs it finds follows as its own commit.
+
 - **Round v0.4 updated with H19 and the cybrids** (2026-11-17, the maintainer: "Yes, as v0.4 update"). H19 of
   mitoage-pipelines had run on haumea on 2026-11-16 and was never read; its tables are now committed from haumea
   (bd23aca) and read by the rules fixed in advance (1708f8e). In mammals the nuclear subunits follow the change of the

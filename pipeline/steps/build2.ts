@@ -44,6 +44,7 @@ import {
 } from "./lifespan";
 import { REGIONS, computeGeneCodons, computeNonCoding, computeRegion, makeStats } from "./regions";
 import { type ReleaseRecord, type SpeciesChoice, onePerSpecies, successorFor } from "./refseq";
+import { type SourceSynonyms, synonymPairs } from "./synonym-pairs";
 import { slugify } from "./taxonomy";
 
 export const BUILD = 2;
@@ -95,6 +96,8 @@ export interface Build2Inputs {
   tax: NcbiTaxonomy;
   observations: SourceObservation[];
   matches: Map<string, NameMatch>;
+  /** The synonym tables of the lifespan sources that have one (FishBase, SeaLifeBase), by source name. */
+  sourceSynonyms: SourceSynonyms;
   buildDate: string;
   /**
    * Full GenBank text (with sequence) of the given accession.versions, for release records that carry
@@ -677,6 +680,14 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
     flag(sa.id, `possible_duplicate_species:${b}`);
     flag(sb.id, `possible_duplicate_species:${a}`);
     review.push({ reviewType: "possible_duplicate_species", ncbiTaxid: null, scientificName: `${a} (${sa.id}); ${b} (${sb.id})`, refseq: `${sa.refseq}; ${sb.refseq}`, source: null, sourceName: null, detail: `${why}; both kept and flagged (owner default h)` });
+  }
+  // Pairs by names (RM8): reported for review only; no flag on the species and nothing merged.
+  {
+    const named = species.map((s) => ({ id: s.id, scientificName: s.scientificName, taxid: s.ncbiSpeciesTaxid ?? null, refseq: s.refseq ?? null }));
+    const ncbiSynonyms = await tax.synonymsOf(new Set(named.flatMap((s) => (s.taxid === null ? [] : [s.taxid]))));
+    for (const p of synonymPairs(named, ncbiSynonyms, inp.sourceSynonyms)) {
+      review.push({ reviewType: "possible_synonym_species", ncbiTaxid: null, scientificName: `${p.a.scientificName} (${p.a.id}); ${p.b.scientificName} (${p.b.id})`, refseq: `${p.a.refseq}; ${p.b.refseq}`, source: p.by, sourceName: null, detail: `${p.detail}; found by the rule by names, both kept` });
+    }
   }
   const refseqGenera = new Set([...choice.keys()].map((t) => (tax.lineage(t)?.name ?? "").split(" ")[0]!.toLowerCase()));
   const inBuild = new Set(species.map((s) => s.ncbiSpeciesTaxid));
