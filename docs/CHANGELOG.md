@@ -4,6 +4,12 @@ Newest first.
 
 ## Unreleased
 
+- **A handoff for an agent on the cluster** (2026-11-17, the maintainer: "a markdown on the summary with results of
+  all mitochondria sessions ... which jobs are on the server and which results are located where").
+  `docs/CLUSTER_HANDOFF.md`: the cluster's rules, the mitoage jobs in haumea's queue (H18's energy array, the four
+  Coevol chains), the runs held for CPU (H19, H21 to H26), what each hypothesis found, and where each result lives
+  under `/data/uq2347/runs/mitoage/`. A snapshot; the two repositories stay the ground truth.
+
 - **Round v0.4 is on the co-authors' Drive folder** (2026-11-17, the maintainer: "so far we have v0.4 but I do not see
   it on google drive"). Opened on 2026-11-16, it had never been pushed. The paper and the Supplementary Methods as
   Google Docs, the six figures and Supplementary Table S1, built from 286c74e, whose v0.4 masters are those of 5693464
