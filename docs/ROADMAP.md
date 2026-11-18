@@ -78,6 +78,16 @@ removed for its grade: every species stays in the database with its level and th
 6. A list for inspection by eye: the species the rules cannot settle (which of two near-identical records
    carries the wrong name; the 36 pairs of one genus at 99.5% or more), each with the record, the sources and
    what to look at. Who inspects is the maintainer's and the first author's to say.
+7. A separate supplement on the cleanup and its review (the maintainer, 2026-11-19: "all the cleanup and reviewing
+   should be included in a separate supplement"): the audit's method, every record found wrong with its evidence,
+   the levels and their rules, what was not checked, and how each result moves on high-confidence data. It takes
+   in the record audit of the earlier round (RM23; Supplementary Methods S16 and Table S4 of v0.3).
+8. Telling the depositors and the databases. The maintainer, 2026-11-19, asked whether "in the future we can mail
+   people who deposited stuff or moderators that sequences have errors". Possible: GenBank corrects a record on
+   its submitter's request, and NCBI takes third-party reports on RefSeq records. The seat drafts, per record,
+   the evidence in a form a curator can check (the record, the independent sequences, the identities); sending
+   is the maintainer's, under his name, and nothing is sent before he says so. First the records settled by
+   independent sequences or already on a published list; the unresolved pairs are not reported.
 
 ## RM9 — A DOI for each build
 
