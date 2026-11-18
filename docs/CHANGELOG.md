@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **A curation audit of build 2** (2026-11-18, RM25). After the 2015 database's first author reported mistakes in
+  the curation, an independent agent checked every species against the pinned sources and changed nothing;
+  `docs/analyses/curation-audit-2026-11-18/` has its verdict and a table with one row per species, one column per
+  check and a proposed grade. Names against NCBI and the lifespans attached through synonyms are sound. The
+  sequence records are not: 13 species carry another species' mitogenome or a chimera, 3 records are
+  reverse-complemented (their skews have the wrong sign) and 3 are truncated; 18 of the 19 are in the default
+  dataset. Five of these were recounted with separate code. Nothing in the data changed with this entry; the
+  rules, the confidence level and the site's mark for it are RM25.
 - **The build's output with the rule by names: one pair** (2026-11-18, RM8). `bun run data`, run on the cluster
   (Slurm job 6501325) from the code of b917e03, changes one file: `public/data/review_list.csv` gains one row,
   `possible_synonym_species`, for *Gadus macrocephalus* and *Gadus ogac*, which FishBase keeps under one species

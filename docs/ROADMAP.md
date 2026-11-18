@@ -50,20 +50,31 @@ pipeline code to guard this as well, and also do selective manual inspections". 
 lifespan value (`lifespan_quality`) and carries flags on 50 species; nothing grades the naming, the match of a
 lifespan record to a species, or the sequence record, and the analyses' default dataset filters on none of them.
 
-1. An independent audit of build 2 over all species (names against NCBI, each lifespan record's own name against
-   the row, each RefSeq record's organism against the row, incomplete or odd genomes, the retirements and
-   renames, and the failure modes known from public databases: chimeric or misidentified mitogenomes, nuclear
-   copies, splits and lumps, values copied between sources). Running since 2026-11-18; it reports and changes
-   nothing.
-2. Each finding checked by hand before it counts; then the checks that hold become rules of `bun run data`, each
-   with a test that fails on the code without it, writing review flags and one column, a grade per species with
-   the rule that gave it (usable; usable with a named caveat; left out of regressions and machine learning).
-   An unchecked aspect is said as not checked, never as clean.
-3. A list for inspection by eye: the species the rules cannot settle, drawn by rule (every species graded down,
-   and a random draw of the rest per class), with the record, the sources and what to look at. Who inspects is the
-   maintainer's and the first author's to say.
-4. The site's default dataset, the downloads and `mitoage-pipelines`' default dataset take the grade; analyses
-   whose species set changes are named, and rerun where the change can move a result.
+The maintainer's calls, 2026-11-18: "we should give all, but give confidence level (like classiciation) and for
+fast to compute things we have to provide extra recomputed with high quality data only"; "on the database level we
+probalby should have a color or an icon (whateve fits better for styles) for the data quliaty level". So no row is
+removed for its grade: every species stays in the database with its level and the reason for it.
+
+1. Done, 2026-11-18: the audit (`docs/analyses/curation-audit-2026-11-18/`). Names and lifespan matches are sound;
+   19 sequence records are another species', a chimera, reverse-complemented or truncated, 18 of them in the
+   default dataset; higher ranks mix two schemes; 87 lifespans are at least 1.5 times below another source's value.
+2. The checks that hold become rules of `bun run data`, each with a test that fails on the code without it,
+   writing review flags and one column, a confidence level per species with the rule that gave it. An unchecked
+   aspect is said as not checked, never as clean. The three reverse-complement records are recomputed on the
+   other strand; a species-level record replaces a subspecies' or a wrong one where the release has it.
+3. Maximum lifespan and sampling effort: lifespan for body mass is higher in well-sampled and captive birds and
+   reptiles (medians, 2026-11-18: birds 1.26 times the expectation with a large sample against 0.93 with a small
+   one; captive 1.24 against wild 0.95), so sample size and the kind of record enter the level's reasons, and the
+   regressions get sensitivity runs (medium and large samples only; captive only and wild only within a class).
+4. The site shows the level on a species' page and in the tables, as a colour or an icon with its reason in
+   words; the downloads carry the column.
+5. The analyses that compute fast (correlations, phylogenetic regressions, composition) are given a second time
+   on high-confidence species only, beside the full result, on the site's datasets and in `mitoage-pipelines`.
+   Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
+   that can move a result.
+6. A list for inspection by eye: the species the rules cannot settle (which of two near-identical records
+   carries the wrong name; the 36 pairs of one genus at 99.5% or more), each with the record, the sources and
+   what to look at. Who inspects is the maintainer's and the first author's to say.
 
 ## RM9 — A DOI for each build
 
