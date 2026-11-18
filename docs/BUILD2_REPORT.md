@@ -12,7 +12,7 @@ for every source and a comparison with the published build, is in
 The EURING list of 2023-09-01, not retrieved when this report was written, is now read from the Internet
 Archive's copy of the PDF (md5 c82b37efe23fe95b5e2945f894c46496; 776 records of 399 species). It adds 9
 European birds that have a RefSeq mitogenome and no AnAge lifespan: build 2 has **2,344 species** (1,422 new),
-14,428 changelog rows, 7,541 lifespan observations and 97 review items; the dated tree places 2,314 of them;
+14,428 changelog rows, 7,541 lifespan observations and 98 review items (97 until 2026-11-18, when the rule by names added one); the dated tree places 2,314 of them;
 the `default` correlation dataset has 2,211 species (`anage_only` is unchanged at 1,710); the alignments cover
 the 2,325 live species. None of the 26 USGS-sourced birds is on the list: their values stand and they are no
 longer flagged provisional. The cross-check with the audit, rerun with the audit reading the list too (through
@@ -566,7 +566,7 @@ build and not committed (D3).
 | public/data/mtdna_structure.parquet | 172498 |
 | public/data/protein_gene_features.parquet | 747264 |
 | public/data/region_stats.parquet | 1295167 |
-| public/data/review_list.csv | 14430 |
+| public/data/review_list.csv | 14991 |
 | public/data/species.csv | 1383624 |
 | public/data/species.parquet | 314952 |
 | src/data/generated/build-info.json | 6966 |

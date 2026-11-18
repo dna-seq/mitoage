@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **The build's output with the rule by names: one pair** (2026-11-18, RM8). `bun run data`, run on the cluster
+  (Slurm job 6501325) from the code of b917e03, changes one file: `public/data/review_list.csv` gains one row,
+  `possible_synonym_species`, for *Gadus macrocephalus* and *Gadus ogac*, which FishBase keeps under one species
+  record (98 review items, were 97). It is one of the three pairs of the hand audit; the other two (*Panopea
+  generosa* and *P. abrupta*, *Euthynnus affinis* and *E. alletteratus*) are joined by no names in the pinned
+  NCBI, FishBase or SeaLifeBase tables and stay flagged by hand only. No species, flag or other table changed.
+  `docs/BUILD2_REPORT.md` has the new count and file size; its other generated tables are unchanged.
 - **Possible duplicate species by names, in the data pipeline** (2026-11-17, RM8). `bun run data` now lists, in the
   review list as `possible_synonym_species`, each pair of species of the build whose names one taxonomy treats as one
   species: NCBI lists the name of one as a synonym of the other, or one species record of FishBase or SeaLifeBase
