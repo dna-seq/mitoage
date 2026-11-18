@@ -67,7 +67,8 @@ removed for its grade: every species stays in the database with its level and th
    one; captive 1.24 against wild 0.95), so sample size and the kind of record enter the level's reasons, and the
    regressions get sensitivity runs (medium and large samples only; captive only and wild only within a class).
 4. The site shows the level on a species' page and in the tables, as a colour or an icon with its reason in
-   words; the downloads carry the column.
+   words, and a selector limits the tables, the plots and the correlations to reliable data only (the maintainer,
+   2026-11-18: "have a selector to limit only to reliable data"); the downloads carry the column.
 5. The analyses that compute fast (correlations, phylogenetic regressions, composition) are given a second time
    on high-confidence species only, beside the full result, on the site's datasets and in `mitoage-pipelines`.
    Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
