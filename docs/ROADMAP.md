@@ -40,6 +40,31 @@ protein genes (`docs/analyses/possible-duplicates/`), and the rule by names insi
 one pair in the review list, one of the three hand pairs (changelog, 2026-11-17 and 2026-11-18). Left: what the
 build does with the 12 pairs by sequence (nothing, or a review flag), which is the maintainer's to say.
 
+## RM25 — A data-quality grade for every species, and the checks that give it
+
+**State:** urgent · **Owner:** lead
+
+The maintainer, 2026-11-18: the first author of the 2015 MitoAge reported mistakes in nomenclature, synonyms and
+"other species and sequence aspects" of the curation (his list is not with us yet); "we have to update the
+pipeline code to guard this as well, and also do selective manual inspections". Today the build grades only the
+lifespan value (`lifespan_quality`) and carries flags on 50 species; nothing grades the naming, the match of a
+lifespan record to a species, or the sequence record, and the analyses' default dataset filters on none of them.
+
+1. An independent audit of build 2 over all species (names against NCBI, each lifespan record's own name against
+   the row, each RefSeq record's organism against the row, incomplete or odd genomes, the retirements and
+   renames, and the failure modes known from public databases: chimeric or misidentified mitogenomes, nuclear
+   copies, splits and lumps, values copied between sources). Running since 2026-11-18; it reports and changes
+   nothing.
+2. Each finding checked by hand before it counts; then the checks that hold become rules of `bun run data`, each
+   with a test that fails on the code without it, writing review flags and one column, a grade per species with
+   the rule that gave it (usable; usable with a named caveat; left out of regressions and machine learning).
+   An unchecked aspect is said as not checked, never as clean.
+3. A list for inspection by eye: the species the rules cannot settle, drawn by rule (every species graded down,
+   and a random draw of the rest per class), with the record, the sources and what to look at. Who inspects is the
+   maintainer's and the first author's to say.
+4. The site's default dataset, the downloads and `mitoage-pipelines`' default dataset take the grade; analyses
+   whose species set changes are named, and rerun where the change can move a result.
+
 ## RM9 — A DOI for each build
 
 **State:** after RM4 · **Owner:** lead
