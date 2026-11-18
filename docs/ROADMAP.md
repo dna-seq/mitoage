@@ -98,7 +98,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** waits until 2026-11-19: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in the design of H21 (mammals and birds). Its pair test ran on 2026-11-17: not detected in birds (41 pairs), not assessed in mammals (6 unsaturated pairs). Its RELAX and aBSREL runs are queued since 2026-11-17 (job 6500930, four tasks at a time, behind the account's CPU limit; 2 of 46 tasks done by 2026-11-18); looked at again that day, with the Coevol chains of step 4. Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
+**State:** waits until 2026-11-20: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in the design of H21 (mammals and birds). Its pair test ran on 2026-11-17: not detected in birds (41 pairs), not assessed in mammals (6 unsaturated pairs). Its RELAX and aBSREL runs are queued since 2026-11-17 (job 6500930, four tasks at a time, behind the account's CPU limit; 29 of 46 tasks done by 2026-11-19); looked at again that day, with the Coevol chains of step 4. Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
@@ -148,7 +148,7 @@ literature. Reported in `#mitoalignments`; nothing goes on the site before the m
 
 ## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
 
-**State:** waits until 2026-11-19: the cluster is at its CPU cap (the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
+**State:** waits until 2026-11-20: the cluster is at its CPU cap (the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
 
 The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
 can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
@@ -171,7 +171,7 @@ Reported in `#mitoage`; nothing goes on the site before the maintainer has seen 
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** waits until 2026-11-19: the cluster is at its CPU cap and the maintainer said on 2026-11-16 to wait ("so far we are hitting cpu capp on the cluster"). Left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
+**State:** waits until 2026-11-20: the cluster is at its CPU cap and the maintainer said on 2026-11-16 to wait ("so far we are hitting cpu capp on the cluster"). Left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
