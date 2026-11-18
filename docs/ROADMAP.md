@@ -32,14 +32,16 @@ The priming's weekly look for a release newer than each pin; the dates and findi
 
 ## RM8 — Detect possible duplicate species
 
-**State:** unattended · **Owner:** lead
+**State:** waits until 2026-11-19: the data build with the rule by names is queued behind the account's CPU cap · **Owner:** lead
 
 The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
 Done on 2026-11-17: the rule by sequence, `bun run duplicates`, which lists 12 pairs of one genus with nearly
 identical protein genes (changelog; `docs/analyses/possible-duplicates/`). It does not find the three hand
-pairs, whose sequences differ. Left: the rule by names (two names one taxonomy treats as synonyms, in NCBI or
-FishBase), inside `bun run data`, reporting into the review list and never merging; and what the build does
-with the 12 pairs by sequence (a review flag at most), which is the maintainer's to say.
+pairs, whose sequences differ. Done on 2026-11-18: the rule by names (two names one taxonomy treats as one
+species, in NCBI, FishBase or SeaLifeBase), inside `bun run data`, reporting into the review list and never
+merging (changelog). Left: the build's output with that rule, as its own commit, with the review counts of
+`docs/BUILD2_REPORT.md`; and what the build does with the 12 pairs by sequence (a review flag at most), which
+is the maintainer's to say.
 
 ## RM9 — A DOI for each build
 
