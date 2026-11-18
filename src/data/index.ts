@@ -32,6 +32,8 @@ import {
   type BuildInfo,
   type CodonUsage,
   type Correlation,
+  CONFIDENCE_LEVELS,
+  type ConfidenceLevel,
   type CorrelationDataset,
   type DataApi,
   type FeatureDef,
@@ -148,6 +150,11 @@ function speciesOf(r: Row): Species {
     reviewFlags: list(r["review_flags"]),
     changeKinds: list(r["change_kinds"]),
   };
+  const level = strOrNull(r["data_confidence"]);
+  if (level !== null) {
+    if (!(CONFIDENCE_LEVELS as readonly string[]).includes(level)) throw new Error(`species ${s.slug}: unknown data_confidence "${level}"`);
+    s.confidence = { level: level as ConfidenceLevel, reasons: list(r["data_confidence_reasons"]) };
+  }
   const p = provenanceOf(r);
   if (p) s.provenance = p;
   if (r["lifespan_source"] !== null && r["lifespan_source"] !== undefined) {

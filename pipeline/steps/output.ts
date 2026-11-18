@@ -193,6 +193,8 @@ export function speciesColumns(species: Species[], extra: Map<number, SpeciesExt
     col("previous_scientific_names", "STRING", (s) => list(s.previousScientificNames)),
     col("retired_reason", "STRING", (s) => s.retiredReason ?? null),
     col("review_flags", "STRING", (s) => list(s.reviewFlags)),
+    col("data_confidence", "STRING", (s) => s.confidence?.level ?? null),
+    col("data_confidence_reasons", "STRING", (s) => list(s.confidence?.reasons)),
     col("change_kinds", "STRING", (s) => list(s.changeKinds)),
     ...provenanceColumns(species.map((s) => s.provenance)),
   ];

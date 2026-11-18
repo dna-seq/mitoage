@@ -33,6 +33,8 @@ import { buildExtended, type StructureRow } from "./steps/extended";
 import { PUBLIC_DATA_DIR, writeGenerated, writePublic } from "./steps/output";
 import { buildPublicReadme } from "./steps/readme";
 import { classifyRelease } from "./steps/refseq";
+import { SEQUENCE_AUDIT } from "./curation/sequence-audit";
+import { CONFIDENCE_LEVELS, confidenceOfAll } from "./steps/confidence";
 import { buildCodonUsage, buildRegionStats, computeNonCoding, fixCsvLabels } from "./steps/regions";
 import { buildTaxonomyTree, flattenTaxa, uniqueSpeciesSlugs } from "./steps/taxonomy";
 import { validateGenerated } from "./validate";
@@ -183,6 +185,17 @@ const statusCounts: Partial<Record<RecordStatus, number>> = {};
 for (const s of b2.species) statusCounts[s.provenance!.recordStatus] = (statusCounts[s.provenance!.recordStatus] ?? 0) + 1;
 console.log(`  ${b2.species.length} species ${JSON.stringify(statusCounts)}; ${b2.changelog.length} changelog rows; ${b2.observations.length} lifespan observations; ${b2.review.length} review items; ${JSON.stringify({ ...b2.report, contigOnlyFetched: (b2.report["contigOnlyFetched"] as string[]).length })}`);
 
+step("Confidence level of every record");
+{
+  const levels = confidenceOfAll(b2.species, b2.features, b2.stats, b2.observations, SEQUENCE_AUDIT);
+  for (const s of b2.species) s.confidence = levels.get(s.id)!;
+  const used = new Set(b2.species.map((s) => s.refseq));
+  const lapsed = SEQUENCE_AUDIT.filter((f) => !used.has(f.refseq)).map((f) => f.refseq);
+  const n = (l: string) => b2.species.filter((s) => s.confidence!.level === l).length;
+  console.log(`  ${CONFIDENCE_LEVELS.map((l) => `${l} ${n(l)}`).join(", ")}${lapsed.length ? `; ${lapsed.length} audit findings apply to no record of this build: ${lapsed.join(", ")}` : ""}`);
+  notes.push(`Confidence level of the records (${CONFIDENCE_LEVELS.map((l) => `${l} ${n(l)}`).join(", ")}): the level and its reasons are in species.data_confidence and data_confidence_reasons; a record of the level "unreliable" is in no correlation dataset.`);
+}
+
 // ================================================================== phylogeny and taxonomy
 let dated: DatedTree | null = null;
 if (process.env["MITOAGE_SKIP_TREE"]) {
@@ -224,7 +237,7 @@ notes.push(
 );
 const datasets = (["default", "anage_only"] as const).map((d) => ({
   dataset: d,
-  filters: "record_status != retired; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)",
+  filters: "record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)",
   lifespanSources: d === "default" ? ["AnAge", "FishBase", "SeaLifeBase", "EURING", "USGS_BBL"] : ["AnAge"],
   species: datasetMembers(b2.species, d).length,
 }));

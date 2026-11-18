@@ -42,13 +42,15 @@ export function traitValue(s: Species, key: TraitKey): number | null {
 export const log10OrNull = (v: number | null): number | null => (v !== null && v > 0 ? Math.log10(v) : null);
 
 /**
- * Whether a species belongs to a correlation dataset. Retired species never do. "default": the
+ * Whether a species belongs to a correlation dataset. Retired species never do, nor does one whose record is
+ * of the confidence level "unreliable" (its sequence is not this species' genome as it stands). "default": the
  * lifespan is neither estimated nor of low or questionable quality, from any source; "anage_only":
  * the same, with the lifespan from AnAge. A species without lifespan metadata (a build 1 file) is
  * in "default" only.
  */
 export function inDataset(s: Species, d: CorrelationDataset): boolean {
   if (s.provenance?.recordStatus === "retired") return false;
+  if (s.confidence?.level === "unreliable") return false;
   const l = s.lifespan;
   if (!l) return d === "default";
   if (l.recordType === "estimated" || l.quality === "low" || l.quality === "questionable") return false;

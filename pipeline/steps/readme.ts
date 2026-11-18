@@ -1,5 +1,6 @@
 /** public/data/README.md describing the downloadable files. */
 import type { BuildInfo } from "../../src/data/schema";
+import { CONFIDENCE_LEVELS, CONFIDENCE_REASONS, NOT_CHECKED } from "./confidence";
 
 export function buildPublicReadme(info: BuildInfo): string {
   const sources = info.sources.map((s) => `- ${s.name}, ${s.version}: ${s.url} (${s.license})`).join("\n");
@@ -45,6 +46,14 @@ FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its \`lifes
   when none is recorded yet. \`gene_annotated_by_mitoage:\` marks a gene intact in the record's sequence but not annotated
   there, which the build adds from a hand-checked list (\`pipeline/sources/gene-annotation.ts\`; the changelog row,
   \`diff_class\` annotation_patch, says how it was checked).
+
+- \`data_confidence\`: how far the record can be relied on, one of ${CONFIDENCE_LEVELS.join(", ")}; \`data_confidence_reasons\`
+  (\`; \`-separated) says why. No row is removed for its level; a record of the level unreliable is in no correlation
+  dataset. unreliable: the record is retired, or its sequence is not this species' genome as it stands. low: the
+  lifespan value is weak (estimated, or rated low or questionable by its source); the mitochondrial data are not in
+  question. caveat: usable, with the caveat named. The reasons:
+${Object.entries(CONFIDENCE_REASONS).map(([k, v]) => `  - \`${k}\` (${v.level}): ${v.text}`).join("\n")}
+  Not checked by any rule, so "high" does not vouch for it: ${NOT_CHECKED.join("; ")}.
 
 ### region_stats.parquet (one row per species and region)
 - \`species_id\`, \`slug\`, \`region\`: total_mtDNA, total_pc (all protein-coding genes, overlaps counted once), total_rRNA,

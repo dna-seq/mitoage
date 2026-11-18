@@ -4,6 +4,19 @@ Newest first.
 
 ## Unreleased
 
+- **A confidence level for every record, in the data pipeline** (2026-11-19, RM25). `bun run data` now gives each
+  species one of four levels, with the reasons, in two new columns of the species table, `data_confidence` and
+  `data_confidence_reasons`: high; caveat (usable, the caveat named: a subspecies' record, a ringing recovery, another
+  source's lifespan at least 1.5 times higher, a tiny sample, 50 or more ambiguous bases, a possible duplicate, a
+  missing gene); low (the lifespan is estimated, or rated low or questionable); unreliable (retired; the sequence is
+  another species', a chimera, one genome under several names or truncated; the record is deposited as the reverse
+  complement; no rRNA gene). No row is removed for its level. The records the audit found wrong by their sequence are
+  a list a person read, `pipeline/curation/sequence-audit.ts` (17 records, each with its evidence, each holding for
+  one accession.version); the other reasons are computed. **A record of the level unreliable is in no correlation
+  dataset any more**, so the default dataset loses the species the audit named and the correlations move with it.
+  The downloads' README lists the reasons and what no rule checks. `pipeline/steps/confidence.ts`; 15 tests, each
+  of 32 deliberate breaks of the rules caught. This commit is the code; the build's output follows as its own
+  commit. The site does not show the level yet.
 - **A curation audit of build 2** (2026-11-18, RM25). After the 2015 database's first author reported mistakes in
   the curation, an independent agent checked every species against the pinned sources and changed nothing;
   `docs/analyses/curation-audit-2026-11-18/` has its verdict and a table with one row per species, one column per

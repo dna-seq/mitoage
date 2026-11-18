@@ -131,7 +131,13 @@ export interface Species {
   reviewFlags?: string[];
   /** Kinds of change against build 1 (genome, annotation, lifespan, name, taxonomy, common_name, ncbi_taxid). */
   changeKinds?: string[];
+  /** How far the record can be relied on, with the reasons (pipeline/steps/confidence.ts). */
+  confidence?: { level: ConfidenceLevel; reasons: string[] };
 }
+
+/** Confidence in a species' record, best first; "unreliable" is not shown by default. */
+export const CONFIDENCE_LEVELS = ["high", "caveat", "low", "unreliable"] as const;
+export type ConfidenceLevel = (typeof CONFIDENCE_LEVELS)[number];
 
 /** Base composition of one region in one species. */
 export interface RegionStats {
