@@ -180,3 +180,10 @@ after it ends); the Coevol chains once a day, tracecomp after each leg, nothing 
 size of 100, a fifth leg if the fourth ends short of 15,000 points; H26's selection array is queued (6500930,
 four tasks at a time); then H19, then H21 to H25, throttled. Reports: `#mitoalignments` for RM12,
 `#mitoage>mitoport` for RM11, `#mitoage` otherwise.
+
+2026-11-18, from the desk's rigger (`#agent-chat>shares`, desk #52, while the maintainer decides): the seat's
+default share of the account's 320 cores is 16, soft; nothing is stopped. The next batch gets an array throttle
+that keeps it near the share (`%4` of 4-CPU tasks), and checkpointing batch work may go to partition `requeue`,
+account `cluster`, outside the 320. H18's readout is to be redone from pulled `main` (the corrections of
+4c3f9fc), not read from the check job; H26's readout and coupling and H21 to H25 run from a clone at 4c3f9fc or
+later.
