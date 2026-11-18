@@ -37,6 +37,7 @@ export const CONFIDENCE_REASONS: Record<string, { level: Exclude<ConfidenceLevel
   lifespan_questionable: { level: "low", text: "the source rates the lifespan record questionable" },
   lifespan_ungraded: { level: "low", text: "the lifespan record has no source and no quality" },
   subspecies_record: { level: "caveat", text: "the genome is a subspecies' or a form's record standing for the species" },
+  sequence_errors: { level: "caveat", text: "sequencing errors or nuclear copies are reported for the record, or genes do not translate as annotated" },
   specimen_doubt: { level: "caveat", text: "the record's qualifiers name another species' breed or form" },
   ringing_record: { level: "caveat", text: "the lifespan is a ringing recovery, a minimum age in the wild" },
   other_source_higher: { level: "caveat", text: "another source reports a lifespan at least 1.5 times higher" },
@@ -63,6 +64,7 @@ const FINDING_REASON: Record<SequenceFindingKind, string> = {
   chimera: "sequence_chimera",
   one_genome_names: "sequence_one_genome_names",
   truncated: "sequence_truncated",
+  sequence_errors: "sequence_errors",
   specimen_doubt: "specimen_doubt",
 };
 

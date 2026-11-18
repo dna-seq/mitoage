@@ -4,6 +4,14 @@ Newest first.
 
 ## Unreleased
 
+- **The curation audit's second round, and the list of audited records after it** (2026-11-19, RM25). The auditor
+  compared each record of a near-identical pair with independent sequences of each named species, matched the
+  records against published lists of problematic mitogenomes, translated every protein gene, and checked names
+  against the class authorities and lifespans against their source records
+  (`docs/analyses/curation-audit-2026-11-18/`, "Second round"). `pipeline/curation/sequence-audit.ts` now names 44
+  records: three of the first round are lifted (*Vipera berus*, *Carcharhinus acronotus*, *Agapornis lilianae*: their
+  partners carry the wrong name), and 30 are added, 26 of them unreliable and 4 with a new caveat, `sequence_errors`
+  (sequencing errors or nuclear copies reported, or genes that do not translate as annotated).
 - **A confidence level for every record, in the data pipeline** (2026-11-19, RM25). `bun run data` now gives each
   species one of four levels, with the reasons, in two new columns of the species table, `data_confidence` and
   `data_confidence_reasons`: high; caveat (usable, the caveat named: a subspecies' record, a ringing recovery, another

@@ -56,6 +56,7 @@ describe("confidence level of a record", () => {
       expect(of(species(), { findings: [{ refseq: "NC_000001.1", kind: kind as SequenceFinding["kind"], evidence: "", found: "" }] })).toEqual({ level: "unreliable", reasons: [reason] });
     }
     expect(of(species(), { findings: [{ refseq: "NC_000001.1", kind: "specimen_doubt", evidence: "", found: "" }] })).toEqual({ level: "caveat", reasons: ["specimen_doubt"] });
+    expect(of(species(), { findings: [{ refseq: "NC_000001.1", kind: "sequence_errors", evidence: "", found: "" }] })).toEqual({ level: "caveat", reasons: ["sequence_errors"] });
   });
 
   test("an audit finding holds for its accession.version only", () => {
