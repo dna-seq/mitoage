@@ -22,6 +22,9 @@ const { scope, clade, id = "lifespan-correlates", limit = 10 } = Astro.props;
 const all = getCorrelations({ scope, trait: "maxLongevityYears" });
 const tested = all.filter((r) => Number.isFinite(r.spearmanRho));
 const rows: Correlation[] = [...tested].sort((a, b) => Math.abs(b.spearmanRho) - Math.abs(a.spearmanRho)).slice(0, limit);
+// The same correlations on the species whose record has no known caveat (the "high_confidence" dataset).
+const high = new Map(getCorrelations({ scope, trait: "maxLongevityYears", dataset: "high_confidence" }).map((r) => [r.featureKey, r]));
+const nHigh = Math.max(0, ...rows.map((r) => high.get(r.featureKey)?.n ?? 0));
 const defs = new Map<string, FeatureDef>(getFeatureDefs().map((d) => [d.key, d]));
 const nMax = Math.max(0, ...rows.map((r) => r.n));
 const significant = tested.filter((r) => r.qValue < 0.05).length;
@@ -73,6 +76,7 @@ const barStyle = (rho: number) => {
           <th scope="col" class="is-num"><abbr title="Pearson correlation">r</abbr></th>
           <th scope="col" class="corr__rho-h"><abbr title="Spearman rank correlation">ρ</abbr></th>
           <th scope="col" class="is-num"><abbr title="Benjamini–Hochberg q-value">q</abbr></th>
+          <th scope="col" class="is-num"><abbr title="Spearman rank correlation on the species whose record has high confidence only">ρ, high conf.</abbr></th>
           <th scope="col" class="is-num"><abbr title="Correlation of phylogenetically independent contrasts">PIC r</abbr></th>
           <th scope="col" class="is-num"><abbr title="Partial correlation controlling for log10 adult body mass">Partial r</abbr></th>
         </tr>
@@ -83,6 +87,8 @@ const barStyle = (rho: number) => {
             const def = defs.get(r.featureKey);
             const sig = r.qValue < 0.05;
             const picSig = r.picPValue !== null && r.picPValue < 0.05;
+            const h = high.get(r.featureKey);
+            const highSig = h !== undefined && h.qValue < 0.05;
             const partialSig = r.partialPValue !== null && r.partialPValue !== undefined && r.partialPValue < 0.05;
             return (
               <tr>
@@ -104,6 +110,9 @@ const barStyle = (rho: number) => {
                     {sig && <span class="visually-hidden"> (significant)</span>}
                   </span>
                 </td>
+                <td class:list={["is-num", { "is-strong": highSig }]} data-label="ρ, high confidence" title={h ? `n = ${fmtInt(h.n)}` : "Too few species of high confidence in this group"}>
+                  {fmtR(h?.spearmanRho)}
+                </td>
                 <td class:list={["is-num", { "is-strong": picSig }]} data-label="PIC r">{fmtR(r.picR)}</td>
                 <td class:list={["is-num", { "is-strong": partialSig }]} data-label="Partial r">{fmtR(r.partialR)}</td>
               </tr>
@@ -123,6 +132,11 @@ const barStyle = (rho: number) => {
       <b>PIC r</b> uses phylogenetically independent contrasts, so related species do not count as independent
       evidence.{" "}<b>Partial r</b> holds log<sub>10</sub> body mass constant, because big animals live longer. Bold
       values have p &lt; 0.05. Select a feature to plot it against lifespan.
+    </p>
+    <p>
+      <b>ρ, high conf.</b> is the same rank correlation on the species whose record has high confidence only{nHigh > 0 ? ` (up to ${fmtInt(nHigh)} here)` : ""}:
+      no caveat on the genome record or on the lifespan value. Bold when its own q is below 0.05. A dash means too few
+      such species in this group.
     </p>
   </div>
 </section>

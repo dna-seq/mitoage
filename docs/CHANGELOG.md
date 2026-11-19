@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The lifespan correlation tables show the high-confidence value beside the default one** (2026-11-19, RM25).
+  "What tracks lifespan in ..." on the taxon pages has a new column, the rank correlation on the species whose
+  record has high confidence only, bold when its own q is below 0.05, with the number of such species in the
+  note. In mammals the ten strongest correlations are the same to within 0.02 on 537 of the 610 species. The gene
+  pages' correlation tables do not have the column yet.
 - **The build's output with the strand rule and the third dataset** (2026-11-19, RM25). `bun run data` on the
   cluster (Slurm job 6534613, from the code of 3bc1072): the region statistics of the three reverse-complemented
   records are on the conventional strand, and those three species are caveat instead of unreliable (high 1,896,
