@@ -30,16 +30,6 @@ now resolves to another species (c), a nullable maximum lifespan (b). Each answe
 The priming's weekly look for a release newer than each pin; the dates and findings are in
 `docs/seats/LEAD_NOTES.md`. A newer release becomes its own item.
 
-## RM8 — Detect possible duplicate species
-
-**State:** blocked: desk #54 · **Owner:** lead
-
-The three pairs flagged in build 2 come from a hand audit (`POSSIBLE_DUPLICATES`, open questions, item h).
-Done: the rule by sequence, `bun run duplicates`, which lists 12 pairs of one genus with nearly identical
-protein genes (`docs/analyses/possible-duplicates/`), and the rule by names inside `bun run data`, which lists
-one pair in the review list, one of the three hand pairs (changelog, 2026-11-17 and 2026-11-18). Left: what the
-build does with the 12 pairs by sequence (nothing, or a review flag), which is the maintainer's to say.
-
 ## RM25 — A data-quality grade for every species, and the checks that give it
 
 **State:** urgent · **Owner:** lead

@@ -4,6 +4,13 @@ Newest first.
 
 ## Unreleased
 
+- **The build's output with the confidence level** (2026-11-19, RM25). `bun run data` on the cluster (Slurm job
+  6520036, from the code of 4620b4d) writes the two new columns of the species table: high 1,896, caveat 275, low
+  111, unreliable 62. The `default` correlation dataset is 2,171 species (was 2,211) and `anage_only` 1,678 (was
+  1,710), since an unreliable record is in no dataset. No other table changed. RM8 (possible duplicate species)
+  leaves the roadmap: its two rules are in, and what the build does with near-identical pairs is now the confidence
+  level's (a record that independent sequences assign to another species is unreliable; two real close species
+  stay), so the desk question on it was withdrawn.
 - **The curation audit's second round, and the list of audited records after it** (2026-11-19, RM25). The auditor
   compared each record of a near-identical pair with independent sequences of each named species, matched the
   records against published lists of problematic mitogenomes, translated every protein gene, and checked names
