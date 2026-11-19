@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The build's output with the strand rule and the third dataset** (2026-11-19, RM25). `bun run data` on the
+  cluster (Slurm job 6534613, from the code of 3bc1072): the region statistics of the three reverse-complemented
+  records are on the conventional strand, and those three species are caveat instead of unreliable (high 1,896,
+  caveat 278, low 111, unreliable 59). The correlation datasets: `default` 2,174 species, `anage_only` 1,681,
+  `high_confidence` 1,896. The test on the committed build passes again.
 - **Records deposited as the reverse complement are read on the conventional strand** (2026-11-19, RM25, and
   the strand point of RM23). Three vertebrate records (*Pseudocaranx dentex*, *Dasycercus cristicauda*,
   *Pseudoscaphirhynchus hermanni*) are deposited on the other strand, so their GC and AT balance had the opposite

@@ -51,7 +51,7 @@ FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its `lifesp
   - `sequence_one_genome_names` (unreliable): distinct species carry this same genome, and which name is right is not settled
   - `sequence_truncated` (unreliable): the record is not a complete genome
   - `record_other_species` (unreliable): the cited record now belongs to another species at NCBI
-  - `reverse_complement` (unreliable): the record is deposited as the reverse complement, so strand-dependent values (skews) have the opposite sign
+  - `reverse_complement` (caveat): the record is deposited as the reverse complement; base counts and skews are given on the conventional strand, coordinates and gene strands are the record's
   - `no_rrna` (unreliable): no rRNA gene is annotated in the record
   - `lifespan_estimated` (low): the lifespan is an estimate from a growth study, not an observed age
   - `lifespan_low_quality` (low): the source rates the lifespan record low
@@ -67,7 +67,7 @@ FishBase; Palomares & Pauly, SeaLifeBase). Every species row carries its `lifesp
   - `possible_duplicate` (caveat): the species may be the same as another in the database
   - `source_match_in_review` (caveat): the match of the lifespan record to this species is under review
   - `gene_missing` (caveat): a protein gene is missing from the record's annotation
-  Not checked by any rule, so "high" does not vouch for it: names against authorities other than NCBI; sequence identity to other species, beyond the records listed in pipeline/curation/sequence-audit.ts; internal stop codons and nuclear copies; the lifespan value against its primary reference.
+  Not checked by any rule, so "high" does not vouch for it: names against authorities other than NCBI; sequence identity to other species, beyond the records an audit examined; internal stop codons and nuclear copies; the lifespan value against its primary reference.
 
 ### region_stats.parquet (one row per species and region)
 - `species_id`, `slug`, `region`: total_mtDNA, total_pc (all protein-coding genes, overlaps counted once), total_rRNA,
@@ -146,7 +146,7 @@ complement-labelled base columns; build1/README.md lists them and the SHA-256 of
 
 ### Computed during the site build (not stored here)
 `correlations.parquet` and `explorer.json` are derived from these files when the site is built and are served
-next to them. Correlation datasets: `default` (2171 species; lifespan sources AnAge, FishBase, SeaLifeBase, EURING, USGS_BBL; record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)); `anage_only` (1678 species; lifespan sources AnAge; record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)).
+next to them. Correlation datasets: `default` (2174 species; lifespan sources AnAge, FishBase, SeaLifeBase, EURING, USGS_BBL; record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)); `anage_only` (1681 species; lifespan sources AnAge; record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)); `high_confidence` (1896 species; lifespan sources AnAge, FishBase, SeaLifeBase, EURING, USGS_BBL; record_status != retired; data_confidence = high; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)).
 
 ## Sources
 - MitoAge build 1, Build 1 (2015-07-01), full database CSV export (frozen in public/data/build1/): https://www.mitoage.info/ (Free for all purposes provided MitoAge is cited (Toren et al. 2016, Nucleic Acids Res 44:D1262-D1265))
@@ -164,7 +164,7 @@ next to them. Correlation datasets: `default` (2171 species; lifespan sources An
 ## Data notes
 - The build 1 CSV export has 923 species but the published release has 922: Loxioides bailleui (HAGRID 1598, NC_025626.1) is excluded: RefSeq NC_025626.1 is titled 'complete genome' but is only 9,243 bp (about 7 kb short of a complete avian mtDNA).
 - 6 records used from release 237 (mitochondrion.1.genomic.gbff.gz, file date 2026-09-03) carry only a CONTIG line (no sequence) in the release file; their sequence and features were taken from the same accession.version retrieved with NCBI efetch (rettype gbwithparts), checked to have the release's length: NC_053523.1, NC_054728.1, NC_059324.1, NC_059325.1, NC_080739.1, NC_091244.1.
-- Confidence level of the records (high 1896, caveat 275, low 111, unreliable 62): the level and its reasons are in species.data_confidence and data_confidence_reasons; a record of the level "unreliable" is in no correlation dataset.
+- Confidence level of the records (high 1896, caveat 278, low 111, unreliable 59): the level and its reasons are in species.data_confidence and data_confidence_reasons; a record of the level "unreliable" is in no correlation dataset.
 - Dated tree: topology from the Open Tree of Life synthetic tree (opentree16.1, induced subtree of 2314 of 2344 species, polytomies kept); node ages from the TimeTree 5 API for 2054 of 2238 internal nodes; 184 undated nodes placed midway between parent and oldest child, 61 ages raised to keep parents older than children. 30 species are not in the tree: their PIC contribution is unknown (they are left out of PIC, not given values). PIC (Felsenstein 1985) correlations are computed during the site build on this tree.
 - Build 2 (2026-11-13): 2344 species = 922 from build 1 + 1422 new. Record status: updated 465, original 392, renamed 46, retired 19, new 1422. Every value of a build 1 species that changed is in changelog.parquet with its old value and the reason; build 1 itself is frozen in build1/.
 - Genome values (region statistics, codon usage, genome features) of every live species are computed from the RefSeq record in release 237 (mitochondrion.1.genomic.gbff.gz, file date 2026-09-03); for build 1 species that is the same accession.version they cited (or its newer version, or a live successor when the record was suppressed). Retired species keep their build 1 values.
