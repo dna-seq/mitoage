@@ -36,7 +36,7 @@ export const CONFIDENCE_REASONS: Record<string, { level: Exclude<ConfidenceLevel
 /** What no rule looks at; said wherever "high" is shown, so it is not read as "checked in every respect". */
 export const NOT_CHECKED = [
   "names against authorities other than NCBI",
-  "sequence identity to other species, beyond the records listed in pipeline/curation/sequence-audit.ts",
+  "sequence identity to other species, beyond the records an audit examined",
   "internal stop codons and nuclear copies",
   "the lifespan value against its primary reference",
 ];
