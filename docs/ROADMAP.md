@@ -56,9 +56,10 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    them.
 2. Maximum lifespan and sampling effort: sample size and the kind of record are reasons already where they are
    extreme (a tiny sample, a ringing recovery, another source 1.5 times higher); the sensitivity runs of the
-   regressions are H27 of `dna-seq/mitoage-pipelines`, whose entry is written and whose code is not. H27 reads the
-   species table from the Hugging Face dataset, so the rebuilt data has to be uploaded there first, which waits on
-   the maintainer's word (desk #66).
+   regressions are H27 of `dna-seq/mitoage-pipelines`, whose entry is written and whose code is not. The rebuilt data is on
+   Hugging Face since 2026-11-19 (revision 446dad6), so H27's runs can start. The maintainer, the same day: "maybe
+   for 3 we switch to more reliable sources than anage": which source gives a species its lifespan when several
+   have one is his call, and H27 shows first how much the choice moves.
 3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
    beside it; the selector's choice is kept in the page address.
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where

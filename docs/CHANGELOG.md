@@ -4,6 +4,11 @@ Newest first.
 
 ## Unreleased
 
+- **The build with the confidence level is on Hugging Face** (2026-11-19, RM25; the maintainer: "yes, you must
+  upload"). `bun run hf` packaged the committed build (e214d8e) and it was uploaded to `longevity-genie/mitoage` as
+  revision `446dad61883937075ec0c7e1f3f8135f2962a1cf`. Checked after the upload: the species table downloaded at
+  that revision is the committed one, row for row. Earlier revisions stay reachable by their commit; the MCP
+  server's pinned revision is not changed here.
 - **The gene pages' correlation tables have the high-confidence column too** (2026-11-19, RM25): the rank
   correlation of each measure of a gene with lifespan, per group, on high-confidence records only. On both kinds of
   table the note now says what makes the value bold: q below 0.05 on those species, computed as in the q column,
