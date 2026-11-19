@@ -135,7 +135,7 @@ const barStyle = (rho: number) => {
     </p>
     <p>
       <b>ρ, high conf.</b> is the same rank correlation on the species whose record has high confidence only{nHigh > 0 ? ` (up to ${fmtInt(nHigh)} here)` : ""}:
-      no caveat on the genome record or on the lifespan value. Bold when its own q is below 0.05. A dash means too few
+      no caveat on the genome record or on the lifespan value. Bold when q, computed as in the q column (on the Pearson correlation), is below 0.05 on those species. A dash means too few
       such species in this group.
     </p>
   </div>

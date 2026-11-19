@@ -95,6 +95,9 @@ const bar = (r: number) => {
                         <abbr title="Benjamini–Hochberg adjusted p-value">q</abbr>
                       </th>
                       <th scope="col" class="is-num">
+                        <abbr title="Spearman rank correlation on the species whose record has high confidence only; bold when q, computed as in the q column, is below 0.05 on those species">ρ, high conf.</abbr>
+                      </th>
+                      <th scope="col" class="is-num">
                         <abbr title="Correlation of phylogenetically independent contrasts">PIC r</abbr>
                       </th>
                       <th scope="col" class="is-num">
@@ -132,6 +135,9 @@ const bar = (r: number) => {
                               fmtQ(r.qValue)
                             )}
                           </td>
+                          <td class="is-num" title={m.high[r.scope] ? `n = ${fmtInt(m.high[r.scope]!.n)}` : "Too few species of high confidence in this group"}>
+                            {m.high[r.scope] && sig(m.high[r.scope]!.q) ? <b>{r2(m.high[r.scope]!.rho)}</b> : r2(m.high[r.scope]?.rho)}
+                          </td>
                           <td class="is-num">{r2(r.picR)}</td>
                           <td class="is-num">{r2(r.partialR)}</td>
                           <td class="corr__go">
@@ -165,6 +171,10 @@ const bar = (r: number) => {
     <div>
       <dt>q</dt>
       <dd>p-value adjusted for testing every mtDNA feature in the same group (Benjamini–Hochberg); rows with q &lt; 0.05 are highlighted.</dd>
+    </div>
+    <div>
+      <dt>ρ, high conf.</dt>
+      <dd>Spearman ρ on the species whose record has high confidence only (no caveat on the genome record or the lifespan value); bold when q, computed as in the q column (on the Pearson correlation), is below 0.05 on those species; a dash when the group has too few of them.</dd>
     </div>
     <div>
       <dt>PIC r</dt>

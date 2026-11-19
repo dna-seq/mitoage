@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **The gene pages' correlation tables have the high-confidence column too** (2026-11-19, RM25): the rank
+  correlation of each measure of a gene with lifespan, per group, on high-confidence records only. On both kinds of
+  table the note now says what makes the value bold: q below 0.05 on those species, computed as in the q column,
+  which is on the Pearson correlation.
 - **The lifespan correlation tables show the high-confidence value beside the default one** (2026-11-19, RM25).
   "What tracks lifespan in ..." on the taxon pages has a new column, the rank correlation on the species whose
   record has high confidence only, bold when its own q is below 0.05, with the number of such species in the

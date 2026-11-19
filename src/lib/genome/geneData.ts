@@ -133,6 +133,8 @@ export interface MeasureCorrelations {
   long: string;
   featureKey: string;
   rows: Correlation[];
+  /** The same correlation on high-confidence records only, by scope; a scope with too few such species is absent. */
+  high: Record<string, { rho: number; q: number; n: number }>;
 }
 
 const scopeRank = (scope: string): number => (scope === "all" ? 0 : scope.startsWith("class:") ? 1 : 2);
@@ -143,7 +145,9 @@ export const geneCorrelations = (region: Region): MeasureCorrelations[] =>
     const rows = getCorrelations({ featureKey, trait: "maxLongevityYears" }).sort(
       (a, b) => scopeRank(a.scope) - scopeRank(b.scope) || b.n - a.n,
     );
-    return { prefix: m.prefix, label: m.label, long: m.long, featureKey, rows };
+    const high: MeasureCorrelations["high"] = {};
+    for (const h of getCorrelations({ featureKey, trait: "maxLongevityYears", dataset: "high_confidence" })) high[h.scope] = { rho: h.spearmanRho, q: h.qValue, n: h.n };
+    return { prefix: m.prefix, label: m.label, long: m.long, featureKey, rows, high };
   }).filter((m) => m.rows.length > 0);
 
 // ---------------------------------------------------------------- codon usage
