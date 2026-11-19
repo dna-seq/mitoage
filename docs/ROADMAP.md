@@ -58,7 +58,7 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    extreme (a tiny sample, a ringing recovery, another source 1.5 times higher); the sensitivity runs of the
    regressions are H27 of `dna-seq/mitoage-pipelines`, whose entry is written and whose code is not. H27 reads the
    species table from the Hugging Face dataset, so the rebuilt data has to be uploaded there first, which waits on
-   the maintainer's word (asked 2026-11-19 in the lead's session).
+   the maintainer's word (desk #66).
 3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
    beside it; the selector's choice is kept in the page address.
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
