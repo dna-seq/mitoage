@@ -2,8 +2,9 @@
  * The species list, genome or life-history view. The page renders the first rows at build time;
  * on load the island fetches /species/table.json with every species, so the page stays small.
  */
-import { createSignal, onMount, Show } from "solid-js";
+import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import DataTable, { type Row } from "~/components/ui/DataTable";
+import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, rowsAtLevels } from "~/lib/confidence";
 import {
   SPECIES_COLUMNS,
   SPECIES_SEARCH_KEYS,
@@ -25,6 +26,22 @@ export interface SpeciesListProps {
 export default function SpeciesList(props: SpeciesListProps) {
   const [rows, setRows] = createSignal<Row[]>(props.raw.map((r) => tableRow(TABLE_FIELDS, r)));
   const [state, setState] = createSignal<"loading" | "ready" | "error">("loading");
+  // Which confidence levels are listed: all but the lowest, until the visitor ticks it.
+  const [shown, setShown] = createSignal<ReadonlySet<ConfidenceLevel>>(new Set(DEFAULT_SHOWN_LEVELS));
+  const toggle = (l: ConfidenceLevel) => {
+    const next = new Set(shown());
+    if (next.has(l)) next.delete(l);
+    else next.add(l);
+    setShown(next);
+  };
+  const counts = createMemo(() => {
+    const c: Record<string, number> = {};
+    for (const r of rows()) c[String(r.confidence)] = (c[String(r.confidence)] ?? 0) + 1;
+    return c;
+  });
+  // A row without a level (a build before the level existed) is always listed.
+  const visible = createMemo(() => rowsAtLevels(rows(), (r) => r.confidence, shown()));
+  const hidden = () => rows().length - visible().length;
   onMount(() => {
     fetch(SPECIES_TABLE_URL)
       .then((r) => (r.ok ? (r.json() as Promise<SpeciesTableFile>) : Promise.reject(new Error(`HTTP ${r.status}`))))
@@ -43,10 +60,29 @@ export default function SpeciesList(props: SpeciesListProps) {
             : "Could not load the full list; showing the first rows."}
         </p>
       </Show>
+      <fieldset class="conf-pick">
+        <legend>Confidence in the record</legend>
+        <For each={CONFIDENCE_LEVELS}>
+          {(l) => (
+            <label title={CONFIDENCE_MEANING[l]}>
+              <input type="checkbox" checked={shown().has(l)} onChange={() => toggle(l)} />
+              <span class={`conf conf--${l}`}>{CONFIDENCE_LABEL[l]}</span>
+              <Show when={state() === "ready"}>
+                <span class="conf-pick__count">{(counts()[l] ?? 0).toLocaleString("en-US")}</span>
+              </Show>
+            </label>
+          )}
+        </For>
+        <Show when={state() === "ready" && hidden() > 0}>
+          <p class="conf-pick__note" aria-live="polite">
+            {hidden().toLocaleString("en-US")} species not listed: their level is unticked.
+          </p>
+        </Show>
+      </fieldset>
       <DataTable
         caption={props.view === "genome" ? "Species and their mitochondrial genomes" : "Species and their life history"}
         columns={SPECIES_COLUMNS[props.view]}
-        rows={rows()}
+        rows={visible()}
         initialSort={props.initialSort}
         pageSize={50}
         search={{ keys: SPECIES_SEARCH_KEYS, placeholder: "Filter by name, class, order or family" }}

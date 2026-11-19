@@ -11,6 +11,7 @@
  */
 import { join } from "node:path";
 import type { BuildInfo, GenomeFeature, RecordStatus, Species, Traits } from "../src/data/schema";
+import { CORRELATION_DATASETS } from "../src/data/schema";
 import { round } from "./lib/stats";
 import { ANAGE_URL, type AnAgeEntry, anageObservations, loadAnAge } from "./sources/anage";
 import { loadEuring } from "./sources/euring";
@@ -235,10 +236,10 @@ notes.push(
   `Lifespan: AnAge build 15 always first; when AnAge has no value, fish take FishBase v26.06, aquatic invertebrates SeaLifeBase v26.06 and birds the EURING list of 2023-09-01 then USGS BBL v2025.1. Every value from every source is in lifespan_observations.parquet. Values from FishBase and SeaLifeBase are CC BY-NC 4.0 (non-commercial).`,
   `Class labels follow the build 1 scheme (AnAge build 12-era: Actinopterygii, Reptilia, ...) for every species, so correlation scopes stay comparable with the 2016 paper; AnAge build 15's fish reclassification (Teleostei, ...) is not adopted.`,
 );
-const datasets = (["default", "anage_only"] as const).map((d) => ({
+const datasets = CORRELATION_DATASETS.map((d) => ({
   dataset: d,
-  filters: "record_status != retired; data_confidence != unreliable; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)",
-  lifespanSources: d === "default" ? ["AnAge", "FishBase", "SeaLifeBase", "EURING", "USGS_BBL"] : ["AnAge"],
+  filters: `record_status != retired; data_confidence ${d === "high_confidence" ? "= high" : "!= unreliable"}; lifespan_record_type != estimated; lifespan_quality not in (low, questionable)`,
+  lifespanSources: d === "anage_only" ? ["AnAge"] : ["AnAge", "FishBase", "SeaLifeBase", "EURING", "USGS_BBL"],
   species: datasetMembers(b2.species, d).length,
 }));
 const buildInfo: BuildInfo = {

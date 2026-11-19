@@ -1,4 +1,5 @@
 /** Explorer payload (served as /data/explorer.json, built during the site build). Pure: no Bun APIs. */
+import { CONFIDENCE_LEVELS } from "../../src/data/schema";
 import type { BuildInfo, FeatureDef, Species } from "../../src/data/schema";
 import { roundSig } from "../lib/stats";
 import { TRAIT_KEYS, traitValue } from "./correlations";
@@ -32,6 +33,7 @@ export function buildExplorer(
       class: species.map((s) => classes.indexOf(s.taxonomy.class)),
       order: species.map((s) => orders.indexOf(s.taxonomy.order)),
       family: species.map((s) => families.indexOf(s.taxonomy.family)),
+      confidence: species.map((s) => (s.confidence ? CONFIDENCE_LEVELS.indexOf(s.confidence.level) : -1)),
     },
     traits: Object.fromEntries(TRAIT_KEYS.map((t) => [t, species.map((s) => sig(traitValue(s, t)))])),
     features: keep.map((d) => ({ key: d.key, label: d.label, region: d.region, group: d.group })),

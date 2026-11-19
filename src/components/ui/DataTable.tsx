@@ -30,6 +30,7 @@ import {
   Show,
 } from "solid-js";
 import { basePercents } from "~/lib/composition";
+import { CONFIDENCE_LABEL, CONFIDENCE_MEANING, type ConfidenceLevel } from "~/lib/confidence";
 import { downloadText, toCsv } from "~/lib/csv";
 import { type DownloadNote, downloadFasta } from "~/lib/fastaDownload";
 import { fmtP, fmtR } from "~/lib/explore/format";
@@ -71,8 +72,8 @@ export type ColumnFormat =
 export interface Column {
   key: string;
   label: string;
-  /** text (default), sci (italic name), number, composition ([a,c,g,t] array as a mini bar). */
-  kind?: "text" | "sci" | "number" | "composition";
+  /** text (default), sci (italic name), number, composition ([a,c,g,t] array as a mini bar), level (a confidence level as a coloured mark). */
+  kind?: "text" | "sci" | "number" | "composition" | "level";
   format?: ColumnFormat;
   /** Row key holding a ColumnFormat for this cell, overriding `format` (rows with different units). */
   formatKey?: string;
@@ -565,6 +566,12 @@ export default function DataTable(props: DataTableProps) {
                       const content =
                         c.kind === "composition" ? (
                           <Comp v={v} />
+                        ) : c.kind === "level" ? (
+                          typeof v === "string" && v in CONFIDENCE_LABEL ? (
+                            <span class={`conf conf--${v}`} title={CONFIDENCE_MEANING[v as ConfidenceLevel]}>{CONFIDENCE_LABEL[v as ConfidenceLevel]}</span>
+                          ) : (
+                            "–"
+                          )
                         ) : c.kind === "sci" ? (
                           <i>{formatCell(c, v, r)}</i>
                         ) : (

@@ -138,12 +138,28 @@ describe("confidence level of a record", () => {
     expect(levels.get(2)).toEqual({ level: "caveat", reasons: ["ambiguous_bases", "other_source_higher"] });
   });
 
-  test("an unreliable record is in no correlation dataset; the other levels do not decide membership", () => {
+  test("an unreliable record is in no correlation dataset; high_confidence holds the high records of default only", () => {
     for (const level of CONFIDENCE_LEVELS) {
       const s = species({ confidence: { level, reasons: [] } });
       expect(inDataset(s, "default")).toBe(level !== "unreliable");
       expect(inDataset(s, "anage_only")).toBe(level !== "unreliable");
+      expect(inDataset(s, "high_confidence")).toBe(level === "high");
     }
+    const high: NonNullable<Species["confidence"]> = { level: "high", reasons: [] };
+    // high_confidence is a subset of default: a weak lifespan keeps a record out of both, a non-AnAge source out of neither
+    expect(inDataset(species({ confidence: high, lifespan: lifespan({ quality: "low" }) }), "high_confidence")).toBe(false);
+    expect(inDataset(species({ confidence: high, lifespan: lifespan({ recordType: "estimated" }) }), "high_confidence")).toBe(false);
+    expect(inDataset(species({ confidence: high, lifespan: lifespan({ source: "FishBase" }) }), "high_confidence")).toBe(true);
+    expect(inDataset(species({ confidence: high, lifespan: lifespan({ source: "FishBase" }) }), "anage_only")).toBe(false);
+    expect(inDataset(species({ confidence: high, provenance: { ...species().provenance!, recordStatus: "retired" } }), "high_confidence")).toBe(false);
+    // a species with no lifespan record at all (a build 1 file) is in default only
+    const bare = species();
+    delete bare.lifespan;
+    expect(inDataset(bare, "default")).toBe(true);
+    expect(inDataset(bare, "anage_only")).toBe(false);
+    // a species with no level is in default and not in high_confidence: unknown is not read as high
+    expect(inDataset(species(), "default")).toBe(true);
+    expect(inDataset(species(), "high_confidence")).toBe(false);
   });
 
   test("the audit list names each record once per kind, with evidence and a date", () => {

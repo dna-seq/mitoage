@@ -12,6 +12,7 @@
  */
 import type { GenomeFeature, LifespanObservation, RegionStats, Species } from "../../src/data/schema";
 import { CONFIDENCE_LEVELS, PROTEIN_GENES, type ConfidenceLevel } from "../../src/data/schema";
+import { CONFIDENCE_REASONS, NOT_CHECKED } from "../../src/lib/confidence";
 import type { SequenceFinding, SequenceFindingKind } from "../curation/sequence-audit";
 
 export { CONFIDENCE_LEVELS, type ConfidenceLevel };
@@ -22,39 +23,7 @@ export interface Confidence {
   reasons: string[];
 }
 
-/** Each reason's level and what it means, for the README, the site and the tests. */
-export const CONFIDENCE_REASONS: Record<string, { level: Exclude<ConfidenceLevel, "high">; text: string }> = {
-  retired: { level: "unreliable", text: "the record is retired" },
-  sequence_other_species: { level: "unreliable", text: "the record's protein genes are another species'" },
-  sequence_chimera: { level: "unreliable", text: "the record joins genes of two unrelated species" },
-  sequence_one_genome_names: { level: "unreliable", text: "distinct species carry this same genome, and which name is right is not settled" },
-  sequence_truncated: { level: "unreliable", text: "the record is not a complete genome" },
-  record_other_species: { level: "unreliable", text: "the cited record now belongs to another species at NCBI" },
-  reverse_complement: { level: "unreliable", text: "the record is deposited as the reverse complement, so strand-dependent values (skews) have the opposite sign" },
-  no_rrna: { level: "unreliable", text: "no rRNA gene is annotated in the record" },
-  lifespan_estimated: { level: "low", text: "the lifespan is an estimate from a growth study, not an observed age" },
-  lifespan_low_quality: { level: "low", text: "the source rates the lifespan record low" },
-  lifespan_questionable: { level: "low", text: "the source rates the lifespan record questionable" },
-  lifespan_ungraded: { level: "low", text: "the lifespan record has no source and no quality" },
-  subspecies_record: { level: "caveat", text: "the genome is a subspecies' or a form's record standing for the species" },
-  sequence_errors: { level: "caveat", text: "sequencing errors or nuclear copies are reported for the record, or genes do not translate as annotated" },
-  specimen_doubt: { level: "caveat", text: "the record's qualifiers name another species' breed or form" },
-  ringing_record: { level: "caveat", text: "the lifespan is a ringing recovery, a minimum age in the wild" },
-  other_source_higher: { level: "caveat", text: "another source reports a lifespan at least 1.5 times higher" },
-  tiny_sample: { level: "caveat", text: "the lifespan rests on a tiny sample" },
-  ambiguous_bases: { level: "caveat", text: "the genome has 50 or more ambiguous bases" },
-  possible_duplicate: { level: "caveat", text: "the species may be the same as another in the database" },
-  source_match_in_review: { level: "caveat", text: "the match of the lifespan record to this species is under review" },
-  gene_missing: { level: "caveat", text: "a protein gene is missing from the record's annotation" },
-};
-
-/** What no rule here looks at; said in the README so that "high" is not read as "checked in every respect". */
-export const NOT_CHECKED = [
-  "names against authorities other than NCBI",
-  "sequence identity to other species, beyond the records listed in pipeline/curation/sequence-audit.ts",
-  "internal stop codons and nuclear copies",
-  "the lifespan value against its primary reference",
-];
+export { CONFIDENCE_REASONS, NOT_CHECKED };
 
 export const OTHER_SOURCE_RATIO = 1.5;
 export const AMBIGUOUS_BASES_MIN = 50;

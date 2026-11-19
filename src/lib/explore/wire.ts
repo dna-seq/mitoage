@@ -29,6 +29,8 @@ export interface ExplorerFile {
     class: number[];
     order: number[];
     family: number[];
+    /** Index into CONFIDENCE_LEVELS; -1 when the build gives no level. Absent in a file built before the level existed. */
+    confidence?: number[];
   };
   traits: Record<TraitKey, Num[]>;
   features: FeatureDef[];

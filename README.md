@@ -229,6 +229,15 @@ Section stylesheets (`genome.css`, `tree.css`, `explorer.css`, `compare.css`,
 `@layer tokens, reset, base, components, utilities;`. Keep that line in any new stylesheet: a
 sheet bundled before `global.css` would otherwise reorder the cascade layers for the whole page.
 
+**Confidence in a record.** Every species carries a confidence level from the data pipeline (`data_confidence`
+in the species table; the rules are `pipeline/steps/confidence.ts`, the records an audit found wrong
+`pipeline/curation/sequence-audit.ts`). `src/lib/confidence.ts` holds the levels, the words for each reason and
+the default (every level but the lowest, "unreliable", is shown). The mark is the `.conf` class in
+`components.css`, one tone per level. The species list and the plot explorer have a selector of levels
+(`.conf-pick`); `DataTable` draws a level column with `kind: "level"`. A species page says its level with the
+reasons in words and what the audit saw in its record. Correlations exist on three species sets (`default`,
+`anage_only`, `high_confidence`), all in `/data/correlations.parquet`; the pages show `default`.
+
 ## Design system
 
 The look follows the "Trust me, I'm a Biologist" brand: dark-green to lime gradients, a faceted

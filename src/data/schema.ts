@@ -266,7 +266,7 @@ export interface Correlation {
  * neither estimated nor of low or questionable quality, from any lifespan source. "anage_only": the
  * same filters, lifespan from AnAge only (comparable with the 2016 paper).
  */
-export const CORRELATION_DATASETS = ["default", "anage_only"] as const;
+export const CORRELATION_DATASETS = ["default", "anage_only", "high_confidence"] as const;
 export type CorrelationDataset = (typeof CORRELATION_DATASETS)[number];
 
 /** One lifespan value from one source (long format; every source value is kept, not only the chosen one). */

@@ -37,6 +37,8 @@ import type { ScatterPoint } from "~/lib/scatterTypes";
 import { breadcrumbLd, taxonLd } from "~/lib/seo";
 import { speciesCrumbs } from "~/lib/taxa";
 import { href } from "~/lib/url";
+import { CONFIDENCE_LABEL, CONFIDENCE_MEANING, NOT_CHECKED, confidenceReasonText } from "~/lib/confidence";
+import { SEQUENCE_AUDIT } from "../../../pipeline/curation/sequence-audit";
 import { presentTraits } from "~/lib/traits";
 import {
   isNonCommercial,
@@ -86,6 +88,10 @@ const prov = s.provenance;
 const retired = prov?.recordStatus === "retired";
 const previousNames = (s.previousScientificNames ?? []).filter((n) => n && n !== name);
 const flags = (s.reviewFlags ?? []).map(reviewFlagText);
+// ---- Confidence in the record: the level, its reasons in words, and what the audit saw in this record ----
+const conf = s.confidence ?? null;
+const confReasons = (conf?.reasons ?? []).map(confidenceReasonText);
+const confEvidence = SEQUENCE_AUDIT.filter((f) => f.refseq === s.refseq).map((f) => f.evidence);
 const isoDay = (iso: string | null | undefined): string | null => (iso ? iso.slice(0, 10) : null);
 
 // ---- Scatter: whole-genome GC% vs lifespan, this species highlighted ----
@@ -221,6 +227,25 @@ const tabs = [
           <strong>Retired record.</strong> {s.retiredReason ?? "This species no longer qualifies for the database."} Its build 1
           values are kept and it is left out of the correlations.
         </p>
+      )
+    }
+    {
+      conf && conf.level !== "high" && (
+        <div class:list={["sp-conf", `sp-conf--${conf.level}`]} role="note">
+          <p class="sp-conf__head">
+            <span class:list={["conf", `conf--${conf.level}`]}>{CONFIDENCE_LABEL[conf.level]}</span>
+            <span>{CONFIDENCE_MEANING[conf.level]}</span>
+          </p>
+          <ul class="sp-conf__why">
+            {confReasons.map((t) => (
+              <li>{t.charAt(0).toUpperCase() + t.slice(1)}.</li>
+            ))}
+            {confEvidence.map((t) => (
+              <li>Seen in the record {s.refseq}: {t}.</li>
+            ))}
+          </ul>
+          {conf.level === "unreliable" && !retired && <p class="sp-conf__note">This species is left out of the correlations and is not listed by default.</p>}
+        </div>
       )
     }
     <section class="stat-grid sp-stats" aria-label="Key numbers">
@@ -389,6 +414,12 @@ const tabs = [
               </dl>
               {isNonCommercial(life) && (
                 <p class="card__desc">The lifespan value is for non-commercial use only; the genome data is not restricted by it.</p>
+              )}
+              {conf && conf.level === "high" && (
+                <p class="card__desc">
+                  <span class="conf conf--high">{CONFIDENCE_LABEL.high}</span> confidence in this record: no check found a problem. Not checked:{" "}
+                  {NOT_CHECKED.join("; ")}.
+                </p>
               )}
               {flags.length > 0 && (
                 <ul class="sp-flags">
@@ -578,6 +609,33 @@ const tabs = [
   }
   .sp-overview :global(.sp-plot) {
     flex: 3 1 32rem;
+  }
+  .sp-conf {
+    margin: 0 0 1.25rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--color-border-strong);
+    border-left: 6px solid var(--conf-bar, var(--color-border-strong));
+    border-radius: var(--radius-sm);
+    background: var(--color-surface);
+  }
+  .sp-conf--caveat { --conf-bar: var(--tone-sky-bar); }
+  .sp-conf--low { --conf-bar: var(--tone-orange-bar); }
+  .sp-conf--unreliable { --conf-bar: var(--tone-red-bar); }
+  .sp-conf__head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.9rem;
+    margin: 0 0 0.4rem;
+    font-weight: var(--fw-bold);
+  }
+  .sp-conf__why {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+  .sp-conf__note {
+    margin: 0.5rem 0 0;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
   }
   .sp-notice {
     margin: 0;

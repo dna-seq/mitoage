@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **The site shows the confidence level, and a third correlation dataset** (2026-11-19, RM25). The species lists
+  have a Confidence column, a coloured mark per level, and a selector of levels above the table; species of the
+  lowest level, unreliable, are not listed until it is ticked (the maintainer: "we show everything but the lowest
+  grade and we can select the grades"). The plot explorer has the same selector, which decides the points drawn
+  and the statistics computed from them. A species page says its level, the reasons in words and what the audit
+  saw in its record; a high record says what no check covers. A new correlation dataset, `high_confidence`, is
+  the species of `default` whose record has no known caveat, so every correlation can be read a second time on
+  those; it is in `/data/correlations.parquet` beside the other two. Not yet on the pages: the correlation
+  tables and the taxon pages still show `default` only, and the selector's choice is not kept in the address.
+  `src/lib/confidence.ts`; 4 tests on the committed build, 15 on the rules, each of 39 deliberate breaks caught.
 - **The build's output with the confidence level** (2026-11-19, RM25). `bun run data` on the cluster (Slurm job
   6520036, from the code of 4620b4d) writes the two new columns of the species table: high 1,896, caveat 275, low
   111, unreliable 62. The `default` correlation dataset is 2,171 species (was 2,211) and `anage_only` 1,678 (was

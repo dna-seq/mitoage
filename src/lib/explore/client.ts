@@ -3,6 +3,7 @@
  * amino-acid chunks on demand, and precomputed correlation slices. Every file is fetched once and
  * cached for the page's lifetime. Safe for islands only (uses fetch).
  */
+import { CONFIDENCE_LEVELS, type ConfidenceLevel } from "~/data/schema";
 import type { TraitKey } from "~/data/schema";
 import { classGroup, classLabel } from "~/lib/classes";
 import { speciesUrl } from "~/lib/urls";
@@ -18,6 +19,8 @@ export interface SpeciesMeta {
   /** Scatter legend group: a coloured class or "Other". */
   group: string;
   href: string;
+  /** Confidence level of the record; null when the build gives none. */
+  confidence: ConfidenceLevel | null;
 }
 
 export interface Dataset {
@@ -66,6 +69,7 @@ function toDataset(f: ExplorerFile): Dataset {
       order: f.orders[sp.order[i] ?? -1] ?? "",
       group: classGroup(className),
       href: speciesUrl(slug),
+      confidence: CONFIDENCE_LEVELS[sp.confidence?.[i] ?? -1] ?? null,
     };
   });
   const classCount = new Map<string, number>();
@@ -166,6 +170,14 @@ export function loadCorr(trait: TraitKey, scope: string): Promise<{ file: CorrFi
 }
 
 // ---------------------------------------------------------------- scopes
+
+/** Species filter by confidence level; a species with no level passes (unknown is not read as unreliable). */
+export function levelFilter(ds: Dataset, shown: ReadonlySet<ConfidenceLevel>): (i: number) => boolean {
+  return (i) => {
+    const l = ds.species[i]?.confidence ?? null;
+    return l === null || shown.has(l);
+  };
+}
 
 /** Species filter for a scope: "all", "class:Mammalia", "order:Primates". */
 export function scopeFilter(ds: Dataset, scope: string): (i: number) => boolean {

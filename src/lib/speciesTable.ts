@@ -15,7 +15,7 @@ export const TABLE_FIELDS = [
   "lifespan", "size", "gc", "gcSkew", "atSkew", "nonCoding",
   "adultWeightG", "birthWeightG", "femaleMaturityDays", "maleMaturityDays", "gestationDays",
   "litterSize", "littersPerYear", "growthRatePerDay", "metabolicRateW", "bodyTemperatureK",
-  "refseq",
+  "refseq", "confidence",
 ] as const;
 export type TableField = (typeof TABLE_FIELDS)[number];
 
@@ -40,6 +40,8 @@ export function tableRow(fields: readonly string[], r: readonly (string | number
 
 const NAME: Column = { key: "name", label: "Species", kind: "sci", hrefKey: "href", subKey: "common", primary: true, csvSub: "Common name" };
 
+const CONFIDENCE: Column = { key: "confidence", label: "Confidence", kind: "level", title: "How far the record can be relied on; the species page gives the reason" };
+
 export const SPECIES_COLUMNS: Record<SpeciesView, Column[]> = {
   genome: [
     NAME,
@@ -51,6 +53,7 @@ export const SPECIES_COLUMNS: Record<SpeciesView, Column[]> = {
     { key: "atSkew", label: "AT balance", format: "signed3", title: "(A − T) / (A + T), whole genome, L strand", hideOnMobile: true },
     { key: "nonCoding", label: "Non-coding", format: "bp", hideOnMobile: true },
     { key: "lifespan", label: "Max lifespan", format: "lifespan" },
+    CONFIDENCE,
   ],
   life: [
     NAME,
@@ -66,6 +69,7 @@ export const SPECIES_COLUMNS: Record<SpeciesView, Column[]> = {
     { key: "growthRatePerDay", label: "Growth rate", format: "dec3", title: "Postnatal growth rate per day", hideOnMobile: true },
     { key: "metabolicRateW", label: "Metabolic rate (W)", format: "dec3", title: "Basal metabolic rate in watts", hideOnMobile: true },
     { key: "bodyTemperatureK", label: "Body temp.", format: "celsius", hideOnMobile: true },
+    CONFIDENCE,
   ],
 };
 

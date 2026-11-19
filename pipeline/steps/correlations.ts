@@ -45,16 +45,18 @@ export const log10OrNull = (v: number | null): number | null => (v !== null && v
  * Whether a species belongs to a correlation dataset. Retired species never do, nor does one whose record is
  * of the confidence level "unreliable" (its sequence is not this species' genome as it stands). "default": the
  * lifespan is neither estimated nor of low or questionable quality, from any source; "anage_only":
- * the same, with the lifespan from AnAge. A species without lifespan metadata (a build 1 file) is
+ * the same, with the lifespan from AnAge; "high_confidence": the species of "default" whose record is of the
+ * confidence level "high", so every result can be read a second time on records with no known caveat. A species without lifespan metadata (a build 1 file) is
  * in "default" only.
  */
 export function inDataset(s: Species, d: CorrelationDataset): boolean {
   if (s.provenance?.recordStatus === "retired") return false;
   if (s.confidence?.level === "unreliable") return false;
   const l = s.lifespan;
-  if (!l) return d === "default";
+  if (d === "high_confidence" && s.confidence?.level !== "high") return false;
+  if (!l) return d !== "anage_only";
   if (l.recordType === "estimated" || l.quality === "low" || l.quality === "questionable") return false;
-  return d === "default" || l.source === "AnAge";
+  return d !== "anage_only" || l.source === "AnAge";
 }
 
 export const datasetMembers = (species: Species[], d: CorrelationDataset) => species.filter((s) => inDataset(s, d));

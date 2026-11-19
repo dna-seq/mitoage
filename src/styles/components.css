@@ -104,6 +104,64 @@
   }
 
   /* ================= Chips ================= */
+  /* Confidence level of a record: a dot and a word, in the level's tone. */
+  .conf {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-bold);
+    white-space: nowrap;
+    color: var(--conf-ink);
+  }
+  .conf::before {
+    content: "";
+    width: 0.7em;
+    height: 0.7em;
+    border-radius: 50%;
+    background: var(--conf-bar);
+    flex: none;
+  }
+  .conf--high { --conf-bar: var(--tone-green-bar); --conf-ink: var(--tone-green-ink); }
+  .conf--caveat { --conf-bar: var(--tone-sky-bar); --conf-ink: var(--tone-sky-ink); }
+  .conf--low { --conf-bar: var(--tone-orange-bar); --conf-ink: var(--tone-orange-ink); }
+  .conf--unreliable { --conf-bar: var(--tone-red-bar); --conf-ink: var(--tone-red-ink); }
+  /* The level selector above a list or a plot. */
+  .conf-pick {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.4rem 1.1rem;
+    margin: 0 0 0.9rem;
+    padding: 0;
+    border: 0;
+  }
+  .conf-pick legend {
+    float: left;
+    padding: 0;
+    margin-right: 1.1rem;
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-heavy);
+  }
+  .conf-pick label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    min-height: var(--tap);
+    cursor: pointer;
+  }
+  .conf-pick__count {
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+    font-weight: var(--fw-regular);
+  }
+  .conf-pick__note {
+    flex-basis: 100%;
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: var(--fs-sm);
+  }
+
   .chip {
     display: inline-flex;
     align-items: center;

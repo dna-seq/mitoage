@@ -12,7 +12,8 @@ import { ICONS } from "~/components/ui/icons";
 import type { TraitKey } from "~/data/schema";
 import { CLASS_GROUPS, classColor } from "~/lib/classes";
 import { fmtInt, fmtLifespan, fmtNum } from "~/lib/format";
-import { type Column, type Dataset, loadColumnByKey, loadCorr, loadDataset, scopeFilter, scopeLabel } from "~/lib/explore/client";
+import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS } from "~/lib/confidence";
+import { type Column, type Dataset, levelFilter, loadColumnByKey, loadCorr, loadDataset, scopeFilter, scopeLabel } from "~/lib/explore/client";
 import { fmtP, fmtR, labelPhrase } from "~/lib/explore/format";
 import { DEFAULT_X, DEFAULT_Y, MAX_HIGHLIGHTS, parseState, serializeState } from "~/lib/explore/state";
 import { describePairs, relationshipHeadline } from "~/lib/explore/stats";
@@ -130,12 +131,21 @@ export default function Explorer(props: Props) {
   });
 
   // ------------------------------------------------------------ the current view
+  // Which confidence levels are plotted and counted: all but the lowest, until the visitor ticks it.
+  const [levels, setLevels] = createSignal<ReadonlySet<ConfidenceLevel>>(new Set(DEFAULT_SHOWN_LEVELS));
+  const toggleLevel = (l: ConfidenceLevel) => {
+    const next = new Set(levels());
+    if (next.has(l)) next.delete(l);
+    else next.add(l);
+    setLevels(next);
+  };
   const view = createMemo(() => {
     const d = ds();
     const xc = cols().get(xKey());
     const yc = cols().get(yKey());
     if (!d || !xc || !yc) return null;
     const inScope = scopeFilter(d, scope());
+    const atLevel = levelFilter(d, levels());
     const lx = logX();
     const ly = logY();
     const pts: ScatterPoint[] = [];
@@ -145,7 +155,7 @@ export default function Explorer(props: Props) {
     let both = 0;
     let droppedLog = 0;
     for (let i = 0; i < d.n; i++) {
-      if (!inScope(i)) continue;
+      if (!inScope(i) || !atLevel(i)) continue;
       inScopeN++;
       const a = xc[i] ?? Number.NaN;
       const b = yc[i] ?? Number.NaN;
@@ -375,6 +385,17 @@ export default function Explorer(props: Props) {
             </div>
           </div>
 
+          <fieldset class="conf-pick xp-levels">
+            <legend>Confidence in the record</legend>
+            <For each={CONFIDENCE_LEVELS}>
+              {(l) => (
+                <label title={CONFIDENCE_MEANING[l]}>
+                  <input type="checkbox" checked={levels().has(l)} onChange={() => toggleLevel(l)} />
+                  <span class={`conf conf--${l}`}>{CONFIDENCE_LABEL[l]}</span>
+                </label>
+              )}
+            </For>
+          </fieldset>
           <div class="xp-filters">
             <label class="field xp-scope">
               Species
