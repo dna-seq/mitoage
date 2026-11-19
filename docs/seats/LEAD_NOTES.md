@@ -187,3 +187,9 @@ that keeps it near the share (`%4` of 4-CPU tasks), and checkpointing batch work
 account `cluster`, outside the 320. H18's readout is to be redone from pulled `main` (the corrections of
 4c3f9fc), not read from the check job; H26's readout and coupling and H21 to H25 run from a clone at 4c3f9fc or
 later.
+
+2026-11-19, the maintainer, relayed by the desk's secretary to every lead: "manuscript skills is super token
+consuming, please fininsh this run but do not initialize run withou asking me or getting explicit instruciton on
+it". No run of the manuscript-skills plugin (any of its skills, panels, improve, dashboard or other-model runs) is
+started by this seat unless the maintainer asked for that run in his own words, or was asked and said yes; ask in
+the seat's chat or on the desk, saying what the run is for.
