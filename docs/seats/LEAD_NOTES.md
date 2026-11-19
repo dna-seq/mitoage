@@ -193,3 +193,13 @@ consuming, please fininsh this run but do not initialize run withou asking me or
 it". No run of the manuscript-skills plugin (any of its skills, panels, improve, dashboard or other-model runs) is
 started by this seat unless the maintainer asked for that run in his own words, or was asked and said yes; ask in
 the seat's chat or on the desk, saying what the run is for.
+
+### Upstream check, 2026-11-20
+
+| Source | Pinned | Found |
+|---|---|---|
+| RefSeq release | 237 | **238 is out** (the release number file); its own item, RM26 |
+| AnAge | build 15 | build 15, current |
+| FishBase / SeaLifeBase | v26.06 | the mirror answers; whether a newer version is there was not checked |
+| USGS BBL | v2025.1 | the page answers; its version was not read |
+| EURING | list of 2023-09-01 (Internet Archive's copy) | not checked |
