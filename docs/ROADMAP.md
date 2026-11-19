@@ -45,29 +45,27 @@ fast to compute things we have to provide extra recomputed with high quality dat
 probalby should have a color or an icon (whateve fits better for styles) for the data quliaty level". So no row is
 removed for its grade: every species stays in the database with its level and the reason for it.
 
-1. Done, 2026-11-18: the audit (`docs/analyses/curation-audit-2026-11-18/`). Names and lifespan matches are sound;
-   19 sequence records are another species', a chimera, reverse-complemented or truncated, 18 of them in the
-   default dataset; higher ranks mix two schemes; 87 lifespans are at least 1.5 times below another source's value.
-2. The checks that hold become rules of `bun run data`, each with a test that fails on the code without it,
-   writing review flags and one column, a confidence level per species with the rule that gave it. An unchecked
-   aspect is said as not checked, never as clean. The three reverse-complement records are recomputed on the
-   other strand; a species-level record replaces a subspecies' or a wrong one where the release has it.
-3. Maximum lifespan and sampling effort: lifespan for body mass is higher in well-sampled and captive birds and
-   reptiles (medians, 2026-11-18: birds 1.26 times the expectation with a large sample against 0.93 with a small
-   one; captive 1.24 against wild 0.95), so sample size and the kind of record enter the level's reasons, and the
-   regressions get sensitivity runs (medium and large samples only; captive only and wild only within a class).
-4. The site shows the level on a species' page and in the tables, as a colour or an icon with its reason in
-   words, and a selector limits the tables, the plots and the correlations to reliable data only (the maintainer,
-   2026-11-18: "have a selector to limit only to reliable data"); the downloads carry the column. The lowest level is not
-   shown by default and is switched on in the selector, which offers every level (the maintainer, 2026-11-18:
-   "we show everything but the lowest grade and we can select the grades").
-5. The analyses that compute fast (correlations, phylogenetic regressions, composition) are given a second time
-   on high-confidence species only, beside the full result, on the site's datasets and in `mitoage-pipelines`.
-   Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
-   that can move a result.
-6. A list for inspection by eye: the species the rules cannot settle (which of two near-identical records
-   carries the wrong name; the 36 pairs of one genus at 99.5% or more), each with the record, the sources and
-   what to look at. Who inspects is the maintainer's and the first author's to say.
+Done by 2026-11-19 (changelog): the audit in two rounds (`docs/analyses/curation-audit-2026-11-18/`); the level
+and its reasons as rules of `bun run data` with a list of 44 audited records; the reverse-complemented records
+read on the conventional strand; the mark, the selector of levels on the species lists and the plot, and the
+notice on a species page; a third correlation dataset, `high_confidence`. Left:
+
+1. Screen every record, not only the near-identical pairs, against independent sequences of its named species
+   (COX1 and CYTB), as a cluster job: the audit's first screen found 4 of the 18 live bird records a published list
+   names, and 2,265 records are unscreened. Its findings join the list of audited records after a person read
+   them.
+2. Maximum lifespan and sampling effort: sample size and the kind of record are reasons already where they are
+   extreme (a tiny sample, a ringing recovery, another source 1.5 times higher); the sensitivity runs of the
+   regressions are H27 of `dna-seq/mitoage-pipelines`, whose entry is written and whose code is not. H27 reads the
+   species table from the Hugging Face dataset, so the rebuilt data has to be uploaded there first, which waits on
+   the maintainer's word (asked 2026-11-19 in the lead's session).
+3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
+   beside it; the selector's choice is kept in the page address.
+4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
+   that can move a result (H27's "not rerun" list).
+5. The manuscript's species counts and the supplement's "97 review items" follow the new build in the next round.
+6. A list for inspection by eye: the 7 pairs the second round left unresolved, each with the record, the sources
+   and what to look at. Who inspects is the maintainer's and the first author's to say.
 7. A separate supplement on the cleanup and its review (the maintainer, 2026-11-19: "all the cleanup and reviewing
    should be included in a separate supplement"): the audit's method, every record found wrong with its evidence,
    the levels and their rules, what was not checked, and how each result moves on high-confidence data. It takes
@@ -285,10 +283,8 @@ v0.3) found records that are probably wrong: near-identical records under differ
 characiform's, three vertebrate records deposited reverse-complemented, and genes left unannotated. The build keeps
 them as RefSeq deposits them. What is left:
 
-- A per-record flag in the build and on the species pages, naming the audit's finding, so a user can leave a record
-  out; nothing is removed by default.
-- The GC/AT balance of the three reversed deposits is of the other strand: compute it on the conventional strand
-  for vertebrate records the audit calls reversed, with a changelog row each.
+- Done on 2026-11-19 under RM25: the per-record level with the audit's finding on the species pages, and the base
+  counts of the three reversed deposits on the conventional strand.
 - Annotation gaps (CYTB of *Pluvialis fulva*, ND6 of *Phalacrocorax auritus*, both rRNAs of *Crocidura russula*):
   patch them the way the parrot's ND6 was patched, or leave them stated as missing.
 - Whether to report the candidates to NCBI (RefSeq's record-feedback route) is the maintainer's call; nothing is
