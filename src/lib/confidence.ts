@@ -15,7 +15,7 @@ export const CONFIDENCE_REASONS: Record<string, { level: Exclude<ConfidenceLevel
   sequence_one_genome_names: { level: "unreliable", text: "distinct species carry this same genome, and which name is right is not settled" },
   sequence_truncated: { level: "unreliable", text: "the record is not a complete genome" },
   record_other_species: { level: "unreliable", text: "the cited record now belongs to another species at NCBI" },
-  reverse_complement: { level: "unreliable", text: "the record is deposited as the reverse complement, so strand-dependent values (skews) have the opposite sign" },
+  reverse_complement: { level: "caveat", text: "the record is deposited as the reverse complement; base counts and skews are given on the conventional strand, coordinates and gene strands are the record's" },
   no_rrna: { level: "unreliable", text: "no rRNA gene is annotated in the record" },
   lifespan_estimated: { level: "low", text: "the lifespan is an estimate from a growth study, not an observed age" },
   lifespan_low_quality: { level: "low", text: "the source rates the lifespan record low" },

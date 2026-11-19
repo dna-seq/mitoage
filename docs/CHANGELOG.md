@@ -4,6 +4,16 @@ Newest first.
 
 ## Unreleased
 
+- **Records deposited as the reverse complement are read on the conventional strand** (2026-11-19, RM25, and
+  the strand point of RM23). Three vertebrate records (*Pseudocaranx dentex*, *Dasycercus cristicauda*,
+  *Pseudoscaphirhynchus hermanni*) are deposited on the other strand, so their GC and AT balance had the opposite
+  sign to every other vertebrate's. `bun run data` now gives the base counts of such a record, in every region, on
+  the conventional strand (A and T change places, C and G); lengths, GC content, codon tables, coordinates and
+  gene strands are the record's as before. The rule is the one that finds them: a chordate record with all 13
+  protein genes, each on the strand opposite to the usual one. Their confidence reason, `reverse_complement`,
+  is a caveat now and no longer makes the record unreliable. Tested on the human record with every gene's strand
+  turned; each of 4 deliberate breaks caught. This commit is the code; until the build's output follows, one
+  test on the committed build fails, as it should.
 - **The site shows the confidence level, and a third correlation dataset** (2026-11-19, RM25). The species lists
   have a Confidence column, a coloured mark per level, and a selector of levels above the table; species of the
   lowest level, unreliable, are not listed until it is ticked (the maintainer: "we show everything but the lowest

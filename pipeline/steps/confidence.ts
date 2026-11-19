@@ -7,6 +7,9 @@
  *   low         the lifespan value is weak (the mitochondrial data are not in question)
  *   unreliable  the record is retired, or its sequence is not this species' genome as it stands
  *
+ * A record deposited as the reverse complement is a caveat, not unreliable: build2's genomeRows gives its base
+ * counts on the conventional strand.
+ *
  * The level is the worst of the reasons'. A reason says what was found; an aspect no rule looks at (see
  * NOT_CHECKED) is not thereby clean, and the downloads' README says so.
  */

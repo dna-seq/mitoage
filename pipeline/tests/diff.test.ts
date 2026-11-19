@@ -54,7 +54,7 @@ async function diffSpecies(id: number) {
   const s = raw.species.get(id)!;
   const text = readFileSync(join(CACHE_DIR, "genbank", `${s.refseq}.gb`), "utf8");
   const g = annotateGenome(text, fallbackTable(s.phylum), s.phylum === "Chordata");
-  const rows = genomeRows(id, g);
+  const rows = genomeRows(id, g, s.phylum);
   const csvComposition = new Map<Region, RawComposition[]>();
   for (const [region, m] of raw.composition) if (m.get(id)) csvComposition.set(region, m.get(id)!);
   const csvCodons = new Map<string, Record<string, number>>();

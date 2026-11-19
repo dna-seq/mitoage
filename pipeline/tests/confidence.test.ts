@@ -77,7 +77,7 @@ describe("confidence level of a record", () => {
     expect(isReverseComplement(movedBack, "Chordata")).toBe(false);
     // a record without all 13 genes is not judged
     expect(isReverseComplement(genome(true).filter((f) => f.name !== "ATP8"), "Chordata")).toBe(false);
-    expect(of(species(), { features: genome(true) })).toEqual({ level: "unreliable", reasons: ["reverse_complement"] });
+    expect(of(species(), { features: genome(true) })).toEqual({ level: "caveat", reasons: ["reverse_complement"] });
   });
 
   test("a record with no rRNA gene is unreliable", () => {

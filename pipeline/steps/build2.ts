@@ -32,6 +32,8 @@ import type { RefSeqRelease } from "../sources/refseq-release";
 import { BUILD1_DATE } from "./build1";
 import { type AccessionChange, type Classification, type RowChange, diffGenome, featureKeys } from "./diff";
 import { type SpeciesGenome, annotateGenome } from "./genome";
+import { isReverseComplement } from "./confidence";
+import type { BaseCounts } from "../lib/stats";
 import {
   type MatchedObservation,
   type NameMatch,
@@ -143,11 +145,21 @@ const emptyTraits = (): Traits => ({
 });
 
 /** Region stats, codon usage, features and non-coding length of one genome (build 2 rules). */
-export function genomeRows(id: number, g: SpeciesGenome): { stats: RegionStats[]; usage: Usage[]; features: GenomeFeature[]; nonCoding: number } {
+/** Base counts of the same stretch read on the other strand: A and T change places, and C and G. */
+export const complementCounts = (b: BaseCounts): BaseCounts => ({ a: b.t, c: b.g, g: b.c, t: b.a, other: b.other });
+
+/**
+ * The rows of one record. Base counts are on the strand the record is deposited on, which for a vertebrate is
+ * by convention the light strand; a chordate record deposited as the reverse complement (every protein gene on
+ * the strand opposite to the usual one) has its counts given on the conventional strand instead, so that its
+ * skews mean what every other record's mean. Coordinates and feature strands stay the record's.
+ */
+export function genomeRows(id: number, g: SpeciesGenome, phylum: string): { stats: RegionStats[]; usage: Usage[]; features: GenomeFeature[]; nonCoding: number } {
   const stats: RegionStats[] = [];
+  const reversed = isReverseComplement(g.features, phylum);
   for (const region of REGIONS) {
     const c = computeRegion(g, region);
-    if (c) stats.push(makeStats(id, region, c.counts, "genbank"));
+    if (c) stats.push(makeStats(id, region, reversed ? complementCounts(c.counts) : c.counts, "genbank"));
   }
   const usage: Usage[] = [];
   const parts: Record<string, number>[] = [];
@@ -402,7 +414,7 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
       g = annotateGenome(gText, fallbackTable(s.phylum), s.phylum === "Chordata");
       if (g.record.accessionVersion !== p.version) throw new Error(`release record ${g.record.accessionVersion} != ${p.version}`);
       genomes.set(id, g);
-      rows = genomeRows(id, g);
+      rows = genomeRows(id, g, s.phylum);
     } else {
       // Retired: the build 1 rows exactly (no gap fill from a record that left RefSeq).
       rows = {
@@ -595,7 +607,7 @@ export async function assembleBuild2(inp: Build2Inputs): Promise<Build2> {
     const text = texts.get(c.rec.header.version)!;
     const g = annotateGenome(text, fallbackTable(lin.phylum), lin.phylum === "Chordata");
     genomes.set(id, g);
-    const rows = genomeRows(id, g);
+    const rows = genomeRows(id, g, lin.phylum);
     const entry = c.hagrid ? (anageByHagrid.get(c.hagrid) ?? null) : null;
     const name = lin.name;
     let slug = slugify(name);

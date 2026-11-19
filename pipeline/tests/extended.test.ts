@@ -18,6 +18,8 @@ import {
   toHeavyStrand,
 } from "../steps/extended";
 import { annotateGenome } from "../steps/genome";
+import { complementCounts, genomeRows } from "../steps/build2";
+import { isReverseComplement } from "../steps/confidence";
 
 const COMPLEMENT: Record<string, string> = { A: "T", C: "G", G: "C", T: "A" };
 const revcomp = (s: string) => [...s].reverse().map((c) => COMPLEMENT[c]!).join("");
@@ -310,5 +312,35 @@ describe("contact zones", () => {
     // the zone boundaries are inclusive in 1-based coordinates
     expect(bridgingPairs([pair(99, 499)], zones)).toBe(1);
     expect(bridgingPairs([pair(98, 499)], zones)).toBe(0);
+  });
+});
+
+describe("a record deposited as the reverse complement (human rCRS with every gene's strand turned)", () => {
+  test("complementing counts swaps A with T and C with G, and twice gives the counts back", () => {
+    const b = { a: 1, c: 2, g: 3, t: 4, other: 5 };
+    expect(complementCounts(b)).toEqual({ a: 4, c: 3, g: 2, t: 1, other: 5 });
+    expect(complementCounts(complementCounts(b))).toEqual(b);
+  });
+
+  test.skipIf(!existsSync(HUMAN))("its base counts are given on the conventional strand; a usual record's and a non-chordate's are left as deposited", async () => {
+    const g = annotateGenome(await Bun.file(HUMAN).text(), 2, true);
+    const turned = { ...g, features: g.features.map((f) => ({ ...f, strand: (f.strand === 1 ? -1 : 1) as 1 | -1 })) };
+    expect(isReverseComplement(g.features, "Chordata")).toBe(false);
+    expect(isReverseComplement(turned.features, "Chordata")).toBe(true);
+    const usual = genomeRows(1, g, "Chordata").stats;
+    const fixed = genomeRows(1, turned, "Chordata").stats;
+    const asDeposited = genomeRows(1, turned, "Mollusca").stats;
+    expect(usual.length).toBe(20); // the genome, the three totals, 13 protein genes, two rRNAs and the D-loop
+    expect(fixed.map((r) => r.region)).toEqual(usual.map((r) => r.region));
+    for (const [i, u] of usual.entries()) {
+      const f = fixed[i]!, d = asDeposited[i]!;
+      expect([f.a, f.c, f.g, f.t, f.other]).toEqual([u.t, u.g, u.c, u.a, u.other]);
+      expect(f.lengthBp).toBe(u.lengthBp);
+      expect(f.gcPercent).toBe(u.gcPercent);
+      if (u.gcSkew !== null && u.gcSkew !== 0) expect(f.gcSkew).toBeCloseTo(-u.gcSkew, 10);
+      expect([d.a, d.c, d.g, d.t]).toEqual([u.a, u.c, u.g, u.t]);
+    }
+    // the whole genome of the usual record has the vertebrate sign, the turned one the opposite before the rule
+    expect(usual.find((r) => r.region === "total_mtDNA")!.gcSkew!).toBeLessThan(0);
   });
 });
