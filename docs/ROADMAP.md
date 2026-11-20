@@ -63,7 +63,8 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
 1. Screen every record, not only the near-identical pairs, against independent sequences of its named species
    (COX1 and CYTB), as a cluster job: the audit's first screen found 4 of the 18 live bird records a published list
    names, and 2,265 records are unscreened. Its findings join the list of audited records after a person read
-   them.
+   them. The screen is written (`bun run screen`, 2026-11-21: every live record against up to 15 sequences of its
+   own species and of each other species of its genus in the build); its run and reading are left.
 2. Maximum lifespan and sampling effort: sample size and the kind of record are reasons already where they are
    extreme (a tiny sample, a ringing recovery, another source 1.5 times higher). H27 of
    `dna-seq/mitoage-pipelines` ran on 2026-11-20: with the highest observed value in place of AnAge's, 1,302 of

@@ -28,6 +28,7 @@
     "hf": "bun run pipeline/hf.ts",
     "complexes": "bun run pipeline/complexes.ts",
     "duplicates": "bun run pipeline/duplicates.ts",
+    "screen": "bun run pipeline/screen.ts",
     "inputs": "bun run pipeline/inputs.ts",
     "sqlite": "bun run pipeline/sqlite.ts",
     "mitoport": "bun run pipeline/mitoport.ts",
