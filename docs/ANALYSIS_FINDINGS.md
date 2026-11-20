@@ -50,13 +50,35 @@ Added after the curation audit and H27 (below). The entries keep their own numbe
 - **Not found: a single site** of a mitochondrial protein associated with lifespan on the dated tree (H2), **a
   substitution rate** that follows lifespan (H7: four of 655 tests, with disagreeing signs), or **repeats and
   motifs** that do (H8).
-- **Not settled:** selection (H3's RELAX did not repeat; Coevol's chains have dN/dS rising with lifespan at body
-  mass held, +0.28 with a posterior probability of 0.91, unconverged for one pair of chains); the selection runs
-  on origins of long life (H26) are computed and not read yet.
+- **Found, against the published prediction: selection is relaxed where mammals are long-lived for their mass**
+  (H26: RELAX K = 0.74 on the long-lived clades, likelihood ratio 563, above all 20 matched control draws; birds
+  K = 0.94, above 19 of 20). It is largely primates and bats against other mammals, so few independent origins;
+  no positive selection at the origins (aBSREL), and no shift of dN/dS on sister pairs in birds (41 pairs).
+- **Not settled:** what the relaxation is (a smaller population would give it too); Coevol's chains lean the same
+  way (dN/dS rising with lifespan at body mass held, +0.28 with a posterior probability of 0.91) and are
+  unconverged for one pair of chains; H3's RELAX per gene did not repeat.
 - **Found about the data:** 44 RefSeq mitochondrial genome records are wrong or doubtful by their own sequence
   (another species' genome, chimeras, truncated or reverse-complemented records), and maximum lifespan is
   biased by sampling (for a quarter of birds and fishes another source reports more than 10% above AnAge).
   `docs/analyses/curation-audit-2026-11-18/`.
+
+## H26. Where long life for a body mass arose: is selection on the mitochondrial genes stronger there?
+
+**Test.** Species in the upper quarter of lifespan for their body mass against those below the median, mammals and
+birds apart; HyPhy RELAX on the 12 heavy-strand genes with the long-lived clades as test branches, against 20 draws
+of matched control clades; one sister pair per origin for dN/dS; aBSREL on the stems. Fixed before any run
+(`docs/HYPOTHESES.md` of `dna-seq/mitoage-pipelines`, H26, with the tables in `results/h26-readout/`).
+**Result (2026-11-20).**
+- Mammals: K = 0.74, likelihood ratio 563, above all 20 control draws (largest 74.7): relaxed, opposite to the
+  prediction of intensified selection. Birds: K = 0.94, likelihood ratio 18.7 (Holm p = 3e-5), above 19 of 20
+  control draws: the same reading, at the edge of the rule.
+- Sister pairs: birds, 41 pairs, median shift of dN/dS +0.009 (p = 0.66), not detected; mammals not assessed (6
+  unsaturated pairs).
+- aBSREL: no stem of a long-lived clade under episodic positive selection in either class.
+- Coevolution side: not assessed (its species set is not prepared yet).
+**Limits.** Of the 151 long-lived mammals 87 are primates and 25 bats: the mammal result is a few deep origins, not
+39 independent ones, and the definition within orders was fixed for the pair test only. K below 1 does not say
+why selection is weaker.
 
 ## H27. Do the results hold on records of high confidence, and on well-sampled lifespans?
 

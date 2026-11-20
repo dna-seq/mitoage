@@ -97,7 +97,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** waits until 2026-11-21: step 5 is H26 of `dna-seq/mitoage-pipelines`, long-lived for body mass as one more trait in the design of H21 (mammals and birds). Its pair test ran on 2026-11-17: not detected in birds (41 pairs), not assessed in mammals (6 unsaturated pairs). Its RELAX and aBSREL runs are queued since 2026-11-17 (job 6500930, four tasks at a time, behind the account's CPU limit; 42 of 46 tasks done by 2026-11-20); looked at again that day, with the Coevol chains of step 4. Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
+**State:** waits until 2026-11-21: step 5, H26 of `dna-seq/mitoage-pipelines` (long-lived for body mass, mammals and birds), was read on 2026-11-20: RELAX finds selection relaxed on the long-lived clades (mammals K = 0.74 above all 20 control draws, birds K = 0.94 above 19 of 20), no positive selection at the origins, no shift of dN/dS on sister pairs in birds; its coevolution side waits for the mammal set of H21 to H25. Left: the Coevol chains of step 4, looked at daily. Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
