@@ -65,11 +65,12 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    names, and 2,265 records are unscreened. Its findings join the list of audited records after a person read
    them.
 2. Maximum lifespan and sampling effort: sample size and the kind of record are reasons already where they are
-   extreme (a tiny sample, a ringing recovery, another source 1.5 times higher); the sensitivity runs of the
-   regressions are H27 of `dna-seq/mitoage-pipelines`, whose entry is written and whose code is not. The rebuilt data is on
-   Hugging Face since 2026-11-19 (revision 446dad6), so H27's runs can start. The maintainer, the same day: "maybe
-   for 3 we switch to more reliable sources than anage": which source gives a species its lifespan when several
-   have one is his call, and H27 shows first how much the choice moves.
+   extreme (a tiny sample, a ringing recovery, another source 1.5 times higher). H27 of
+   `dna-seq/mitoage-pipelines` ran on 2026-11-20: with the highest observed value in place of AnAge's, 1,302 of
+   1,368 results hold and none changes direction. The maintainer, 2026-11-19: "maybe for 3 we switch to more
+   reliable sources than anage": which source gives a species its lifespan is his call, `blocked: desk #78`
+   (default: AnAge first stays, the highest observed value becomes a second column of the downloads). Left of
+   H27: the species set does not reach H2's column screen and H20's pair fits yet.
 3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
    beside it; the selector's choice is kept in the page address.
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
