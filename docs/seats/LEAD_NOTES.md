@@ -203,3 +203,13 @@ the seat's chat or on the desk, saying what the run is for.
 | FishBase / SeaLifeBase | v26.06 | the mirror answers; whether a newer version is there was not checked |
 | USGS BBL | v2025.1 | the page answers; its version was not read |
 | EURING | list of 2023-09-01 (Internet Archive's copy) | not checked |
+
+### State, 2026-11-20 afternoon
+
+- H26 is read (pipelines 98a8c6d, findings 9fa9c5e, posted in `#mitoalignments`); its coevolution side waits for the
+  mammal set of H21 to H25. Its readout clone is the second one in the H26 run folder, at d20393f.
+- The lifespan-source rule is on the desk (#78), default AnAge first with the highest observed value as a second
+  column of the downloads.
+- Next, unattended: H27's leftovers (the species set reaching H2's column screen and H20's pair fits; the entry is
+  extended before the code), then the screen of every record against independent sequences (RM25 item 1).
+- Waiting on jobs: Coevol's second leg (tracecomp when it ends), H18's energy array and its check job.
