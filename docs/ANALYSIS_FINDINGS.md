@@ -100,6 +100,14 @@ level sets. With them, of 1,425 results none moves without the unreliable record
 **Limit.** The wild mammals are a different sample of mammals as much as a different kind of record. A level of high says
 no rule found a reason, not that a record was checked in every respect.
 
+**Sample size as a covariate, 2026-11-21.** The last piece of H27 (tables in `results/h27-sample-size/` of
+`dna-seq/mitoage-pipelines`, 5b78bd3). Each model of H1 and H11 was fitted twice on the same mammals and birds,
+without and with AnAge's sample size as an ordered term. Of 206 results that pass without the term, 187 hold with
+it and 19 hold less precisely (q between 0.050 and 0.091); none moves or reverses. The slopes do not shrink: the
+median of slope with over slope without is 1.00 for H1 in mammals and 1.06 and 1.05 for H11 in mammals and birds.
+The term itself passes p < 0.05 no more often than chance gives (87 of 1,972 fits). So these lifespan slopes are
+not made by how well a species is sampled, as far as AnAge's five classes can say.
+
 ## Data
 
 - The MitoAge build: species table, lifespans, alignments of the 13 mitochondrial proteins (amino acids and

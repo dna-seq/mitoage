@@ -72,7 +72,8 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    reliable sources than anage": which source gives a species its lifespan is his call, `blocked: desk #78`
    (default: AnAge first stays, the highest observed value becomes a second column of the downloads). H27's
    extension the same day took the sets to H2's column screen and H20's pair fits: none of their results moves.
-   Left of H27: the sample-size covariate.
+   The sample-size covariate ran on 2026-11-21: the slopes of H1 and H11 stay where they were with it. H27 is
+   complete; this item waits on #78 alone.
 3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
    beside it; the selector's choice is kept in the page address.
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
