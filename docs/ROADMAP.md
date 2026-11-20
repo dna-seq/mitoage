@@ -69,8 +69,9 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    `dna-seq/mitoage-pipelines` ran on 2026-11-20: with the highest observed value in place of AnAge's, 1,302 of
    1,368 results hold and none changes direction. The maintainer, 2026-11-19: "maybe for 3 we switch to more
    reliable sources than anage": which source gives a species its lifespan is his call, `blocked: desk #78`
-   (default: AnAge first stays, the highest observed value becomes a second column of the downloads). Left of
-   H27: the species set does not reach H2's column screen and H20's pair fits yet.
+   (default: AnAge first stays, the highest observed value becomes a second column of the downloads). H27's
+   extension the same day took the sets to H2's column screen and H20's pair fits: none of their results moves.
+   Left of H27: the sample-size covariate.
 3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
    beside it; the selector's choice is kept in the page address.
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where

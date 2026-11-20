@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- Findings and roadmap: H27's extension. The species sets now reach H2's column screen and H20's sister-pair fits (`dna-seq/mitoage-pipelines`, 3ff40c3); none of their results moves without the unreliable records or on high-confidence records. The lifespan-source rule is asked on the desk (#78).
 - Findings: H26 read. Where mammals are long-lived for their body mass, selection on the mitochondrial protein genes is relaxed (RELAX K = 0.74, above all 20 control draws), opposite to the published prediction; birds the same direction at the edge of the controls; no positive selection at the origins. `docs/ANALYSIS_FINDINGS.md` has the section and the roadmap's RM12 its state.
 - **Findings: what stands, and H27** (2026-11-20). `docs/ANALYSIS_FINDINGS.md` opens with a short reading across
   the entries and has H27's result: the results of H1, H7 and H11 hold without the unreliable records, on

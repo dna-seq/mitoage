@@ -93,8 +93,11 @@ less precisely; on high-confidence records 1,031 and 337; with the highest obser
 change) 1,302 and 66; none moves on any of the three. On well-sampled lifespans 686 hold, 681 hold less
 precisely and 1 moves. On mammals with wild lifespan records (53 species against 545 captive) the amino-acid
 results do not stand: none of 20 holds and 8 move.
-**Limit.** H2's column screen and H20's pair fits were not reached by the species sets and are not assessed.
-The wild mammals are a different sample of mammals as much as a different kind of record. A level of high says
+**Extension, the same day.** The sets were taken to H2's column screen and H20's pair fits (tables in
+`results/h27-extension/`): H2's two passing columns in mammals (COX1 499, ND5 316) do not move, and lose their
+threshold on high-confidence records; of H20's 17 passing rows 12 hold and the rest hold less precisely on both
+level sets. With them, of 1,425 results none moves without the unreliable records or on high-confidence records.
+**Limit.** The wild mammals are a different sample of mammals as much as a different kind of record. A level of high says
 no rule found a reason, not that a record was checked in every respect.
 
 ## Data
