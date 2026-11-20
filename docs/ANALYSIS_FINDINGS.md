@@ -1,6 +1,7 @@
 # Analysis findings
 
-What the research arms of MitoAge found on build 2, as of 2026-11-15: longevity in the alignments of the
+What the research arms of MitoAge found on build 2, as of 2026-11-15, with a short reading across the entries
+and H27 added on 2026-11-20: longevity in the alignments of the
 mitochondrial proteins, the peptides encoded inside mtDNA, the pairing of mitochondrial proteins with
 their nuclear partners (mitoport), the substitution rates of the 13 proteins, and the mtDNA motif, repeat
 and deletion-contact-zone features. Results that did not hold, and one mistake, are kept next to those that
@@ -30,6 +31,49 @@ checks: 2026-11-14, dataset revision 6efa0959282e, on which `controls` and `comp
 2026-11-13 again) (about 2,300 species with a mitochondrial
 genome and a maximum lifespan); the command that produces each table is named. "Lifespan" is maximum
 recorded lifespan, log10 years. Nothing here is peer reviewed.
+
+## What stands as of 2026-11-20, in short
+
+Added after the curation audit and H27 (below). The entries keep their own numbers; this is the reading across them.
+
+- **Found, and it holds every check so far: in mammals, the amino-acid make-up of the 13 mitochondrial proteins
+  follows lifespan.** Without any correction the association is very strong (625 mammals: isoleucine −0.88
+  percentage points per tenfold lifespan, p = 1e-57; threonine +0.83, p = 5e-29; the rank correlation of
+  isoleucine content with lifespan is −0.51). With body mass in the model and relatedness handled by the dated
+  tree it shrinks about threefold and five amino acids still pass (604 mammals: isoleucine −0.26, q = 0.004;
+  histidine +0.07, glycine +0.05, phenylalanine −0.09, threonine +0.18). On high-confidence records only (527
+  mammals) isoleucine still passes (−0.24, q = 0.03) and the other four keep their sign and size without passing.
+  With base composition at neutral sites also in the model, part of it goes (H1); what is left follows the slow
+  life history, maturity and gestation, more than lifespan itself (H11).
+- **Not found outside mammals.** Birds: no amino acid passes. Fishes: three pass with mass (isoleucine, serine,
+  threonine), with slopes a third of the mammals'.
+- **Not found: a single site** of a mitochondrial protein associated with lifespan on the dated tree (H2), **a
+  substitution rate** that follows lifespan (H7: four of 655 tests, with disagreeing signs), or **repeats and
+  motifs** that do (H8).
+- **Not settled:** selection (H3's RELAX did not repeat; Coevol's chains have dN/dS rising with lifespan at body
+  mass held, +0.28 with a posterior probability of 0.91, unconverged for one pair of chains); the selection runs
+  on origins of long life (H26) are computed and not read yet.
+- **Found about the data:** 44 RefSeq mitochondrial genome records are wrong or doubtful by their own sequence
+  (another species' genome, chimeras, truncated or reverse-complemented records), and maximum lifespan is
+  biased by sampling (for a quarter of birds and fishes another source reports more than 10% above AnAge).
+  `docs/analyses/curation-audit-2026-11-18/`.
+
+## H27. Do the results hold on records of high confidence, and on well-sampled lifespans?
+
+**Question.** After the audit, every species has a confidence level. Do the results of H1, H7 and H11 change
+when the species are restricted by that level, by how well the lifespan is sampled, by the kind of record, or
+when the lifespan is the highest observed value across sources instead of AnAge's first?
+**Test.** The same commands on six species sets, each read against the unrestricted run on the same build by a
+rule fixed before any run: holds, holds less precisely, moves, reverses. Entry H27 of `dna-seq/mitoage-pipelines`
+(`docs/HYPOTHESES.md`), tables in its `results/h27/`.
+**Result.** Of 1,368 results that passed on all species: without the unreliable records 1,309 hold and 59 hold
+less precisely; on high-confidence records 1,031 and 337; with the highest observed lifespan (289 species
+change) 1,302 and 66; none moves on any of the three. On well-sampled lifespans 686 hold, 681 hold less
+precisely and 1 moves. On mammals with wild lifespan records (53 species against 545 captive) the amino-acid
+results do not stand: none of 20 holds and 8 move.
+**Limit.** H2's column screen and H20's pair fits were not reached by the species sets and are not assessed.
+The wild mammals are a different sample of mammals as much as a different kind of record. A level of high says
+no rule found a reason, not that a record was checked in every respect.
 
 ## Data
 

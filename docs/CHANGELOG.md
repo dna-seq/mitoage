@@ -4,6 +4,10 @@ Newest first.
 
 ## Unreleased
 
+- **Findings: what stands, and H27** (2026-11-20). `docs/ANALYSIS_FINDINGS.md` opens with a short reading across
+  the entries and has H27's result: the results of H1, H7 and H11 hold without the unreliable records, on
+  high-confidence records and with the highest observed lifespan across sources (none moves), and do not stand
+  on mammals with wild lifespan records (53 species).
 - **The build with the confidence level is on Hugging Face** (2026-11-19, RM25; the maintainer: "yes, you must
   upload"). `bun run hf` packaged the committed build (e214d8e) and it was uploaded to `longevity-genie/mitoage` as
   revision `446dad61883937075ec0c7e1f3f8135f2962a1cf`. Checked after the upload: the species table downloaded at
