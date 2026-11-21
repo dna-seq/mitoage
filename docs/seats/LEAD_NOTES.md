@@ -219,14 +219,12 @@ the seat's chat or on the desk, saying what the run is for.
 - H27's extension is read (pipelines 3ff40c3, findings 884aab9): H2 and H20 do not move on the restricted sets.
 - H27 is complete: sample size as a covariate ran (pipelines 5b78bd3 and 0562dbf, findings 62f256c); the slopes of
   H1 and H11 stay. RM25 item 2 waits on desk #78 alone.
-- The screen of every record against independent sequences (`bun run screen`): the fetch is done, 4,650 searches
-  on 2026-11-21 (four listed a genome project's master record, left out of the search since 40e3a27). The comparing
-  step is array job 6565328, submitted from the screen run folder's clone at 40e3a27; it waits on the CPU cap. When
-  it ends: `bun run screen summarize out/screen` there, the two tables into `docs/analyses/independent-screen/`
-  here with a README, as their own commit naming the job and 40e3a27. Read first whether the screen finds the
-  audit's own records (those with independent-sequence evidence in `pipeline/curation/sequence-audit.ts`): that
-  is the check of the method. Rows other than "agrees" are for a person to read; nothing joins the audit list from
-  the screen alone.
+- The screen of every record against independent sequences ran and is committed (61e7074; job 6565328 from
+  40e3a27), posted in `#mitoage>RM25 data quality`. Reading its rows is a person's; the 14 two-gene cases come
+  first. The selector's choice is in the page address (da0a948). Of RM25 are left: the reading (items 1 and 6),
+  desk #78 (item 2), the heavy runs' list (4), the manuscript counts (5) and the separate supplement (7).
+- The headless browser for page checks needs `PLAYWRIGHT_BROWSERS_PATH` set to the playwright folder of the data
+  disk's cache; the check scripts are in the runs folder's `shots`.
 - RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol: all four chains on their
   second leg, 6,069 to 7,163 points, about 1,170 a day.
 - Waiting on jobs: Coevol's second leg (tracecomp when it ends), H18's energy array (2 tasks pending) and its
