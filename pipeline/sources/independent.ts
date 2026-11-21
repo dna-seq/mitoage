@@ -3,7 +3,8 @@
  * name the gene, are 300 to 3,000 bases long and are not RefSeq. The length bound keeps whole mitochondrial
  * genomes out, so the record under test and the genome it was copied from are not among them. It does not make
  * a sequence independent in every sense: the same laboratory may have deposited both, and a GenBank sequence
- * can itself carry a wrong name.
+ * can itself carry a wrong name. The master record of a genome project is kept out: it names the species and its
+ * length field counts contigs, so it passes the length bound, and it holds no sequence.
  *
  * One search and one fetch per species and gene, cached under data/cache/independent with the search's text,
  * its date and the ids, so a rerun compares the same sequences.
@@ -29,7 +30,7 @@ const GENE_TERMS: Record<ScreenGene, string> = {
 };
 
 export const searchTerm = (speciesTaxid: number, gene: ScreenGene): string =>
-  `txid${speciesTaxid}[Organism:exp] AND (${GENE_TERMS[gene]}) AND 300:3000[SLEN] NOT refseq[filter]`;
+  `txid${speciesTaxid}[Organism:exp] AND (${GENE_TERMS[gene]}) AND 300:3000[SLEN] NOT refseq[filter] NOT wgs_master[prop]`;
 
 export interface IndependentSet {
   term: string;

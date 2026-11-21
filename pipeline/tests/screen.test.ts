@@ -71,11 +71,12 @@ describe("independent sequences", () => {
     ]);
     expect(parseFasta("")).toEqual([]);
   });
-  test("the search keeps whole genomes and RefSeq out", () => {
+  test("the search keeps whole genomes, RefSeq and genome projects' master records out", () => {
     const t = searchTerm(9606, "CYTB");
     expect(t).toContain("txid9606[Organism:exp]");
     expect(t).toContain("300:3000[SLEN]");
     expect(t).toContain("NOT refseq[filter]");
+    expect(t).toContain("NOT wgs_master[prop]");
   });
 });
 
