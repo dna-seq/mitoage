@@ -60,11 +60,11 @@ and its reasons as rules of `bun run data` with a list of 44 audited records; th
 read on the conventional strand; the mark, the selector of levels on the species lists and the plot, and the
 notice on a species page; a third correlation dataset, `high_confidence`. Left:
 
-1. Screen every record, not only the near-identical pairs, against independent sequences of its named species
-   (COX1 and CYTB), as a cluster job: the audit's first screen found 4 of the 18 live bird records a published list
-   names, and 2,265 records are unscreened. Its findings join the list of audited records after a person read
-   them. The screen is written (`bun run screen`, 2026-11-21: every live record against up to 15 sequences of its
-   own species and of each other species of its genus in the build); its run and reading are left.
+1. Read the screen of every record against independent sequences (`docs/analyses/independent-screen/`, run on
+   2026-11-21): 1,771 of 2,325 records agree, 519 do not and 35 could not be assessed. Nobody read a row yet. First
+   the 14 records whose both genes fit another species of their genus better than their own (the README's table),
+   then the 17 with one such gene; a row joins the list of audited records only after a person read it. Who reads
+   is the maintainer's and the first author's to say.
 2. Maximum lifespan and sampling effort: sample size and the kind of record are reasons already where they are
    extreme (a tiny sample, a ringing recovery, another source 1.5 times higher). H27 of
    `dna-seq/mitoage-pipelines` ran on 2026-11-20: with the highest observed value in place of AnAge's, 1,302 of
@@ -78,8 +78,9 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
    that can move a result (H27's "not rerun" list).
 5. The manuscript's species counts and the supplement's "97 review items" follow the new build in the next round.
-6. A list for inspection by eye: the 7 pairs the second round left unresolved, each with the record, the sources
-   and what to look at. Who inspects is the maintainer's and the first author's to say.
+6. Inspection by eye of the 7 pairs the second round left unresolved: the list, with what the screen adds for each
+   record and what to look at, is in `docs/analyses/independent-screen/README.md`. Who inspects is the maintainer's
+   and the first author's to say.
 7. A separate supplement on the cleanup and its review (the maintainer, 2026-11-19: "all the cleanup and reviewing
    should be included in a separate supplement"): the audit's method, every record found wrong with its evidence,
    the levels and their rules, what was not checked, and how each result moves on high-confidence data. It takes
