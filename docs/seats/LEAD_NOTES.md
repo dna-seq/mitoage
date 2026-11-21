@@ -245,6 +245,9 @@ the seat's chat or on the desk, saying what the run is for.
   the coupling tables. Never commit from `clone-coupling`: its data folders are replaced by links.
 - Anton asked in `#mitoage>mitoport` where the mitoport hypothesis holds and where it agrees with experiments;
   answered there on 2026-11-21.
+- H28 (the cybrids by ProteinMPNN on the hosts' complexes) is written as a proposed entry in the pipelines'
+  hypotheses (f988e09) after Anton asked for fast learned stand-ins for molecular dynamics. No code, no run: it
+  waits for his yes in `#mitoage>mitoport`. The hour of GPU is my estimate, not measured.
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
 - H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
   (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
