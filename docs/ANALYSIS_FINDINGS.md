@@ -589,3 +589,36 @@ the interface question is an energy on the threaded chimeric complexes, or molec
 no effective sequences for the conserved COX proteins, so complex IV's co-evolution score is close to unweighted
 noise; the library did not report the checkpoint's commit; one partner pair of complex I exceeds the model's length in
 each host and was not assessed.
+
+## H18. The cybrids by an interface energy on the chimeric complexes (H16's and H17's open item)
+
+**Question.** Counts (H16), co-evolved pairs and a language model (H17) do not find the cybrids' defects better than
+divergence. Does a physical score: is the interface between the mtDNA-encoded and the nuclear subunits weaker, by a
+force field, in the chimeric complex than in the host's own?
+**Method, fixed before any energy was computed.** On the host's solved complex (human I, III, IV, V; mouse I, III,
+IV) the chimera takes the donor's residue wherever donor and host differ in an mtDNA-encoded chain. The score,
+`ddE`, is the interaction energy between the mtDNA-encoded and the other chains in the chimera minus the same in the
+host's own complex (AMBER14 with implicit solvent, side chains near a substitution free, three starts each);
+`ddE_per_change` divides it by the substitutions at the interface. Readouts and rule are H16's and H17's, unchanged.
+**Result** (dna-seq/mitoage-pipelines `results/h18/`, commit c869d8e; energies from job 6500884, readout, tests and
+breaks from job 6575325). **The interface energy adds nothing to divergence.** For each of the two scores one of
+the rule's three conditions holds.
+
+| readout | `ddE` | `ddE_per_change` | divergence (`d_all`) |
+| --- | --- | --- | --- |
+| rank correlation with activity (13 points) | −0.37 | −0.55 | −0.36 |
+| area for reduced against not reduced (9 against 20) | 0.62 | 0.48 | 0.74 |
+| names the most reduced complex, of 6 pairs | 0 | 1 | 4 |
+
+The energy is positive, a weaker interface in the chimera, in 33 of the 44 tasks, and it rises with the number of
+substitutions (rank correlation 0.48; 0.89 in complex I), so in the large complexes it mostly repeats divergence.
+The two orangutans, which give no respiring cybrid in human cells, score above every human donor that respired;
+the two hamsters do not score above rat in mouse cells.
+**Reading.** With H16 and H17: no score tried, from counts to a force field, ranks the published defects better
+than the number of differing residues. It does not say the interfaces are not weaker. The model has no cofactors
+and no membrane, a fixed backbone and no entropy, as said in advance, and a score that misses for those reasons
+looks the same as one that misses because there is nothing to find.
+**Open.** The first check stopped at one failed test, traced to single-precision rounding on an unrelaxed structure
+and not to the energy function. It showed that a task's three starts share one build of the structure, so the
+spread reported for an energy leaves the build out. Ten tasks are being run from a second build to measure that;
+it can change what is said of single energies, not the verdict above.

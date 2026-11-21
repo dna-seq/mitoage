@@ -104,7 +104,7 @@ Build 2 has 2,344 species; the manuscript cites build 0f4e970.
 | H13 | Audit of the build's records | 3 reversed deposits, 7 mixed; 84 near-identical pairs, 9 across genera (mislabel candidates, e.g. *Echis coloratus* / *Vipera berus*); no genetic-code mismatch. In the manuscript as Table S4. |
 | H14 | Complexes I, III, V too: whole proteins or contact residues? | Whole proteins in all four complexes (p 7e-7 to 9e-4); contact residues and cross-interface pairs add nothing after Holm. |
 | H16, H17 | Published cybrids: does contact mismatch, co-evolved pairs or ESM-2 predict which complex fails? | No score beats plain divergence by the rule fixed in advance. H18 (energy) is running. |
-| H18 | Interface energy of the chimeric complexes | Running (job 6500884). |
+| H18 | Interface energy of the chimeric complexes | Read on 2026-11-21: adds nothing to divergence (`docs/ANALYSIS_FINDINGS.md`, H18). |
 | H19, H21-H25 | | Written, not run (held). |
 | H20 | Temperature, size, metabolic rate against the mtDNA clock | Not as metabolic theory predicts: in ray-finned fishes E = -0.22 eV [-0.49, +0.04], excluding 0.65 and 0.40 eV; mammalian tests unreadable (size control failed). Lehmann et al.'s GC term survives the tree (p 0.007), R2 0.49 not 0.77. |
 | H26 | Long-lived-for-mass origins (R2, one pair per origin) | Birds: not detected (median delta-omega +0.009 [-0.014, +0.018], 41 pairs). Mammals: not assessed (6 unsaturated pairs); within orders nothing (26 pairs). R1, R4, C not run. |
