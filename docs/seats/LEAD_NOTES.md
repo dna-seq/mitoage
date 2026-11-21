@@ -235,6 +235,16 @@ the seat's chat or on the desk, saying what the run is for.
   100. Ages fixed: the covariances with lifespan and mass are under 100 and differ by 0.34 to 0.6 between chains.
   Posted in `#mitoage>Coevol`. Next tracecomp when the third leg ends, about 2026-11-24 16:00.
 - H21 to H25's first job passed (27 tests, 25 of 25 breaks, the rerun gives the same bytes).
+- H21 to H25's coevolution side: the coupling job 6587085 failed, because the entry's species rule keeps no species
+  (H19's nuclear alignments cover 182 of 617 mammals and 137 of 883 fishes; no protein reaches 90% of the class).
+  Fixed in pipelines 59f739a (an empty set is said as "not assessed", one test, one break) and run again as job
+  6587349 from a second clone, `clone-coupling` beside the first, whose data folders are links to the first clone's:
+  tests pass, 26 of 26 breaks caught, C1, C2 and P "not assessed" in both classes; the tables are in the first
+  clone's `data/output/adaptations/coupling`. Whether to amend the rule is desk #81 (default: keep it; under the
+  other reading marine mammals have 14 species and migrating fishes 8). The readout names 6587349 and 59f739a for
+  the coupling tables. Never commit from `clone-coupling`: its data folders are replaced by links.
+- Anton asked in `#mitoage>mitoport` where the mitoport hypothesis holds and where it agrees with experiments;
+  answered there on 2026-11-21.
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
 - H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
   (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
