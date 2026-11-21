@@ -231,4 +231,11 @@ the seat's chat or on the desk, saying what the run is for.
   is new work nobody decided.
 - RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol on 2026-11-21 15:00: the
   second leg ends about 18:10, at 6,741 to 7,827 points; tracecomp is due then.
-- Next by the handoff: H19, then H21 to H25, throttled.
+- H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
+- H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
+  (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
+  and the coupling job 6587085 on H19's alignments, both after it. The mammal-wide hibernation tasks (array tasks
+  63 to 83, 111 and 112) are left out: their table is on Dryad, which serves a browser only, asked on desk #80
+  (default: the fish analyses run alone and H23 to H25's mammal-wide readouts stay "not run"). When the table is
+  placed in the clone's `data/input/hibernation`: `mitoage download hibernation` checks it, then the first job's
+  steps again and the left-out tasks. `adapt readout` comes last, when selection and coupling are done.
