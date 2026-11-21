@@ -225,7 +225,10 @@ the seat's chat or on the desk, saying what the run is for.
   desk #78 (item 2), the heavy runs' list (4), the manuscript counts (5) and the separate supplement (7).
 - The headless browser for page checks needs `PLAYWRIGHT_BROWSERS_PATH` set to the playwright folder of the data
   disk's cache; the check scripts are in the runs folder's `shots`.
-- RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol: all four chains on their
-  second leg, 6,069 to 7,163 points, about 1,170 a day.
-- Waiting on jobs: Coevol's second leg (tracecomp when it ends), H18's energy array (2 tasks pending) and its
-  check job.
+- H18 is read (pipelines c869d8e and ff05158, findings bf5868b, posted in `#mitoage>mitoport`): the interface
+  energy adds nothing to divergence, and a control showed the energy does not repeat between two builds of a task.
+  Its run clone (the `h17-cybrid` folder) is at d2c3646. A better protocol (several builds, or one shared build)
+  is new work nobody decided.
+- RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol on 2026-11-21 15:00: the
+  second leg ends about 18:10, at 6,741 to 7,827 points; tracecomp is due then.
+- Next by the handoff: H19, then H21 to H25, throttled.
