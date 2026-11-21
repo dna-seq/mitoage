@@ -610,7 +610,7 @@ the rule's three conditions holds.
 | area for reduced against not reduced (9 against 20) | 0.62 | 0.48 | 0.74 |
 | names the most reduced complex, of 6 pairs | 0 | 1 | 4 |
 
-The energy is positive, a weaker interface in the chimera, in 33 of the 44 tasks, and it rises with the number of
+The energy is positive, a weaker interface in the chimera, in 33 of the 44 tasks (see the control below), and it rises with the number of
 substitutions (rank correlation 0.48; 0.89 in complex I), so in the large complexes it mostly repeats divergence.
 The two orangutans, which give no respiring cybrid in human cells, score above every human donor that respired;
 the two hamsters do not score above rat in mouse cells.
@@ -618,7 +618,12 @@ the two hamsters do not score above rat in mouse cells.
 than the number of differing residues. It does not say the interfaces are not weaker. The model has no cofactors
 and no membrane, a fixed backbone and no entropy, as said in advance, and a score that misses for those reasons
 looks the same as one that misses because there is nothing to find.
-**Open.** The first check stopped at one failed test, traced to single-precision rounding on an unrelaxed structure
-and not to the energy function. It showed that a task's three starts share one build of the structure, so the
-spread reported for an energy leaves the build out. Ten tasks are being run from a second build to measure that;
-it can change what is said of single energies, not the verdict above.
+**The control: the energy does not repeat** (pipelines ff05158, `results/h18/h18_repeat_build.tsv`). The first check
+stopped at one failed test, traced to single-precision rounding on an unrelaxed structure and not to the energy
+function. It showed that a task's three starts share one build of the structure, so the spread reported for an
+energy leaves the build out. Ten tasks (human, complexes IV and V) were run from a second build: `ddE` differs
+between the two builds by 60 kJ/mol at the median and up to 162, against a spread over the starts of 21, and 4 of
+the 10 change sign. The median size of `ddE` over all 44 tasks is 67 kJ/mol. So most single energies are not
+distinguished from the noise of the build, and the sentence above on the sign of the energy is a count, not a
+finding. The verdict stands by the rule and has a second reason: at this protocol the score is too noisy to rank
+13 points. A run that could say more needs several builds per task, or one build shared by chimera and reference.
