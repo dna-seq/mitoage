@@ -229,8 +229,12 @@ the seat's chat or on the desk, saying what the run is for.
   energy adds nothing to divergence, and a control showed the energy does not repeat between two builds of a task.
   Its run clone (the `h17-cybrid` folder) is at d2c3646. A better protocol (several builds, or one shared build)
   is new work nobody decided.
-- RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol on 2026-11-21 15:00: the
-  second leg ends about 18:10, at 6,741 to 7,827 points; tracecomp is due then.
+- RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol on 2026-11-21 16:00: the
+  second leg ended at 6,814 to 7,903 points and the third started. tracecomp on copies of the traces (the runs
+  folder's `coevol-tracecomp`, by date): nothing is read. Ages estimated: tree length (60) and dN/dS (78) are under
+  100. Ages fixed: the covariances with lifespan and mass are under 100 and differ by 0.34 to 0.6 between chains.
+  Posted in `#mitoage>Coevol`. Next tracecomp when the third leg ends, about 2026-11-24 16:00.
+- H21 to H25's first job passed (27 tests, 25 of 25 breaks, the rerun gives the same bytes).
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
 - H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
   (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
