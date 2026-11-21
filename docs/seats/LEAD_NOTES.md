@@ -217,17 +217,16 @@ the seat's chat or on the desk, saying what the run is for.
 ### State, 2026-11-21 night
 
 - H27's extension is read (pipelines 3ff40c3, findings 884aab9): H2 and H20 do not move on the restricted sets.
-- H27's last piece, sample size as a covariate, is written and pushed (pipelines 7dac172) and submitted from the
-  second clone of the H27 run folder; it waits on the CPU cap. When it ends: its tables into `results/` of the
-  pipelines repository with the job and commit named, the result into H27's entry, then findings, roadmap (RM25
-  item 2) and changelog here, and a `done:` post in `#mitoage>H27 data quality`.
-- The screen of every record against independent sequences is written (`bun run screen`, 2eec451). Its fetch runs
-  on the login node in the screen run folder's clone; when it ends, submit `pipeline/screen.sbatch` there as an
-  array of 8 (account and nice on the command line, bun on the PATH), then `bun run screen summarize out/screen`,
-  commit the two tables with a README as their own commit naming the job and 2eec451. Read first whether the
-  screen finds the audit's own records (those with independent-sequence evidence in
-  `pipeline/curation/sequence-audit.ts`): that is the check of the method. Rows other than "agrees" are for a
-  person to read; nothing joins the audit list from the screen alone.
+- H27 is complete: sample size as a covariate ran (pipelines 5b78bd3 and 0562dbf, findings 62f256c); the slopes of
+  H1 and H11 stay. RM25 item 2 waits on desk #78 alone.
+- The screen of every record against independent sequences (`bun run screen`): the fetch is done, 4,650 searches
+  on 2026-11-21 (four listed a genome project's master record, left out of the search since 40e3a27). The comparing
+  step is array job 6565328, submitted from the screen run folder's clone at 40e3a27; it waits on the CPU cap. When
+  it ends: `bun run screen summarize out/screen` there, the two tables into `docs/analyses/independent-screen/`
+  here with a README, as their own commit naming the job and 40e3a27. Read first whether the screen finds the
+  audit's own records (those with independent-sequence evidence in `pipeline/curation/sequence-audit.ts`): that
+  is the check of the method. Rows other than "agrees" are for a person to read; nothing joins the audit list from
+  the screen alone.
 - RM11, RM12 and RM16 wait until 2026-11-24: the cluster is still at its CPU cap. Coevol: all four chains on their
   second leg, 6,069 to 7,163 points, about 1,170 a day.
 - Waiting on jobs: Coevol's second leg (tracecomp when it ends), H18's energy array (2 tasks pending) and its
