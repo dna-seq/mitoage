@@ -53,6 +53,29 @@ export const CONFIDENCE_MEANING: Record<ConfidenceLevel, string> = {
 /** The levels a list or a plot shows unless the visitor asks for more: all but the lowest. */
 export const DEFAULT_SHOWN_LEVELS: readonly ConfidenceLevel[] = CONFIDENCE_LEVELS.filter((l) => l !== "unreliable");
 
+/** The query parameter that keeps the selector's choice in a page's address. */
+export const LEVELS_PARAM = "levels";
+
+/**
+ * The levels a page address asks for: `levels=high,caveat`, or `levels=none` for no level ticked. Without the
+ * parameter, or with a value that names no level (a mistyped link), the default.
+ */
+export function levelsFromQuery(search: string): ConfidenceLevel[] {
+  const v = new URLSearchParams(search).get(LEVELS_PARAM);
+  if (v === null) return [...DEFAULT_SHOWN_LEVELS];
+  if (v === "none") return [];
+  const asked = new Set(v.split(","));
+  const levels = CONFIDENCE_LEVELS.filter((l) => asked.has(l));
+  return levels.length ? levels : [...DEFAULT_SHOWN_LEVELS];
+}
+
+/** The parameter's value for a choice, in the order of the levels; null for the default, which the address omits. */
+export function levelsQueryValue(shown: ReadonlySet<ConfidenceLevel>): string | null {
+  const levels = CONFIDENCE_LEVELS.filter((l) => shown.has(l));
+  if (levels.length === DEFAULT_SHOWN_LEVELS.length && levels.every((l, i) => l === DEFAULT_SHOWN_LEVELS[i])) return null;
+  return levels.length ? levels.join(",") : "none";
+}
+
 /** A reason code ("kind" or "kind:detail") as words; an unknown code is shown as written, never dropped. */
 export function confidenceReasonText(code: string): string {
   const kind = code.split(":")[0]!;

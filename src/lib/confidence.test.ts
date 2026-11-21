@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { getAllSpecies } from "~/data";
-import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, CONFIDENCE_REASONS, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, confidenceReasonText, rowsAtLevels } from "./confidence";
+import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, CONFIDENCE_REASONS, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, LEVELS_PARAM, confidenceReasonText, levelsFromQuery, levelsQueryValue, rowsAtLevels } from "./confidence";
 
 describe("confidence levels on the site", () => {
   test("every level has a label and a meaning; all but the lowest are shown by default", () => {
@@ -25,6 +25,24 @@ describe("confidence levels on the site", () => {
     expect(at([...CONFIDENCE_LEVELS])).toEqual(rows.map((r) => r.c));
     expect(at([])).toEqual([null, "?", 3]);
     expect(at(["unreliable"])).toEqual(["unreliable", null, "?", 3]);
+  });
+
+  test("the selector's choice in a page address: every choice comes back as it went; the default is omitted", () => {
+    // every subset of the levels
+    for (let m = 0; m < 1 << CONFIDENCE_LEVELS.length; m++) {
+      const set = new Set(CONFIDENCE_LEVELS.filter((_, i) => m & (1 << i)));
+      const v = levelsQueryValue(set);
+      const isDefault = set.size === DEFAULT_SHOWN_LEVELS.length && DEFAULT_SHOWN_LEVELS.every((l) => set.has(l));
+      expect(v === null).toBe(isDefault);
+      const search = v === null ? "?q=x" : `?q=x&${LEVELS_PARAM}=${v}`;
+      expect(levelsFromQuery(search)).toEqual(CONFIDENCE_LEVELS.filter((l) => set.has(l)));
+    }
+    expect(levelsQueryValue(new Set())).toBe("none");
+    expect(levelsFromQuery("")).toEqual([...DEFAULT_SHOWN_LEVELS]);
+    // order and repeats in a link do not matter; a value that is no level is dropped; nothing valid is the default
+    expect(levelsFromQuery("?levels=unreliable,high,high,bogus")).toEqual(["high", "unreliable"]);
+    expect(levelsFromQuery("?levels=bogus")).toEqual([...DEFAULT_SHOWN_LEVELS]);
+    expect(levelsFromQuery("?levels=")).toEqual([...DEFAULT_SHOWN_LEVELS]);
   });
 
   test("the committed build: every species has a level, every reason is a known one, and the level is the worst of its reasons'", () => {

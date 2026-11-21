@@ -235,9 +235,11 @@ in the species table; the rules are `pipeline/steps/confidence.ts`, the records 
 `pipeline/curation/sequence-audit.ts`). `src/lib/confidence.ts` holds the levels, the words for each reason and
 the default (every level but the lowest, "unreliable", is shown). The mark is the `.conf` class in
 `components.css`, one tone per level. The species list and the plot explorer have a selector of levels
-(`.conf-pick`); `DataTable` draws a level column with `kind: "level"`. A species page says its level with the
+(`.conf-pick`), whose choice is kept in the page address (`levels=high,unreliable`; `levels=none`; nothing for
+the default); `DataTable` draws a level column with `kind: "level"`. A species page says its level with the
 reasons in words and what the audit saw in its record. Correlations exist on three species sets (`default`,
-`anage_only`, `high_confidence`), all in `/data/correlations.parquet`; the pages show `default`.
+`anage_only`, `high_confidence`), all in `/data/correlations.parquet`; the pages show `default`, and the gene and taxon pages `high_confidence`
+beside it.
 
 ## Design system
 

@@ -4,7 +4,7 @@
  */
 import { createMemo, createSignal, For, onMount, Show } from "solid-js";
 import DataTable, { type Row } from "~/components/ui/DataTable";
-import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, rowsAtLevels } from "~/lib/confidence";
+import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, LEVELS_PARAM, levelsFromQuery, levelsQueryValue, rowsAtLevels } from "~/lib/confidence";
 import {
   SPECIES_COLUMNS,
   SPECIES_SEARCH_KEYS,
@@ -26,13 +26,19 @@ export interface SpeciesListProps {
 export default function SpeciesList(props: SpeciesListProps) {
   const [rows, setRows] = createSignal<Row[]>(props.raw.map((r) => tableRow(TABLE_FIELDS, r)));
   const [state, setState] = createSignal<"loading" | "ready" | "error">("loading");
-  // Which confidence levels are listed: all but the lowest, until the visitor ticks it.
+  // Which confidence levels are listed: all but the lowest, until the visitor ticks it. The choice is kept in the
+  // page address, so a link opens the same list.
   const [shown, setShown] = createSignal<ReadonlySet<ConfidenceLevel>>(new Set(DEFAULT_SHOWN_LEVELS));
   const toggle = (l: ConfidenceLevel) => {
     const next = new Set(shown());
     if (next.has(l)) next.delete(l);
     else next.add(l);
     setShown(next);
+    const url = new URL(window.location.href);
+    const v = levelsQueryValue(next);
+    if (v === null) url.searchParams.delete(LEVELS_PARAM);
+    else url.searchParams.set(LEVELS_PARAM, v);
+    window.history.replaceState(window.history.state, "", url.href.replace(/%2C/gi, ","));
   };
   const counts = createMemo(() => {
     const c: Record<string, number> = {};
@@ -43,6 +49,7 @@ export default function SpeciesList(props: SpeciesListProps) {
   const visible = createMemo(() => rowsAtLevels(rows(), (r) => r.confidence, shown()));
   const hidden = () => rows().length - visible().length;
   onMount(() => {
+    setShown(new Set(levelsFromQuery(window.location.search)));
     fetch(SPECIES_TABLE_URL)
       .then((r) => (r.ok ? (r.json() as Promise<SpeciesTableFile>) : Promise.reject(new Error(`HTTP ${r.status}`))))
       .then((f) => {

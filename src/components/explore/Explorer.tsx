@@ -12,7 +12,7 @@ import { ICONS } from "~/components/ui/icons";
 import type { TraitKey } from "~/data/schema";
 import { CLASS_GROUPS, classColor } from "~/lib/classes";
 import { fmtInt, fmtLifespan, fmtNum } from "~/lib/format";
-import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS } from "~/lib/confidence";
+import { CONFIDENCE_LABEL, CONFIDENCE_LEVELS, CONFIDENCE_MEANING, type ConfidenceLevel, DEFAULT_SHOWN_LEVELS, LEVELS_PARAM, levelsFromQuery, levelsQueryValue } from "~/lib/confidence";
 import { type Column, type Dataset, levelFilter, loadColumnByKey, loadCorr, loadDataset, scopeFilter, scopeLabel } from "~/lib/explore/client";
 import { fmtP, fmtR, labelPhrase } from "~/lib/explore/format";
 import { DEFAULT_X, DEFAULT_Y, MAX_HIGHLIGHTS, parseState, serializeState } from "~/lib/explore/state";
@@ -80,8 +80,19 @@ export default function Explorer(props: Props) {
   const [cols, setCols] = createSignal(new Map<string, Column>());
   const [colError, setColError] = createSignal<string | null>(null);
 
+  // Which confidence levels are plotted and counted: all but the lowest, until the visitor ticks it. The choice is
+  // part of the page address, as the rest of the view is.
+  const [levels, setLevels] = createSignal<ReadonlySet<ConfidenceLevel>>(new Set(DEFAULT_SHOWN_LEVELS));
+  const toggleLevel = (l: ConfidenceLevel) => {
+    const next = new Set(levels());
+    if (next.has(l)) next.delete(l);
+    else next.add(l);
+    setLevels(next);
+  };
+
   onMount(() => {
     const keys = new Set(FEATURE_KEYS());
+    setLevels(new Set(levelsFromQuery(window.location.search)));
     const s = parseState(window.location.search, (k) => keys.has(k) || getVariable(k)?.kind === "trait");
     setXKey(s.x);
     setYKey(s.y);
@@ -123,22 +134,16 @@ export default function Explorer(props: Props) {
   // ------------------------------------------------------------ URL sync
   createEffect(() => {
     if (!ready()) return;
-    const q = serializeState(
+    const view = serializeState(
       { x: xKey(), y: yKey(), logX: logXPref(), logY: logYPref(), scope: scope(), highlight: highlight(), fit: fit() },
       (k) => getVariable(k)?.defaultLog ?? false,
     );
+    const lv = levelsQueryValue(levels());
+    const q = lv === null ? view : `${view}&${LEVELS_PARAM}=${lv}`;
     if (q !== window.location.search) history.replaceState(history.state, "", `${window.location.pathname}${q}`);
   });
 
   // ------------------------------------------------------------ the current view
-  // Which confidence levels are plotted and counted: all but the lowest, until the visitor ticks it.
-  const [levels, setLevels] = createSignal<ReadonlySet<ConfidenceLevel>>(new Set(DEFAULT_SHOWN_LEVELS));
-  const toggleLevel = (l: ConfidenceLevel) => {
-    const next = new Set(levels());
-    if (next.has(l)) next.delete(l);
-    else next.add(l);
-    setLevels(next);
-  };
   const view = createMemo(() => {
     const d = ds();
     const xc = cols().get(xKey());

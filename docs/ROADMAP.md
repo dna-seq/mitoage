@@ -74,8 +74,7 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    extension the same day took the sets to H2's column screen and H20's pair fits: none of their results moves.
    The sample-size covariate ran on 2026-11-21: the slopes of H1 and H11 stay where they were with it. H27 is
    complete; this item waits on #78 alone.
-3. The site: the correlation tables and the taxon pages show `default` only, and get the `high_confidence` value
-   beside it; the selector's choice is kept in the page address.
+3. (done, 2026-11-21: see the changelog)
 4. Heavy runs (selection, Coevol, co-evolution) are named with the species they would lose and rerun only where
    that can move a result (H27's "not rerun" list).
 5. The manuscript's species counts and the supplement's "97 review items" follow the new build in the next round.
