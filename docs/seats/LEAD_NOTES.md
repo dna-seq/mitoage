@@ -322,6 +322,23 @@ the seat's chat or on the desk, saying what the run is for.
 - H33's table is committed as collected (20ada25, `results/h33`): 8 contrasts with a stated direction against
   the 10 the rule needs, so "not assessed: too few" as it stands; Anton has not been told this number yet. The
   swordtail case (Moran et al. 2024, a lethal incompatibility mapped to three complex I proteins) is unread.
+- 2026-11-22 night, state after the corrections (pipelines 58686ae). Done since the note above: the start-codon
+  variants (72a5745, 498780b, job 6592885), H28's sentence on soluble weights, the control's result (job 6592766:
+  Pearson 0.993 in size over 150 mutations), and Anton's PDF of McKenzie 2003 (kept in the papers folder under
+  the data directory): eight activities read from its Fig. 4 went into the measurement table (da06759, job
+  6593046), so T1 has 21 values (count -0.52, StaB-ddG -0.31, control region -0.67; H32's blocks now beaten by
+  7.6% of random sets, still short of 5%). Everything is in the review section of the hypotheses file and
+  `results/review-20261122`. Still to correct: H17's ESM and co-evolution sums (donor through the host; needs a
+  GPU run), H31's shuffled genome. Fresh clones used for the reruns: `h28-stab/clone-fix` to `clone-fix5`.
+- Anton on the safety filter: "if fable complains, ask the agent with Opus 5.5 and if it complains - with latest
+  Sonnet" (2026-11-22). The membrane survey ran on an Opus agent and finished. H34 (ac6d8f2) is its outcome: part A,
+  the existing predictors from MitImpact 4 on H29's variants, is run (832eca5, `results/h34`; AlphaMissense 0.98
+  and APOGEE 2 1.00 both fitted to such labels, ESM1b 0.94 and KronGenome 0.92 level with the baseline 0.92);
+  part B, the membrane ProteinMPNN of the LigandMPNN repository (per-residue or global membrane checkpoint, MIT),
+  has no code: its choices (checkpoint, membrane labels of our chains, decoding order) are to be fixed with the
+  code before any score, the soluble weights as control, run twice. Anton was told part B is next. The run clone
+  for H34 is `h34/clone` in the runs folder.
+- Asked of Anton and open: Yu et al. 2009 (Genome Research) as a PDF for H33's strain table.
 - H33 (pipelines a402176) is what Anton's "so we got stuck?" led to: genomes that differ in a few listed positions
   on one nucleus, a sign test of whether conservation or KronGenome names the one that works worse. He was given
   two options (build it, default; or go back to the open work) and had not answered. The table of contrasts is
