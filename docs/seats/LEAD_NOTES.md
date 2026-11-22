@@ -281,9 +281,16 @@ the seat's chat or on the desk, saying what the run is for.
   Nucleotide scores do as well or better than amino acid counts (T2 0.76 to 0.87 against 0.74), and one number per
   donor does as well as the complex's own genes, so the points mostly carry the donor's distance. Sent to Anton in
   the direct message; the tables are not in `results/` yet, they go with H28's write-up.
-- Anton asked whether the kron genome model can score cybrids. Its seat was asked for the model's facts in
-  `#agent-chat>kron genome on cybrids` (2026-11-22); no entry and no code until it answers, and Anton sees the rule
-  before a run.
+- H31 (KronGenome's masked likelihoods; Anton's question, its seat gave the model's facts in
+  `#agent-chat>kron genome on cybrids`) is run and written up, pipelines 4ea8463, `results/h31/`: neither rule met.
+  Cybrids fail (T2 0.59); single human variants 0.88 over all, 0.93 on amino acid changes, 0.77 on tRNA, level with
+  conservation. The model runs on a GPU only (Triton kernels) and its code cannot share an environment with the
+  other torch groups: the table is filled by `slurm/h31-kron-table.py` under `uv run --script`; a compute node has
+  no git, so the script's environment is built once on the login node. Runs folder `h31-kron`.
+- H32 (the conserved blocks of the control region looked special, 0.98 on the mouse host; Anton: "investigate the
+  lead") is run, pipelines 98c4d3a, `results/h32/`: does not count, 16% of random window sets do as well. The
+  nucleotide baselines are in `results/cybrid-dna/`: no region ranks above another, all follow distance.
+- Anton, 2026-11-22: "You talk too much, explain short and simple". Replies to him: the verdict and a few lines.
 - H30 (two healthy mouse mtDNAs mixed, NZB with C57 or 129) has its entry (pipelines 4b56a5f), no code; the strain
   accessions are not looked up.
 - Open with Anton: whether the cluster notes' "never submit to the requeue partition" should change for all seats;
