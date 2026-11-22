@@ -249,10 +249,15 @@ the seat's chat or on the desk, saying what the run is for.
   answer is relayed on desk #82). The check changed the model to StaB-ddG (ProteinMPNN fine-tuned for binding energy
   changes; plain ProteinMPNN stays as a control arm); entry rewritten before the code (pipelines bcd8bb4), code
   de8a216 (`mitoport cybrid-stab`, `cybrid-stab-collect`, `cybrid-stab-readout`, `download stabddg`). No card was
-  free, so it runs on CPU nodes from the runs folder's `h28-stab/clone` (at de8a216, with H17's inputs copied in):
-  tasks 0 and 2 as job 6590881, the other 42 as 6590907 after them, two at a time (raise the throttle to four when
-  the selection array of H21 to H25 has ended). Complex IV takes about 40 minutes a task; complex I was not yet
-  measured. Still to do: the whole array a second time into another folder (`H28_OUT`), then
+  free, so it runs on CPU nodes from the runs folder's `h28-stab/clone` (with H17's inputs copied in). Anton then
+  asked for a verdict per ported protein, not contacts: per-protein sets and the stability term were added
+  (c0a229c; the entry says it as a change), the first two tasks cancelled (their output is in `h28-stab/first-try`)
+  and the whole array restarted as 6591070 from c0a229c, two at a time (raise the throttle to four when the
+  selection array of H21 to H25 has ended: `scontrol update JobId=6591070 ArrayTaskThrottle=4`). Measured before
+  the change: 7.5 minutes a set for complex I, 1.4 for complex IV; a complex I task now has 57 sets, about 7 hours.
+  H29 (disease variants against common ones, the check of what a per-protein number is worth) is a proposed entry
+  in the pipelines' hypotheses: no code; Anton was told it runs after H28 unless he says no; its variant files and
+  threshold are to be fixed with the code. Still to do for H28: the whole array a second time into another folder (`H28_OUT`), then
   `slurm/h28-stab-check.sbatch` with `H28_SECOND` naming that folder (collect, readout, byte comparison, tests, 21
   breaks; one break is caught only on the clone with data), then results into the entry against the rule, the
   tables into `results/`, findings and a post in `#mitoage>mitoport`.
