@@ -293,6 +293,19 @@ the seat's chat or on the desk, saying what the run is for.
 - Anton, 2026-11-22: "You talk too much, explain short and simple". Replies to him: the verdict and a few lines.
 - H30 (two healthy mouse mtDNAs mixed, NZB with C57 or 129) has its entry (pipelines 4b56a5f), no code; the strain
   accessions are not looked up.
+- 2026-11-22 evening: H28 is written up (pipelines 761ad26, 26210b5; `results/h28`; two runs identical in all 44
+  tables, 50 tests, 26 of 26 breaks, check job 6592268) and posted in `#mitoage>mitoport`. H29 has its readout
+  (check job 6592227 in `h28-stab/clone-gpu3`; the first, 6592222, failed for the interface site tables, copied
+  from clone-gpu2): does not count, AUC 0.64 against 0.92 for the site's variability; 31 tests, 19 of 19 breaks.
+  Its second run (6592223 to 6592226, into `data/output/mitoport/variants-second`) was on the cards; owed: `cmp`
+  of the 19 tables, the result into H29's entry and `results/h29`. With H29 failed, StaB-ddG is dropped and H30 as
+  written (it scores with StaB-ddG) is not built; Anton was told.
+- H33 (pipelines a402176) is what Anton's "so we got stuck?" led to: genomes that differ in a few listed positions
+  on one nucleus, a sign test of whether conservation or KronGenome names the one that works worse. He was given
+  two options (build it, default; or go back to the open work) and had not answered. The table of contrasts is
+  collected first and committed before any scoring code. Found before any score: the build has 4 insects, so the
+  conservation score cannot be made for the fly panels; KronGenome's context is the genetic code table (5 for
+  flies), to check against its training data before the run.
 - Open with Anton: whether the cluster notes' "never submit to the requeue partition" should change for all seats;
   he asked that seats with GPU needs be told, done in `#agent-chat>gpu nodes`.
 - The drafts of the reports on audited records (RM25 item 8) are in `docs/analyses/record-reports/` (2a55267); the
