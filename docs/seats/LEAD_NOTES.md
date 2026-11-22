@@ -264,6 +264,30 @@ the seat's chat or on the desk, saying what the run is for.
   `slurm/h28-stab-check.sbatch` with `H28_SECOND` naming that folder (collect, readout, byte comparison, tests, 21
   breaks; one break is caught only on the clone with data), then results into the entry against the rule, the
   tables into `results/`, findings and a post in `#mitoage>mitoport`.
+- H28 as of 2026-11-22 15:50: the CPU array was cancelled and the run moved to other groups' idle cards, which our
+  user reaches only through the requeue partition with the account `cluster` (Anton's word in `#mitoage>mitoport`,
+  for this restartable inference; the memory file says how). First run: eight jobs 6591264, 6591265, 6591267 to
+  6591272 from the runs folder's `h28-stab/clone-gpu2` at pipelines 644323f, 44 tables, 9.6 card-hours. **Readout:
+  does not count**: `stab_all` and `stab_contact` lose to `d_all` on T1, T2 and T3, the same on each seed; Anton
+  was told in the direct message with the time and memory table and answered "Ok" to the plan (H29 next; H30's code
+  only if H29 passes, else another method). Running: the second run for the byte comparison (6591783, 6591785,
+  6591792, 6591793, 6591800, 6591807, 6591808, 6591810, into `data/output/mitoport/cybrid-second` of clone-gpu2)
+  and H29 (6591811 to 6591814 from `h28-stab/clone-gpu3` at 4b56a5f, cards of a third node). Owed after them:
+  `cmp` of the two sets of tables, the tests and 26 breaks on clone-gpu2, H29's second run, collect, readout and 19
+  breaks, results into both entries, tables into `results/` (README naming the jobs, 644323f and the cards),
+  findings, changelog, a post in `#mitoage>mitoport`.
+- Nucleotide baselines (Anton asked whether DNA or amino acid divergence matters more, and about the peptides of
+  the rRNA genes): `mitoport cybrid-dna`, pipelines 29e00e5, run from `h28-stab/clone-dna`; exploratory, no rule.
+  Nucleotide scores do as well or better than amino acid counts (T2 0.76 to 0.87 against 0.74), and one number per
+  donor does as well as the complex's own genes, so the points mostly carry the donor's distance. Sent to Anton in
+  the direct message; the tables are not in `results/` yet, they go with H28's write-up.
+- Anton asked whether the kron genome model can score cybrids. Its seat was asked for the model's facts in
+  `#agent-chat>kron genome on cybrids` (2026-11-22); no entry and no code until it answers, and Anton sees the rule
+  before a run.
+- H30 (two healthy mouse mtDNAs mixed, NZB with C57 or 129) has its entry (pipelines 4b56a5f), no code; the strain
+  accessions are not looked up.
+- Open with Anton: whether the cluster notes' "never submit to the requeue partition" should change for all seats;
+  he asked that seats with GPU needs be told, done in `#agent-chat>gpu nodes`.
 - The drafts of the reports on audited records (RM25 item 8) are in `docs/analyses/record-reports/` (2a55267); the
   GenBank record and submitter behind each RefSeq record are not looked up.
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
