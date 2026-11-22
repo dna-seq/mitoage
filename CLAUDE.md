@@ -141,6 +141,7 @@ Runs on Bun. Every entry point (`README.md`, "Commands", has the same table):
 | `bun run complexes` | write `src/data/generated/complexes.json`, the data of the pages under `/complexes/`, from the per-residue table of complex IV and the chains of the solved structures in `docs/analyses/cluster-2026-11-15/` (D21) |
 | `bun run duplicates` | list the species of one genus whose mitochondrial protein genes are nearly identical (99.9% or more), from the committed build and its alignments, into `docs/analyses/possible-duplicates/`; it reports and merges nothing (RM8) |
 | `bun run screen` | compare every live record's COX1 and CYTB with independent GenBank sequences of its named species and of the other species of its genus (`fetch`, needs network; `compare`, a cluster job, `pipeline/screen.sbatch`; `summarize`, into `docs/analyses/independent-screen/`); it reports and flags nothing in the build (RM25) |
+| `bun run record-reports` | write the drafts of the reports on RefSeq records the audit found wrong, one per record with its evidence and the screen's comparisons, into `docs/analyses/record-reports/`; it sends nothing (RM25) |
 | `bun run sqlite` | write `out/hf/mitoage.sqlite`, the SQLite copy of the build the MCP server reads; runs after `bun run hf`, and needs `dist/data/correlations.parquet` from `bun run build` (D8) |
 | `bun run mcp` | compile the MCP server in `mcp/` to `mcp/dist/` |
 | `bun run dev` | dev server |

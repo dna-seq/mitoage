@@ -91,6 +91,9 @@ notice on a species page; a third correlation dataset, `high_confidence`. Left:
    the evidence in a form a curator can check (the record, the independent sequences, the identities); sending
    is the maintainer's, under his name, and nothing is sent before he says so. First the records settled by
    independent sequences or already on a published list; the unresolved pairs are not reported.
+   Drafted on 2026-11-22: `docs/analyses/record-reports/` (`bun run record-reports`) holds 35 drafts and the 9
+   records without one, each with the reason. Left: the GenBank record each RefSeq record was made from and its
+   submitter (not looked up), the maintainer's reading of the drafts, and his word on sending.
 
 ## RM9 — A DOI for each build
 

@@ -4,6 +4,7 @@ Newest first.
 
 ## Unreleased
 
+- **Drafts of the reports on records the audit found wrong** (RM25 item 8; 2026-11-22). `bun run record-reports` writes `docs/analyses/record-reports/`: of the 44 audited records, 35 have a draft (the finding, its evidence word for word, what is asked, and the screen's comparisons of COX1 and CYTB with independent sequences) and 9 have none, each with the reason (a name not settled, a finding read from the record itself, evidence that is the record itself or other RefSeq records only). Nothing was sent; sending is the maintainer's. Which GenBank record each RefSeq record was made from is not looked up yet.
 - Findings and roadmap: H27's last piece, sample size as a covariate (`dna-seq/mitoage-pipelines`, 5b78bd3). With AnAge's sample size in the model, 187 of the 206 passing results of H1 and H11 hold and 19 hold less precisely; none moves, and the slopes do not shrink.
 - Findings: H18's control. Ten tasks run from a second build of the structure give an energy 60 kJ/mol away at the median (4 of 10 change sign), as large as the energies themselves: single energies are not distinguished from the build's noise (`dna-seq/mitoage-pipelines`, ff05158). The verdict stands.
 - Findings: H18. The interface energy of the cybrids' chimeric complexes adds nothing to divergence (`dna-seq/mitoage-pipelines`, c869d8e): one of the rule's three conditions holds for each score. Its first check had stopped at a failed test, traced to rounding and not to the energies; a control from a second build of ten tasks is still running.
