@@ -300,6 +300,28 @@ the seat's chat or on the desk, saying what the run is for.
   Its second run (6592223 to 6592226, into `data/output/mitoport/variants-second`) was on the cards; owed: `cmp`
   of the 19 tables, the result into H29's entry and `results/h29`. With H29 failed, StaB-ddG is dropped and H30 as
   written (it scores with StaB-ddG) is not built; Anton was told.
+- 2026-11-22 late: Anton asked for a reviewer of every cybrid comparison ("maybe there was some mistake on data
+  processing or setup", then "make sure agent review all the results"). Two review agents ran; neither found an
+  error that changes a verdict. Their findings and what is corrected stand in the pipelines' hypotheses file,
+  section "Review of the cybrid comparisons, 2026-11-22", and `results/review-20261122`. Corrected and remade:
+  H16's count (donor read through the host; partial ends unknown; 9d82153, job 6592805) and the Chinese hamster's
+  record (fd27213, job 6592840). Still to correct: H17's ESM and co-evolution sums (same old placing of the donor
+  on human columns; the model must run again), H31's shuffled genome (never scored), start-codon and stop variants
+  in H29 and H31, the sentence on soluble weights in H28's entry. To read in full: McKenzie et al. 2003
+  (doi 10.1093/molbev/msg132), which may hold activities in a figure for donors our table has without a value.
+- H28's positive control (`slurm/h28-stab-control.py`, job 6592766 in `h28-stab/control`, about four hours on
+  CPU): on its first 16 mutations our path gives the authors' predictions (Pearson -0.98; the sign differs because
+  their benchmark file keeps "negative is destabilising"). When it ends: the summary lines of its log into the
+  review section. H29 is written up (pipelines 2b8f943, `results/h29`).
+- Anton asked for membrane-aware models ("let's see if membraine aware models show any signals ... then think
+  about possibility of proper MD"). The survey agent was stopped by the model's safety filter before its report
+  ended, and its work may not be redone in this session; Anton was told and asked whether to retry on another
+  model. What arrived: no model with code beats conservation on membrane protein variants; APOGEE 2 reports 0.95
+  on mtDNA variants; AlphaMissense covers the 13 proteins. My proposal to him: score our variants with the ready
+  AlphaMissense and APOGEE 2 tables. No answer yet.
+- H33's table is committed as collected (20ada25, `results/h33`): 8 contrasts with a stated direction against
+  the 10 the rule needs, so "not assessed: too few" as it stands; Anton has not been told this number yet. The
+  swordtail case (Moran et al. 2024, a lethal incompatibility mapped to three complex I proteins) is unread.
 - H33 (pipelines a402176) is what Anton's "so we got stuck?" led to: genomes that differ in a few listed positions
   on one nucleus, a sign test of whether conservation or KronGenome names the one that works worse. He was given
   two options (build it, default; or go back to the open work) and had not answered. The table of contrasts is
