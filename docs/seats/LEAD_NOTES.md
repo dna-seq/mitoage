@@ -245,10 +245,19 @@ the seat's chat or on the desk, saying what the run is for.
   the coupling tables. Never commit from `clone-coupling`: its data folders are replaced by links.
 - Anton asked in `#mitoage>mitoport` where the mitoport hypothesis holds and where it agrees with experiments;
   answered there on 2026-11-21.
-- H28 (the cybrids by ProteinMPNN on the hosts' complexes) is written as a proposed entry in the pipelines'
-  hypotheses (f988e09) after Anton asked for fast learned stand-ins for molecular dynamics. No code, no run: it
-  waits for his yes; since he went away on 2026-11-21 the question is desk #82 (default: nothing runs). The hour
-  of GPU is my estimate, not measured.
+- H28: Anton agreed on 2026-11-22 in `#mitoage>mitoport` and asked for a check of the 2026 literature first (his
+  answer is relayed on desk #82). The check changed the model to StaB-ddG (ProteinMPNN fine-tuned for binding energy
+  changes; plain ProteinMPNN stays as a control arm); entry rewritten before the code (pipelines bcd8bb4), code
+  de8a216 (`mitoport cybrid-stab`, `cybrid-stab-collect`, `cybrid-stab-readout`, `download stabddg`). No card was
+  free, so it runs on CPU nodes from the runs folder's `h28-stab/clone` (at de8a216, with H17's inputs copied in):
+  tasks 0 and 2 as job 6590881, the other 42 as 6590907 after them, two at a time (raise the throttle to four when
+  the selection array of H21 to H25 has ended). Complex IV takes about 40 minutes a task; complex I was not yet
+  measured. Still to do: the whole array a second time into another folder (`H28_OUT`), then
+  `slurm/h28-stab-check.sbatch` with `H28_SECOND` naming that folder (collect, readout, byte comparison, tests, 21
+  breaks; one break is caught only on the clone with data), then results into the entry against the rule, the
+  tables into `results/`, findings and a post in `#mitoage>mitoport`.
+- The drafts of the reports on audited records (RM25 item 8) are in `docs/analyses/record-reports/` (2a55267); the
+  GenBank record and submitter behind each RefSeq record are not looked up.
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
 - H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
   (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
