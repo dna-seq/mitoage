@@ -255,9 +255,12 @@ the seat's chat or on the desk, saying what the run is for.
   and the whole array restarted as 6591070 from c0a229c, two at a time (raise the throttle to four when the
   selection array of H21 to H25 has ended: `scontrol update JobId=6591070 ArrayTaskThrottle=4`). Measured before
   the change: 7.5 minutes a set for complex I, 1.4 for complex IV; a complex I task now has 57 sets, about 7 hours.
-  H29 (disease variants against common ones, the check of what a per-protein number is worth) is a proposed entry
-  in the pipelines' hypotheses: no code; Anton was told it runs after H28 unless he says no; its variant files and
-  threshold are to be fixed with the code. Still to do for H28: the whole array a second time into another folder (`H28_OUT`), then
+  H29 (disease variants against common ones, the check of what a per-protein number is worth) has its entry and
+  code (pipelines f11db49: `download variants`, `mitoport variant-stab`, 19 tasks, about 4 hours each for complex I
+  by my estimate); Anton was told it runs after H28 unless he says no. To run it: a fresh clone with H28's inputs
+  and the build, `download variants`, `slurm/h29-variants.sbatch`, a second run, the check job. MITOMAP serves a
+  browser only, so the harmful variants are ClinVar's expert-panel ones (41 rows; none in CYTB, COX1, COX3, ND2).
+  Still to do for H28: the whole array a second time into another folder (`H28_OUT`), then
   `slurm/h28-stab-check.sbatch` with `H28_SECOND` naming that folder (collect, readout, byte comparison, tests, 21
   breaks; one break is caught only on the clone with data), then results into the entry against the rule, the
   tables into `results/`, findings and a post in `#mitoage>mitoport`.
