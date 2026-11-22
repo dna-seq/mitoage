@@ -247,7 +247,8 @@ the seat's chat or on the desk, saying what the run is for.
   answered there on 2026-11-21.
 - H28 (the cybrids by ProteinMPNN on the hosts' complexes) is written as a proposed entry in the pipelines'
   hypotheses (f988e09) after Anton asked for fast learned stand-ins for molecular dynamics. No code, no run: it
-  waits for his yes in `#mitoage>mitoport`. The hour of GPU is my estimate, not measured.
+  waits for his yes; since he went away on 2026-11-21 the question is desk #82 (default: nothing runs). The hour
+  of GPU is my estimate, not measured.
 - H19 had already run (its entry has the result of job 6493878); the handoff's table was older.
 - H21 to H25 are submitted from a fresh clone at ff05158 in the runs folder's `h21-25`: the first job 6587083
   (tests, breaks, traits, pairs, fits, selection inputs), then the selection array 6587084 (four tasks at a time)
@@ -256,3 +257,4 @@ the seat's chat or on the desk, saying what the run is for.
   (default: the fish analyses run alone and H23 to H25's mammal-wide readouts stay "not run"). When the table is
   placed in the clone's `data/input/hibernation`: `mitoage download hibernation` checks it, then the first job's
   steps again and the left-out tasks. `adapt readout` comes last, when selection and coupling are done.
+  The array stood at 55 of 107 tasks done, none failed, at 10:40 on 2026-11-22 (about five tasks an hour).
