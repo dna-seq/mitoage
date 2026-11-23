@@ -104,7 +104,7 @@ the deposit's files and text; publishing is outside its grant.
 
 ## RM12 — Longevity in the alignments: sites, selection pressure, convergence
 
-**State:** waits until 2026-11-24: step 5, H26 of `dna-seq/mitoage-pipelines` (long-lived for body mass, mammals and birds), was read on 2026-11-20: RELAX finds selection relaxed on the long-lived clades (mammals K = 0.74 above all 20 control draws, birds K = 0.94 above 19 of 20), no positive selection at the origins, no shift of dN/dS on sister pairs in birds; its coevolution side waits for the mammal set of H21 to H25. Left: the Coevol chains of step 4, looked at daily (2026-11-21: all four on their second leg, 6,069 to 7,163 points of the 15,000 aimed at). Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
+**State:** waits until 2026-11-25: step 5, H26 of `dna-seq/mitoage-pipelines` (long-lived for body mass, mammals and birds), was read on 2026-11-20: RELAX finds selection relaxed on the long-lived clades (mammals K = 0.74 above all 20 control draws, birds K = 0.94 above 19 of 20), no positive selection at the origins, no shift of dN/dS on sister pairs in birds; H21 to H25 were read on 2026-11-23 (nothing supported; their coevolution side is "not assessed", the nuclear alignments cover too few species, so H26's stays so too). Left: the Coevol chains of step 4 (2026-11-24: all four on their third leg, which ends that afternoon; the chains are compared after it). Steps 1 to 4 ran (H0 to H3 and H7 there) · **Owner:** lead
 
 The maintainer, 2026-11-13: "As we have MSA can you plan an analysis to reveal longevity insights? I also
 assume we can apply sone philogeny methods to check for longevity related evolutionary pressure and to check
@@ -154,7 +154,7 @@ literature. Reported in `#mitoalignments`; nothing goes on the site before the m
 
 ## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
 
-**State:** waits until 2026-11-24: the cluster is at its CPU cap, still so on 2026-11-21 (the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
+**State:** waits until 2026-11-27: the cluster is at its CPU cap, still so on 2026-11-24 (another group holds 266 of the 320 cores; the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
 
 The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
 can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
@@ -177,7 +177,7 @@ Reported in `#mitoage`; nothing goes on the site before the maintainer has seen 
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** waits until 2026-11-24: the cluster is at its CPU cap, still so on 2026-11-21, and the maintainer said on 2026-11-16 to wait ("so far we are hitting cpu capp on the cluster"). Left are the per-residue embeddings at contact positions. Ran, all in `dna-seq/mitoage-pipelines`: rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
+**State:** waits until 2026-11-27: the per-residue embeddings at contact positions are left and need a card (all six held on 2026-11-23); proposed beside them, H35 (Evo 2 and the dependencies a protein model holds across the interface). Ran, all in `dna-seq/mitoage-pipelines`: structure models on the variants and the cybrids (H28, H29, H34: none counts), KronGenome (H31), rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
