@@ -348,6 +348,13 @@ the seat's chat or on the desk, saying what the run is for.
   part is job 6596367 from `h17-fix/clone` in the runs folder, the ESM part (`slurm/h17-cybrid-esm.sbatch`) waits
   for a card. The lead's own working clone of pipelines is `h31-kron/work` in the runs folder, so as not to share
   a working tree with the agent.
+- 2026-11-23, later. H34 part B is run by the Opus agent on CPU nodes and does not count (pipelines 056c773:
+  membrane ProteinMPNN 0.58 against the site's variability 0.92; soluble weights 0.63); Anton was answered in
+  `#mitoage>general chat`. The agent found that tasks sharing one environment must run with `UV_NO_SYNC=1`
+  (H29's job file has the same latent fault). H21 to H25 are read out (pipelines 8919501, job 6599963; posted in
+  `#mitoage>adaptations H21-H25`): nothing supported; H24's positive control equals H25's B1, not checked why.
+  H17's CPU part passed (6596367); its ESM part is not submitted: no A100 was free, and its job file asks for a
+  card with 20 GiB free, which the other groups' cards do not have.
 - Asked of Anton and open: Yu et al. 2009 (Genome Research) as a PDF for H33's strain table.
 - H33 (pipelines a402176) is what Anton's "so we got stuck?" led to: genomes that differ in a few listed positions
   on one nucleus, a sign test of whether conservation or KronGenome names the one that works worse. He was given
