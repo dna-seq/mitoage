@@ -338,6 +338,16 @@ the seat's chat or on the desk, saying what the run is for.
   has no code: its choices (checkpoint, membrane labels of our chains, decoding order) are to be fixed with the
   code before any score, the soluble weights as control, run twice. Anton was told part B is next. The run clone
   for H34 is `h34/clone` in the runs folder.
+- 2026-11-23. H34 part B is specified whole in its entry (82c80ad, 4b24634: the tool's `use_sequence` switch
+  does the opposite of its name). When this session started on its code, its own reply was stopped by the model's
+  safety filter; the lead does not write that piece. Anton at the terminal: "the account has quota now, so please
+  run the model"; by his standing word it went to an Opus 5.5 agent of this session (code, tests, run, write-up in
+  pipelines; told to wait for a free A100 and not to use the requeue partition). All six A100 cards were held by
+  the kron jobs that afternoon. H31's shuffled genome is scored (c8b5b0c, job 6596363, result 531d3a8: variants
+  0.364 against 0.883, composition gives none of the signal). H17's donor placing is corrected (4f9f1e3); its CPU
+  part is job 6596367 from `h17-fix/clone` in the runs folder, the ESM part (`slurm/h17-cybrid-esm.sbatch`) waits
+  for a card. The lead's own working clone of pipelines is `h31-kron/work` in the runs folder, so as not to share
+  a working tree with the agent.
 - Asked of Anton and open: Yu et al. 2009 (Genome Research) as a PDF for H33's strain table.
 - H33 (pipelines a402176) is what Anton's "so we got stuck?" led to: genomes that differ in a few listed positions
   on one nucleus, a sign test of whether conservation or KronGenome names the one that works worse. He was given
