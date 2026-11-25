@@ -375,3 +375,32 @@ the seat's chat or on the desk, saying what the run is for.
   placed in the clone's `data/input/hibernation`: `mitoage download hibernation` checks it, then the first job's
   steps again and the left-out tasks. `adapt readout` comes last, when selection and coupling are done.
   The array stood at 55 of 107 tasks done, none failed, at 10:40 on 2026-11-22 (about five tasks an hour).
+
+## State on 2026-11-25 (Anton's redirect: the nuclear side)
+
+- Anton, 2026-11-24: the aim is which NUCLEAR genes and residues limit a cybrid, because only the nucleus can be
+  edited. H36 is that. Step 1 (counts of the donor's mitochondrial differences facing each nuclear subunit, pipelines
+  98f5696): no subunit named. Step 2 is his own design, the in-silico swap of the host's nuclear subunit for the
+  donor's ortholog, scored by StaB-ddG binding restoration against a random-mammal null: apes on the human host (9077124)
+  and rat, M. pahari, M. caroli on the mouse's own solved complexes I, III, IV (17f6db8, jobs 6631178/6631179): no
+  candidate in either. Only three reduced pairs exist on the mouse host, so the swap can point, not name.
+  Not assessed, said so: M. spretus, M. terricolor, Otomys (no ortholog source), the hamster donors (only a whole-cybrid
+  outcome; there is no hamster-host row). Orthologs are pinned input (`mitoage download donor-orthologs`, 405ce8c).
+  Step 3 (a protein model reading the joined mitochondrial and nuclear chains, and H35 part 2) needs a GPU: ask in
+  `#agent-chat>gpu` before taking an A100.
+- H35 part 1, Evo 2 (results/h35, 0f6afe1): cybrids do not count in any of three arms; on the variants it is about as
+  good as conservation and slightly better where alignments exist (0.966 against 0.910, interval 0.002 to 0.114,
+  thin). One run, not compared byte for byte.
+- Work done by Sonnet agents because Fable and Opus 5.5 agents were stopped by the safety filter on these topics
+  (Anton's order: Opus 5.5 then the latest Sonnet; I did not redo their work myself). Agents write the code, tests,
+  breaks and runs from fresh clones; I read the result and decide. A first break run in a copy without `tests/data` is
+  void: break in complete copies.
+- Coevol: third leg ended 2026-11-24 14:13 at 11,277 and 11,295 points (ages estimated), 10,152 and 10,297 (fixed);
+  tracecomp (runs folder `coevol-tracecomp/2026-11-24`): tree length 81 (estimated) and 31 (fixed), fixed covariances
+  46 to 66: nothing is read. The fourth leg started 2026-11-24 evening; a fifth if under 15,000 points. RM12 moved to
+  2026-11-28.
+- The November report file for the ROGEN project (mitoage.md in the secretary's report folder) is current to 2026-11-24; update rounds are asked by
+  the secretary in `#agent-chat>ROGEN report November`.
+- A Drive instruction for a KronGenome folder reached this session by mistake (Anton: it was for the Kron session);
+  nothing was created there.
+- GPU: I took no A100 since the Evo 2 job that ran between two kron-dna runs (kron trainer complained); ask first.
