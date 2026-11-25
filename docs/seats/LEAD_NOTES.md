@@ -404,3 +404,16 @@ the seat's chat or on the desk, saying what the run is for.
 - A Drive instruction for a KronGenome folder reached this session by mistake (Anton: it was for the Kron session);
   nothing was created there.
 - GPU: I took no A100 since the Evo 2 job that ran between two kron-dna runs (kron trainer complained); ask first.
+- H36 step 3 is run (778a237, jobs 6655272 probe, 6655308/6655425 and 6655426/6655427 plus resubmitted shards, checks
+  6655958): SaProt 650M on each mitochondrial chain joined to the nuclear chain it touches, host against donor-swapped.
+  **It does not count, and the reason is the method.** A shuffled nuclear partner beats the real one in about three
+  quarters of the cases (the real partner wins 16 of 61 human, 23 of 92 mouse), so the model hardly reads the pair;
+  it was trained on single chains, which the entry said before the run. It also loses to the plain count of facing
+  differences and to StaB-ddG on the reduced cases (4 pairs: a table, not a test). One subunit passes the rule,
+  human complex IV COX5B on V64I, restoration 0.037 against a null of -0.048: too small to mean anything.
+  Anton allowed the other groups' 2080 Ti cards through `--partition=GPUrequeue --account=cluster` for this work
+  (2026-11-25); the probe ran in fp32 with `sdpa`, 3.5 GiB peak, no flash-attn needed, and no job was requeued.
+  Two runs gave identical bytes; 116 tests, 83 of 83 breaks.
+- **All three steps of H36 are now run and none names a nuclear gene.** My reading, told to Anton: with 29 cybrids,
+  2 usable hosts and a handful of reduced complexes this cannot be settled by a better model; it needs more cybrids
+  with per-complex outcomes. Nothing further on the nuclear side is planned until he says so.
