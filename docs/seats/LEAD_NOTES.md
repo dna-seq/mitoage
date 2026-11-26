@@ -417,3 +417,37 @@ the seat's chat or on the desk, saying what the run is for.
 - **All three steps of H36 are now run and none names a nuclear gene.** My reading, told to Anton: with 29 cybrids,
   2 usable hosts and a handful of reduced complexes this cannot be settled by a better model; it needs more cybrids
   with per-complex outcomes. Nothing further on the nuclear side is planned until he says so.
+
+## State on 2026-11-26 (the nuclear side closed, the non-protein genes opened and closed)
+
+**H36 step 3 ended the nuclear-side design.** A protein model (SaProt 650M) on the joined mitochondrial and
+nuclear chains does not count, and the reason is the method, not the data: the model barely registers which
+partner it is given (a shuffled nuclear partner beats the real one in about three quarters of cases), and it
+loses to the plain count of facing differences and to StaB-ddG on the few reduced cases that exist. All three
+steps of the maintainer's design (counts, the in-silico swap, a model on the joined chains) are run and none
+names a nuclear gene. The limit is 29 cybrids and two usable hosts, not the model.
+
+**Asked on 2026-11-26 what had not been investigated at all**, I put four to the maintainer and he took them in
+my order ("Lgtm"): (1) a systematic harvest of the published cybrid and transmitochondrial-mouse literature for
+per-complex outcomes, which is the real bottleneck and is reading, not computing; (2) the 22 tRNA and 2 rRNA
+genes, never looked at as genes by any entry; (3) genome architecture as a trait (rearrangement rate,
+control-region duplication, repeat content), audited for correctness in H13 but never tested as a signal; (4)
+H30, mixed genomes in one cell, agreed long ago and still without code.
+
+**H37 was written before any code** (the entry, its bars and its nulls) and part A is now run: it does not
+count. Of 768 cells one gene passed the bar as I first wrote it, and that is the lesson worth keeping. The bar
+said the family-wise correction was over the 24 genes within each test, and there are 32 tests, so the chance of
+at least one cell passing under no effect at all is about four in five. Corrected over the whole family every
+cell is null, and nothing reaches the lenient correction either. I sent the result back for that correction
+before telling anyone it was a finding; the bar itself was not changed after the fact, and the narrower reading
+is kept in the entry marked superseded. The positive control passed exactly (the rate pipeline reproduces H7 on
+the protein genes with no cell different, and the tRNA rates were gated behind it in code), so this is a real
+null and not a broken pipeline. Part B (where inside the tRNA) is deferred for want of a pathogenic-variant list
+that is not behind a bot check. Part C (a tRNA against its own nuclear synthetase) is written and not run.
+
+**Working practice that paid off here**: when a single cell passes out of hundreds, correct across the whole
+family before the result is spoken of as a result, and have the agent that computed it compute the correction
+too, with the instruction not to look for a correction that saves it.
+
+Coevol leg 4 is still running (two and a half days at this writing); the chains were short of 15,000 points at
+the last count, so a fifth leg is likely. Nothing else on the nuclear side is planned.
