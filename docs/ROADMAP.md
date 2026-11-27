@@ -25,7 +25,7 @@ now resolves to another species (c), a nullable maximum lifespan (b). Each answe
 
 ## RM6 — The upstream sources, checked weekly
 
-**State:** waits until 2026-11-28: the next check, owed from 2026-11-27 and moved one day because the account's seven-day window was at 97% that night · **Owner:** lead
+**State:** waits until 2026-12-05: checked on 2026-11-28, nothing new · **Owner:** lead
 
 The priming's weekly look for a release newer than each pin; the dates and findings are in
 `docs/seats/LEAD_NOTES.md`. A newer release becomes its own item.
