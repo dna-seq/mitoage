@@ -504,5 +504,39 @@ chains gave at 1,100 and 4,300 points, so compute was never what the answer wait
 half becomes readable. Told to Anton as what it is: not a discovery, a consistent not-quite-supported
 tendency, and an answer for the analysis that samples the node ages rather than for the one that holds them.
 
-Of the four directions, the cybrid literature harvest (1) and H30 (4) are untouched, and H37 part C (a tRNA
-against its own nuclear synthetase) is written and unrun.
+Of the four directions, H30 (4) is untouched and H37 part C (a tRNA against its own nuclear synthetase) is
+written and unrun.
+
+## The cybrid harvest (direction 1) on 2026-11-27: the search is finished, the direction is not
+
+Rules and bar committed before any paper was read (`docs/CYBRID_HARVEST.md` in pipelines), then three passes
+of PubMed: the design terms, the transmitochondrial and conplastic literature by its own terms, and the
+forward reach of H16's five sources. 52 candidates logged in `results/h16/harvest/`: 5 already used, 2
+included, 36 excluded, 9 unread. **Against the bar (10 points from 2 papers) this is nothing**, and it is
+written up as nothing. The searchable literature is simply small: the whole `xenomitochondrial` term is 20
+records, a quarter of them ours already, and the transmitochondrial literature is almost all single-species
+disease models, which the rules put out from the start.
+
+Two things came out of it that are worth more than the two points.
+
+**H16's unit may be wrong.** Mouse with *Mus terricolor* mtDNA, complex I, stands in the table twice as not
+reduced (83% in the cell cybrid, 90% in skeletal muscle). In cardiac mitochondria of the same in-vivo line it
+is stated 40% down. The disagreement follows the **tissue**, not the laboratory, and the table has no tissue
+column: it treats each (host, donor, complex) as one fact. If that is wrong here it may be wrong throughout,
+and the 30 points are fewer than they look, not more. Written into H16; no test rerun, the harvest is not
+closed.
+
+**Two rule edges were hit and neither was moved.** The outcome rule says activity, which excludes a
+four-donor cybrid panel whose significant per-complex differences are protein abundance — and those four
+points are three-quarters outside complex I, which is exactly what the bar names as the thing that would
+change H16's reading. Bending the rule there, with the result already in view, is the move the document was
+written to forbid. And rule 3's amino-acid check "against the build" cannot run for two strains of one
+species, since the build holds one genome per species. Both are in the harvest README for Anton to rule on
+after it closes, not during.
+
+**What the harvest is now waiting on is nine PDFs, not more searching** (desk #97, kept current with both
+updates). The one that matters most is not a new point but a tie-break: a third laboratory on the single
+pairing the table already holds in disagreement (mouse with rat mtDNA, complex III), whose abstract agrees
+with the reduced reading. The harvest closes, and `new_points.tsv` moves into `cybrid_measurements.tsv`,
+when #97 is answered or its term runs out — not before, because the document's own rule is that no test is
+rerun until the table is committed.
