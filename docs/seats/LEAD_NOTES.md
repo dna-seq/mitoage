@@ -451,3 +451,49 @@ too, with the instruction not to look for a correction that saves it.
 
 Coevol leg 4 is still running (two and a half days at this writing); the chains were short of 15,000 points at
 the last count, so a fifth leg is likely. Nothing else on the nuclear side is planned.
+
+## State on 2026-11-27 (genome architecture closed, the two Coevol halves came apart)
+
+**H38, the third of the maintainer's four directions, is run and nothing counts.** Nine measures of genome
+architecture (rearrangement distance from the class consensus at two tiers, control-region length and feature
+count, tandem-repeat content genome-wide and in the control region, non-coding content, gene-overlap length)
+against maximum lifespan on 2,325 live species, under the same controls as the composition work. Of 36 cells,
+33 are null and 3 are not assessed for want of species off the modal value. With lambda estimated the smallest
+raw p is 0.018 and every Holm p is 1.0; the cells that pass with lambda fixed at 1 are null under the estimated
+form, which is the failure the bar was written to catch. The annotation covariate moved no cell across a
+threshold. Twelve raw regressions that ignore the tree are Holm-significant and are reported for comparison
+only. Two runs gave identical bytes; 56 tests, 118 of 118 breaks.
+
+Two things were written into the entry before any code, and both earned their place. The first is the
+confound, in the audit's own words: a real rearrangement and an annotation error look the same in a record, so
+the confidence-filtered records are primary and the audit's flags go in as a covariate. The second is that the
+family-wide correction covers every cell of the whole run, is computed in the same table as the raw p-values,
+and is never added afterwards — the code refuses to judge a table without the corrected columns. That is H37's
+lesson turned into a mechanism.
+
+**I got the positive control wrong and the agent caught it.** I wrote that the rearrangement measure must agree
+with H13's audit, but the audit judges a record against its family while the measure is distance from the
+class consensus; read literally the control would fail a measure that is working. The agent read the control
+against the family with the same function and strings, wrote the departure into the entry before the run (it
+then passed, 0 exceptions in 9 checks at both tiers), and asked me to rule. I ruled in the entry that the
+departure is accepted and the fault is mine, and stated what the control therefore does *not* establish: the
+choice of the class as the reference for the lifespan tests is a judgement of the entry and is validated by
+nothing. Nothing counts under either reference, so no bar was loosened to save a result.
+
+**Said plainly to the maintainer:** neither H37 nor H38 has a power calculation, so these nulls do not exclude a
+small effect and I do not claim they do.
+
+**Coevol leg 4 ended and the two halves came apart.** All four jobs completed after about 2d22h. The
+ages-estimated chains are readable for the first time since this started: 14,940 and 15,002 points, tree length
+effective size 158 (81 after leg 3), dN/dS 352, covariances 1,635 to 10,569, every effective size above the bar
+of 100. The ages-fixed chains are not, and are moving the wrong way: tree length effective size 4, down from
+31, with the chains 0.231 apart on it, and covariances as low as 66. An effective size that falls as a chain
+lengthens is a chain not mixing on a parameter, not one short of points, and fixing the dates removes the
+parameter that absorbs rate variation, so it is a plausible consequence of the setup. Leg 5 went in for the
+three chains short of target (6666186 estimated chain 1, 6666187 and 6666188 fixed). I put one judgement to the
+maintainer: if tree length is still this bad after leg 5, stop the ages-fixed analysis as unreadable rather
+than spend further legs. Asked the same day whether any of this is a discovery, I answered: non-conclusive so
+far, with the estimated side open for the first time.
+
+Of the four directions, the cybrid literature harvest (1) and H30 (4) are untouched, and H37 part C (a tRNA
+against its own nuclear synthetase) is written and unrun.
