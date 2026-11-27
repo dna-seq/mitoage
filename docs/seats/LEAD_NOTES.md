@@ -495,5 +495,14 @@ maintainer: if tree length is still this bad after leg 5, stop the ages-fixed an
 than spend further legs. Asked the same day whether any of this is a discovery, I answered: non-conclusive so
 far, with the estimated side open for the first time.
 
+**The ages-estimated chains were read the same afternoon** (job 6666586, burn-in 1,500, 13,500 points; both
+chains at 15,002, every effective size 165 or more, chains within 0.16). With body mass held nothing about
+lifespan reaches the bar of 0.975: dN/dS with lifespan +0.29 at pp 0.92, dS with lifespan −0.12 at 0.15, the
+raw dS fall being body mass. The two chains agree to the third decimal, and these are the numbers the unmixed
+chains gave at 1,100 and 4,300 points, so compute was never what the answer waited on. H3 and
+`results/h3/coevol-2026-11-27/` carry it; RM12 moved to 2026-11-30 and now waits only on whether the ages-held
+half becomes readable. Told to Anton as what it is: not a discovery, a consistent not-quite-supported
+tendency, and an answer for the analysis that samples the node ages rather than for the one that holds them.
+
 Of the four directions, the cybrid literature harvest (1) and H30 (4) are untouched, and H37 part C (a tRNA
 against its own nuclear synthetase) is written and unrun.
