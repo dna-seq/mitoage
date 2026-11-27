@@ -554,3 +554,30 @@ rerun until the table is committed.
 
 Nothing new. The two sources this check cannot actually settle are named as such rather than reported
 current: the USGS page shows a year, not a version, and EURING shows nothing at all.
+
+## H37 part C started, 2026-11-28: the gene set only (pipelines af7aff5)
+
+Of the four directions, the harvest (1) is parked on desk #97 and H30 (4) is still untouched; part C of H37 was
+the one listed as written and unrun, and its precondition was already met by part A. Its first step is done and
+nothing else is: **no rate is computed and nothing is tested.** The step is the one the entry puts before the
+test, which is which nuclear gene counts as a tRNA's "own synthetase", and it is written down now so the pairing
+cannot be adjusted later to suit a number.
+
+The entry forbids taking the symbols from the entry, so the code keeps no list of them and resolves them from
+NCBI at each run. Two things that cost an hour and are worth keeping: **a search for these genes by their own
+words does not find them** — the description "tRNA synthetase 2, mitochondrial" is not indexed in `[Title]` and
+returns nothing, and "aminoacyl-tRNA ligase activity" returns 38 genes without HARS2, the gene for histidine — so
+the search is the wider "tRNA ligase activity" and every narrowing happens on the records. And **NCBI's GO process
+term for DARS2, the aspartyl synthetase, names asparagine**, so the amino acid is read from the description and
+never from the process terms; a test holds that record so the rule cannot drift back.
+
+18 of the 20 amino acids have a gene. Gln and Lys are not assessed, and both were foreseen in the entry, which is
+a check on the rule rather than luck: Gln is charged by the GatCAB amidotransferase and not by a synthetase at
+all, and KARS1 carries mitochondrial components with no mitochondrial aminoacylation process, which is also what
+a cytosolic synthetase with one stray annotation looks like, so the rule cannot tell it from QARS1 and uses
+neither. Part C tests 18 pairs, not 20, and that cost is stated rather than paid quietly.
+
+What is still open before any test — the orthologs, the per-branch tRNA rate against part A's per-sister-pair one,
+the Leu and Ser isoacceptors, the null's draws, the nuclear background — is listed as open in
+`results/h37/partC/README.md`, not settled. The next step is the ortholog download for the 18 symbols over the
+mitoport mammals, which is the first part that costs cluster time.
