@@ -540,3 +540,17 @@ pairing the table already holds in disagreement (mouse with rat mtDNA, complex I
 with the reduced reading. The harvest closes, and `new_points.tsv` moves into `cybrid_measurements.tsv`,
 when #97 is answered or its term runs out — not before, because the document's own rule is that no test is
 rerun until the table is committed.
+
+### Upstream check, 2026-11-28
+
+| Source | Pinned | Found |
+|---|---|---|
+| RefSeq release | 237 | 238, unchanged since 2026-11-20; its item is RM26, blocked on desk #67 |
+| AnAge | build 15 | build 15, current |
+| FishBase | v26.06 | v26.06 is the newest snapshot in the dataset's own listing (`fb/`), current |
+| SeaLifeBase | v26.06 | v26.06 is the newest snapshot in the dataset's own listing (`slb/`), current |
+| USGS BBL | v2025.1 | the longevity portal answers and names "Version 2025"; it prints no point release, so a v2025.2 could not be told from the pin by this check |
+| EURING | list of 2023-09-01 (Internet Archive's copy) | euring.org still redirects to its maintenance page, as it has since 2026-11-13; nothing newer can be seen |
+
+Nothing new. The two sources this check cannot actually settle are named as such rather than reported
+current: the USGS page shows a year, not a version, and EURING shows nothing at all.
