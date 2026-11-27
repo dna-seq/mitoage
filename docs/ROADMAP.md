@@ -25,7 +25,7 @@ now resolves to another species (c), a nullable maximum lifespan (b). Each answe
 
 ## RM6 — The upstream sources, checked weekly
 
-**State:** waits until 2026-11-27: the next check · **Owner:** lead
+**State:** waits until 2026-11-28: the next check, owed from 2026-11-27 and moved one day because the account's seven-day window was at 97% that night · **Owner:** lead
 
 The priming's weekly look for a release newer than each pin; the dates and findings are in
 `docs/seats/LEAD_NOTES.md`. A newer release becomes its own item.
@@ -154,7 +154,7 @@ literature. Reported in `#mitoalignments`; nothing goes on the site before the m
 
 ## RM16 — Peptides encoded inside mtDNA: kept across species, and against lifespan
 
-**State:** waits until 2026-11-27: the cluster is at its CPU cap, still so on 2026-11-24 (another group holds 266 of the 320 cores; the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
+**State:** waits until 2026-11-30: the cluster is at its CPU cap, still so on 2026-11-24 (another group holds 266 of the 320 cores; the maintainer, 2026-11-16: "so far we are hitting cpu capp on the cluster"). The blind scan (step 4) is left. The published peptides were run across the whole build against nulls of the host gene (H15 in `dna-seq/mitoage-pipelines`) · **Owner:** lead
 
 The maintainer: "there was a recent research on many peptides discovered at mtDNA not known until recently,
 can we investigate them?" The published ones are small reading frames inside the rRNA genes (humanin,
@@ -177,7 +177,7 @@ Reported in `#mitoage`; nothing goes on the site before the maintainer has seen 
 
 ## RM11 — mitoport: mitochondrial and nuclear partners against lifespan
 
-**State:** waits until 2026-11-27: the per-residue embeddings at contact positions are left and need a card (all six held on 2026-11-23); proposed beside them, H35 (Evo 2 and the dependencies a protein model holds across the interface). Ran, all in `dna-seq/mitoage-pipelines`: structure models on the variants and the cybrids (H28, H29, H34: none counts), KronGenome (H31), rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
+**State:** waits until 2026-11-30: the per-residue embeddings at contact positions are left and need a card (all six A100s held on 2026-11-23; the other groups' smaller cards are reachable through the requeue partition, which the maintainer allowed on 2026-11-22 for restartable inference). Ran since: H35 part 1 (Evo 2 on the variants and the cybrids: the cybrids do not count in any arm) and H36 whole, the cybrids read from the nuclear side on the maintainer's own design (counts of facing differences, the in-silico swap scored by StaB-ddG, and a protein model on the joined chains: no nuclear gene is named by any of the three, and the limit is 29 cybrids and two usable hosts, not the models). Ran before, all in `dna-seq/mitoage-pipelines`: structure models on the variants and the cybrids (H28, H29, H34: none counts), KronGenome (H31), rate covariation (H5), embeddings (H6), contact mismatch against lifespan (H9, a bounded null), complexes I, III and V (H14: the coupling belongs to whole proteins, not to the touching residues), the published cybrids (H16) · **Owner:** lead
 
 Started 2026-11-13, reported in `#mitoage>mitoport`: nuclear subunits from NCBI's ortholog sets (184 of 627
 mammals have them); rate covariation on 62 mammals shows complex IV's nuclear subunits following the
