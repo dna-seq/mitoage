@@ -606,3 +606,20 @@ The reusable find, for the next holder: H5's whole ERC run survives in this mach
 the repository (62 mammals, 67 genes, the alignments, the branch-length trees and the topology), and its 54
 ortholog downloads beside it. Part C reuses those downloads rather than fetching them again, and the entry's own
 positive control needs H5's numbers reproduced on the same mammals in any case.
+
+### Coevol's ages-held half is stopped, 2026-11-28 (pipelines 79da16b, desk #96 withdrawn)
+
+Leg 5 finished — both chains at their full 15,001 points, jobs 6666187 (17 h 34 m) and 6666188 (21 h 28 m) — and
+the number was checked **once**, as #96 said it would be. Tree length is still at an effective sample size of 4
+with the chains 0.24 apart after about 3,500 more points each; four covariance terms are below 100 (71, 71, 92,
+98) and the covariances disagree by 0.17 to 0.27. Two terms pass on both counts, and a result is not assembled
+from the two that converged while seven did not.
+
+This is #96's **default applied**, not a fresh judgement, and it is withdrawn in those words so the desk's stats
+tell the two apart. The maintainer's other two options stay open because the chains are on disk: more legs, or
+the calibrated prior instead of fixed ages.
+
+The line that matters for the write-up, and it is in `results/h3/coevol-fixed-2026-11-28/README.md` in these
+words: this says the ages-held form **could not be read**, not that there is no relationship. An unreadable chain
+is not a negative result. H3's Coevol claim rests on the ages-estimated half alone, with the limit named beside
+it. RM12's step 4 now has nothing left.
