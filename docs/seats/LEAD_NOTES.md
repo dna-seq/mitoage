@@ -623,3 +623,33 @@ The line that matters for the write-up, and it is in `results/h3/coevol-fixed-20
 words: this says the ages-held form **could not be read**, not that there is no relationship. An unreadable chain
 is not a negative result. H3's Coevol claim rests on the ages-estimated half alone, with the limit named beside
 it. RM12's step 4 now has nothing left.
+
+### H37 part C's first run is submitted, 2026-11-28 (pipelines c214467, job 6670766)
+
+The alignments and branch lengths, and nothing else: no rate, no pairing. One fixed topology for the 18
+synthetases together with the 62 nuclear ortholog sets of H5's run, so part C's rates and the rates its bar is
+read against come off the same branches. Fresh clone of `main`, the build pinned to H27's revision and the dated
+tree to part A's; both digests were checked against what part A recorded and both match.
+
+Three choices were made before submitting, and are in the part C README rather than in my head:
+
+- The gene set is **not written into the job**. It is read again from the recorded NCBI answer and compared with
+  the committed table, and a second guard compares the ortholog folders against that table. Both were run on the
+  login node first and both pass: the table is byte-identical, the folders are exactly the 18 chosen genes plus
+  H5's 62.
+- **HARS2 is left in on purpose.** `align`'s own completeness rule should drop it (38 of H5's 62 mammals), and
+  letting the code reach that instead of me is a check on yesterday's arithmetic. If the rule keeps it, the hand
+  decision is what is wrong.
+- **H5's proteins are aligned again here under the new `longest` anchor**, not copied. The background has to sit
+  on this run's species set. H5's published numbers do not move; part C will quote the number measured here.
+
+MAFFT on one thread, which is slower and repeatable. `--time=06:00:00` is sized from a measurement, not invented:
+one L-INS-i on WARS2 (183 sequences, ~400 residues) took 21 s on the login node, cost grows with the square of
+the length, the longest gene here is ~1,000 residues, 80 sets.
+
+The 15 breaks of the gene-set and anchor guards were each run against the tests before the job was written, and
+all 15 are caught. One of them was wrong twice before it bit: my first two attempts at breaking "the amino acid
+comes from the description, not the GO processes" both left DARS2's answer correct — the first because the
+replacement produced a string the regex could not match, the second because `next()` picked DARS2's *cytosolic*
+process term, which names the right amino acid. A break that passes for the wrong reason is worth more attention
+than one that fails.
