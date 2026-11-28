@@ -581,3 +581,28 @@ What is still open before any test — the orthologs, the per-branch tRNA rate a
 the Leu and Ser isoacceptors, the null's draws, the nuclear background — is listed as open in
 `results/h37/partC/README.md`, not settled. The next step is the ortholog download for the 18 symbols over the
 mitoport mammals, which is the first part that costs cluster time.
+
+### The anchor defect, found on the way into H37 part C (2026-11-28, pipelines 9c18b63, desk #100)
+
+Taking the ortholog sets for part C's 18 synthetases turned up something older and wider than part C.
+`mitoport/select.py` chooses each species' isoform by length against "the human one", and took that to be **the
+first human RefSeq protein in NCBI's file order** — an order by accession, which means nothing: where a gene's
+alternative isoforms were accessioned after its canonical one, `NP_001…` sorts first and the whole column follows
+the short form. Over the 72 ortholog sets held on this machine the first human protein is not the one NCBI tags
+`[isoform=1]` in 31 of them. CARS2 anchored at 302 residues against a canonical 564, and 161 of its 181 species
+then came out more than 20% from the anchor.
+
+`select` now takes `--anchor`. **The default is the old rule**, so nothing already computed moves without the
+maintainer's word; `longest` takes the longest human RefSeq protein, which depends on neither file order nor an
+isoform tag (NCBI writes `[isoform=1]`, `[isoform=a]`, `[isoform=X1]` or nothing, so no tag rule covers every
+gene). Part C uses `longest`, fixed before any rate exists: the species per gene do not change, only which isoform
+each contributes, and the count more than 20% from the anchor falls from 396 to 28.
+
+What is not mine is the past. H19's classes and H12's partners used the old anchor, and whether their numbers move
+cannot be known without rerunning them — **desk #100**, S2, default on silence being that they stay as they are
+with the anchor recorded in their folders and every new analysis using the new rule. Part C is not blocked by it.
+
+The reusable find, for the next holder: H5's whole ERC run survives in this machine's mitoport run folder beside
+the repository (62 mammals, 67 genes, the alignments, the branch-length trees and the topology), and its 54
+ortholog downloads beside it. Part C reuses those downloads rather than fetching them again, and the entry's own
+positive control needs H5's numbers reproduced on the same mammals in any case.
